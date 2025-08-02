@@ -70,7 +70,7 @@ func TestFindYoutubePlaylistFeed(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		subscriptions, localizedError := NewSubscriptionFinder(nil).FindSubscriptionsFromYouTubePlaylistPage(scenario.websiteURL)
+		subscriptions, localizedError := NewSubscriptionFinder(nil).findSubscriptionsFromYouTubePlaylistPage(scenario.websiteURL)
 		if scenario.discoveryError {
 			if localizedError == nil {
 				t.Fatalf(`Parsing an invalid URL should return an error`)
@@ -159,7 +159,7 @@ func TestFindYoutubeChannelFeed(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		subscriptions, localizedError := NewSubscriptionFinder(nil).FindSubscriptionsFromYouTubeChannelPage(scenario.websiteURL)
+		subscriptions, localizedError := NewSubscriptionFinder(nil).findSubscriptionsFromYouTubeChannelPage(scenario.websiteURL)
 		if scenario.discoveryError {
 			if localizedError == nil {
 				t.Fatalf(`Parsing an invalid URL should return an error`)
@@ -197,7 +197,7 @@ func TestParseWebPageWithRssFeed(t *testing.T) {
 		</body>
 	</html>`
 
-	subscriptions, err := NewSubscriptionFinder(nil).FindSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -230,7 +230,7 @@ func TestParseWebPageWithAtomFeed(t *testing.T) {
 		</body>
 	</html>`
 
-	subscriptions, err := NewSubscriptionFinder(nil).FindSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -263,7 +263,7 @@ func TestParseWebPageWithJSONFeed(t *testing.T) {
 		</body>
 	</html>`
 
-	subscriptions, err := NewSubscriptionFinder(nil).FindSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -296,7 +296,7 @@ func TestParseWebPageWithOldJSONFeedMimeType(t *testing.T) {
 		</body>
 	</html>`
 
-	subscriptions, err := NewSubscriptionFinder(nil).FindSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -329,7 +329,7 @@ func TestParseWebPageWithRelativeFeedURL(t *testing.T) {
 		</body>
 	</html>`
 
-	subscriptions, err := NewSubscriptionFinder(nil).FindSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -362,7 +362,7 @@ func TestParseWebPageWithEmptyTitle(t *testing.T) {
 		</body>
 	</html>`
 
-	subscriptions, err := NewSubscriptionFinder(nil).FindSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -396,7 +396,7 @@ func TestParseWebPageWithMultipleFeeds(t *testing.T) {
 		</body>
 	</html>`
 
-	subscriptions, err := NewSubscriptionFinder(nil).FindSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -418,7 +418,7 @@ func TestParseWebPageWithDuplicatedFeeds(t *testing.T) {
 		</body>
 	</html>`
 
-	subscriptions, err := NewSubscriptionFinder(nil).FindSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -451,7 +451,7 @@ func TestParseWebPageWithEmptyFeedURL(t *testing.T) {
 		</body>
 	</html>`
 
-	subscriptions, err := NewSubscriptionFinder(nil).FindSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -472,7 +472,7 @@ func TestParseWebPageWithNoHref(t *testing.T) {
 		</body>
 	</html>`
 
-	subscriptions, err := NewSubscriptionFinder(nil).FindSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
