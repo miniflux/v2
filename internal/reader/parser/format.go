@@ -22,6 +22,9 @@ const (
 
 // DetectFeedFormat tries to guess the feed format from input data.
 func DetectFeedFormat(r io.ReadSeeker) (string, string) {
+	r.Seek(0, io.SeekStart)
+	defer r.Seek(0, io.SeekStart)
+
 	if isJSON, err := detectJSONFormat(r); err == nil && isJSON {
 		return FormatJSON, ""
 	}
@@ -68,6 +71,10 @@ func detectJSONFormat(r io.ReadSeeker) (bool, error) {
 				return false, nil // No non-whitespace content found
 			}
 			return false, err
+		}
+
+		if len(buffer) < n {
+			panic("unreachable") // bounds check hint to compiler
 		}
 
 		// Check each byte in the buffer
