@@ -125,10 +125,15 @@ if (logoElement) {
 
 onClick(".header nav li", (event) => onClickMainMenuListItem(event));
 
+// Register the service worker if supported.
 if ("serviceWorker" in navigator) {
-    const scriptElement = document.getElementById("service-worker-script");
-    if (scriptElement) {
-        navigator.serviceWorker.register(ttpolicy.createScriptURL(scriptElement.src));
+    const serviceWorkerURL = document.body.dataset.serviceWorkerUrl;
+    if (serviceWorkerURL) {
+        navigator.serviceWorker.register(ttpolicy.createScriptURL(serviceWorkerURL), {
+            type: "module"
+        }).catch((error) => {
+            console.error("Service Worker registration failed:", error);
+        });
     }
 }
 
