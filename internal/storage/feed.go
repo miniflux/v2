@@ -35,7 +35,7 @@ func (l byStateAndName) Less(i, j int) bool {
 // FeedExists checks if the given feed exists.
 func (s *Storage) FeedExists(userID, feedID int64) bool {
 	var result bool
-	query := `SELECT true FROM feeds WHERE user_id=$1 AND id=$2`
+	query := `SELECT true FROM feeds WHERE user_id=$1 AND id=$2 LIMIT 1`
 	s.db.QueryRow(query, userID, feedID).Scan(&result)
 	return result
 }
@@ -43,7 +43,7 @@ func (s *Storage) FeedExists(userID, feedID int64) bool {
 // CategoryFeedExists returns true if the given feed exists that belongs to the given category.
 func (s *Storage) CategoryFeedExists(userID, categoryID, feedID int64) bool {
 	var result bool
-	query := `SELECT true FROM feeds WHERE user_id=$1 AND category_id=$2 AND id=$3`
+	query := `SELECT true FROM feeds WHERE user_id=$1 AND category_id=$2 AND id=$3 LIMIT 1`
 	s.db.QueryRow(query, userID, categoryID, feedID).Scan(&result)
 	return result
 }
@@ -51,7 +51,7 @@ func (s *Storage) CategoryFeedExists(userID, categoryID, feedID int64) bool {
 // FeedURLExists checks if feed URL already exists.
 func (s *Storage) FeedURLExists(userID int64, feedURL string) bool {
 	var result bool
-	query := `SELECT true FROM feeds WHERE user_id=$1 AND feed_url=$2`
+	query := `SELECT true FROM feeds WHERE user_id=$1 AND feed_url=$2 LIMIT 1`
 	s.db.QueryRow(query, userID, feedURL).Scan(&result)
 	return result
 }
@@ -59,7 +59,7 @@ func (s *Storage) FeedURLExists(userID int64, feedURL string) bool {
 // AnotherFeedURLExists checks if the user a duplicated feed.
 func (s *Storage) AnotherFeedURLExists(userID, feedID int64, feedURL string) bool {
 	var result bool
-	query := `SELECT true FROM feeds WHERE id <> $1 AND user_id=$2 AND feed_url=$3`
+	query := `SELECT true FROM feeds WHERE id <> $1 AND user_id=$2 AND feed_url=$3 LIMIT 1`
 	s.db.QueryRow(query, feedID, userID, feedURL).Scan(&result)
 	return result
 }

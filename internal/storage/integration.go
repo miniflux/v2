@@ -13,7 +13,7 @@ import (
 
 // HasDuplicateFeverUsername checks if another user have the same Fever username.
 func (s *Storage) HasDuplicateFeverUsername(userID int64, feverUsername string) bool {
-	query := `SELECT true FROM integrations WHERE user_id != $1 AND fever_username=$2`
+	query := `SELECT true FROM integrations WHERE user_id != $1 AND fever_username=$2 LIMIT 1`
 	var result bool
 	s.db.QueryRow(query, userID, feverUsername).Scan(&result)
 	return result
@@ -21,7 +21,7 @@ func (s *Storage) HasDuplicateFeverUsername(userID int64, feverUsername string) 
 
 // HasDuplicateGoogleReaderUsername checks if another user have the same Google Reader username.
 func (s *Storage) HasDuplicateGoogleReaderUsername(userID int64, googleReaderUsername string) bool {
-	query := `SELECT true FROM integrations WHERE user_id != $1 AND googlereader_username=$2`
+	query := `SELECT true FROM integrations WHERE user_id != $1 AND googlereader_username=$2 LIMIT 1`
 	var result bool
 	s.db.QueryRow(query, userID, googleReaderUsername).Scan(&result)
 	return result

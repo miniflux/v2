@@ -42,14 +42,14 @@ func (s *Storage) SetLastLogin(userID int64) error {
 // UserExists checks if a user exists by using the given username.
 func (s *Storage) UserExists(username string) bool {
 	var result bool
-	s.db.QueryRow(`SELECT true FROM users WHERE username=LOWER($1)`, username).Scan(&result)
+	s.db.QueryRow(`SELECT true FROM users WHERE username=LOWER($1) LIMIT 1`, username).Scan(&result)
 	return result
 }
 
 // AnotherUserExists checks if another user exists with the given username.
 func (s *Storage) AnotherUserExists(userID int64, username string) bool {
 	var result bool
-	s.db.QueryRow(`SELECT true FROM users WHERE id != $1 AND username=LOWER($2)`, userID, username).Scan(&result)
+	s.db.QueryRow(`SELECT true FROM users WHERE id != $1 AND username=LOWER($2) LIMIT 1`, userID, username).Scan(&result)
 	return result
 }
 
@@ -472,7 +472,7 @@ func (s *Storage) UserByField(field, value string) (*model.User, error) {
 // AnotherUserWithFieldExists returns true if a user has the value set for the given field.
 func (s *Storage) AnotherUserWithFieldExists(userID int64, field, value string) bool {
 	var result bool
-	s.db.QueryRow(fmt.Sprintf(`SELECT true FROM users WHERE id <> $1 AND %s=$2`, pq.QuoteIdentifier(field)), userID, value).Scan(&result)
+	s.db.QueryRow(fmt.Sprintf(`SELECT true FROM users WHERE id <> $1 AND %s=$2 LIMIT 1`, pq.QuoteIdentifier(field)), userID, value).Scan(&result)
 	return result
 }
 
@@ -750,7 +750,7 @@ func (s *Storage) CheckPassword(username, password string) error {
 // HasPassword returns true if the given user has a password defined.
 func (s *Storage) HasPassword(userID int64) (bool, error) {
 	var result bool
-	query := `SELECT true FROM users WHERE id=$1 AND password <> ''`
+	query := `SELECT true FROM users WHERE id=$1 AND password <> '' LIMIT 1`
 
 	err := s.db.QueryRow(query, userID).Scan(&result)
 	if err == sql.ErrNoRows {

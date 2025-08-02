@@ -15,7 +15,7 @@ import (
 // HasFeedIcon checks if the given feed has an icon.
 func (s *Storage) HasFeedIcon(feedID int64) bool {
 	var result bool
-	query := `SELECT true FROM feed_icons WHERE feed_id=$1`
+	query := `SELECT true FROM feed_icons WHERE feed_id=$1 LIMIT 1`
 	s.db.QueryRow(query, feedID).Scan(&result)
 	return result
 }
