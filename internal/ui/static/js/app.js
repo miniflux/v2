@@ -1,3 +1,15 @@
+// Sentinel values for specific list navigation
+const TOP = 9999;
+const BOTTOM = -9999;
+
+/**
+ * Get the CSRF token from the HTML document.
+ *
+ * @returns {string} The CSRF token.
+ */
+function getCsrfToken() {
+    return document.body.dataset.csrfToken || "";
+}
 
 /**
  * Open a new tab with the given URL.
@@ -9,6 +21,59 @@ function openNewTab(url) {
     win.opener = null;
     win.location = url;
     win.focus();
+}
+
+/**
+ * Scroll the page to the given element.
+ *
+ * @param {Element} element
+ * @param {boolean} evenIfOnScreen
+ */
+function scrollPageTo(element, evenIfOnScreen) {
+    const windowScrollPosition = window.scrollY;
+    const windowHeight = document.documentElement.clientHeight;
+    const viewportPosition = windowScrollPosition + windowHeight;
+    const itemBottomPosition = element.offsetTop + element.offsetHeight;
+
+    if (evenIfOnScreen || viewportPosition - itemBottomPosition < 0 || viewportPosition - element.offsetTop > windowHeight) {
+        window.scrollTo(0, element.offsetTop - 10);
+    }
+}
+
+/**
+ * Attach a click event listener to elements matching the selector.
+ *
+ * @param {string} selector
+ * @param {function} callback
+ * @param {boolean} noPreventDefault
+ */
+function onClick(selector, callback, noPreventDefault) {
+    document.querySelectorAll(selector).forEach((element) => {
+        element.onclick = (event) => {
+            if (!noPreventDefault) {
+                event.preventDefault();
+            }
+            callback(event);
+        };
+    });
+}
+
+/**
+ * Attach an auxiliary click event listener to elements matching the selector.
+ *
+ * @param {string} selector
+ * @param {function} callback
+ * @param {boolean} noPreventDefault
+ */
+function onAuxClick(selector, callback, noPreventDefault) {
+    document.querySelectorAll(selector).forEach((element) => {
+        element.onauxclick = (event) => {
+            if (!noPreventDefault) {
+                event.preventDefault();
+            }
+            callback(event);
+        };
+    });
 }
 
 /**
@@ -32,43 +97,231 @@ function getVisibleEntries() {
 }
 
 /**
- * Scroll the page to the given element.
+ * Check if the current view is a list view.
  *
- * @param {Element} element
- * @param {boolean} evenIfOnScreen
+ * @returns {boolean}
  */
-function scrollPageTo(element, evenIfOnScreen) {
-    const windowScrollPosition = window.scrollY;
-    const windowHeight = document.documentElement.clientHeight;
-    const viewportPosition = windowScrollPosition + windowHeight;
-    const itemBottomPosition = element.offsetTop + element.offsetHeight;
+function isListView() {
+    return document.querySelector(".items") !== null;
+}
 
-    if (evenIfOnScreen || viewportPosition - itemBottomPosition < 0 || viewportPosition - element.offsetTop > windowHeight) {
-        window.scrollTo(0, element.offsetTop - 10);
+/**
+ * Check if the current view is an entry view.
+ *
+ * @return {boolean}
+ */
+function isEntryView() {
+    return document.querySelector("section.entry") !== null;
+}
+
+/**
+ * Find the entry element for the given element.
+ *
+ * @returns {Element|null}
+ */
+function findEntry(element) {
+    if (isListView()) {
+        if (element) {
+            return element.closest(".item");
+        }
+        return document.querySelector(".current-item");
+    }
+    return document.querySelector(".entry");
+}
+
+/**
+ * Navigate to a specific page.
+ *
+ * @param {string} page - The page to navigate to.
+ * @param {boolean} reloadOnFail - If true, reload the current page if the target page is not found.
+ */
+function goToPage(page, reloadOnFail = false) {
+    const element = document.querySelector(":is(a, button)[data-page=" + page + "]");
+
+    if (element) {
+        document.location.href = element.href;
+    } else if (reloadOnFail) {
+        window.location.reload();
     }
 }
 
-// OnClick attaches a listener to the elements that match the selector.
-function onClick(selector, callback, noPreventDefault) {
-    document.querySelectorAll(selector).forEach((element) => {
-        element.onclick = (event) => {
-            if (!noPreventDefault) {
-                event.preventDefault();
-            }
-            callback(event);
-        };
-    });
+/**
+ * Navigate to the previous page.
+ *
+ * If the offset is a KeyboardEvent, it will navigate to the previous item in the list.
+ * If the offset is a number, it will jump that many items in the list.
+ * If the offset is TOP, it will jump to the first item in the list.
+ * If the offset is BOTTOM, it will jump to the last item in the list.
+ * If the current view is an entry view, it will redirect to the previous page.
+ *
+ * @param {number|KeyboardEvent} offset - How many items to jump for focus.
+ */
+function goToPreviousPage(offset) {
+    if (offset instanceof KeyboardEvent) offset = -1;
+    if (isListView()) {
+        goToListItem(offset);
+    } else {
+        goToPage("previous");
+    }
 }
 
-function onAuxClick(selector, callback, noPreventDefault) {
-    document.querySelectorAll(selector).forEach((element) => {
-        element.onauxclick = (event) => {
-            if (!noPreventDefault) {
-                event.preventDefault();
+/**
+ * Navigate to the next page.
+ *
+ * If the offset is a KeyboardEvent, it will navigate to the next item in the list.
+ * If the offset is a number, it will jump that many items in the list.
+ * If the offset is TOP, it will jump to the first item in the list.
+ * If the offset is BOTTOM, it will jump to the last item in the list.
+ * If the current view is an entry view, it will redirect to the next page.
+ *
+ * @param {number|KeyboardEvent} offset - How many items to jump for focus.
+ */
+function goToNextPage(offset) {
+    if (offset instanceof KeyboardEvent) offset = 1;
+    if (isListView()) {
+        goToListItem(offset);
+    } else {
+        goToPage("next");
+    }
+}
+
+/**
+ * Navigate to the individual feed or feeds page.
+ *
+ * If the current view is an entry view, it will redirect to the feed link of the entry.
+ * If the current view is a list view, it will redirect to the feeds page.
+ */
+function goToFeedOrFeedsPage() {
+    if (isEntryView()) {
+        goToFeedPage();
+    } else {
+        goToPage("feeds");
+    }
+}
+
+/**
+ * Navigate to the feed page of the current entry.
+ *
+ * If the current view is an entry view, it will redirect to the feed link of the entry.
+ * If the current view is a list view, it will redirect to the feed link of the currently selected item.
+ * If no feed link is available, it will do nothing.
+ */
+function goToFeedPage() {
+    if (isEntryView()) {
+        const feedAnchor = document.querySelector("span.entry-website a");
+        if (feedAnchor !== null) {
+            window.location.href = feedAnchor.href;
+        }
+    } else {
+        const currentItemFeed = document.querySelector(".current-item :is(a, button)[data-feed-link]");
+        if (currentItemFeed !== null) {
+            window.location.href = currentItemFeed.getAttribute("href");
+        }
+    }
+}
+
+/**
+ * Navigate to the add subscription page.
+ *
+ * @returns {void}
+ */
+function goToAddSubscriptionPage() {
+    window.location.href = document.body.dataset.addSubscriptionUrl;
+}
+
+/**
+ * Navigate to the next or previous item in the list.
+ *
+ * If the offset is TOP, it will jump to the first item in the list.
+ * If the offset is BOTTOM, it will jump to the last item in the list.
+ * If the offset is a number, it will jump that many items in the list.
+ * If the current view is an entry view, it will redirect to the next or previous page.
+ *
+ * @param {number} offset - How many items to jump for focus.
+ * @return {void}
+ */
+function goToListItem(offset) {
+    const items = getVisibleEntries();
+    if (items.length === 0) {
+        return;
+    }
+
+    if (document.querySelector(".current-item") === null) {
+        items[0].classList.add("current-item");
+        items[0].focus();
+        return;
+    }
+
+    for (let i = 0; i < items.length; i++) {
+        if (items[i].classList.contains("current-item")) {
+            items[i].classList.remove("current-item");
+
+            // By default adjust selection by offset
+            let itemOffset = (i + offset + items.length) % items.length;
+            // Allow jumping to top or bottom
+            if (offset === TOP) {
+                itemOffset = 0;
+            } else if (offset === BOTTOM) {
+                itemOffset = items.length - 1;
             }
-            callback(event);
-        };
-    });
+            const item = items[itemOffset];
+
+            item.classList.add("current-item");
+            scrollPageTo(item);
+            item.focus();
+
+            break;
+        }
+    }
+}
+
+/**
+ * Handle the share action for the entry.
+ *
+ * If the share status is "shared", it will trigger the Web Share API.
+ * If the share status is "share", it will send an Ajax request to fetch the share URL and then trigger the Web Share API.
+ * If the Web Share API is not supported, it will redirect to the entry URL.
+ */
+async function handleShare() {
+    const link = document.querySelector(':is(a, button)[data-share-status]');
+    const title = document.querySelector(".entry-header > h1 > a");
+    if (link.dataset.shareStatus === "shared") {
+        await triggerWebShare(title, link.href);
+    }
+    else if (link.dataset.shareStatus === "share") {
+        const request = new RequestBuilder(link.href);
+        request.withCallback((r) => {
+            // Ensure title is not null before passing to triggerWebShare
+            triggerWebShare(title, r.url);
+        });
+        request.withHttpMethod("GET");
+        request.execute();
+    }
+}
+
+/**
+ * Trigger the Web Share API to share the entry.
+ *
+ * If the Web Share API is not supported, it will redirect to the entry URL.
+ *
+ * @param {Element} title - The title element of the entry.
+ * @param {string} url - The URL of the entry to share.
+ */
+async function triggerWebShare(title, url) {
+    if (!navigator.canShare) {
+        console.error("Your browser doesn't support the Web Share API.");
+        window.location = url;
+        return;
+    }
+    try {
+        await navigator.share({
+            title: title ? title.textContent : url,
+            url: url
+        });
+    } catch (err) {
+        console.error(err);
+    }
+    window.location.reload();
 }
 
 // make logo element as button on mobile layout
@@ -490,114 +743,6 @@ function unsubscribeFromFeed() {
     }
 }
 
-/**
- * @param {string} page Page to redirect to.
- * @param {boolean} fallbackSelf Refresh actual page if the page is not found.
- */
-function goToPage(page, fallbackSelf = false) {
-    const element = document.querySelector(":is(a, button)[data-page=" + page + "]");
-
-    if (element) {
-        document.location.href = element.href;
-    } else if (fallbackSelf) {
-        window.location.reload();
-    }
-}
-
-/**
- *
- * @param {(number|event)} offset - many items to jump for focus.
- */
-function goToPrevious(offset) {
-    if (offset instanceof KeyboardEvent) {
-        offset = -1;
-    }
-    if (isListView()) {
-        goToListItem(offset);
-    } else {
-        goToPage("previous");
-    }
-}
-
-/**
- *
- * @param {(number|event)} offset - How many items to jump for focus.
- */
-function goToNext(offset) {
-    if (offset instanceof KeyboardEvent) {
-        offset = 1;
-    }
-    if (isListView()) {
-        goToListItem(offset);
-    } else {
-        goToPage("next");
-    }
-}
-
-function goToFeedOrFeeds() {
-    if (isEntry()) {
-        goToFeed();
-    } else {
-        goToPage('feeds');
-    }
-}
-
-function goToFeed() {
-    if (isEntry()) {
-        const feedAnchor = document.querySelector("span.entry-website a");
-        if (feedAnchor !== null) {
-            window.location.href = feedAnchor.href;
-        }
-    } else {
-        const currentItemFeed = document.querySelector(".current-item :is(a, button)[data-feed-link]");
-        if (currentItemFeed !== null) {
-            window.location.href = currentItemFeed.getAttribute("href");
-        }
-    }
-}
-
-// Sentinel values for specific list navigation
-const TOP = 9999;
-const BOTTOM = -9999;
-
-/**
- * @param {number} offset How many items to jump for focus.
- */
-function goToListItem(offset) {
-    const items = getVisibleEntries();
-    if (items.length === 0) {
-        return;
-    }
-
-    if (document.querySelector(".current-item") === null) {
-        items[0].classList.add("current-item");
-        items[0].focus();
-        return;
-    }
-
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].classList.contains("current-item")) {
-            items[i].classList.remove("current-item");
-
-            // By default adjust selection by offset
-            let itemOffset = (i + offset + items.length) % items.length;
-            // Allow jumping to top or bottom
-            if (offset === TOP) {
-                itemOffset = 0;
-            } else if (offset === BOTTOM) {
-                itemOffset = items.length - 1;
-            }
-            const item = items[itemOffset];
-
-            item.classList.add("current-item");
-            scrollPageTo(item);
-            item.focus();
-
-            break;
-        }
-    }
-}
-
 function scrollToCurrentItem() {
     const currentItem = document.querySelector(".current-item");
     if (currentItem !== null) {
@@ -634,24 +779,6 @@ function updateUnreadCounterValue(callback) {
             }
         );
     }
-}
-
-function isEntry() {
-    return document.querySelector("section.entry") !== null;
-}
-
-function isListView() {
-    return document.querySelector(".items") !== null;
-}
-
-function findEntry(element) {
-    if (isListView()) {
-        if (element) {
-            return element.closest(".item");
-        }
-        return document.querySelector(".current-item");
-    }
-    return document.querySelector(".entry");
 }
 
 function handleConfirmationMessage(linkElement, callback) {
@@ -724,11 +851,6 @@ function showToast(label, iconElement) {
     }, 100);
 }
 
-/** Navigate to the new subscription page. */
-function goToAddSubscription() {
-    window.location.href = document.body.dataset.addSubscriptionUrl;
-}
-
 /**
  * save player position to allow to resume playback later
  * @param {Element} playerElement
@@ -771,54 +893,6 @@ function isPlayerPlaying(element) {
         !element.paused &&
         !element.ended &&
         element.readyState > 2; //https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
-}
-
-/**
- * handle new share entires and already shared entries
- */
-async function handleShare() {
-    const link = document.querySelector(':is(a, button)[data-share-status]');
-    const title = document.querySelector(".entry-header > h1 > a");
-    if (link.dataset.shareStatus === "shared") {
-        await checkShareAPI(title, link.href);
-    }
-    if (link.dataset.shareStatus === "share") {
-        const request = new RequestBuilder(link.href);
-        request.withCallback((r) => {
-            checkShareAPI(title, r.url);
-        });
-        request.withHttpMethod("GET");
-        request.execute();
-    }
-}
-
-/**
-* wrapper for Web Share API
-*/
-async function checkShareAPI(title, url) {
-    if (!navigator.canShare) {
-        console.error("Your browser doesn't support the Web Share API.");
-        window.location = url;
-        return;
-    }
-    try {
-        await navigator.share({
-            title: title ? title.textContent : url,
-            url: url
-        });
-    } catch (err) {
-        console.error(err);
-    }
-    window.location.reload();
-}
-
-/**
- * Get the CSRF token from the HTML document.
- *
- * @returns {string} The CSRF token.
- */
-function getCsrfToken() {
-    return document.body.dataset.csrfToken || "";
 }
 
 /**
