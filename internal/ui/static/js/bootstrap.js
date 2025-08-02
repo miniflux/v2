@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    handleSubmitButtons();
+    disableSubmitButtonsOnFormSubmit();
 
     if (!document.querySelector("body[data-disable-keyboard-shortcuts=true]")) {
         const keyboardHandler = new KeyboardHandler();

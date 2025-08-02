@@ -140,15 +140,21 @@ function onClickMainMenuListItem(event) {
     }
 }
 
-// Change the button label when the page is loading.
-function handleSubmitButtons() {
+/**
+ * This function changes the button label to the loading state and disables the button.
+ *
+ * @returns {void}
+ */
+function disableSubmitButtonsOnFormSubmit() {
     document.querySelectorAll("form").forEach((element) => {
         element.onsubmit = () => {
-            const button = element.querySelector("button");
-            if (button) {
-                button.textContent = button.dataset.labelLoading;
+            const buttons = element.querySelectorAll("button[type=submit]");
+            buttons.forEach((button) => {
+                if (button.dataset.labelLoading) {
+                    button.textContent = button.dataset.labelLoading;
+                }
                 button.disabled = true;
-            }
+            });
         };
     });
 }
