@@ -50,6 +50,17 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 		slog.Int64("feed_id", feed.ID),
 	)
 
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithUserAgent(feed.UserAgent, config.Opts.HTTPClientUserAgent())
+	requestBuilder.WithCookie(feed.Cookie)
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
+	requestBuilder.WithCustomFeedProxyURL(feed.ProxyURL)
+	requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())
+	requestBuilder.UseCustomApplicationProxyURL(feed.FetchViaProxy)
+	requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
+	requestBuilder.DisableHTTP2(feed.DisableHTTP2)
+
 	// Processing older entries first ensures that their creation timestamp is lower than newer entries.
 	for _, entry := range slices.Backward(feed.Entries) {
 		slog.Debug("Processing entry",
@@ -94,17 +105,6 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 			)
 
 			startTime := time.Now()
-
-			requestBuilder := fetcher.NewRequestBuilder()
-			requestBuilder.WithUserAgent(feed.UserAgent, config.Opts.HTTPClientUserAgent())
-			requestBuilder.WithCookie(feed.Cookie)
-			requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
-			requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
-			requestBuilder.WithCustomFeedProxyURL(feed.ProxyURL)
-			requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())
-			requestBuilder.UseCustomApplicationProxyURL(feed.FetchViaProxy)
-			requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
-			requestBuilder.DisableHTTP2(feed.DisableHTTP2)
 
 			scrapedPageBaseURL, extractedContent, scraperErr := scraper.ScrapeWebsite(
 				requestBuilder,
