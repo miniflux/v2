@@ -47,7 +47,7 @@ class TouchHandler {
     }
 
     onItemTouchMove(event) {
-        if (event.touches === undefined || event.touches.length !== 1 || this.element === null) {
+        if (event.touches === undefined || event.touches.length !== 1 || this.touch.element === null) {
             return;
         }
 
@@ -151,7 +151,15 @@ class TouchHandler {
         }
     }
 
+    static isTouchSupported() {
+        return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    }
+
     listen() {
+        if (!TouchHandler.isTouchSupported()) {
+            return;
+        }
+
         const eventListenerOptions = { passive: true };
 
         document.querySelectorAll(".entry-swipe").forEach((element) => {
