@@ -451,30 +451,23 @@ function showKeyboardShortcuts() {
  */
 function markPageAsRead() {
     const items = getVisibleEntries();
-    const entryIDs = [];
+    if (items.length === 0) return;
 
-    items.forEach((element) => {
+    const entryIDs = items.map((element) => {
         element.classList.add("item-status-read");
-        entryIDs.push(parseInt(element.dataset.id, 10));
+        return parseInt(element.dataset.id, 10);
     });
 
-    if (entryIDs.length > 0) {
-        updateEntriesStatus(entryIDs, "read", () => {
-            // Make sure the Ajax request reach the server before we reload the page.
+    updateEntriesStatus(entryIDs, "read", () => {
+        const element = document.querySelector(":is(a, button)[data-action=markPageAsRead]");
+        const showOnlyUnread = element?.dataset.showOnlyUnread || false;
 
-            const element = document.querySelector(":is(a, button)[data-action=markPageAsRead]");
-            let showOnlyUnread = false;
-            if (element) {
-                showOnlyUnread = element.dataset.showOnlyUnread || false;
-            }
-
-            if (showOnlyUnread) {
-                window.location.href = window.location.href;
-            } else {
-                goToPage("next", true);
-            }
-        });
-    }
+        if (showOnlyUnread) {
+            window.location.reload();
+        } else {
+            goToPage("next", true);
+        }
+    });
 }
 
 /**
@@ -600,9 +593,9 @@ function updateEntriesStatus(entryIDs, status, callback) {
             }
 
             if (status === "read") {
-                decrementUnreadCounter(count);
+                updateUnreadCounterValue(-count);
             } else {
-                incrementUnreadCounter(count);
+                updateUnreadCounterValue(count);
             }
         });
     });
@@ -672,9 +665,7 @@ function handleBookmark(element) {
  */
 function toggleBookmark(parentElement, toasting) {
     const buttonElement = parentElement.querySelector(":is(a, button)[data-toggle-bookmark]");
-    if (!buttonElement) {
-        return;
-    }
+    if (!buttonElement) return;
 
     buttonElement.textContent = "";
     insertIconLabelElement(buttonElement, buttonElement.dataset.labelLoading);
@@ -683,20 +674,14 @@ function toggleBookmark(parentElement, toasting) {
     request.withCallback(() => {
         const currentStarStatus = buttonElement.dataset.value;
         const newStarStatus = currentStarStatus === "star" ? "unstar" : "star";
+        const isStarred = currentStarStatus === "star";
 
-        let iconElement, label;
-        if (currentStarStatus === "star") {
-            iconElement = document.querySelector("template#icon-star");
-            label = buttonElement.dataset.labelStar;
-            if (toasting) {
-                showToast(buttonElement.dataset.toastUnstar, iconElement);
-            }
-        } else {
-            iconElement = document.querySelector("template#icon-unstar");
-            label = buttonElement.dataset.labelUnstar;
-            if (toasting) {
-                showToast(buttonElement.dataset.toastStar, iconElement);
-            }
+        const iconElement = document.querySelector(isStarred ? "template#icon-star" : "template#icon-unstar");
+        const label = isStarred ? buttonElement.dataset.labelStar : buttonElement.dataset.labelUnstar;
+
+        if (toasting) {
+            const toastKey = isStarred ? "toastUnstar" : "toastStar";
+            showToast(buttonElement.dataset[toastKey], iconElement);
         }
 
         buttonElement.replaceChildren(iconElement.content.cloneNode(true));
@@ -712,14 +697,10 @@ function toggleBookmark(parentElement, toasting) {
  * @returns {void}
  */
 function handleFetchOriginalContent() {
-    if (isListView()) {
-        return;
-    }
+    if (isListView()) return;
 
     const buttonElement = document.querySelector(":is(a, button)[data-fetch-content-entry]");
-    if (!buttonElement) {
-        return;
-    }
+    if (!buttonElement) return;
 
     const previousElement = buttonElement.cloneNode(true);
 
@@ -732,7 +713,7 @@ function handleFetchOriginalContent() {
         buttonElement.appendChild(previousElement);
 
         response.json().then((data) => {
-            if (data.hasOwnProperty("content") && data.hasOwnProperty("reading_time")) {
+            if (data.content && data.reading_time) {
                 document.querySelector(".entry-content").innerHTML = ttpolicy.createHTML(data.content);
                 const entryReadingtimeElement = document.querySelector(".entry-reading-time");
                 if (entryReadingtimeElement) {
@@ -752,7 +733,7 @@ function handleFetchOriginalContent() {
  */
 function openOriginalLink(openLinkInCurrentTab) {
     const entryLink = document.querySelector(".entry h1 a");
-    if (entryLink !== null) {
+    if (entryLink) {
         if (openLinkInCurrentTab) {
             window.location.href = entryLink.getAttribute("href");
         } else {
@@ -762,7 +743,7 @@ function openOriginalLink(openLinkInCurrentTab) {
     }
 
     const currentItemOriginalLink = document.querySelector(".current-item :is(a, button)[data-original-link]");
-    if (currentItemOriginalLink !== null) {
+    if (currentItemOriginalLink) {
         openNewTab(currentItemOriginalLink.getAttribute("href"));
 
         const currentItem = document.querySelector(".current-item");
@@ -781,19 +762,13 @@ function openOriginalLink(openLinkInCurrentTab) {
  * @returns {void}
  */
 function openCommentLink(openLinkInCurrentTab) {
-    if (!isListView()) {
-        const entryLink = document.querySelector(":is(a, button)[data-comments-link]");
-        if (entryLink !== null) {
-            if (openLinkInCurrentTab) {
-                window.location.href = entryLink.getAttribute("href");
-            } else {
-                openNewTab(entryLink.getAttribute("href"));
-            }
-        }
-    } else {
-        const currentItemCommentsLink = document.querySelector(".current-item :is(a, button)[data-comments-link]");
-        if (currentItemCommentsLink !== null) {
-            openNewTab(currentItemCommentsLink.getAttribute("href"));
+    const entryLink = document.querySelector(isListView() ? ".current-item :is(a, button)[data-comments-link]" : ":is(a, button)[data-comments-link]");
+
+    if (entryLink) {
+        if (openLinkInCurrentTab) {
+            window.location.href = entryLink.getAttribute("href");
+        } else {
+            openNewTab(entryLink.getAttribute("href"));
         }
     }
 }
@@ -806,7 +781,7 @@ function openCommentLink(openLinkInCurrentTab) {
  */
 function openSelectedItem() {
     const currentItemLink = document.querySelector(".current-item .item-title a");
-    if (currentItemLink !== null) {
+    if (currentItemLink) {
         window.location.href = currentItemLink.getAttribute("href");
     }
 }
@@ -815,17 +790,11 @@ function openSelectedItem() {
  * Unsubscribe from the feed of the currently selected item.
  */
 function unsubscribeFromFeed() {
-    const unsubscribeLinks = document.querySelectorAll("[data-action=remove-feed]");
-    if (unsubscribeLinks.length === 1) {
-        const unsubscribeLink = unsubscribeLinks[0];
-
+    const unsubscribeLink = document.querySelector("[data-action=remove-feed]");
+    if (unsubscribeLink) {
         const request = new RequestBuilder(unsubscribeLink.dataset.url);
         request.withCallback(() => {
-            if (unsubscribeLink.dataset.redirectUrl) {
-                window.location.href = unsubscribeLink.dataset.redirectUrl;
-            } else {
-                window.location.reload();
-            }
+            window.location.href = unsubscribeLink.dataset.redirectUrl || window.location.href;
         });
         request.execute();
     }
@@ -836,54 +805,26 @@ function unsubscribeFromFeed() {
  */
 function scrollToCurrentItem() {
     const currentItem = document.querySelector(".current-item");
-    if (currentItem !== null) {
+    if (currentItem) {
         scrollPageTo(currentItem, true);
     }
 }
 
 /**
- * Decrement the unread counter by a specified amount.
- *
- * @param {number} n - The amount to decrement the counter by.
- */
-function decrementUnreadCounter(n) {
-    updateUnreadCounterValue((current) => {
-        return current - n;
-    });
-}
-
-/**
- * Increment the unread counter by a specified amount.
- *
- * @param {number} n - The amount to increment the counter by.
- */
-function incrementUnreadCounter(n) {
-    updateUnreadCounterValue((current) => {
-        return current + n;
-    });
-}
-
-/**
  * Update the unread counter value.
  *
- * @param {function} callback - The function to call with the old value.
+ * @param {number} delta - The amount to change the counter by.
  */
-function updateUnreadCounterValue(callback) {
+function updateUnreadCounterValue(delta) {
     document.querySelectorAll("span.unread-counter").forEach((element) => {
         const oldValue = parseInt(element.textContent, 10);
-        element.textContent = callback(oldValue);
+        element.textContent = oldValue + delta;
     });
 
     if (window.location.href.endsWith('/unread')) {
         const oldValue = parseInt(document.title.split('(')[1], 10);
-        const newValue = callback(oldValue);
-
-        document.title = document.title.replace(
-            /(.*?)\(\d+\)(.*?)/,
-            function (match, prefix, suffix, offset, string) {
-                return prefix + '(' + newValue + ')' + suffix;
-            }
-        );
+        const newValue = oldValue + delta;
+        document.title = document.title.replace(/(.*?)\(\d+\)(.*?)/, `$1(${newValue})$2`);
     }
 }
 
@@ -970,9 +911,7 @@ function showToast(toastMessage, iconElement) {
 
     const toastElementWrapper = document.getElementById("toast-wrapper");
     toastElementWrapper.classList.remove('toast-animate');
-    setTimeout(() => {
-        toastElementWrapper.classList.add('toast-animate');
-    }, 100);
+    setTimeout(() => toastElementWrapper.classList.add('toast-animate'), 100);
 }
 
 /**
