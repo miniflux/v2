@@ -52,14 +52,7 @@ class WebAuthnHandler {
             url += "?username=" + username;
         }
 
-        return fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Csrf-Token": getCsrfToken()
-            },
-            body: JSON.stringify(data),
-        });
+        return sendPOSTRequest(url, data);
     }
 
     async get(urlKey, username) {
