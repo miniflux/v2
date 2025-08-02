@@ -806,13 +806,13 @@ async function checkShareAPI(title, url) {
     window.location.reload();
 }
 
+/**
+ * Get the CSRF token from the HTML document.
+ *
+ * @returns {string} The CSRF token.
+ */
 function getCsrfToken() {
-    const element = document.querySelector("body[data-csrf-token]");
-    if (element !== null) {
-        return element.dataset.csrfToken;
-    }
-
-    return "";
+    return document.body.dataset.csrfToken || "";
 }
 
 /**
