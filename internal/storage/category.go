@@ -31,7 +31,7 @@ func (s *Storage) CategoryTitleExists(userID int64, title string) bool {
 // CategoryIDExists checks if the given category exists into the database.
 func (s *Storage) CategoryIDExists(userID, categoryID int64) bool {
 	var result bool
-	query := `SELECT true FROM categories WHERE user_id=$1 AND id=$2`
+	query := `SELECT true FROM categories WHERE user_id=$1 AND id=$2 LIMIT 1`
 	s.db.QueryRow(query, userID, categoryID).Scan(&result)
 	return result
 }
