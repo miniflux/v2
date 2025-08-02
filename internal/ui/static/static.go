@@ -116,7 +116,6 @@ func GenerateJavascriptBundles() error {
 			"js/tt.js", // has to be first
 			"js/touch_handler.js",
 			"js/keyboard_handler.js",
-			"js/request_builder.js",
 			"js/modal_handler.js",
 			"js/webauthn_handler.js",
 			"js/app.js",

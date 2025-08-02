@@ -1,14 +1,28 @@
-// Sentinel values for specific list navigation
+// Sentinel values for specific list navigation.
 const TOP = 9999;
 const BOTTOM = -9999;
 
 /**
- * Get the CSRF token from the HTML document.
+ * Send a POST request to the specified URL with the given body.
  *
- * @returns {string} The CSRF token.
+ * @param {string} url - The URL to send the request to.
+ * @param {Object} [body] - The body of the request (optional).
+ * @returns {Promise<Response>} The response from the fetch request.
  */
-function getCsrfToken() {
-    return document.body.dataset.csrfToken || "";
+function sendPOSTRequest(url, body = null) {
+    const options = {
+        method: "POST",
+        headers: {
+            "X-Csrf-Token": document.body.dataset.csrfToken || ""
+        }
+    };
+
+    if (body !== null) {
+        options.headers["Content-Type"] = "application/json";
+        options.body = JSON.stringify(body);
+    }
+
+    return fetch(url, options);
 }
 
 /**
@@ -298,18 +312,9 @@ function goToListItem(offset) {
  */
 async function handleShare() {
     const link = document.querySelector(':is(a, button)[data-share-status]');
-    const title = document.querySelector(".entry-header > h1 > a");
     if (link.dataset.shareStatus === "shared") {
+        const title = document.querySelector(".entry-header > h1 > a");
         await triggerWebShare(title, link.href);
-    }
-    else if (link.dataset.shareStatus === "share") {
-        const request = new RequestBuilder(link.href);
-        request.withCallback((r) => {
-            // Ensure title is not null before passing to triggerWebShare
-            triggerWebShare(title, r.url);
-        });
-        request.withHttpMethod("GET");
-        request.execute();
     }
 }
 
@@ -335,7 +340,6 @@ async function triggerWebShare(title, url) {
     } catch (err) {
         console.error(err);
     }
-    window.location.reload();
 }
 
 /**
@@ -584,9 +588,7 @@ function handleRefreshAllFeeds() {
  */
 function updateEntriesStatus(entryIDs, status, callback) {
     const url = document.body.dataset.entriesStatusUrl;
-    const request = new RequestBuilder(url);
-    request.withBody({ entry_ids: entryIDs, status: status });
-    request.withCallback((resp) => {
+    sendPOSTRequest(url, { entry_ids: entryIDs, status: status }).then((resp) => {
         resp.json().then(count => {
             if (callback) {
                 callback(resp);
@@ -599,7 +601,6 @@ function updateEntriesStatus(entryIDs, status, callback) {
             }
         });
     });
-    request.execute();
 }
 
 /**
@@ -630,8 +631,7 @@ function saveEntry(element, toasting) {
     element.textContent = "";
     insertIconLabelElement(element, element.dataset.labelLoading);
 
-    const request = new RequestBuilder(element.dataset.saveUrl);
-    request.withCallback(() => {
+    sendPOSTRequest(element.dataset.saveUrl).then(() => {
         element.textContent = "";
         insertIconLabelElement(element, element.dataset.labelDone);
         element.dataset.completed = "true";
@@ -640,7 +640,6 @@ function saveEntry(element, toasting) {
             showToast(element.dataset.toastDone, iconElement);
         }
     });
-    request.execute();
 }
 
 /**
@@ -670,8 +669,7 @@ function toggleBookmark(parentElement, toasting) {
     buttonElement.textContent = "";
     insertIconLabelElement(buttonElement, buttonElement.dataset.labelLoading);
 
-    const request = new RequestBuilder(buttonElement.dataset.bookmarkUrl);
-    request.withCallback(() => {
+    sendPOSTRequest(buttonElement.dataset.bookmarkUrl).then(() => {
         const currentStarStatus = buttonElement.dataset.value;
         const newStarStatus = currentStarStatus === "star" ? "unstar" : "star";
         const isStarred = currentStarStatus === "star";
@@ -688,7 +686,6 @@ function toggleBookmark(parentElement, toasting) {
         insertIconLabelElement(buttonElement, label);
         buttonElement.dataset.value = newStarStatus;
     });
-    request.execute();
 }
 
 /**
@@ -707,8 +704,7 @@ function handleFetchOriginalContent() {
     buttonElement.textContent = "";
     insertIconLabelElement(buttonElement, buttonElement.dataset.labelLoading);
 
-    const request = new RequestBuilder(buttonElement.dataset.fetchContentUrl);
-    request.withCallback((response) => {
+    sendPOSTRequest(buttonElement.dataset.fetchContentUrl).then((response) => {
         buttonElement.textContent = '';
         buttonElement.appendChild(previousElement);
 
@@ -722,7 +718,6 @@ function handleFetchOriginalContent() {
             }
         });
     });
-    request.execute();
 }
 
 /**
@@ -792,11 +787,9 @@ function openSelectedItem() {
 function unsubscribeFromFeed() {
     const unsubscribeLink = document.querySelector("[data-action=remove-feed]");
     if (unsubscribeLink) {
-        const request = new RequestBuilder(unsubscribeLink.dataset.url);
-        request.withCallback(() => {
+        sendPOSTRequest(unsubscribeLink.dataset.url).then(() => {
             window.location.href = unsubscribeLink.dataset.redirectUrl || window.location.href;
         });
-        request.execute();
     }
 }
 
@@ -952,9 +945,7 @@ function handlePlayerProgressionSaveAndMarkAsReadOnCompletion(playerElement) {
     ) {
         playerElement.dataset.lastPosition = currentPositionInSeconds.toString();
 
-        const request = new RequestBuilder(playerElement.dataset.saveUrl);
-        request.withBody({ progression: currentPositionInSeconds });
-        request.execute();
+        sendPOSTRequest(playerElement.dataset.saveUrl, { progression: currentPositionInSeconds });
 
         // Handle the mark as read on completion
         if (markAsReadOnCompletion >= 0 && playerElement.duration > 0) {
@@ -1199,8 +1190,7 @@ function initializeClickHandlers() {
     // Generic confirmation handler
     onClick(":is(a, button)[data-confirm]", (event) => {
         handleConfirmationMessage(event.target, (url, redirectURL) => {
-            const request = new RequestBuilder(url);
-            request.withCallback((response) => {
+            sendPOSTRequest(url).then((response) => {
                 if (redirectURL) {
                     window.location.href = redirectURL;
                 } else if (response?.redirected && response.url) {
@@ -1209,7 +1199,6 @@ function initializeClickHandlers() {
                     window.location.reload();
                 }
             });
-            request.execute();
         });
     });
 
