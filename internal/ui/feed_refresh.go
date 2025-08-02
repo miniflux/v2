@@ -33,7 +33,6 @@ func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
-	userID := request.UserID(r)
 	printer := locale.NewPrinter(request.UserLanguage(r))
 	sess := session.New(h.store, request.SessionID(r))
 
@@ -42,6 +41,7 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 		time := config.Opts.ForceRefreshInterval()
 		sess.NewFlashErrorMessage(printer.Plural("alert.too_many_feeds_refresh", time, time))
 	} else {
+		userID := request.UserID(r)
 		// We allow the end-user to force refresh all its feeds
 		// without taking into consideration the number of errors.
 		batchBuilder := h.store.NewBatchBuilder()

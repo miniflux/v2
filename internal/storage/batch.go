@@ -55,15 +55,15 @@ func (b *BatchBuilder) WithNextCheckExpired() *BatchBuilder {
 }
 
 func (b *BatchBuilder) WithoutDisabledFeeds() *BatchBuilder {
-	b.conditions = append(b.conditions, "disabled is false")
+	b.conditions = append(b.conditions, "disabled IS false")
 	return b
 }
 
-func (b *BatchBuilder) FetchJobs() (jobs model.JobList, err error) {
+func (b *BatchBuilder) FetchJobs() (model.JobList, error) {
 	query := `SELECT id, user_id FROM feeds`
 
 	if len(b.conditions) > 0 {
-		query += fmt.Sprintf(" WHERE %s", strings.Join(b.conditions, " AND "))
+		query += " WHERE " + strings.Join(b.conditions, " AND ")
 	}
 
 	if b.limit > 0 {
@@ -75,6 +75,8 @@ func (b *BatchBuilder) FetchJobs() (jobs model.JobList, err error) {
 		return nil, fmt.Errorf(`store: unable to fetch batch of jobs: %v`, err)
 	}
 	defer rows.Close()
+
+	jobs := make(model.JobList, 0, b.limit)
 
 	for rows.Next() {
 		var job model.Job
