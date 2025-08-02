@@ -48,7 +48,7 @@
         <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; require-trusted-types-for 'script'; trusted-types ttpolicy;">
     {{ end }}
 
-    <script src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" defer></script>
+    <script src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" type="module"></script>
     <script src="{{ route "javascript" "name" "service-worker" "checksum" .sw_js_checksum }}" defer id="service-worker-script"></script>
 </head>
 <body

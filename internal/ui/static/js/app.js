@@ -489,6 +489,9 @@ function appendIconLabel(element, labelTextContent) {
 function toggleEntryStatus(element, toasting) {
     const entryID = parseInt(element.dataset.id, 10);
     const link = element.querySelector(":is(a, button)[data-toggle-status]");
+    if (!link) {
+        return;
+    }
 
     const currentStatus = link.dataset.value;
     const newStatus = currentStatus === "read" ? "unread" : "read";
