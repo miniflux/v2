@@ -274,32 +274,45 @@ function goToListItem(offset) {
         return;
     }
 
-    if (document.querySelector(".current-item") === null) {
+    const currentItem = document.querySelector(".current-item");
+
+    // If no current item exists, select the first item
+    if (!currentItem) {
         items[0].classList.add("current-item");
         items[0].focus();
+        scrollPageTo(items[0]);
         return;
     }
 
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].classList.contains("current-item")) {
-            items[i].classList.remove("current-item");
+    // Find the index of the current item
+    const currentIndex = items.indexOf(currentItem);
+    if (currentIndex === -1) {
+        // Current item not found in visible items, select first item
+        currentItem.classList.remove("current-item");
+        items[0].classList.add("current-item");
+        items[0].focus();
+        scrollPageTo(items[0]);
+        return;
+    }
 
-            // By default adjust selection to the next item
-            let itemOffset = (i + offset + items.length) % items.length;
-            // Allow jumping to top or bottom
-            if (offset === TOP) {
-                itemOffset = 0;
-            } else if (offset === BOTTOM) {
-                itemOffset = items.length - 1;
-            }
-            const item = items[itemOffset];
+    // Calculate the new item index
+    let newIndex;
+    if (offset === TOP) {
+        newIndex = 0;
+    } else if (offset === BOTTOM) {
+        newIndex = items.length - 1;
+    } else {
+        newIndex = (currentIndex + offset + items.length) % items.length;
+    }
 
-            item.classList.add("current-item");
-            scrollPageTo(item);
-            item.focus();
+    // Update selection if moving to a different item
+    if (newIndex !== currentIndex) {
+        const newItem = items[newIndex];
 
-            break;
-        }
+        currentItem.classList.remove("current-item");
+        newItem.classList.add("current-item");
+        newItem.focus();
+        scrollPageTo(newItem);
     }
 }
 
@@ -593,12 +606,7 @@ function updateEntriesStatus(entryIDs, status, callback) {
             if (callback) {
                 callback(resp);
             }
-
-            if (status === "read") {
-                updateUnreadCounterValue(-count);
-            } else {
-                updateUnreadCounterValue(count);
-            }
+            updateUnreadCounterValue(status === "read" ? -count : count);
         });
     });
 }
