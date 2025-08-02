@@ -270,7 +270,7 @@ function goToListItem(offset) {
         if (items[i].classList.contains("current-item")) {
             items[i].classList.remove("current-item");
 
-            // By default adjust selection by offset
+            // By default adjust selection to the next item
             let itemOffset = (i + offset + items.length) % items.length;
             // Allow jumping to top or bottom
             if (offset === TOP) {
@@ -338,73 +338,85 @@ async function triggerWebShare(title, url) {
     window.location.reload();
 }
 
-// make logo element as button on mobile layout
-function checkMenuToggleModeByLayout() {
+/**
+ * Toggle the ARIA attributes on the main menu based on the viewport width.
+ */
+function toggleAriaAttributesOnMainMenu() {
     const logoElement = document.querySelector(".logo");
-    if (!logoElement) return;
-
     const homePageLinkElement = document.querySelector(".logo > a");
 
-    if (document.documentElement.clientWidth < 620) {
+    if (!logoElement || !homePageLinkElement) return;
+
+    const isMobile = document.documentElement.clientWidth < 650;
+
+    if (isMobile) {
         const navMenuElement = document.getElementById("header-menu");
-        const navMenuElementIsExpanded = navMenuElement.classList.contains("js-menu-show");
-        const logoToggleButtonLabel = logoElement.getAttribute("data-toggle-button-label");
-        logoElement.setAttribute("role", "button");
-        logoElement.setAttribute("tabindex", "0");
-        logoElement.setAttribute("aria-label", logoToggleButtonLabel);
-        logoElement.setAttribute("aria-expanded", navMenuElementIsExpanded?"true":"false");
-        homePageLinkElement.setAttribute("tabindex", "-1");
+        const isExpanded = navMenuElement?.classList.contains("js-menu-show") ?? false;
+        const toggleButtonLabel = logoElement.getAttribute("data-toggle-button-label");
+
+        // Set mobile menu button attributes
+        Object.assign(logoElement, {
+            role: "button",
+            tabIndex: 0,
+            ariaLabel: toggleButtonLabel,
+            ariaExpanded: isExpanded.toString()
+        });
+        homePageLinkElement.tabIndex = -1;
     } else {
-        logoElement.removeAttribute("role");
-        logoElement.removeAttribute("tabindex");
-        logoElement.removeAttribute("aria-expanded");
-        logoElement.removeAttribute("aria-label");
+        // Remove mobile menu button attributes
+        ["role", "tabindex", "aria-expanded", "aria-label"].forEach(attr =>
+            logoElement.removeAttribute(attr)
+        );
         homePageLinkElement.removeAttribute("tabindex");
     }
 }
 
-function fixVoiceOverDetailsSummaryBug() {
-    document.querySelectorAll("details").forEach((details) => {
-        const summaryElement = details.querySelector("summary");
-        summaryElement.setAttribute("role", "button");
-        summaryElement.setAttribute("aria-expanded", details.open? "true": "false");
-
-        details.addEventListener("toggle", () => {
-            summaryElement.setAttribute("aria-expanded", details.open? "true": "false");
-        });
-    });
-}
-
-// Show and hide the main menu on mobile devices.
-function toggleMainMenu(event) {
-    if (event.type === "keydown" && !(event.key === "Enter" || event.key === " ")) {
+/**
+ * Toggle the main menu dropdown.
+ *
+ * @param {Event} event - The event object.
+ */
+function toggleMainMenuDropdown(event) {
+    // Only handle Enter, Space, or click events
+    if (event.type === "keydown" && !["Enter", " "].includes(event.key)) {
         return;
     }
 
+    // Prevent default only if element has role attribute (mobile menu button)
     if (event.currentTarget.getAttribute("role")) {
         event.preventDefault();
     }
 
-    const menu = document.querySelector(".header nav ul");
+    const navigationMenu = document.querySelector(".header nav ul");
     const menuToggleButton = document.querySelector(".logo");
-    if (menu.classList.contains("js-menu-show")) {
-        menuToggleButton.setAttribute("aria-expanded", "false");
-    } else {
-        menuToggleButton.setAttribute("aria-expanded", "true");
+
+    if (!navigationMenu || !menuToggleButton) {
+        return;
     }
-    menu.classList.toggle("js-menu-show");
+
+    const isShowing = navigationMenu.classList.toggle("js-menu-show");
+    menuToggleButton.setAttribute("aria-expanded", isShowing.toString());
 }
 
-// Handle click events for the main menu (<li> and <a>).
-function onClickMainMenuListItem(event) {
-    const element = event.target;
+/**
+ * Initialize the main menu handlers.
+ */
+function initializeMainMenuHandlers() {
+    toggleAriaAttributesOnMainMenu();
+    window.addEventListener("resize", toggleAriaAttributesOnMainMenu, { passive: true });
 
-    if (element.tagName === "A") {
-        window.location.href = element.getAttribute("href");
-    } else {
-        const linkElement = element.querySelector("a") || element.closest("a");
-        window.location.href = linkElement.getAttribute("href");
+    const logoElement = document.querySelector(".logo");
+    if (logoElement) {
+        logoElement.addEventListener("click", toggleMainMenuDropdown);
+        logoElement.addEventListener("keydown", toggleMainMenuDropdown);
     }
+
+    onClick(".header nav li", (event) => {
+        const linkElement = event.target.closest("a") || event.target.querySelector("a");
+        if (linkElement) {
+            window.location.href = linkElement.getAttribute("href");
+        }
+    });
 }
 
 /**
@@ -412,7 +424,7 @@ function onClickMainMenuListItem(event) {
  *
  * @returns {void}
  */
-function disableSubmitButtonsOnFormSubmit() {
+function initializeFormHandlers() {
     document.querySelectorAll("form").forEach((element) => {
         element.onsubmit = () => {
             const buttons = element.querySelectorAll("button[type=submit]");
@@ -426,13 +438,17 @@ function disableSubmitButtonsOnFormSubmit() {
     });
 }
 
-// Show modal dialog with the list of keyboard shortcuts.
+/**
+ * Show the keyboard shortcuts modal.
+ */
 function showKeyboardShortcuts() {
     const template = document.getElementById("keyboard-shortcuts");
     ModalHandler.open(template.content, "dialog-title");
 }
 
-// Mark as read visible items of the current page.
+/**
+ * Mark all visible entries on the current page as read.
+ */
 function markPageAsRead() {
     const items = getVisibleEntries();
     const entryIDs = [];
