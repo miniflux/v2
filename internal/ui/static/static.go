@@ -127,14 +127,6 @@ func GenerateJavascriptBundles() error {
 		},
 	}
 
-	var prefixes = map[string]string{
-		"app": "(function(){'use strict';",
-	}
-
-	var suffixes = map[string]string{
-		"app": "})();",
-	}
-
 	JavascriptBundles = make(map[string][]byte)
 	JavascriptBundleChecksums = make(map[string]string)
 
@@ -146,10 +138,6 @@ func GenerateJavascriptBundles() error {
 	for bundle, srcFiles := range bundles {
 		var buffer bytes.Buffer
 
-		if prefix, found := prefixes[bundle]; found {
-			buffer.WriteString(prefix)
-		}
-
 		for _, srcFile := range srcFiles {
 			fileData, err := javascriptFiles.ReadFile(srcFile)
 			if err != nil {
@@ -157,10 +145,6 @@ func GenerateJavascriptBundles() error {
 			}
 
 			buffer.Write(fileData)
-		}
-
-		if suffix, found := suffixes[bundle]; found {
-			buffer.WriteString(suffix)
 		}
 
 		minifiedData, err := minifier.Bytes("text/javascript", buffer.Bytes())
