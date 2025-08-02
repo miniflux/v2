@@ -25,7 +25,9 @@ func Serve(router *mux.Router, store *storage.Storage) {
 	handler := &handler{store, router}
 
 	sr := router.PathPrefix("/fever").Subrouter()
-	sr.Use(newMiddleware(store).serve)
+	middleware := newMiddleware(store)
+	sr.Use(middleware.maybeUnauthorizedFever)
+	sr.Use(middleware.serve)
 	sr.HandleFunc("/", handler.serve).Name("feverEndpoint")
 }
 
