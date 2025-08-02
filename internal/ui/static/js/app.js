@@ -130,6 +130,20 @@ function findEntry(element) {
 }
 
 /**
+ * Insert an icon label element into the parent element.
+ *
+ * @param {Element} parentElement The parent element to insert the icon label into.
+ * @param {string} iconLabelText The text to display in the icon label.
+ * @returns {void}
+ */
+function insertIconLabelElement(parentElement, iconLabelText) {
+    const span = document.createElement('span');
+    span.classList.add('icon-label');
+    span.textContent = iconLabelText;
+    parentElement.appendChild(span);
+}
+
+/**
  * Navigate to a specific page.
  *
  * @param {string} page - The page to navigate to.
@@ -477,15 +491,12 @@ function handleEntryStatus(navigationDirection, element, setToRead) {
     }
 }
 
-// Add an icon-label span element.
-function appendIconLabel(element, labelTextContent) {
-    const span = document.createElement('span');
-    span.classList.add('icon-label');
-    span.textContent = labelTextContent;
-    element.appendChild(span);
-}
-
-// Change the entry status to the opposite value.
+/**
+ * Toggle the entry status between "read" and "unread".
+ *
+ * @param {Element} element The entry element to toggle the status for.
+ * @param {boolean} toasting If true, show a toast notification after toggling the status.
+ */
 function toggleEntryStatus(element, toasting) {
     const entryID = parseInt(element.dataset.id, 10);
     const link = element.querySelector(":is(a, button)[data-toggle-status]");
@@ -515,7 +526,7 @@ function toggleEntryStatus(element, toasting) {
         }
 
         link.replaceChildren(iconElement.content.cloneNode(true));
-        appendIconLabel(link, label);
+        insertIconLabelElement(link, label);
         link.dataset.value = newStatus;
 
         if (element.classList.contains("item-status-" + currentStatus)) {
@@ -529,7 +540,11 @@ function toggleEntryStatus(element, toasting) {
     });
 }
 
-// Mark a single entry as read.
+/**
+ * Mark the entry as read if it is currently unread.
+ *
+ * @param {Element} element The entry element to mark as read.
+ */
 function markEntryAsRead(element) {
     if (element.classList.contains("item-status-unread")) {
         element.classList.remove("item-status-unread");
@@ -540,15 +555,24 @@ function markEntryAsRead(element) {
     }
 }
 
-// Send the Ajax request to refresh all feeds in the background
+/**
+ * Handle the refresh of all feeds.
+ *
+ * This function redirects the user to the URL specified in the data-refresh-all-feeds-url attribute of the body element.
+ */
 function handleRefreshAllFeeds() {
-    const url = document.body.dataset.refreshAllFeedsUrl;
-    if (url) {
-        window.location.href = url;
+    const refreshAllFeedsUrl = document.body.dataset.refreshAllFeedsUrl;
+    if (refreshAllFeedsUrl) {
+        window.location.href = refreshAllFeedsUrl;
     }
 }
 
-// Send the Ajax request to change entries statuses.
+/**
+ * Update the status of multiple entries.
+ *
+ * @param {Array<number>} entryIDs - The IDs of the entries to update.
+ * @param {string} status - The new status to set for the entries (e.g., "read", "unread").
+ */
 function updateEntriesStatus(entryIDs, status, callback) {
     const url = document.body.dataset.entriesStatusUrl;
     const request = new RequestBuilder(url);
@@ -569,7 +593,11 @@ function updateEntriesStatus(entryIDs, status, callback) {
     request.execute();
 }
 
-// Handle save entry from list view and entry view.
+/**
+ * Handle save entry from list view and entry view.
+ *
+ * @param {Element} element
+ */
 function handleSaveEntry(element) {
     const toasting = !element;
     const currentEntry = findEntry(element);
@@ -578,19 +606,25 @@ function handleSaveEntry(element) {
     }
 }
 
-// Send the Ajax request to save an entry.
+/**
+ * Save the entry by sending an Ajax request to the server.
+ *
+ * @param {Element} element The element that triggered the save action.
+ * @param {boolean} toasting If true, show a toast notification after saving the entry.
+ * @return {void}
+ */
 function saveEntry(element, toasting) {
     if (!element || element.dataset.completed) {
         return;
     }
 
     element.textContent = "";
-    appendIconLabel(element, element.dataset.labelLoading);
+    insertIconLabelElement(element, element.dataset.labelLoading);
 
     const request = new RequestBuilder(element.dataset.saveUrl);
     request.withCallback(() => {
         element.textContent = "";
-        appendIconLabel(element, element.dataset.labelDone);
+        insertIconLabelElement(element, element.dataset.labelDone);
         element.dataset.completed = "true";
         if (toasting) {
             const iconElement = document.querySelector("template#icon-save");
@@ -600,7 +634,11 @@ function saveEntry(element, toasting) {
     request.execute();
 }
 
-// Handle bookmark from the list view and entry view.
+/**
+ * Handle bookmarking an entry.
+ *
+ * @param {Element} element - The element that triggered the bookmark action.
+ */
 function handleBookmark(element) {
     const toasting = !element;
     const currentEntry = findEntry(element);
@@ -609,7 +647,13 @@ function handleBookmark(element) {
     }
 }
 
-// Send the Ajax request and change the icon when bookmarking an entry.
+/**
+ * Toggle the bookmark status of an entry.
+ *
+ * @param {Element} parentElement - The parent element containing the bookmark button.
+ * @param {boolean} toasting - Whether to show a toast notification.
+ * @returns {void}
+ */
 function toggleBookmark(parentElement, toasting) {
     const buttonElement = parentElement.querySelector(":is(a, button)[data-toggle-bookmark]");
     if (!buttonElement) {
@@ -617,7 +661,7 @@ function toggleBookmark(parentElement, toasting) {
     }
 
     buttonElement.textContent = "";
-    appendIconLabel(buttonElement, buttonElement.dataset.labelLoading);
+    insertIconLabelElement(buttonElement, buttonElement.dataset.labelLoading);
 
     const request = new RequestBuilder(buttonElement.dataset.bookmarkUrl);
     request.withCallback(() => {
@@ -640,13 +684,17 @@ function toggleBookmark(parentElement, toasting) {
         }
 
         buttonElement.replaceChildren(iconElement.content.cloneNode(true));
-        appendIconLabel(buttonElement, label);
+        insertIconLabelElement(buttonElement, label);
         buttonElement.dataset.value = newStarStatus;
     });
     request.execute();
 }
 
-// Send the Ajax request to download the original web page.
+/**
+ * Handle fetching the original content of an entry.
+ *
+ * @returns {void}
+ */
 function handleFetchOriginalContent() {
     if (isListView()) {
         return;
@@ -660,7 +708,7 @@ function handleFetchOriginalContent() {
     const previousElement = buttonElement.cloneNode(true);
 
     buttonElement.textContent = "";
-    appendIconLabel(buttonElement, buttonElement.dataset.labelLoading);
+    insertIconLabelElement(buttonElement, buttonElement.dataset.labelLoading);
 
     const request = new RequestBuilder(buttonElement.dataset.fetchContentUrl);
     request.withCallback((response) => {
@@ -680,6 +728,12 @@ function handleFetchOriginalContent() {
     request.execute();
 }
 
+/**
+ * Open the original link of an entry.
+ *
+ * @param {boolean} openLinkInCurrentTab - Whether to open the link in the current tab.
+ * @returns {void}
+ */
 function openOriginalLink(openLinkInCurrentTab) {
     const entryLink = document.querySelector(".entry h1 a");
     if (entryLink !== null) {
@@ -704,6 +758,12 @@ function openOriginalLink(openLinkInCurrentTab) {
     }
 }
 
+/**
+ * Open the comments link of an entry.
+ *
+ * @param {boolean} openLinkInCurrentTab - Whether to open the link in the current tab.
+ * @returns {void}
+ */
 function openCommentLink(openLinkInCurrentTab) {
     if (!isListView()) {
         const entryLink = document.querySelector(":is(a, button)[data-comments-link]");
@@ -722,6 +782,12 @@ function openCommentLink(openLinkInCurrentTab) {
     }
 }
 
+/**
+ * Open the selected item in the current view.
+ *
+ * If the current view is a list view, it will navigate to the link of the currently selected item.
+ * If the current view is an entry view, it will navigate to the link of the entry.
+ */
 function openSelectedItem() {
     const currentItemLink = document.querySelector(".current-item .item-title a");
     if (currentItemLink !== null) {
@@ -729,6 +795,9 @@ function openSelectedItem() {
     }
 }
 
+/**
+ * Unsubscribe from the feed of the currently selected item.
+ */
 function unsubscribeFromFeed() {
     const unsubscribeLinks = document.querySelectorAll("[data-action=remove-feed]");
     if (unsubscribeLinks.length === 1) {
@@ -746,6 +815,9 @@ function unsubscribeFromFeed() {
     }
 }
 
+/**
+ * Scroll the page to the currently selected item.
+ */
 function scrollToCurrentItem() {
     const currentItem = document.querySelector(".current-item");
     if (currentItem !== null) {
@@ -753,18 +825,33 @@ function scrollToCurrentItem() {
     }
 }
 
+/**
+ * Decrement the unread counter by a specified amount.
+ *
+ * @param {number} n - The amount to decrement the counter by.
+ */
 function decrementUnreadCounter(n) {
     updateUnreadCounterValue((current) => {
         return current - n;
     });
 }
 
+/**
+ * Increment the unread counter by a specified amount.
+ *
+ * @param {number} n - The amount to increment the counter by.
+ */
 function incrementUnreadCounter(n) {
     updateUnreadCounterValue((current) => {
         return current + n;
     });
 }
 
+/**
+ * Update the unread counter value.
+ *
+ * @param {function} callback - The function to call with the old value.
+ */
 function updateUnreadCounterValue(callback) {
     document.querySelectorAll("span.unread-counter").forEach((element) => {
         const oldValue = parseInt(element.textContent, 10);
@@ -784,6 +871,17 @@ function updateUnreadCounterValue(callback) {
     }
 }
 
+/**
+ * Handle confirmation messages for actions that require user confirmation.
+ *
+ * This function modifies the link element to show a confirmation question with "Yes" and "No" buttons.
+ * If the user clicks "Yes", it calls the provided callback with the URL and redirect URL.
+ * If the user clicks "No", it either redirects to a no-action URL or restores the link element.
+ *
+ * @param {Element} linkElement - The link or button element that triggered the confirmation.
+ * @param {function} callback - The callback function to execute if the user confirms the action.
+ * @returns {void}
+ */
 function handleConfirmationMessage(linkElement, callback) {
     if (linkElement.tagName !== 'A' && linkElement.tagName !== "BUTTON") {
         linkElement = linkElement.parentNode;
@@ -838,14 +936,21 @@ function handleConfirmationMessage(linkElement, callback) {
     containerElement.appendChild(questionElement);
 }
 
-function showToast(label, iconElement) {
-    if (!label || !iconElement) {
+/**
+ * Show a toast notification.
+ *
+ * @param {string} toastMessage - The label to display in the toast.
+ * @param {Element} iconElement - The icon element to display in the toast.
+ * @returns {void}
+ */
+function showToast(toastMessage, iconElement) {
+    if (!toastMessage || !iconElement) {
         return;
     }
 
     const toastMsgElement = document.getElementById("toast-msg");
     toastMsgElement.replaceChildren(iconElement.content.cloneNode(true));
-    appendIconLabel(toastMsgElement, label);
+    insertIconLabelElement(toastMsgElement, toastMessage);
 
     const toastElementWrapper = document.getElementById("toast-wrapper");
     toastElementWrapper.classList.remove('toast-animate');
@@ -855,26 +960,47 @@ function showToast(label, iconElement) {
 }
 
 /**
- * save player position to allow to resume playback later
- * @param {Element} playerElement
+ * Check if the player is actually playing a media
+ *
+ * @param mediaElement the player element itself
+ * @returns {boolean}
+ */
+function isPlayerPlaying(mediaElement) {
+    return mediaElement &&
+        mediaElement.currentTime > 0 &&
+        !mediaElement.paused &&
+        !mediaElement.ended &&
+        mediaElement.readyState > 2; // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+}
+
+/**
+ * Handle player progression save and mark as read on completion.
+ *
+ * This function is triggered on the `timeupdate` event of the media player.
+ * It saves the current playback position and marks the entry as read if the completion percentage is reached.
+ *
+ * @param {Element} playerElement The media player element (audio or video).
  */
 function handlePlayerProgressionSaveAndMarkAsReadOnCompletion(playerElement) {
     if (!isPlayerPlaying(playerElement)) {
-        return; //If the player is not playing, we do not want to save the progression and mark as read on completion
+        return;
     }
-    const currentPositionInSeconds = Math.floor(playerElement.currentTime); // we do not need a precise value
+
+    const currentPositionInSeconds = Math.floor(playerElement.currentTime);
     const lastKnownPositionInSeconds = parseInt(playerElement.dataset.lastPosition, 10);
-    const markAsReadOnCompletion = parseFloat(playerElement.dataset.markReadOnCompletion); //completion percentage to mark as read
+    const markAsReadOnCompletion = parseFloat(playerElement.dataset.markReadOnCompletion);
     const recordInterval = 10;
 
-    // we limit the number of update to only one by interval. Otherwise, we would have multiple update per seconds
+    // We limit the number of update to only one by interval. Otherwise, we would have multiple update per seconds
     if (currentPositionInSeconds >= (lastKnownPositionInSeconds + recordInterval) ||
         currentPositionInSeconds <= (lastKnownPositionInSeconds - recordInterval)
     ) {
         playerElement.dataset.lastPosition = currentPositionInSeconds.toString();
+
         const request = new RequestBuilder(playerElement.dataset.saveUrl);
         request.withBody({ progression: currentPositionInSeconds });
         request.execute();
+
         // Handle the mark as read on completion
         if (markAsReadOnCompletion >= 0 && playerElement.duration > 0) {
             const completion =  currentPositionInSeconds / playerElement.duration;
@@ -886,54 +1012,69 @@ function handlePlayerProgressionSaveAndMarkAsReadOnCompletion(playerElement) {
 }
 
 /**
- * Check if the player is actually playing a media
- * @param element the player element itself
- * @returns {boolean}
+ * Handle media control actions like seeking and changing playback speed.
+ *
+ * This function is triggered by clicking on media control buttons.
+ * It adjusts the playback position or speed of media elements with the same enclosure ID.
+ *
+ * @param {Element} mediaPlayerButtonElement
  */
-function isPlayerPlaying(element) {
-    return element &&
-        element.currentTime > 0 &&
-        !element.paused &&
-        !element.ended &&
-        element.readyState > 2; //https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
-}
-
-/**
- * Handle all clicks on media player controls button on enclosures.
- * Will change the current speed and position of the player accordingly.
- * Will not save anything, all is done client-side, however, changing the position
- * will trigger the handlePlayerProgressionSave and save the new position backends side.
- * @param {Element} button
- */
-function handleMediaControl(button) {
-    const action = button.dataset.enclosureAction;
-    const value = parseFloat(button.dataset.actionValue);
-    const targetEnclosureId = button.dataset.enclosureId;
-    const enclosures = document.querySelectorAll(`audio[data-enclosure-id="${targetEnclosureId}"],video[data-enclosure-id="${targetEnclosureId}"]`);
-    const speedIndicator = document.querySelectorAll(`span.speed-indicator[data-enclosure-id="${targetEnclosureId}"]`);
-    enclosures.forEach((enclosure) => {
-        switch (action) {
+function handleMediaControlButtonClick(mediaPlayerButtonElement) {
+    const actionType = mediaPlayerButtonElement.dataset.enclosureAction;
+    const actionValue = parseFloat(mediaPlayerButtonElement.dataset.actionValue);
+    const enclosureID = mediaPlayerButtonElement.dataset.enclosureId;
+    const mediaElements = document.querySelectorAll(`audio[data-enclosure-id="${enclosureID}"],video[data-enclosure-id="${enclosureID}"]`);
+    const speedIndicatorElements = document.querySelectorAll(`span.speed-indicator[data-enclosure-id="${enclosureID}"]`);
+    mediaElements.forEach((mediaElement) => {
+        switch (actionType) {
         case "seek":
-            enclosure.currentTime = Math.max(enclosure.currentTime + value, 0);
+            mediaElement.currentTime = Math.max(mediaElement.currentTime + actionValue, 0);
             break;
         case "speed":
-            // I set a floor speed of 0.25 to avoid too slow speed where it gives the impression it stopped.
-            // 0.25 was chosen because it will allow to get back to 1x in two "faster" click, and lower value with same property would be 0.
-            enclosure.playbackRate = Math.max(0.25, enclosure.playbackRate + value);
-            speedIndicator.forEach((speedI) => {
-                // Two digit precision to ensure we always have the same number of characters (4) to avoid controls moving when clicking buttons because of more or less characters.
-                // The trick only work on rate less than 10, but it feels an acceptable tread of considering the feature
-                speedI.innerText = `${enclosure.playbackRate.toFixed(2)}x`;
+            // 0.25 was chosen because it will allow to get back to 1x in two "faster" clicks.
+            // A lower value would result in a playback rate of 0, effectively pausing playback.
+            mediaElement.playbackRate = Math.max(0.25, mediaElement.playbackRate + actionValue);
+            speedIndicatorElements.forEach((speedIndicatorElement) => {
+                speedIndicatorElement.innerText = `${mediaElement.playbackRate.toFixed(2)}x`;
             });
             break;
         case "speed-reset":
-            enclosure.playbackRate = value ;
-            speedIndicator.forEach((speedI) => {
+            mediaElement.playbackRate = actionValue ;
+            speedIndicatorElements.forEach((speedIndicatorElement) => {
                 // Two digit precision to ensure we always have the same number of characters (4) to avoid controls moving when clicking buttons because of more or less characters.
-                // The trick only work on rate less than 10, but it feels an acceptable tread of considering the feature
-                speedI.innerText = `${enclosure.playbackRate.toFixed(2)}x`;
+                // The trick only works on rates less than 10, but it feels an acceptable trade-off considering the feature
+                speedIndicatorElement.innerText = `${mediaElement.playbackRate.toFixed(2)}x`;
             });
             break;
+        }
+    });
+}
+
+/**
+ * Initialize media player event handlers.
+ */
+function initializeMediaPlayerHandlers() {
+    document.querySelectorAll("button[data-enclosure-action]").forEach((element) => {
+        element.addEventListener("click", () => handleMediaControlButtonClick(element));
+    });
+
+    // Set playback from the last position if available
+    document.querySelectorAll("audio[data-last-position],video[data-last-position]").forEach((element) => {
+        if (element.dataset.lastPosition) {
+            element.currentTime = element.dataset.lastPosition;
+        }
+        element.ontimeupdate = () => handlePlayerProgressionSaveAndMarkAsReadOnCompletion(element);
+    });
+
+    // Set playback speed from the data attribute if available
+    document.querySelectorAll("audio[data-playback-rate],video[data-playback-rate]").forEach((element) => {
+        if (element.dataset.playbackRate) {
+            element.playbackRate = element.dataset.playbackRate;
+            if (element.dataset.enclosureId) {
+                document.querySelectorAll(`span.speed-indicator[data-enclosure-id="${element.dataset.enclosureId}"]`).forEach((speedIndicatorElement) => {
+                    speedIndicatorElement.innerText = `${parseFloat(element.dataset.playbackRate).toFixed(2)}x`;
+                });
+            }
         }
     });
 }
