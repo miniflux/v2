@@ -49,9 +49,9 @@
     {{ end }}
 
     <script src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" type="module"></script>
-    <script src="{{ route "javascript" "name" "service-worker" "checksum" .sw_js_checksum }}" defer id="service-worker-script"></script>
 </head>
 <body
+    data-service-worker-url="{{ route "javascript" "name" "service-worker" "checksum" .sw_js_checksum }}"
     {{ if .csrf }}data-csrf-token="{{ .csrf }}"{{ end }}
     data-add-subscription-url="{{ route "addSubscription" }}"
     data-entries-status-url="{{ route "updateEntriesStatus" }}"
