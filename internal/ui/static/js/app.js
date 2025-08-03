@@ -323,35 +323,25 @@ function goToListItem(offset) {
  * If the share status is "share", it will send an Ajax request to fetch the share URL and then trigger the Web Share API.
  * If the Web Share API is not supported, it will redirect to the entry URL.
  */
-async function handleShare() {
+async function handleEntryShareAction() {
     const link = document.querySelector(':is(a, button)[data-share-status]');
     if (link.dataset.shareStatus === "shared") {
         const title = document.querySelector(".entry-header > h1 > a");
-        await triggerWebShare(title, link.href);
-    }
-}
+        const url = link.href;
 
-/**
- * Trigger the Web Share API to share the entry.
- *
- * If the Web Share API is not supported, it will redirect to the entry URL.
- *
- * @param {Element} title - The title element of the entry.
- * @param {string} url - The URL of the entry to share.
- */
-async function triggerWebShare(title, url) {
-    if (!navigator.canShare) {
-        console.error("Your browser doesn't support the Web Share API.");
-        window.location = url;
-        return;
-    }
-    try {
-        await navigator.share({
-            title: title ? title.textContent : url,
-            url: url
-        });
-    } catch (err) {
-        console.error(err);
+        if (!navigator.canShare) {
+            console.error("Your browser doesn't support the Web Share API.");
+            window.location = url;
+            return;
+        }
+        try {
+            await navigator.share({
+                title: title ? title.textContent : url,
+                url: url
+            });
+        } catch (err) {
+            console.error(err);
+        }
     }
 }
 
@@ -1189,7 +1179,7 @@ function initializeClickHandlers() {
     onClick(":is(a, button)[data-toggle-bookmark]", (event) => handleBookmark(event.target));
     onClick(":is(a, button)[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
     onClick(":is(a, button)[data-fetch-content-entry]", handleFetchOriginalContent);
-    onClick(":is(a, button)[data-share-status]", handleShare);
+    onClick(":is(a, button)[data-share-status]", handleEntryShareAction);
 
     // Page actions with confirmation
     onClick(":is(a, button)[data-action=markPageAsRead]", (event) =>
