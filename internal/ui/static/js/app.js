@@ -453,7 +453,7 @@ function initializeFormHandlers() {
 /**
  * Show the keyboard shortcuts modal.
  */
-function showKeyboardShortcuts() {
+function showKeyboardShortcutsAction() {
     const template = document.getElementById("keyboard-shortcuts");
     ModalHandler.open(template.content, "dialog-title");
 }
@@ -461,7 +461,7 @@ function showKeyboardShortcuts() {
 /**
  * Mark all visible entries on the current page as read.
  */
-function markPageAsRead() {
+function markPageAsReadAction() {
     const items = getVisibleEntries();
     if (items.length === 0) return;
 
@@ -652,7 +652,7 @@ function handleBookmarkAction(element) {
  *
  * @returns {void}
  */
-function handleFetchOriginalContent() {
+function handleFetchOriginalContentAction() {
     if (isListView()) return;
 
     const buttonElement = document.querySelector(":is(a, button)[data-fetch-content-entry]");
@@ -684,7 +684,7 @@ function handleFetchOriginalContent() {
  * @param {boolean} openLinkInCurrentTab - Whether to open the link in the current tab.
  * @returns {void}
  */
-function openOriginalLink(openLinkInCurrentTab) {
+function openOriginalLinkAction(openLinkInCurrentTab) {
     if (isEntryView()) {
         openOriginalLinkFromEntryView(openLinkInCurrentTab);
     } else if (isListView()) {
@@ -747,7 +747,7 @@ function openOriginalLinkFromListView() {
  * @param {boolean} openLinkInCurrentTab - Whether to open the link in the current tab.
  * @returns {void}
  */
-function openCommentLink(openLinkInCurrentTab) {
+function openCommentLinkAction(openLinkInCurrentTab) {
     const entryLink = document.querySelector(isListView() ? ".current-item :is(a, button)[data-comments-link]" : ":is(a, button)[data-comments-link]");
 
     if (entryLink) {
@@ -765,7 +765,7 @@ function openCommentLink(openLinkInCurrentTab) {
  * If the current view is a list view, it will navigate to the link of the currently selected item.
  * If the current view is an entry view, it will navigate to the link of the entry.
  */
-function openSelectedItem() {
+function openSelectedItemAction() {
     const currentItemLink = document.querySelector(".current-item .item-title a");
     if (currentItemLink) {
         window.location.href = currentItemLink.getAttribute("href");
@@ -775,7 +775,7 @@ function openSelectedItem() {
 /**
  * Unsubscribe from the feed of the currently selected item.
  */
-function unsubscribeFromFeed() {
+function handleRemoveFeedAction() {
     const unsubscribeLink = document.querySelector("[data-action=remove-feed]");
     if (unsubscribeLink) {
         sendPOSTRequest(unsubscribeLink.dataset.url).then(() => {
@@ -787,7 +787,7 @@ function unsubscribeFromFeed() {
 /**
  * Scroll the page to the currently selected item.
  */
-function scrollToCurrentItem() {
+function scrollToCurrentItemAction() {
     const currentItem = document.querySelector(".current-item");
     if (currentItem) {
         scrollPageTo(currentItem, true);
@@ -1118,32 +1118,32 @@ function initializeKeyboardShortcuts() {
     keyboardHandler.on("n", goToNextPage);
     keyboardHandler.on("h", () => goToPage("previous"));
     keyboardHandler.on("l", () => goToPage("next"));
-    keyboardHandler.on("z t", scrollToCurrentItem);
+    keyboardHandler.on("z t", scrollToCurrentItemAction);
 
     // Item actions
-    keyboardHandler.on("o", openSelectedItem);
-    keyboardHandler.on("Enter", () => openSelectedItem());
-    keyboardHandler.on("v", () => openOriginalLink(false));
-    keyboardHandler.on("V", () => openOriginalLink(true));
-    keyboardHandler.on("c", () => openCommentLink(false));
-    keyboardHandler.on("C", () => openCommentLink(true));
+    keyboardHandler.on("o", openSelectedItemAction);
+    keyboardHandler.on("Enter", () => openSelectedItemAction());
+    keyboardHandler.on("v", () => openOriginalLinkAction(false));
+    keyboardHandler.on("V", () => openOriginalLinkAction(true));
+    keyboardHandler.on("c", () => openCommentLinkAction(false));
+    keyboardHandler.on("C", () => openCommentLinkAction(true));
 
     // Entry management
     keyboardHandler.on("m", () => handleEntryStatus("next"));
     keyboardHandler.on("M", () => handleEntryStatus("previous"));
-    keyboardHandler.on("A", markPageAsRead);
+    keyboardHandler.on("A", markPageAsReadAction);
     keyboardHandler.on("s", () => handleSaveEntryAction());
-    keyboardHandler.on("d", handleFetchOriginalContent);
+    keyboardHandler.on("d", handleFetchOriginalContentAction);
     keyboardHandler.on("f", () => handleBookmarkAction());
 
     // Feed actions
     keyboardHandler.on("F", goToFeedPage);
     keyboardHandler.on("R", handleRefreshAllFeedsAction);
     keyboardHandler.on("+", goToAddSubscriptionPage);
-    keyboardHandler.on("#", unsubscribeFromFeed);
+    keyboardHandler.on("#", handleRemoveFeedAction);
 
     // UI actions
-    keyboardHandler.on("?", showKeyboardShortcuts);
+    keyboardHandler.on("?", showKeyboardShortcutsAction);
     keyboardHandler.on("Escape", () => ModalHandler.close());
     keyboardHandler.on("a", () => {
         const enclosureElement = document.querySelector('.entry-enclosures');
@@ -1171,12 +1171,11 @@ function initializeClickHandlers() {
     onClick(":is(a, button)[data-save-entry]", (event) => handleSaveEntryAction(event.target));
     onClick(":is(a, button)[data-toggle-bookmark]", (event) => handleBookmarkAction(event.target));
     onClick(":is(a, button)[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
-    onClick(":is(a, button)[data-fetch-content-entry]", handleFetchOriginalContent);
+    onClick(":is(a, button)[data-fetch-content-entry]", handleFetchOriginalContentAction);
     onClick(":is(a, button)[data-share-status]", handleEntryShareAction);
 
     // Page actions with confirmation
-    onClick(":is(a, button)[data-action=markPageAsRead]", (event) =>
-        handleConfirmationMessage(event.target, markPageAsRead));
+    onClick(":is(a, button)[data-action=markPageAsRead]", (event) => handleConfirmationMessage(event.target, markPageAsReadAction));
 
     // Generic confirmation handler
     onClick(":is(a, button)[data-confirm]", (event) => {
