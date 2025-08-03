@@ -736,14 +736,13 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		ID:        "user/-/state/com.google/reading-list",
 		Title:     "Reading List",
 		Updated:   time.Now().Unix(),
-		Self: []contentHREF{
-			{
-				HREF: config.Opts.RootURL() + route.Path(h.router, "StreamItemsContents"),
-			},
-		},
+		Self: []contentHREF{{
+			HREF: config.Opts.RootURL() + route.Path(h.router, "StreamItemsContents"),
+		}},
 		Author: userName,
+		Items:  make([]contentItem, len(entries)),
 	}
-	contentItems := make([]contentItem, len(entries))
+
 	for i, entry := range entries {
 		enclosures := make([]contentItemEnclosure, 0, len(entry.Enclosures))
 		for _, enclosure := range entry.Enclosures {
@@ -765,7 +764,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		entry.Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entry.Content)
 		entry.Enclosures.ProxifyEnclosureURL(h.router, config.Opts.MediaProxyMode(), config.Opts.MediaProxyResourceTypes())
 
-		contentItems[i] = contentItem{
+		result.Items[i] = contentItem{
 			ID:            convertEntryIDToLongFormItemID(entry.ID),
 			Title:         entry.Title,
 			Author:        entry.Author,
@@ -801,7 +800,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 			Enclosure: enclosures,
 		}
 	}
-	result.Items = contentItems
+
 	json.OK(w, r, result)
 }
 
