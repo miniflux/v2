@@ -148,12 +148,17 @@ function findEntry(element) {
  *
  * @param {Element} parentElement The parent element to insert the icon label into.
  * @param {string} iconLabelText The text to display in the icon label.
+ * @param {boolean} clearParentTextcontent If true, clear the parent's text content before appending the icon label.
  * @returns {void}
  */
-function insertIconLabelElement(parentElement, iconLabelText) {
+function insertIconLabelElement(parentElement, iconLabelText, clearParentTextcontent = true) {
     const span = document.createElement('span');
     span.classList.add('icon-label');
     span.textContent = iconLabelText;
+
+    if (clearParentTextcontent) {
+        parentElement.textContent = '';
+    }
     parentElement.appendChild(span);
 }
 
@@ -542,7 +547,7 @@ function toggleEntryStatus(element, toasting) {
         }
 
         link.replaceChildren(iconElement.content.cloneNode(true));
-        insertIconLabelElement(link, label);
+        insertIconLabelElement(link, label, false);
         link.dataset.value = newStatus;
 
         if (element.classList.contains("item-status-" + currentStatus)) {
@@ -561,7 +566,7 @@ function toggleEntryStatus(element, toasting) {
  *
  * This function redirects the user to the URL specified in the data-refresh-all-feeds-url attribute of the body element.
  */
-function handleRefreshAllFeeds() {
+function handleRefreshAllFeedsAction() {
     const refreshAllFeedsUrl = document.body.dataset.refreshAllFeedsUrl;
     if (refreshAllFeedsUrl) {
         window.location.href = refreshAllFeedsUrl;
@@ -589,38 +594,22 @@ function updateEntriesStatus(entryIDs, status, callback) {
 /**
  * Handle save entry from list view and entry view.
  *
- * @param {Element} element
+ * @param {Element|null} element - The element that triggered the save action (optional).
  */
-function handleSaveEntry(element) {
-    const toasting = !element;
+function handleSaveEntryAction(element = null) {
     const currentEntry = findEntry(element);
-    if (currentEntry) {
-        saveEntry(currentEntry.querySelector(":is(a, button)[data-save-entry]"), toasting);
-    }
-}
+    if (!currentEntry) return;
 
-/**
- * Save the entry by sending an Ajax request to the server.
- *
- * @param {Element} element The element that triggered the save action.
- * @param {boolean} toasting If true, show a toast notification after saving the entry.
- * @return {void}
- */
-function saveEntry(element, toasting) {
-    if (!element || element.dataset.completed) {
-        return;
-    }
+    const buttonElement = currentEntry.querySelector(":is(a, button)[data-save-entry]");
+    if (!buttonElement || buttonElement.dataset.completed) return;
 
-    element.textContent = "";
-    insertIconLabelElement(element, element.dataset.labelLoading);
+    insertIconLabelElement(buttonElement, buttonElement.dataset.labelLoading);
 
-    sendPOSTRequest(element.dataset.saveUrl).then(() => {
-        element.textContent = "";
-        insertIconLabelElement(element, element.dataset.labelDone);
-        element.dataset.completed = "true";
-        if (toasting) {
-            const iconElement = document.querySelector("template#icon-save");
-            showToast(element.dataset.toastDone, iconElement);
+    sendPOSTRequest(buttonElement.dataset.saveUrl).then(() => {
+        insertIconLabelElement(buttonElement, buttonElement.dataset.labelDone);
+        buttonElement.dataset.completed = "true";
+        if (!element) {
+            showToast(buttonElement.dataset.toastDone, document.querySelector("template#icon-save"));
         }
     });
 }
@@ -649,7 +638,6 @@ function toggleBookmark(parentElement, toasting) {
     const buttonElement = parentElement.querySelector(":is(a, button)[data-toggle-bookmark]");
     if (!buttonElement) return;
 
-    buttonElement.textContent = "";
     insertIconLabelElement(buttonElement, buttonElement.dataset.labelLoading);
 
     sendPOSTRequest(buttonElement.dataset.bookmarkUrl).then(() => {
@@ -684,7 +672,6 @@ function handleFetchOriginalContent() {
 
     const previousElement = buttonElement.cloneNode(true);
 
-    buttonElement.textContent = "";
     insertIconLabelElement(buttonElement, buttonElement.dataset.labelLoading);
 
     sendPOSTRequest(buttonElement.dataset.fetchContentUrl).then((response) => {
@@ -1157,13 +1144,13 @@ function initializeKeyboardShortcuts() {
     keyboardHandler.on("m", () => handleEntryStatus("next"));
     keyboardHandler.on("M", () => handleEntryStatus("previous"));
     keyboardHandler.on("A", markPageAsRead);
-    keyboardHandler.on("s", () => handleSaveEntry());
+    keyboardHandler.on("s", () => handleSaveEntryAction());
     keyboardHandler.on("d", handleFetchOriginalContent);
     keyboardHandler.on("f", () => handleBookmark());
 
     // Feed actions
     keyboardHandler.on("F", goToFeedPage);
-    keyboardHandler.on("R", handleRefreshAllFeeds);
+    keyboardHandler.on("R", handleRefreshAllFeedsAction);
     keyboardHandler.on("+", goToAddSubscriptionPage);
     keyboardHandler.on("#", unsubscribeFromFeed);
 
@@ -1193,7 +1180,7 @@ function initializeTouchHandler() {
  */
 function initializeClickHandlers() {
     // Entry actions
-    onClick(":is(a, button)[data-save-entry]", (event) => handleSaveEntry(event.target));
+    onClick(":is(a, button)[data-save-entry]", (event) => handleSaveEntryAction(event.target));
     onClick(":is(a, button)[data-toggle-bookmark]", (event) => handleBookmark(event.target));
     onClick(":is(a, button)[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
     onClick(":is(a, button)[data-fetch-content-entry]", handleFetchOriginalContent);
