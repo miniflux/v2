@@ -619,23 +619,11 @@ function handleSaveEntryAction(element = null) {
  *
  * @param {Element} element - The element that triggered the bookmark action.
  */
-function handleBookmark(element) {
-    const toasting = !element;
+function handleBookmarkAction(element) {
     const currentEntry = findEntry(element);
-    if (currentEntry) {
-        toggleBookmark(currentEntry, toasting);
-    }
-}
+    if (!currentEntry) return;
 
-/**
- * Toggle the bookmark status of an entry.
- *
- * @param {Element} parentElement - The parent element containing the bookmark button.
- * @param {boolean} toasting - Whether to show a toast notification.
- * @returns {void}
- */
-function toggleBookmark(parentElement, toasting) {
-    const buttonElement = parentElement.querySelector(":is(a, button)[data-toggle-bookmark]");
+    const buttonElement = currentEntry.querySelector(":is(a, button)[data-toggle-bookmark]");
     if (!buttonElement) return;
 
     insertIconLabelElement(buttonElement, buttonElement.dataset.labelLoading);
@@ -648,14 +636,14 @@ function toggleBookmark(parentElement, toasting) {
         const iconElement = document.querySelector(isStarred ? "template#icon-star" : "template#icon-unstar");
         const label = isStarred ? buttonElement.dataset.labelStar : buttonElement.dataset.labelUnstar;
 
-        if (toasting) {
+        buttonElement.replaceChildren(iconElement.content.cloneNode(true));
+        insertIconLabelElement(buttonElement, label, false);
+        buttonElement.dataset.value = newStarStatus;
+
+        if (!element) {
             const toastKey = isStarred ? "toastUnstar" : "toastStar";
             showToast(buttonElement.dataset[toastKey], iconElement);
         }
-
-        buttonElement.replaceChildren(iconElement.content.cloneNode(true));
-        insertIconLabelElement(buttonElement, label);
-        buttonElement.dataset.value = newStarStatus;
     });
 }
 
@@ -1146,7 +1134,7 @@ function initializeKeyboardShortcuts() {
     keyboardHandler.on("A", markPageAsRead);
     keyboardHandler.on("s", () => handleSaveEntryAction());
     keyboardHandler.on("d", handleFetchOriginalContent);
-    keyboardHandler.on("f", () => handleBookmark());
+    keyboardHandler.on("f", () => handleBookmarkAction());
 
     // Feed actions
     keyboardHandler.on("F", goToFeedPage);
@@ -1181,7 +1169,7 @@ function initializeTouchHandler() {
 function initializeClickHandlers() {
     // Entry actions
     onClick(":is(a, button)[data-save-entry]", (event) => handleSaveEntryAction(event.target));
-    onClick(":is(a, button)[data-toggle-bookmark]", (event) => handleBookmark(event.target));
+    onClick(":is(a, button)[data-toggle-bookmark]", (event) => handleBookmarkAction(event.target));
     onClick(":is(a, button)[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
     onClick(":is(a, button)[data-fetch-content-entry]", handleFetchOriginalContent);
     onClick(":is(a, button)[data-share-status]", handleEntryShareAction);
