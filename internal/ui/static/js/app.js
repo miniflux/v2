@@ -178,6 +178,67 @@ function setIconAndLabelElement(parentElement, iconName, labelText) {
 }
 
 /**
+ * Set the button to a loading state and return a clone of the original button element.
+ *
+ * @param {Element} buttonElement - The button element to set to loading state.
+ * @return {Element} The original button element cloned before modification.
+ */
+function setButtonToLoadingState(buttonElement) {
+    const originalButtonElement = buttonElement.cloneNode(true);
+
+    buttonElement.textContent = "";
+    buttonElement.appendChild(createIconLabelElement(buttonElement.dataset.labelLoading));
+
+    return originalButtonElement;
+}
+
+/**
+ * Restore the button to its original state.
+ *
+ * @param {Element} buttonElement The button element to restore.
+ * @param {Element} originalButtonElement The original button element to restore from.
+ * @returns {void}
+ */
+function restoreButtonState(buttonElement, originalButtonElement) {
+    buttonElement.textContent = "";
+    buttonElement.appendChild(originalButtonElement);
+}
+
+/**
+ * Set the button to a saved state.
+ *
+ * @param {Element} buttonElement The button element to set to saved state.
+ */
+function setButtonToSavedState(buttonElement) {
+    buttonElement.dataset.completed = "true";
+    setIconAndLabelElement(buttonElement, "save", buttonElement.dataset.labelDone);
+}
+
+/**
+ * Set the bookmark button state.
+ *
+ * @param {Element} buttonElement - The button element to update.
+ * @param {string} newState - The new state to set ("star" or "unstar").
+ */
+function setBookmarkButtonState(buttonElement, newState) {
+    buttonElement.dataset.value = newState;
+    const iconType = newState === "star" ? "unstar" : "star";
+    setIconAndLabelElement(buttonElement, iconType, buttonElement.dataset[newState === "star" ? "labelUnstar" : "labelStar"]);
+}
+
+/**
+ * Set the read status button state.
+ *
+ * @param {Element} buttonElement - The button element to update.
+ * @param {string} newState - The new state to set ("read" or "unread").
+ */
+function setReadStatusButtonState(buttonElement, newState) {
+    buttonElement.dataset.value = newState;
+    const iconType = newState === "read" ? "unread" : "read";
+    setIconAndLabelElement(buttonElement, iconType, buttonElement.dataset[newState === "read" ? "labelUnread" : "labelRead"]);
+}
+
+/**
  * Show a toast notification.
  *
  * @param {string} iconType - The type of icon to display.
@@ -202,29 +263,7 @@ function showToastNotification(iconType, notificationMessage) {
 
     document.body.appendChild(toastElementWrapper);
 
-    setTimeout(() => {
-        toastElementWrapper.classList.add("toast-animate");
-
-    }, 100);
-}
-
-/**
- * Insert an icon label element into the parent element.
- *
- * @param {Element} parentElement The parent element to insert the icon label into.
- * @param {string} iconLabelText The text to display in the icon label.
- * @param {boolean} clearParentTextcontent If true, clear the parent's text content before appending the icon label.
- * @returns {void}
- */
-function insertIconLabelElement(parentElement, iconLabelText, clearParentTextcontent = true) {
-    const span = document.createElement('span');
-    span.classList.add('icon-label');
-    span.textContent = iconLabelText;
-
-    if (clearParentTextcontent) {
-        parentElement.textContent = '';
-    }
-    parentElement.appendChild(span);
+    setTimeout(() => toastElementWrapper.classList.add("toast-animate"), 100);
 }
 
 /**
@@ -584,35 +623,20 @@ function handleEntryStatus(navigationDirection, element, setToRead) {
  */
 function toggleEntryStatus(element, toasting) {
     const entryID = parseInt(element.dataset.id, 10);
-    const link = element.querySelector(":is(a, button)[data-toggle-status]");
-    if (!link) {
-        return;
-    }
+    const buttonElement = element.querySelector(":is(a, button)[data-toggle-status]");
+    if (!buttonElement) return;
 
-    const currentStatus = link.dataset.value;
+    const currentStatus = buttonElement.dataset.value;
     const newStatus = currentStatus === "read" ? "unread" : "read";
 
-    link.querySelector("span").textContent = link.dataset.labelLoading;
+    setButtonToLoadingState(buttonElement);
+
     updateEntriesStatus([entryID], newStatus, () => {
-        let iconElement, label;
+        setReadStatusButtonState(buttonElement, newStatus);
 
-        if (currentStatus === "read") {
-            iconElement = document.querySelector("template#icon-read");
-            label = link.dataset.labelRead;
-            if (toasting) {
-                showToastNotification("read", link.dataset.toastUnread);
-            }
-        } else {
-            iconElement = document.querySelector("template#icon-unread");
-            label = link.dataset.labelUnread;
-            if (toasting) {
-                showToastNotification("unread", link.dataset.toastUnread);
-            }
+        if (toasting) {
+            showToastNotification(currentStatus, currentStatus === "read" ? buttonElement.dataset.toastUnread : buttonElement.dataset.toastRead);
         }
-
-        link.replaceChildren(iconElement.content.cloneNode(true));
-        insertIconLabelElement(link, label, false);
-        link.dataset.value = newStatus;
 
         if (element.classList.contains("item-status-" + currentStatus)) {
             element.classList.remove("item-status-" + currentStatus);
@@ -667,11 +691,10 @@ function handleSaveEntryAction(element = null) {
     const buttonElement = currentEntry.querySelector(":is(a, button)[data-save-entry]");
     if (!buttonElement || buttonElement.dataset.completed) return;
 
-    insertIconLabelElement(buttonElement, buttonElement.dataset.labelLoading);
+    setButtonToLoadingState(buttonElement);
 
     sendPOSTRequest(buttonElement.dataset.saveUrl).then(() => {
-        insertIconLabelElement(buttonElement, buttonElement.dataset.labelDone);
-        buttonElement.dataset.completed = "true";
+        setButtonToSavedState(buttonElement);
         if (isEntryView()) {
             showToastNotification("save", buttonElement.dataset.toastDone);
         }
@@ -690,19 +713,13 @@ function handleBookmarkAction(element) {
     const buttonElement = currentEntry.querySelector(":is(a, button)[data-toggle-bookmark]");
     if (!buttonElement) return;
 
-    insertIconLabelElement(buttonElement, buttonElement.dataset.labelLoading);
+    setButtonToLoadingState(buttonElement);
 
     sendPOSTRequest(buttonElement.dataset.bookmarkUrl).then(() => {
-        const currentStarStatus = buttonElement.dataset.value;
-        const newStarStatus = currentStarStatus === "star" ? "unstar" : "star";
-        const isStarred = currentStarStatus === "star";
+        const isStarred = buttonElement.dataset.value === "star";
+        const newStarStatus = isStarred ? "unstar" : "star";
 
-        const iconElement = document.querySelector(isStarred ? "template#icon-star" : "template#icon-unstar");
-        const label = isStarred ? buttonElement.dataset.labelStar : buttonElement.dataset.labelUnstar;
-
-        buttonElement.replaceChildren(iconElement.content.cloneNode(true));
-        insertIconLabelElement(buttonElement, label, false);
-        buttonElement.dataset.value = newStarStatus;
+        setBookmarkButtonState(buttonElement, newStarStatus);
 
         if (isEntryView()) {
             showToastNotification(newStarStatus, buttonElement.dataset[isStarred ? "toastUnstar" : "toastStar"]);
@@ -721,13 +738,10 @@ function handleFetchOriginalContentAction() {
     const buttonElement = document.querySelector(":is(a, button)[data-fetch-content-entry]");
     if (!buttonElement) return;
 
-    const previousElement = buttonElement.cloneNode(true);
-
-    insertIconLabelElement(buttonElement, buttonElement.dataset.labelLoading);
+    const originalButtonElement = setButtonToLoadingState(buttonElement);
 
     sendPOSTRequest(buttonElement.dataset.fetchContentUrl).then((response) => {
-        buttonElement.textContent = '';
-        buttonElement.appendChild(previousElement);
+        restoreButtonState(buttonElement, originalButtonElement);
 
         response.json().then((data) => {
             if (data.content && data.reading_time) {
