@@ -557,21 +557,6 @@ function toggleEntryStatus(element, toasting) {
 }
 
 /**
- * Mark the entry as read if it is currently unread.
- *
- * @param {Element} element The entry element to mark as read.
- */
-function markEntryAsRead(element) {
-    if (element.classList.contains("item-status-unread")) {
-        element.classList.remove("item-status-unread");
-        element.classList.add("item-status-read");
-
-        const entryID = parseInt(element.dataset.id, 10);
-        updateEntriesStatus([entryID], "read");
-    }
-}
-
-/**
  * Handle the refresh of all feeds.
  *
  * This function redirects the user to the URL specified in the data-refresh-all-feeds-url attribute of the body element.
@@ -725,26 +710,59 @@ function handleFetchOriginalContent() {
  * @returns {void}
  */
 function openOriginalLink(openLinkInCurrentTab) {
-    const entryLink = document.querySelector(".entry h1 a");
-    if (entryLink) {
-        if (openLinkInCurrentTab) {
-            window.location.href = entryLink.getAttribute("href");
-        } else {
-            openNewTab(entryLink.getAttribute("href"));
-        }
-        return;
+    if (isEntryView()) {
+        openOriginalLinkFromEntryView(openLinkInCurrentTab);
+    } else if (isListView()) {
+        openOriginalLinkFromListView();
     }
+}
 
-    const currentItemOriginalLink = document.querySelector(".current-item :is(a, button)[data-original-link]");
-    if (currentItemOriginalLink) {
-        openNewTab(currentItemOriginalLink.getAttribute("href"));
+/**
+ * Open the original link from entry view.
+ *
+ * @param {boolean} openLinkInCurrentTab - Whether to open the link in the current tab.
+ * @returns {void}
+ */
+function openOriginalLinkFromEntryView(openLinkInCurrentTab) {
+    const entryLink = document.querySelector(".entry h1 a");
+    if (!entryLink) return;
 
-        const currentItem = document.querySelector(".current-item");
-        // If we are not on the list of starred items, move to the next item
-        if (document.location.href !== document.querySelector(':is(a, button)[data-page=starred]').href) {
-            goToListItem(1);
-        }
-        markEntryAsRead(currentItem);
+    const url = entryLink.getAttribute("href");
+    if (openLinkInCurrentTab) {
+        window.location.href = url;
+    } else {
+        openNewTab(url);
+    }
+}
+
+/**
+ * Open the original link from list view.
+ *
+ * @returns {void}
+ */
+function openOriginalLinkFromListView() {
+    const currentItem = document.querySelector(".current-item");
+    const originalLink = currentItem?.querySelector(":is(a, button)[data-original-link]");
+
+    if (!currentItem || !originalLink) return;
+
+    // Open the link
+    openNewTab(originalLink.getAttribute("href"));
+
+    // Don't navigate or mark as read on starred page
+    const isStarredPage = document.location.href === document.querySelector(':is(a, button)[data-page=starred]').href;
+    if (isStarredPage) return;
+
+    // Navigate to next item
+    goToListItem(1);
+
+    // Mark as read if currently unread
+    if (currentItem.classList.contains("item-status-unread")) {
+        currentItem.classList.remove("item-status-unread");
+        currentItem.classList.add("item-status-read");
+
+        const entryID = parseInt(currentItem.dataset.id, 10);
+        updateEntriesStatus([entryID], "read");
     }
 }
 
