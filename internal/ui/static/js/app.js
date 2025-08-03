@@ -144,6 +144,71 @@ function findEntry(element) {
 }
 
 /**
+ * Create an icon label element with the given text.
+ *
+ * @param {string} labelText - The text to display in the icon label.
+ * @returns {Element} The created icon label element.
+ */
+function createIconLabelElement(labelText) {
+    const labelElement = document.createElement("span");
+    labelElement.classList.add("icon-label");
+    labelElement.textContent = labelText;
+    return labelElement;
+}
+
+/**
+ * Set the icon and label element in the parent element.
+ *
+ * @param {Element} parentElement - The parent element to insert the icon and label into.
+ * @param {string} iconName - The name of the icon to display.
+ * @param {string} labelText - The text to display in the label.
+ */
+function setIconAndLabelElement(parentElement, iconName, labelText) {
+    const iconElement = document.querySelector(`template#icon-${iconName}`);
+    if (iconElement) {
+        const iconClone = iconElement.content.cloneNode(true);
+        parentElement.textContent = ""; // Clear existing content
+        parentElement.appendChild(iconClone);
+    }
+
+    if (labelText) {
+        const labelElement = createIconLabelElement(labelText);
+        parentElement.appendChild(labelElement);
+    }
+}
+
+/**
+ * Show a toast notification.
+ *
+ * @param {string} iconType - The type of icon to display.
+ * @param {string} notificationMessage - The message to display in the toast.
+ * @returns {void}
+ */
+function showToastNotification(iconType, notificationMessage) {
+    const toastMsgElement = document.createElement("span");
+    toastMsgElement.id = "toast-msg";
+
+    setIconAndLabelElement(toastMsgElement, iconType, notificationMessage);
+
+    const toastElementWrapper = document.createElement("div");
+    toastElementWrapper.id = "toast-wrapper";
+    toastElementWrapper.setAttribute("role", "alert");
+    toastElementWrapper.setAttribute("aria-live", "assertive");
+    toastElementWrapper.setAttribute("aria-atomic", "true");
+    toastElementWrapper.appendChild(toastMsgElement);
+    toastElementWrapper.addEventListener("animationend", () => {
+        toastElementWrapper.remove();
+    });
+
+    document.body.appendChild(toastElementWrapper);
+
+    setTimeout(() => {
+        toastElementWrapper.classList.add("toast-animate");
+
+    }, 100);
+}
+
+/**
  * Insert an icon label element into the parent element.
  *
  * @param {Element} parentElement The parent element to insert the icon label into.
@@ -492,12 +557,11 @@ function markPageAsReadAction() {
  * @returns {void}
  */
 function handleEntryStatus(navigationDirection, element, setToRead) {
-    const toasting = !element;
     const currentEntry = findEntry(element);
 
     if (currentEntry) {
         if (!setToRead || currentEntry.querySelector(":is(a, button)[data-toggle-status]").dataset.value === "unread") {
-            toggleEntryStatus(currentEntry, toasting);
+            toggleEntryStatus(currentEntry, isEntryView());
         }
         if (isListView() && currentEntry.classList.contains('current-item')) {
             switch (navigationDirection) {
@@ -536,13 +600,13 @@ function toggleEntryStatus(element, toasting) {
             iconElement = document.querySelector("template#icon-read");
             label = link.dataset.labelRead;
             if (toasting) {
-                showToast(link.dataset.toastUnread, iconElement);
+                showToastNotification("read", link.dataset.toastUnread);
             }
         } else {
             iconElement = document.querySelector("template#icon-unread");
             label = link.dataset.labelUnread;
             if (toasting) {
-                showToast(link.dataset.toastRead, iconElement);
+                showToastNotification("unread", link.dataset.toastUnread);
             }
         }
 
@@ -608,8 +672,8 @@ function handleSaveEntryAction(element = null) {
     sendPOSTRequest(buttonElement.dataset.saveUrl).then(() => {
         insertIconLabelElement(buttonElement, buttonElement.dataset.labelDone);
         buttonElement.dataset.completed = "true";
-        if (!element) {
-            showToast(buttonElement.dataset.toastDone, document.querySelector("template#icon-save"));
+        if (isEntryView()) {
+            showToastNotification("save", buttonElement.dataset.toastDone);
         }
     });
 }
@@ -640,9 +704,8 @@ function handleBookmarkAction(element) {
         insertIconLabelElement(buttonElement, label, false);
         buttonElement.dataset.value = newStarStatus;
 
-        if (!element) {
-            const toastKey = isStarred ? "toastUnstar" : "toastStar";
-            showToast(buttonElement.dataset[toastKey], iconElement);
+        if (isEntryView()) {
+            showToastNotification(newStarStatus, buttonElement.dataset[isStarred ? "toastUnstar" : "toastStar"]);
         }
     });
 }
@@ -875,27 +938,6 @@ function handleConfirmationMessage(linkElement, callback) {
     questionElement.appendChild(noElement);
 
     containerElement.appendChild(questionElement);
-}
-
-/**
- * Show a toast notification.
- *
- * @param {string} toastMessage - The label to display in the toast.
- * @param {Element} iconElement - The icon element to display in the toast.
- * @returns {void}
- */
-function showToast(toastMessage, iconElement) {
-    if (!toastMessage || !iconElement) {
-        return;
-    }
-
-    const toastMsgElement = document.getElementById("toast-msg");
-    toastMsgElement.replaceChildren(iconElement.content.cloneNode(true));
-    insertIconLabelElement(toastMsgElement, toastMessage);
-
-    const toastElementWrapper = document.getElementById("toast-wrapper");
-    toastElementWrapper.classList.remove('toast-animate');
-    setTimeout(() => toastElementWrapper.classList.add('toast-animate'), 100);
 }
 
 /**
