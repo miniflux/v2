@@ -8,7 +8,6 @@ import (
 	"embed"
 	"html/template"
 	"log/slog"
-	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/locale"
@@ -41,53 +40,31 @@ func NewEngine(router *mux.Router) *Engine {
 
 // ParseTemplates parses template files embed into the application.
 func (e *Engine) ParseTemplates() error {
-	var commonTemplateContents strings.Builder
+	funcMap := e.funcMap.Map()
+	commonTemplates := template.Must(template.New("").Funcs(funcMap).ParseFS(commonTemplateFiles, "templates/common/*.html"))
 
-	dirEntries, err := commonTemplateFiles.ReadDir("templates/common")
+	dirEntries, err := viewTemplateFiles.ReadDir("templates/views")
 	if err != nil {
 		return err
 	}
-
 	for _, dirEntry := range dirEntries {
-		fileData, err := commonTemplateFiles.ReadFile("templates/common/" + dirEntry.Name())
+		fullName := "templates/views/" + dirEntry.Name()
+		slog.Debug("Parsing template", slog.String("template_name", fullName))
+		commonTemplatesClone, err := commonTemplates.Clone()
 		if err != nil {
-			return err
+			panic("Unable to clone the common template")
 		}
-		commonTemplateContents.Write(fileData)
-	}
-
-	dirEntries, err = viewTemplateFiles.ReadDir("templates/views")
-	if err != nil {
-		return err
-	}
-
-	for _, dirEntry := range dirEntries {
-		templateName := dirEntry.Name()
-		fileData, err := viewTemplateFiles.ReadFile("templates/views/" + dirEntry.Name())
-		if err != nil {
-			return err
-		}
-
-		var templateContents strings.Builder
-		templateContents.WriteString(commonTemplateContents.String())
-		templateContents.Write(fileData)
-
-		slog.Debug("Parsing template",
-			slog.String("template_name", templateName),
-		)
-
-		e.templates[templateName] = template.Must(template.New("main").Funcs(e.funcMap.Map()).Parse(templateContents.String()))
+		e.templates[dirEntry.Name()] = template.Must(commonTemplatesClone.ParseFS(viewTemplateFiles, fullName))
 	}
 
 	dirEntries, err = standaloneTemplateFiles.ReadDir("templates/standalone")
 	if err != nil {
 		return err
 	}
-
 	for _, dirEntry := range dirEntries {
-		slog.Debug("Parsing template", slog.String("template_name", dirEntry.Name()))
-		tpl := template.New("").Funcs(e.funcMap.Map())
-		e.templates[dirEntry.Name()] = template.Must(tpl.ParseFS(standaloneTemplateFiles, "templates/standalone/"+dirEntry.Name()))
+		fullName := "templates/standalone/" + dirEntry.Name()
+		slog.Debug("Parsing template", slog.String("template_name", fullName))
+		e.templates[dirEntry.Name()] = template.Must(template.New(dirEntry.Name()).Funcs(funcMap).ParseFS(standaloneTemplateFiles, fullName))
 	}
 
 	return nil
