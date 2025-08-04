@@ -85,16 +85,9 @@ func (e *Engine) ParseTemplates() error {
 	}
 
 	for _, dirEntry := range dirEntries {
-		templateName := dirEntry.Name()
-		fileData, err := standaloneTemplateFiles.ReadFile("templates/standalone/" + dirEntry.Name())
-		if err != nil {
-			return err
-		}
-
-		slog.Debug("Parsing template",
-			slog.String("template_name", templateName),
-		)
-		e.templates[templateName] = template.Must(template.New("base").Funcs(e.funcMap.Map()).Parse(string(fileData)))
+		slog.Debug("Parsing template", slog.String("template_name", dirEntry.Name()))
+		tpl := template.New("").Funcs(e.funcMap.Map())
+		e.templates[dirEntry.Name()] = template.Must(tpl.ParseFS(standaloneTemplateFiles, "templates/standalone/"+dirEntry.Name()))
 	}
 
 	return nil
