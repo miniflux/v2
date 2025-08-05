@@ -140,13 +140,7 @@ func (h *handler) markFeedAsRead(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	userID := request.UserID(r)
 
-	feed, err := h.store.FeedByID(userID, feedID)
-	if err != nil {
-		json.NotFound(w, r)
-		return
-	}
-
-	if feed == nil {
+	if !h.store.FeedExists(userID, feedID) {
 		json.NotFound(w, r)
 		return
 	}
