@@ -21,14 +21,14 @@ const licenseSuffix = "\n//@license-end"
 
 func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "name")
-	etag, found := static.JavascriptBundleChecksums[filename]
+	js, found := static.JavascriptBundles[filename]
 	if !found {
 		html.NotFound(w, r)
 		return
 	}
 
-	response.New(w, r).WithCaching(etag, 48*time.Hour, func(b *response.Builder) {
-		contents := static.JavascriptBundles[filename]
+	response.New(w, r).WithCaching(js.Checksum, 48*time.Hour, func(b *response.Builder) {
+		contents := js.Data
 
 		if filename == "service-worker" {
 			variables := fmt.Sprintf(`const OFFLINE_URL=%q;`, route.Path(h.router, "offline"))

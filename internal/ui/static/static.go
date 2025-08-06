@@ -15,12 +15,16 @@ import (
 	"github.com/tdewolff/minify/v2/js"
 )
 
+type asset struct {
+	Data     []byte
+	Checksum string
+}
+
 // Static assets.
 var (
-	StylesheetBundleChecksums map[string]string
-	StylesheetBundles         map[string][]byte
-	JavascriptBundleChecksums map[string]string
-	JavascriptBundles         map[string][]byte
+	StylesheetBundles   map[string]asset
+	JavascriptBundles   map[string]asset
+	binaryFileChecksums map[string]string
 )
 
 //go:embed bin/*
@@ -32,16 +36,13 @@ var stylesheetFiles embed.FS
 //go:embed js/*.js
 var javascriptFiles embed.FS
 
-var binaryFileChecksums map[string]string
-
 // CalculateBinaryFileChecksums generates hash of embed binary files.
 func CalculateBinaryFileChecksums() error {
-	binaryFileChecksums = make(map[string]string)
-
 	dirEntries, err := binaryFiles.ReadDir("bin")
 	if err != nil {
 		return err
 	}
+	binaryFileChecksums = make(map[string]string, len(dirEntries))
 
 	for _, dirEntry := range dirEntries {
 		data, err := LoadBinaryFile(dirEntry.Name())
@@ -57,15 +58,16 @@ func CalculateBinaryFileChecksums() error {
 
 // LoadBinaryFile loads an embed binary file.
 func LoadBinaryFile(filename string) ([]byte, error) {
-	return binaryFiles.ReadFile(fmt.Sprintf(`bin/%s`, filename))
+	return binaryFiles.ReadFile("bin/" + filename)
 }
 
 // GetBinaryFileChecksum returns a binary file checksum.
 func GetBinaryFileChecksum(filename string) (string, error) {
-	if _, found := binaryFileChecksums[filename]; !found {
+	data, found := binaryFileChecksums[filename]
+	if !found {
 		return "", fmt.Errorf(`static: unable to find checksum for %q`, filename)
 	}
-	return binaryFileChecksums[filename], nil
+	return data, nil
 }
 
 // GenerateStylesheetsBundles creates CSS bundles.
@@ -79,8 +81,7 @@ func GenerateStylesheetsBundles() error {
 		"system_sans_serif": {"css/system.css", "css/sans_serif.css", "css/common.css"},
 	}
 
-	StylesheetBundles = make(map[string][]byte)
-	StylesheetBundleChecksums = make(map[string]string)
+	StylesheetBundles = make(map[string]asset, len(bundles))
 
 	minifier := minify.New()
 	minifier.AddFunc("text/css", css.Minify)
@@ -102,8 +103,10 @@ func GenerateStylesheetsBundles() error {
 			return err
 		}
 
-		StylesheetBundles[bundle] = minifiedData
-		StylesheetBundleChecksums[bundle] = crypto.HashFromBytes(minifiedData)
+		StylesheetBundles[bundle] = asset{
+			Data:     minifiedData,
+			Checksum: crypto.HashFromBytes(minifiedData),
+		}
 	}
 
 	return nil
@@ -125,8 +128,7 @@ func GenerateJavascriptBundles() error {
 		},
 	}
 
-	JavascriptBundles = make(map[string][]byte)
-	JavascriptBundleChecksums = make(map[string]string)
+	JavascriptBundles = make(map[string]asset, len(bundles))
 
 	jsMinifier := js.Minifier{Version: 2020}
 
@@ -150,8 +152,10 @@ func GenerateJavascriptBundles() error {
 			return err
 		}
 
-		JavascriptBundles[bundle] = minifiedData
-		JavascriptBundleChecksums[bundle] = crypto.HashFromBytes(minifiedData)
+		JavascriptBundles[bundle] = asset{
+			Data:     minifiedData,
+			Checksum: crypto.HashFromBytes(minifiedData),
+		}
 	}
 
 	return nil
