@@ -331,20 +331,19 @@ func addInvidiousVideo(entryURL, entryContent string) string {
 		return entryContent
 	}
 
-	v := u.Query().Get("v")
-	if v == "" {
+	qs := u.Query()
+	videoID := qs.Get("v")
+	if videoID == "" {
 		return entryContent
 	}
+	qs.Del("v")
 
-	src := "https://" + u.Hostname() + `/embed/` + v
-	for key, val := range u.Query() {
-		if key == "v" || len(val) != 1 {
-			continue
-		}
-		src += "&" + key + "=" + val[0]
+	embedVideoURL := "https://" + u.Hostname() + `/embed/` + videoID
+	if len(qs) > 0 {
+		embedVideoURL += "?" + qs.Encode()
 	}
 
-	return addVideoPlayerIframe(src, entryContent)
+	return addVideoPlayerIframe(embedVideoURL, entryContent)
 }
 
 func addPDFLink(entryURL, entryContent string) string {
