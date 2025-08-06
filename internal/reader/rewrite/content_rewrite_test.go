@@ -290,7 +290,7 @@ func TestAddInvidiousVideo(t *testing.T) {
 		// Test with more complex query parameters
 		"https://invidious.io/watch?v=dQw4w9WgXcQ&t=30s&autoplay=1": {
 			"Video with multiple parameters",
-			`<iframe width="650" height="350" frameborder="0" src="https://invidious.io/embed/dQw4w9WgXcQ&t=30s&autoplay=1" allowfullscreen></iframe><br>Video with multiple parameters`,
+			`<iframe width="650" height="350" frameborder="0" src="https://invidious.io/embed/dQw4w9WgXcQ&autoplay=1&t=30s" allowfullscreen></iframe><br>Video with multiple parameters`,
 		},
 
 		// Test with non-matching URLs (should return content unchanged)

@@ -8,8 +8,10 @@ import (
 	"fmt"
 	"html"
 	"log/slog"
+	"maps"
 	"net/url"
 	"regexp"
+	"slices"
 	"strings"
 	"unicode"
 
@@ -337,7 +339,9 @@ func addInvidiousVideo(entryURL, entryContent string) string {
 	}
 
 	src := "https://" + u.Hostname() + `/embed/` + v
-	for key, val := range u.Query() {
+	m := u.Query()
+	for _, key := range slices.Sorted(maps.Keys(m)) {
+		val := m[key]
 		if key == "v" || len(val) != 1 {
 			continue
 		}
