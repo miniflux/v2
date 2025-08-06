@@ -15,15 +15,15 @@ import (
 
 func (h *handler) showStylesheet(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "name")
-	etag, found := static.StylesheetBundleChecksums[filename]
+	m, found := static.StylesheetBundles[filename]
 	if !found {
 		html.NotFound(w, r)
 		return
 	}
 
-	response.New(w, r).WithCaching(etag, 48*time.Hour, func(b *response.Builder) {
+	response.New(w, r).WithCaching(m.Checksum, 48*time.Hour, func(b *response.Builder) {
 		b.WithHeader("Content-Type", "text/css; charset=utf-8")
-		b.WithBody(static.StylesheetBundles[filename])
+		b.WithBody(m.Data)
 		b.Write()
 	})
 }
