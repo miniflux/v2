@@ -6,7 +6,6 @@ package response // import "miniflux.app/v2/internal/http/response"
 import (
 	"compress/flate"
 	"compress/gzip"
-	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -48,7 +47,7 @@ func (b *Builder) WithBody(body any) *Builder {
 
 // WithAttachment forces the document to be downloaded by the web browser.
 func (b *Builder) WithAttachment(filename string) *Builder {
-	b.headers["Content-Disposition"] = fmt.Sprintf("attachment; filename=%s", filename)
+	b.headers["Content-Disposition"] = "attachment; filename=" + filename
 	return b
 }
 
