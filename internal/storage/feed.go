@@ -111,14 +111,10 @@ func (s *Storage) CountAllFeeds() map[string]int64 {
 
 // CountUserFeedsWithErrors returns the number of feeds with parsing errors that belong to the given user.
 func (s *Storage) CountUserFeedsWithErrors(userID int64) int {
-	pollingParsingErrorLimit := config.Opts.PollingParsingErrorLimit()
-	if pollingParsingErrorLimit <= 0 {
-		pollingParsingErrorLimit = 1
-	}
+	pollingParsingErrorLimit := min(config.Opts.PollingParsingErrorLimit(), 1)
 	query := `SELECT count(*) FROM feeds WHERE user_id=$1 AND parsing_error_count >= $2`
 	var result int
-	err := s.db.QueryRow(query, userID, pollingParsingErrorLimit).Scan(&result)
-	if err != nil {
+	if s.db.QueryRow(query, userID, pollingParsingErrorLimit).Scan(&result) != nil {
 		return 0
 	}
 
@@ -127,14 +123,10 @@ func (s *Storage) CountUserFeedsWithErrors(userID int64) int {
 
 // CountAllFeedsWithErrors returns the number of feeds with parsing errors.
 func (s *Storage) CountAllFeedsWithErrors() int {
-	pollingParsingErrorLimit := config.Opts.PollingParsingErrorLimit()
-	if pollingParsingErrorLimit <= 0 {
-		pollingParsingErrorLimit = 1
-	}
+	pollingParsingErrorLimit := min(config.Opts.PollingParsingErrorLimit(), 1)
 	query := `SELECT count(*) FROM feeds WHERE parsing_error_count >= $1`
 	var result int
-	err := s.db.QueryRow(query, pollingParsingErrorLimit).Scan(&result)
-	if err != nil {
+	if s.db.QueryRow(query, pollingParsingErrorLimit).Scan(&result) != nil {
 		return 0
 	}
 
@@ -150,11 +142,11 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 
 func getFeedsSorted(builder *FeedQueryBuilder) (model.Feeds, error) {
 	result, err := builder.GetFeeds()
-	if err == nil {
-		sort.Sort(byStateAndName{result})
-		return result, nil
+	if err != nil {
+		return nil, err
 	}
-	return result, err
+	sort.Sort(byStateAndName{result})
+	return result, nil
 }
 
 // FeedsWithCounters returns all feeds of the given user with counters of read and unread entries.
