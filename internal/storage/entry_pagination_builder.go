@@ -15,7 +15,7 @@ import (
 type EntryPaginationBuilder struct {
 	store      *Storage
 	conditions []string
-	args       []interface{}
+	args       []any
 	entryID    int64
 	order      string
 	direction  string
@@ -170,7 +170,7 @@ func (e *EntryPaginationBuilder) getEntry(tx *sql.Tx, entryID int64) (*model.Ent
 func NewEntryPaginationBuilder(store *Storage, userID, entryID int64, order, direction string) *EntryPaginationBuilder {
 	return &EntryPaginationBuilder{
 		store:      store,
-		args:       []interface{}{userID, "removed"},
+		args:       []any{userID, "removed"},
 		conditions: []string{"e.user_id = $1", "e.status <> $2"},
 		entryID:    entryID,
 		order:      order,

@@ -701,7 +701,7 @@ func (o *options) SortedOptions(redactSecret bool) []*option {
 		mediaProxyPrivateKeyValue = "<binary-data>"
 	}
 
-	var keyValues = map[string]interface{}{
+	var keyValues = map[string]any{
 		"ADMIN_PASSWORD":                         redactSecretValue(o.adminPassword, redactSecret),
 		"ADMIN_USERNAME":                         o.adminUsername,
 		"AUTH_PROXY_HEADER":                      o.authProxyHeader,

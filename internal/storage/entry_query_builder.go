@@ -18,7 +18,7 @@ import (
 // EntryQueryBuilder builds a SQL query to fetch entries.
 type EntryQueryBuilder struct {
 	store           *Storage
-	args            []interface{}
+	args            []any
 	conditions      []string
 	sortExpressions []string
 	limit           int
@@ -468,7 +468,7 @@ func (e *EntryQueryBuilder) buildSorting() string {
 func NewEntryQueryBuilder(store *Storage, userID int64) *EntryQueryBuilder {
 	return &EntryQueryBuilder{
 		store:      store,
-		args:       []interface{}{userID},
+		args:       []any{userID},
 		conditions: []string{"e.user_id = $1"},
 	}
 }

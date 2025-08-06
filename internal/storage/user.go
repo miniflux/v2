@@ -521,7 +521,7 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 	return s.fetchUser(query, token)
 }
 
-func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, error) {
+func (s *Storage) fetchUser(query string, args ...any) (*model.User, error) {
 	var user model.User
 	err := s.db.QueryRow(query, args...).Scan(
 		&user.ID,
