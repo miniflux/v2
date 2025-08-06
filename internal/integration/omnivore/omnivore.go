@@ -74,10 +74,10 @@ func NewClient(apiToken string, apiEndpoint string) Client {
 }
 
 func (c *client) SaveUrl(url string) error {
-	var payload = map[string]interface{}{
+	var payload = map[string]any{
 		"query": mutation,
-		"variables": map[string]interface{}{
-			"input": map[string]interface{}{
+		"variables": map[string]any{
+			"input": map[string]any{
 				"clientRequestId": crypto.GenerateUUID(),
 				"source":          "api",
 				"url":             url,

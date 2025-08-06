@@ -46,7 +46,7 @@ func (f *funcMap) Map() template.FuncMap {
 		"hasAuthProxy": func() bool {
 			return config.Opts.AuthProxyHeader() != ""
 		},
-		"route": func(name string, args ...interface{}) string {
+		"route": func(name string, args ...any) string {
 			return route.Path(f.router, name, args...)
 		},
 		"safeURL": func(url string) template.URL {
@@ -105,20 +105,20 @@ func (f *funcMap) Map() template.FuncMap {
 		"elapsed": func(timezone string, t time.Time) string {
 			return ""
 		},
-		"t": func(key interface{}, args ...interface{}) string {
+		"t": func(key any, args ...any) string {
 			return ""
 		},
-		"plural": func(key string, n int, args ...interface{}) string {
+		"plural": func(key string, n int, args ...any) string {
 			return ""
 		},
 	}
 }
 
-func dict(values ...interface{}) (map[string]interface{}, error) {
+func dict(values ...any) (map[string]any, error) {
 	if len(values)%2 != 0 {
 		return nil, fmt.Errorf("dict expects an even number of arguments")
 	}
-	dict := make(map[string]interface{}, len(values)/2)
+	dict := make(map[string]any, len(values)/2)
 	for i := 0; i < len(values); i += 2 {
 		key, ok := values[i].(string)
 		if !ok {

@@ -70,7 +70,7 @@ func (s *Storage) UpdateAppSessionField(sessionID, field string, value any) erro
 	return nil
 }
 
-func (s *Storage) UpdateAppSessionObjectField(sessionID, field string, value interface{}) error {
+func (s *Storage) UpdateAppSessionObjectField(sessionID, field string, value any) error {
 	query := `
 		UPDATE
 			sessions

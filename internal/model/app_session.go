@@ -44,7 +44,7 @@ func (s *SessionData) Value() (driver.Value, error) {
 }
 
 // Scan converts raw JSON data.
-func (s *SessionData) Scan(src interface{}) error {
+func (s *SessionData) Scan(src any) error {
 	source, ok := src.([]byte)
 	if !ok {
 		return errors.New("session: unable to assert type of src")

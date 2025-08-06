@@ -16,14 +16,14 @@ import (
 // FeedQueryBuilder builds a SQL query to fetch feeds.
 type FeedQueryBuilder struct {
 	store             *Storage
-	args              []interface{}
+	args              []any
 	conditions        []string
 	sortExpressions   []string
 	limit             int
 	offset            int
 	withCounters      bool
 	counterJoinFeeds  bool
-	counterArgs       []interface{}
+	counterArgs       []any
 	counterConditions []string
 }
 
@@ -31,9 +31,9 @@ type FeedQueryBuilder struct {
 func NewFeedQueryBuilder(store *Storage, userID int64) *FeedQueryBuilder {
 	return &FeedQueryBuilder{
 		store:             store,
-		args:              []interface{}{userID},
+		args:              []any{userID},
 		conditions:        []string{"f.user_id = $1"},
-		counterArgs:       []interface{}{userID, model.EntryStatusRead, model.EntryStatusUnread},
+		counterArgs:       []any{userID, model.EntryStatusRead, model.EntryStatusUnread},
 		counterConditions: []string{"e.user_id = $1", "e.status IN ($2, $3)"},
 	}
 }
