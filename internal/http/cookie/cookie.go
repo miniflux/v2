@@ -18,26 +18,20 @@ const (
 
 // New creates a new cookie.
 func New(name, value string, isHTTPS bool, path string) *http.Cookie {
-	cookie := &http.Cookie{
+	return &http.Cookie{
 		Name:     name,
 		Value:    value,
 		Path:     basePath(path),
 		Secure:   isHTTPS,
 		HttpOnly: true,
 		Expires:  time.Now().Add(time.Duration(config.Opts.CleanupRemoveSessionsDays()) * 24 * time.Hour),
-		SameSite: http.SameSiteStrictMode,
+		SameSite: http.SameSiteLaxMode,
 	}
-
-	// OAuth doesn't work when cookies are in strict mode.
-	if config.Opts.OAuth2Provider() != "" {
-		cookie.SameSite = http.SameSiteLaxMode
-	}
-	return cookie
 }
 
 // Expired returns an expired cookie.
 func Expired(name string, isHTTPS bool, path string) *http.Cookie {
-	cookie := &http.Cookie{
+	return &http.Cookie{
 		Name:     name,
 		Value:    "",
 		Path:     basePath(path),
@@ -45,14 +39,8 @@ func Expired(name string, isHTTPS bool, path string) *http.Cookie {
 		HttpOnly: true,
 		MaxAge:   -1,
 		Expires:  time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
-		SameSite: http.SameSiteStrictMode,
+		SameSite: http.SameSiteLaxMode,
 	}
-
-	// OAuth doesn't work when cookies are in strict mode.
-	if config.Opts.OAuth2Provider() != "" {
-		cookie.SameSite = http.SameSiteLaxMode
-	}
-	return cookie
 }
 
 func basePath(path string) string {
