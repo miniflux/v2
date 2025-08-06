@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log/slog"
 	"sort"
+	"time"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
@@ -38,6 +39,17 @@ func (s *Storage) FeedExists(userID, feedID int64) bool {
 	query := `SELECT true FROM feeds WHERE user_id=$1 AND id=$2 LIMIT 1`
 	s.db.QueryRow(query, userID, feedID).Scan(&result)
 	return result
+}
+
+// CheckedAt returns when the feed was last checked.
+func (s *Storage) CheckedAt(userID, feedID int64) (time.Time, error) {
+	var result time.Time
+	query := `SELECT checked_at FROM feeds WHERE user_id=$1 AND id=$2 LIMIT 1`
+	err := s.db.QueryRow(query, userID, feedID).Scan(&result)
+	if err != nil {
+		return time.Now(), err
+	}
+	return result, nil
 }
 
 // CategoryFeedExists returns true if the given feed exists that belongs to the given category.
