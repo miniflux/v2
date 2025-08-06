@@ -39,12 +39,7 @@ func (h *handler) showSearchPage(w http.ResponseWriter, r *http.Request) {
 			html.ServerError(w, r, err)
 			return
 		}
-
-		entriesCount, err = builder.CountEntries()
-		if err != nil {
-			html.ServerError(w, r, err)
-			return
-		}
+		entriesCount = len(entries)
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

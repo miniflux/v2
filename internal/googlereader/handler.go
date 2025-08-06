@@ -1116,12 +1116,8 @@ func (h *handler) handleReadingListStreamHandler(w http.ResponseWriter, r *http.
 		formattedID := strconv.FormatInt(entryID, 10)
 		itemRefs = append(itemRefs, itemRef{ID: formattedID})
 	}
+	totalEntries := len(rawEntryIDs)
 
-	totalEntries, err := builder.CountEntries()
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
 	continuation := 0
 	if len(itemRefs)+rm.Offset < totalEntries {
 		continuation = len(itemRefs) + rm.Offset
@@ -1155,11 +1151,8 @@ func (h *handler) handleStarredStreamHandler(w http.ResponseWriter, r *http.Requ
 		itemRefs = append(itemRefs, itemRef{ID: formattedID})
 	}
 
-	totalEntries, err := builder.CountEntries()
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
+	totalEntries := len(rawEntryIDs)
+
 	continuation := 0
 	if len(itemRefs)+rm.Offset < totalEntries {
 		continuation = len(itemRefs) + rm.Offset
@@ -1193,11 +1186,7 @@ func (h *handler) handleReadStreamHandler(w http.ResponseWriter, r *http.Request
 		itemRefs = append(itemRefs, itemRef{ID: formattedID})
 	}
 
-	totalEntries, err := builder.CountEntries()
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
+	totalEntries := len(rawEntryIDs)
 	continuation := 0
 	if len(itemRefs)+rm.Offset < totalEntries {
 		continuation = len(itemRefs) + rm.Offset
@@ -1248,12 +1237,7 @@ func (h *handler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request
 		itemRefs = append(itemRefs, itemRef{ID: formattedID})
 	}
 
-	totalEntries, err := builder.CountEntries()
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
-
+	totalEntries := len(rawEntryIDs)
 	continuation := 0
 	if len(itemRefs)+rm.Offset < totalEntries {
 		continuation = len(itemRefs) + rm.Offset

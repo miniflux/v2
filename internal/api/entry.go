@@ -152,12 +152,7 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 		json.ServerError(w, r, err)
 		return
 	}
-
-	count, err := builder.CountEntries()
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
+	count := len(entries)
 
 	for i := range entries {
 		entries[i].Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entries[i].Content)

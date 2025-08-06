@@ -34,12 +34,7 @@ func (h *handler) showHistoryPage(w http.ResponseWriter, r *http.Request) {
 		html.ServerError(w, r, err)
 		return
 	}
-
-	count, err := builder.CountEntries()
-	if err != nil {
-		html.ServerError(w, r, err)
-		return
-	}
+	count := len(entries)
 
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
