@@ -191,7 +191,7 @@ func (e *EntryQueryBuilder) WithShareCodeNotEmpty() *EntryQueryBuilder {
 
 // WithSorting add a sort expression.
 func (e *EntryQueryBuilder) WithSorting(column, direction string) *EntryQueryBuilder {
-	e.sortExpressions = append(e.sortExpressions, fmt.Sprintf("%s %s", column, direction))
+	e.sortExpressions = append(e.sortExpressions, column+" "+direction)
 	return e
 }
 
@@ -224,11 +224,9 @@ func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
 		FROM entries e
 			JOIN feeds f ON f.id = e.feed_id
 			JOIN categories c ON c.id = f.category_id
-		WHERE %s
-	`
-	condition := e.buildCondition()
+		WHERE ` + e.buildCondition()
 
-	err = e.store.db.QueryRow(fmt.Sprintf(query, condition), e.args...).Scan(&count)
+	err = e.store.db.QueryRow(query, e.args...).Scan(&count)
 	if err != nil {
 		return 0, fmt.Errorf("store: unable to count entries: %v", err)
 	}
@@ -308,12 +306,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			icons i ON i.id=fi.icon_id
 		LEFT JOIN
 			users u ON u.id=e.user_id
-		WHERE %s %s
-	`
-
-	condition := e.buildCondition()
-	sorting := e.buildSorting()
-	query = fmt.Sprintf(query, condition, sorting)
+		WHERE ` + e.buildCondition() + " " + e.buildSorting()
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
@@ -426,12 +419,7 @@ func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
 			feeds f
 		ON
 			f.id=e.feed_id
-		WHERE
-			%s %s
-	`
-
-	condition := e.buildCondition()
-	query = fmt.Sprintf(query, condition, e.buildSorting())
+		WHERE ` + e.buildCondition() + " " + e.buildSorting()
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
@@ -462,7 +450,7 @@ func (e *EntryQueryBuilder) buildSorting() string {
 	var parts string
 
 	if len(e.sortExpressions) > 0 {
-		parts += fmt.Sprintf(" ORDER BY %s", strings.Join(e.sortExpressions, ", "))
+		parts += " ORDER BY " + strings.Join(e.sortExpressions, ", ")
 	}
 
 	if e.limit > 0 {
