@@ -1,5 +1,44 @@
 {{ define "title"}}{{ .entry.Title }}{{ end }}
 
+{{ define "entry_pagination" }}
+<div class="pagination">
+    <div class="pagination-prev {{ if not .prevEntry }}disabled{{end}}">
+        {{ if .prevEntry }}
+            <a href="{{ .prevEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .prevEntry.Title }}" data-page="previous" rel="prev">{{ t "pagination.previous" }}</a>
+        {{ else }}
+            {{ t "pagination.previous" }}
+        {{ end }}
+    </div>
+
+    <div class="pagination-next {{ if not .nextEntry }}disabled{{end}}">
+        {{ if .nextEntry }}
+            <a href="{{ .nextEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .nextEntry.Title }}" data-page="next" rel="next">{{ t "pagination.next" }}</a>
+        {{ else }}
+            {{ t "pagination.next" }}
+        {{ end }}
+    </div>
+</div>
+{{ end }}
+
+{{ define "enclosure_media_controls" }}
+<div class="media-controls">
+    <div class="media-seek-control">
+        <div class="media-control-label">{{ t "enclosure_media_controls.seek" }} </div>
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="seek" data-action-value="-30" title="{{ t "enclosure_media_controls.seek.title" "-30" }}" ><span class="icon-label" >-30s</span></button>
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="seek" data-action-value="-10" title="{{ t "enclosure_media_controls.seek.title" "-10" }}" ><span class="icon-label" >-10s</span></button>
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="seek" data-action-value="+10" title="{{ t "enclosure_media_controls.seek.title" "+10" }}" ><span class="icon-label" >+10s</span></button>
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="seek" data-action-value="+30" title="{{ t "enclosure_media_controls.seek.title" "+30" }}" ><span class="icon-label" >+30s</span></button>
+    </div>
+    <div class="media-speed-control">
+
+        <div class="media-control-label">{{ t "enclosure_media_controls.speed" }} (<span class="speed-indicator" data-enclosure-id="{{.ID}}">1.00x</span>)</div> <!-- Need JS to display the current speed unfortunately -->
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="speed" data-action-value="-0.25" title="{{ t "enclosure_media_controls.speed.slower.title" "0.25" }}"><span class="icon-label" >{{ t "enclosure_media_controls.speed.slower" }}</span></button>
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="speed-reset" data-action-value="1" title="{{ t "enclosure_media_controls.speed.reset.title"}}"><span class="icon-label" >{{ t "enclosure_media_controls.speed.reset" }}</span></button>
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="speed" data-action-value="+0.25" title="{{ t "enclosure_media_controls.speed.faster.title" "0.25" }}"><span class="icon-label" >{{ t "enclosure_media_controls.speed.faster" }}</span></button>
+    </div>
+</div>
+{{ end }}
+
 {{ define "page_header"}}
 <section class="entry" data-id="{{ .entry.ID }}" aria-labelledby="page-header-title">
     <header class="entry-header">
