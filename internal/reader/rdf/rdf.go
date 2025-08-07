@@ -9,21 +9,21 @@ import (
 	"miniflux.app/v2/internal/reader/dublincore"
 )
 
-// RDF sepcs: https://web.resource.org/rss/1.0/spec
-type RDF struct {
+// rdf sepcs: https://web.resource.org/rss/1.0/spec
+type rdf struct {
 	XMLName xml.Name   `xml:"http://www.w3.org/1999/02/22-rdf-syntax-ns# RDF"`
-	Channel RDFChannel `xml:"channel"`
-	Items   []RDFItem  `xml:"item"`
+	Channel rdfChannel `xml:"channel"`
+	Items   []rdfItem  `xml:"item"`
 }
 
-type RDFChannel struct {
+type rdfChannel struct {
 	Title       string `xml:"title"`
 	Link        string `xml:"link"`
 	Description string `xml:"description"`
 	dublincore.DublinCoreChannelElement
 }
 
-type RDFItem struct {
+type rdfItem struct {
 	Title       string `xml:"http://purl.org/rss/1.0/ title"`
 	Link        string `xml:"link"`
 	Description string `xml:"description"`

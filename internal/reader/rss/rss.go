@@ -15,15 +15,15 @@ import (
 )
 
 // Specs: https://www.rssboard.org/rss-specification
-type RSS struct {
+type rss struct {
 	// Version is the version of the RSS specification.
 	Version string `xml:"rss version,attr"`
 
 	// Channel is the main container for the RSS feed.
-	Channel RSSChannel `xml:"rss channel"`
+	Channel rssChannel `xml:"rss channel"`
 }
 
-type RSSChannel struct {
+type rssChannel struct {
 	// Title is the name of the channel.
 	Title string `xml:"rss title"`
 
@@ -64,10 +64,10 @@ type RSSChannel struct {
 	DocumentationURL string `xml:"rss docs"`
 
 	// Cloud is a web service that supports the rssCloud interface which can be implemented in HTTP-POST, XML-RPC or SOAP 1.1.
-	Cloud *RSSCloud `xml:"rss cloud"`
+	Cloud *rssCloud `xml:"rss cloud"`
 
 	// Image specifies a GIF, JPEG or PNG image that can be displayed with the channel.
-	Image *RSSImage `xml:"rss image"`
+	Image *rssImage `xml:"rss image"`
 
 	// TTL is a number of minutes that indicates how long a channel can be cached before refreshing from the source.
 	TTL string `xml:"rss ttl"`
@@ -83,14 +83,14 @@ type RSSChannel struct {
 	SkipDays []string `xml:"rss skipDays>day"`
 
 	// Items is a collection of items.
-	Items []RSSItem `xml:"rss item"`
+	Items []rssItem `xml:"rss item"`
 
-	AtomLinks
+	atomLinks
 	itunes.ItunesChannelElement
 	googleplay.GooglePlayChannelElement
 }
 
-type RSSCloud struct {
+type rssCloud struct {
 	Domain            string `xml:"domain,attr"`
 	Port              string `xml:"port,attr"`
 	Path              string `xml:"path,attr"`
@@ -98,7 +98,7 @@ type RSSCloud struct {
 	Protocol          string `xml:"protocol,attr"`
 }
 
-type RSSImage struct {
+type rssImage struct {
 	// URL is the URL of a GIF, JPEG or PNG image that represents the channel.
 	URL string `xml:"url"`
 
@@ -109,9 +109,9 @@ type RSSImage struct {
 	Link string `xml:"link"`
 }
 
-type RSSItem struct {
+type rssItem struct {
 	// Title is the title of the item.
-	Title InnerContent `xml:"rss title"`
+	Title innerContent `xml:"rss title"`
 
 	// Link is the URL of the item.
 	Link string `xml:"rss link"`
@@ -120,7 +120,7 @@ type RSSItem struct {
 	Description string `xml:"rss description"`
 
 	// Author is the email address of the author of the item.
-	Author RSSAuthor `xml:"rss author"`
+	Author rssAuthor `xml:"rss author"`
 
 	// <category> is an optional sub-element of <item>.
 	// It has one optional attribute, domain, a string that identifies a categorization taxonomy.
@@ -133,7 +133,7 @@ type RSSItem struct {
 	// <enclosure> is an optional sub-element of <item>.
 	// It has three required attributes. url says where the enclosure is located,
 	// length says how big it is in bytes, and type says what its type is, a standard MIME type.
-	Enclosures []RSSEnclosure `xml:"rss enclosure"`
+	Enclosures []rssEnclosure `xml:"rss enclosure"`
 
 	// <guid> is an optional sub-element of <item>.
 	// It's a string that uniquely identifies the item.
@@ -149,7 +149,7 @@ type RSSItem struct {
 	//
 	// isPermaLink is optional, its default value is true.
 	// If its value is false, the guid may not be assumed to be a url, or a url to anything in particular.
-	GUID RSSGUID `xml:"rss guid"`
+	GUID rssGUID `xml:"rss guid"`
 
 	// <pubDate> is the publication date of the item.
 	// Its value is a string in RFC 822 format.
@@ -158,30 +158,30 @@ type RSSItem struct {
 	// <source> is an optional sub-element of <item>.
 	// Its value is the name of the RSS channel that the item came from, derived from its <title>.
 	// It has one required attribute, url, which contains the URL of the RSS channel.
-	Source RSSSource `xml:"rss source"`
+	Source rssSource `xml:"rss source"`
 
 	dublincore.DublinCoreItemElement
-	FeedBurnerItemElement
+	feedBurnerItemElement
 	media.MediaItemElement
-	AtomAuthor
-	AtomLinks
+	atomAuthor
+	atomLinks
 	itunes.ItunesItemElement
 	googleplay.GooglePlayItemElement
 }
 
-type RSSAuthor struct {
+type rssAuthor struct {
 	XMLName xml.Name
 	Data    string `xml:",chardata"`
 	Inner   string `xml:",innerxml"`
 }
 
-type RSSEnclosure struct {
+type rssEnclosure struct {
 	URL    string `xml:"url,attr"`
 	Type   string `xml:"type,attr"`
 	Length string `xml:"length,attr"`
 }
 
-func (enclosure *RSSEnclosure) Size() int64 {
+func (enclosure *rssEnclosure) Size() int64 {
 	if strings.TrimSpace(enclosure.Length) == "" {
 		return 0
 	}
@@ -189,21 +189,21 @@ func (enclosure *RSSEnclosure) Size() int64 {
 	return size
 }
 
-type RSSGUID struct {
+type rssGUID struct {
 	Data        string `xml:",chardata"`
 	IsPermaLink string `xml:"isPermaLink,attr"`
 }
 
-type RSSSource struct {
+type rssSource struct {
 	URL  string `xml:"url,attr"`
 	Name string `xml:",chardata"`
 }
 
-type InnerContent struct {
+type innerContent struct {
 	Content string
 }
 
-func (ic *InnerContent) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+func (ic *innerContent) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var content strings.Builder
 
 	for {

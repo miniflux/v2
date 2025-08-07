@@ -14,14 +14,14 @@ import (
 	"miniflux.app/v2/internal/storage"
 )
 
-// Worker refreshes a feed in the background.
-type Worker struct {
+// worker refreshes a feed in the background.
+type worker struct {
 	id    int
 	store *storage.Storage
 }
 
 // Run wait for a job and refresh the given feed.
-func (w *Worker) Run(c <-chan model.Job) {
+func (w *worker) Run(c <-chan model.Job) {
 	slog.Debug("Worker started",
 		slog.Int("worker_id", w.id),
 	)

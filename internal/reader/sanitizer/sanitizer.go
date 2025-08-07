@@ -197,7 +197,8 @@ type SanitizerOptions struct {
 	OpenLinksInNewTab bool
 }
 
-func SanitizeHTMLWithDefaultOptions(baseURL, rawHTML string) string {
+// TODO: replace with SanitizeHTML, as it's only used in tests.
+func sanitizeHTMLWithDefaultOptions(baseURL, rawHTML string) string {
 	return SanitizeHTML(baseURL, rawHTML, &SanitizerOptions{
 		OpenLinksInNewTab: true,
 	})

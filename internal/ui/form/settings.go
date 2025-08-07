@@ -13,14 +13,14 @@ import (
 	"miniflux.app/v2/internal/validator"
 )
 
-// MarkReadBehavior list all possible behaviors for automatically marking an entry as read
-type MarkReadBehavior string
+// markReadBehavior list all possible behaviors for automatically marking an entry as read
+type markReadBehavior string
 
 const (
-	NoAutoMarkAsRead                           MarkReadBehavior = "no-auto"
-	MarkAsReadOnView                           MarkReadBehavior = "on-view"
-	MarkAsReadOnViewButWaitForPlayerCompletion MarkReadBehavior = "on-view-but-wait-for-player-completion"
-	MarkAsReadOnlyOnPlayerCompletion           MarkReadBehavior = "on-player-completion"
+	NoAutoMarkAsRead                           markReadBehavior = "no-auto"
+	MarkAsReadOnView                           markReadBehavior = "on-view"
+	MarkAsReadOnViewButWaitForPlayerCompletion markReadBehavior = "on-view-but-wait-for-player-completion"
+	MarkAsReadOnlyOnPlayerCompletion           markReadBehavior = "on-player-completion"
 )
 
 // SettingsForm represents the settings form.
@@ -48,7 +48,7 @@ type SettingsForm struct {
 	CategoriesSortingOrder string
 	MarkReadOnView         bool
 	// MarkReadBehavior is a string representation of the MarkReadOnView and MarkReadOnMediaPlayerCompletion fields together
-	MarkReadBehavior          MarkReadBehavior
+	MarkReadBehavior          markReadBehavior
 	MediaPlaybackRate         float64
 	BlockFilterEntryRules     string
 	KeepFilterEntryRules      string
@@ -58,7 +58,7 @@ type SettingsForm struct {
 
 // MarkAsReadBehavior returns the MarkReadBehavior from the given MarkReadOnView and MarkReadOnMediaPlayerCompletion values.
 // Useful to convert the values from the User model to the form
-func MarkAsReadBehavior(markReadOnView, markReadOnMediaPlayerCompletion bool) MarkReadBehavior {
+func MarkAsReadBehavior(markReadOnView, markReadOnMediaPlayerCompletion bool) markReadBehavior {
 	switch {
 	case markReadOnView && !markReadOnMediaPlayerCompletion:
 		return MarkAsReadOnView
@@ -73,9 +73,9 @@ func MarkAsReadBehavior(markReadOnView, markReadOnMediaPlayerCompletion bool) Ma
 	}
 }
 
-// ExtractMarkAsReadBehavior returns the MarkReadOnView and MarkReadOnMediaPlayerCompletion values from the given MarkReadBehavior.
+// extractMarkAsReadBehavior returns the MarkReadOnView and MarkReadOnMediaPlayerCompletion values from the given MarkReadBehavior.
 // Useful to extract the values from the form to the User model
-func ExtractMarkAsReadBehavior(behavior MarkReadBehavior) (markReadOnView, markReadOnMediaPlayerCompletion bool) {
+func extractMarkAsReadBehavior(behavior markReadBehavior) (markReadOnView, markReadOnMediaPlayerCompletion bool) {
 	switch behavior {
 	case MarkAsReadOnView:
 		return true, false
@@ -119,7 +119,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.AlwaysOpenExternalLinks = s.AlwaysOpenExternalLinks
 	user.OpenExternalLinksInNewTab = s.OpenExternalLinksInNewTab
 
-	MarkReadOnView, MarkReadOnMediaPlayerCompletion := ExtractMarkAsReadBehavior(s.MarkReadBehavior)
+	MarkReadOnView, MarkReadOnMediaPlayerCompletion := extractMarkAsReadBehavior(s.MarkReadBehavior)
 	user.MarkReadOnView = MarkReadOnView
 	user.MarkReadOnMediaPlayerCompletion = MarkReadOnMediaPlayerCompletion
 
@@ -205,7 +205,7 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		DefaultHomePage:           r.FormValue("default_home_page"),
 		CategoriesSortingOrder:    r.FormValue("categories_sorting_order"),
 		MarkReadOnView:            r.FormValue("mark_read_on_view") == "1",
-		MarkReadBehavior:          MarkReadBehavior(r.FormValue("mark_read_behavior")),
+		MarkReadBehavior:          markReadBehavior(r.FormValue("mark_read_behavior")),
 		MediaPlaybackRate:         mediaPlaybackRate,
 		BlockFilterEntryRules:     r.FormValue("block_filter_entry_rules"),
 		KeepFilterEntryRules:      r.FormValue("keep_filter_entry_rules"),

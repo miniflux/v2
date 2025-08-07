@@ -15,13 +15,13 @@ import (
 func Parse(baseURL string, r io.ReadSeeker, version string) (*model.Feed, error) {
 	switch version {
 	case "0.3":
-		atomFeed := new(Atom03Feed)
+		atomFeed := new(atom03Feed)
 		if err := xml_decoder.NewXMLDecoder(r).Decode(atomFeed); err != nil {
 			return nil, fmt.Errorf("atom: unable to parse Atom 0.3 feed: %w", err)
 		}
-		return NewAtom03Adapter(atomFeed).BuildFeed(baseURL), nil
+		return NewAtom03Adapter(atomFeed).buildFeed(baseURL), nil
 	default:
-		atomFeed := new(Atom10Feed)
+		atomFeed := new(atom10Feed)
 		if err := xml_decoder.NewXMLDecoder(r).Decode(atomFeed); err != nil {
 			return nil, fmt.Errorf("atom: unable to parse Atom 1.0 feed: %w", err)
 		}

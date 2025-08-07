@@ -16,15 +16,11 @@ import (
 	"miniflux.app/v2/internal/urllib"
 )
 
-type RDFAdapter struct {
-	rdf *RDF
+type rdfAdapter struct {
+	rdf *rdf
 }
 
-func NewRDFAdapter(rdf *RDF) *RDFAdapter {
-	return &RDFAdapter{rdf}
-}
-
-func (r *RDFAdapter) BuildFeed(baseURL string) *model.Feed {
+func (r *rdfAdapter) buildFeed(baseURL string) *model.Feed {
 	feed := &model.Feed{
 		Title:       stripTags(r.rdf.Channel.Title),
 		FeedURL:     strings.TrimSpace(baseURL),

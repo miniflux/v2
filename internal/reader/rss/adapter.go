@@ -19,15 +19,11 @@ import (
 	"miniflux.app/v2/internal/urllib"
 )
 
-type RSSAdapter struct {
-	rss *RSS
+type rssAdapter struct {
+	rss *rss
 }
 
-func NewRSSAdapter(rss *RSS) *RSSAdapter {
-	return &RSSAdapter{rss}
-}
-
-func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
+func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 	feed := &model.Feed{
 		Title:       html.UnescapeString(strings.TrimSpace(r.rss.Channel.Title)),
 		FeedURL:     strings.TrimSpace(baseURL),
@@ -145,7 +141,7 @@ func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
 	return feed
 }
 
-func findFeedAuthor(rssChannel *RSSChannel) string {
+func findFeedAuthor(rssChannel *rssChannel) string {
 	var author string
 	switch {
 	case rssChannel.ItunesAuthor != "":
@@ -165,7 +161,7 @@ func findFeedAuthor(rssChannel *RSSChannel) string {
 	return strings.TrimSpace(sanitizer.StripTags(author))
 }
 
-func findFeedTags(rssChannel *RSSChannel) []string {
+func findFeedTags(rssChannel *rssChannel) []string {
 	tags := make([]string, 0)
 
 	for _, tag := range rssChannel.Categories {
@@ -189,7 +185,7 @@ func findFeedTags(rssChannel *RSSChannel) []string {
 	return tags
 }
 
-func findEntryTitle(rssItem *RSSItem) string {
+func findEntryTitle(rssItem *rssItem) string {
 	title := rssItem.Title.Content
 
 	if rssItem.DublinCoreTitle != "" {
@@ -199,7 +195,7 @@ func findEntryTitle(rssItem *RSSItem) string {
 	return html.UnescapeString(html.UnescapeString(strings.TrimSpace(title)))
 }
 
-func findEntryURL(rssItem *RSSItem) string {
+func findEntryURL(rssItem *rssItem) string {
 	for _, link := range []string{rssItem.FeedBurnerLink, rssItem.Link} {
 		if link != "" {
 			return strings.TrimSpace(link)
@@ -222,7 +218,7 @@ func findEntryURL(rssItem *RSSItem) string {
 	return ""
 }
 
-func findEntryContent(rssItem *RSSItem) string {
+func findEntryContent(rssItem *rssItem) string {
 	for _, value := range []string{
 		rssItem.DublinCoreContent,
 		rssItem.Description,
@@ -237,7 +233,7 @@ func findEntryContent(rssItem *RSSItem) string {
 	return ""
 }
 
-func findEntryDate(rssItem *RSSItem) time.Time {
+func findEntryDate(rssItem *rssItem) time.Time {
 	value := rssItem.PubDate
 	if rssItem.DublinCoreDate != "" {
 		value = rssItem.DublinCoreDate
@@ -260,7 +256,7 @@ func findEntryDate(rssItem *RSSItem) time.Time {
 	return time.Now()
 }
 
-func findEntryAuthor(rssItem *RSSItem) string {
+func findEntryAuthor(rssItem *rssItem) string {
 	var author string
 
 	switch {
@@ -283,7 +279,7 @@ func findEntryAuthor(rssItem *RSSItem) string {
 	return strings.TrimSpace(sanitizer.StripTags(author))
 }
 
-func findEntryTags(rssItem *RSSItem) []string {
+func findEntryTags(rssItem *rssItem) []string {
 	tags := make([]string, 0)
 
 	for _, tag := range rssItem.Categories {
@@ -303,7 +299,7 @@ func findEntryTags(rssItem *RSSItem) []string {
 	return tags
 }
 
-func findEntryEnclosures(rssItem *RSSItem, siteURL string) model.EnclosureList {
+func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 	enclosures := make(model.EnclosureList, 0)
 	duplicates := make(map[string]bool)
 

@@ -19,10 +19,10 @@ import (
 )
 
 type Atom10Adapter struct {
-	atomFeed *Atom10Feed
+	atomFeed *atom10Feed
 }
 
-func NewAtom10Adapter(atomFeed *Atom10Feed) *Atom10Adapter {
+func NewAtom10Adapter(atomFeed *atom10Feed) *Atom10Adapter {
 	return &Atom10Adapter{atomFeed}
 }
 
@@ -40,7 +40,7 @@ func (a *Atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 	}
 
 	// Populate the site URL.
-	siteURL := a.atomFeed.Links.OriginalLink()
+	siteURL := a.atomFeed.Links.originalLink()
 	if siteURL != "" {
 		if absoluteSiteURL, err := urllib.AbsoluteURL(baseURL, siteURL); err == nil {
 			feed.SiteURL = absoluteSiteURL
@@ -50,13 +50,13 @@ func (a *Atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 	}
 
 	// Populate the feed title.
-	feed.Title = a.atomFeed.Title.Body()
+	feed.Title = a.atomFeed.Title.body()
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
 	}
 
 	// Populate the feed description.
-	feed.Description = a.atomFeed.Subtitle.Body()
+	feed.Description = a.atomFeed.Subtitle.body()
 
 	// Populate the feed icon.
 	if a.atomFeed.Icon != "" {
@@ -79,7 +79,7 @@ func (a *Atom10Adapter) populateEntries(siteURL string) model.Entries {
 		entry := model.NewEntry()
 
 		// Populate the entry URL.
-		entry.URL = atomEntry.Links.OriginalLink()
+		entry.URL = atomEntry.Links.originalLink()
 		if entry.URL != "" {
 			if absoluteEntryURL, err := urllib.AbsoluteURL(siteURL, entry.URL); err == nil {
 				entry.URL = absoluteEntryURL
@@ -87,16 +87,16 @@ func (a *Atom10Adapter) populateEntries(siteURL string) model.Entries {
 		}
 
 		// Populate the entry content.
-		entry.Content = atomEntry.Content.Body()
+		entry.Content = atomEntry.Content.body()
 		if entry.Content == "" {
-			entry.Content = atomEntry.Summary.Body()
+			entry.Content = atomEntry.Summary.body()
 			if entry.Content == "" {
 				entry.Content = atomEntry.FirstMediaDescription()
 			}
 		}
 
 		// Populate the entry title.
-		entry.Title = atomEntry.Title.Title()
+		entry.Title = atomEntry.Title.title()
 		if entry.Title == "" {
 			entry.Title = sanitizer.TruncateHTML(entry.Content, 100)
 			if entry.Title == "" {
@@ -105,9 +105,9 @@ func (a *Atom10Adapter) populateEntries(siteURL string) model.Entries {
 		}
 
 		// Populate the entry author.
-		authors := atomEntry.Authors.PersonNames()
+		authors := atomEntry.Authors.personNames()
 		if len(authors) == 0 {
-			authors = a.atomFeed.Authors.PersonNames()
+			authors = a.atomFeed.Authors.personNames()
 		}
 		sort.Strings(authors)
 		authors = slices.Compact(authors)
@@ -152,7 +152,7 @@ func (a *Atom10Adapter) populateEntries(siteURL string) model.Entries {
 		}
 
 		// Generate the entry hash.
-		for _, value := range []string{atomEntry.ID, atomEntry.Links.OriginalLink()} {
+		for _, value := range []string{atomEntry.ID, atomEntry.Links.originalLink()} {
 			if value != "" {
 				entry.Hash = crypto.SHA256(value)
 				break

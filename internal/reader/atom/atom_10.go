@@ -19,7 +19,7 @@ import (
 // Specs:
 // https://tools.ietf.org/html/rfc4287
 // https://validator.w3.org/feed/docs/atom.html
-type Atom10Feed struct {
+type atom10Feed struct {
 	XMLName xml.Name `xml:"http://www.w3.org/2005/Atom feed"`
 
 	// The "atom:id" element conveys a permanent, universally unique
@@ -37,11 +37,11 @@ type Atom10Feed struct {
 	// readable title for an entry or feed.
 	//
 	// atom:feed elements MUST contain exactly one atom:title element.
-	Title Atom10Text `xml:"http://www.w3.org/2005/Atom title"`
+	Title atom10Text `xml:"http://www.w3.org/2005/Atom title"`
 
 	// The "atom:subtitle" element is a Text construct that
 	// contains a human-readable description or subtitle for the feed.
-	Subtitle Atom10Text `xml:"http://www.w3.org/2005/Atom subtitle"`
+	Subtitle atom10Text `xml:"http://www.w3.org/2005/Atom subtitle"`
 
 	// The "atom:author" element is a Person construct that indicates the
 	// author of the entry or feed.
@@ -49,7 +49,7 @@ type Atom10Feed struct {
 	// atom:feed elements MUST contain one or more atom:author elements,
 	// unless all of the atom:feed element's child atom:entry elements
 	// contain at least one atom:author element.
-	Authors AtomPersons `xml:"http://www.w3.org/2005/Atom author"`
+	Authors atomPersons `xml:"http://www.w3.org/2005/Atom author"`
 
 	// The "atom:icon" element's content is an IRI reference [RFC3987] that
 	// identifies an image that provides iconic visual identification for a
@@ -71,7 +71,7 @@ type Atom10Feed struct {
 	// atom:feed elements MUST NOT contain more than one atom:link
 	// element with a rel attribute value of "alternate" that has the
 	// same combination of type and hreflang attribute values.
-	Links AtomLinks `xml:"http://www.w3.org/2005/Atom link"`
+	Links atomLinks `xml:"http://www.w3.org/2005/Atom link"`
 
 	// The "atom:category" element conveys information about a category
 	// associated with an entry or feed.  This specification assigns no
@@ -79,12 +79,12 @@ type Atom10Feed struct {
 	//
 	// atom:feed elements MAY contain any number of atom:category
 	// elements.
-	Categories AtomCategories `xml:"http://www.w3.org/2005/Atom category"`
+	Categories atomCategories `xml:"http://www.w3.org/2005/Atom category"`
 
-	Entries []Atom10Entry `xml:"http://www.w3.org/2005/Atom entry"`
+	Entries []atom10Entry `xml:"http://www.w3.org/2005/Atom entry"`
 }
 
-type Atom10Entry struct {
+type atom10Entry struct {
 	// The "atom:id" element conveys a permanent, universally unique
 	// identifier for an entry or feed.
 	//
@@ -100,7 +100,7 @@ type Atom10Entry struct {
 	// readable title for an entry or feed.
 	//
 	// atom:entry elements MUST contain exactly one atom:title element.
-	Title Atom10Text `xml:"http://www.w3.org/2005/Atom title"`
+	Title atom10Text `xml:"http://www.w3.org/2005/Atom title"`
 
 	// The "atom:published" element is a Date construct indicating an
 	// instant in time associated with an event early in the life cycle of
@@ -118,7 +118,7 @@ type Atom10Entry struct {
 	// atom:entry elements MUST NOT contain more than one atom:link
 	// element with a rel attribute value of "alternate" that has the
 	// same combination of type and hreflang attribute values.
-	Links AtomLinks `xml:"http://www.w3.org/2005/Atom link"`
+	Links atomLinks `xml:"http://www.w3.org/2005/Atom link"`
 
 	// atom:entry elements MUST contain an atom:summary element in either
 	// of the following cases:
@@ -131,17 +131,17 @@ type Atom10Entry struct {
 	//
 	// atom:entry elements MUST NOT contain more than one atom:summary
 	// element.
-	Summary Atom10Text `xml:"http://www.w3.org/2005/Atom summary"`
+	Summary atom10Text `xml:"http://www.w3.org/2005/Atom summary"`
 
 	// atom:entry elements MUST NOT contain more than one atom:content
 	// element.
-	Content Atom10Text `xml:"http://www.w3.org/2005/Atom content"`
+	Content atom10Text `xml:"http://www.w3.org/2005/Atom content"`
 
 	// The "atom:author" element is a Person construct that indicates the
 	// author of the entry or feed.
 	//
 	// atom:entry elements MUST contain one or more atom:author elements
-	Authors AtomPersons `xml:"http://www.w3.org/2005/Atom author"`
+	Authors atomPersons `xml:"http://www.w3.org/2005/Atom author"`
 
 	// The "atom:category" element conveys information about a category
 	// associated with an entry or feed.  This specification assigns no
@@ -149,7 +149,7 @@ type Atom10Entry struct {
 	//
 	// atom:entry elements MAY contain any number of atom:category
 	// elements.
-	Categories AtomCategories `xml:"http://www.w3.org/2005/Atom category"`
+	Categories atomCategories `xml:"http://www.w3.org/2005/Atom category"`
 
 	media.MediaItemElement
 }
@@ -160,14 +160,14 @@ type Atom10Entry struct {
 // Text: https://datatracker.ietf.org/doc/html/rfc4287#section-3.1.1.1
 // HTML: https://datatracker.ietf.org/doc/html/rfc4287#section-3.1.1.2
 // XHTML: https://datatracker.ietf.org/doc/html/rfc4287#section-3.1.1.3
-type Atom10Text struct {
+type atom10Text struct {
 	Type             string               `xml:"type,attr"`
 	CharData         string               `xml:",chardata"`
 	InnerXML         string               `xml:",innerxml"`
-	XHTMLRootElement AtomXHTMLRootElement `xml:"http://www.w3.org/1999/xhtml div"`
+	XHTMLRootElement atomXHTMLRootElement `xml:"http://www.w3.org/1999/xhtml div"`
 }
 
-func (a *Atom10Text) Body() string {
+func (a *atom10Text) body() string {
 	var content string
 
 	if strings.EqualFold(a.Type, "xhtml") {
@@ -179,7 +179,7 @@ func (a *Atom10Text) Body() string {
 	return strings.TrimSpace(content)
 }
 
-func (a *Atom10Text) Title() string {
+func (a *atom10Text) title() string {
 	var content string
 
 	switch {
@@ -194,14 +194,14 @@ func (a *Atom10Text) Title() string {
 	return strings.TrimSpace(content)
 }
 
-func (a *Atom10Text) xhtmlContent() string {
+func (a *atom10Text) xhtmlContent() string {
 	if a.XHTMLRootElement.XMLName.Local == "div" {
 		return a.XHTMLRootElement.InnerXML
 	}
 	return a.InnerXML
 }
 
-type AtomXHTMLRootElement struct {
+type atomXHTMLRootElement struct {
 	XMLName  xml.Name `xml:"div"`
 	InnerXML string   `xml:",innerxml"`
 }

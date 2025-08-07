@@ -27,7 +27,7 @@ func NewPool(store *storage.Storage, nbWorkers int) *Pool {
 	}
 
 	for i := range nbWorkers {
-		worker := &Worker{id: i, store: store}
+		worker := &worker{id: i, store: store}
 		go worker.Run(workerPool.queue)
 	}
 
