@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log/slog"
+	"strconv"
 	"strings"
 
 	"miniflux.app/v2/internal/model"
@@ -33,20 +34,20 @@ func (b *BatchBuilder) WithBatchSize(batchSize int) *BatchBuilder {
 }
 
 func (b *BatchBuilder) WithUserID(userID int64) *BatchBuilder {
-	b.conditions = append(b.conditions, fmt.Sprintf("user_id = $%d", len(b.args)+1))
+	b.conditions = append(b.conditions, "user_id = $"+strconv.Itoa(len(b.args)+1))
 	b.args = append(b.args, userID)
 	return b
 }
 
 func (b *BatchBuilder) WithCategoryID(categoryID int64) *BatchBuilder {
-	b.conditions = append(b.conditions, fmt.Sprintf("category_id = $%d", len(b.args)+1))
+	b.conditions = append(b.conditions, "category_id = $"+strconv.Itoa(len(b.args)+1))
 	b.args = append(b.args, categoryID)
 	return b
 }
 
 func (b *BatchBuilder) WithErrorLimit(limit int) *BatchBuilder {
 	if limit > 0 {
-		b.conditions = append(b.conditions, fmt.Sprintf("parsing_error_count < $%d", len(b.args)+1))
+		b.conditions = append(b.conditions, "parsing_error_count < $"+strconv.Itoa(len(b.args)+1))
 		b.args = append(b.args, limit)
 	}
 	return b
@@ -81,7 +82,7 @@ func (b *BatchBuilder) FetchJobs() (model.JobList, error) {
 	query += " ORDER BY next_check_at ASC"
 
 	if b.batchSize > 0 {
-		query += fmt.Sprintf(" LIMIT %d", b.batchSize)
+		query += " LIMIT " + strconv.Itoa(b.batchSize)
 	}
 
 	rows, err := b.db.Query(query, b.args...)

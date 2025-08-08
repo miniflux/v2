@@ -5,7 +5,6 @@ package model // import "miniflux.app/v2/internal/model"
 
 import (
 	"encoding/base64"
-	"fmt"
 )
 
 // Icon represents a website icon (favicon)
@@ -19,7 +18,7 @@ type Icon struct {
 
 // DataURL returns the data URL of the icon.
 func (i *Icon) DataURL() string {
-	return fmt.Sprintf("%s;base64,%s", i.MimeType, base64.StdEncoding.EncodeToString(i.Content))
+	return i.MimeType + ";base64," + base64.StdEncoding.EncodeToString(i.Content)
 }
 
 // Icons represents a list of icons.

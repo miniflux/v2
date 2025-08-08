@@ -6,6 +6,7 @@ package storage // import "miniflux.app/v2/internal/storage"
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"miniflux.app/v2/internal/model"
@@ -37,7 +38,7 @@ func (e *EntryPaginationBuilder) WithStarred() {
 // WithFeedID adds feed_id to the condition.
 func (e *EntryPaginationBuilder) WithFeedID(feedID int64) {
 	if feedID != 0 {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.feed_id = $%d", len(e.args)+1))
+		e.conditions = append(e.conditions, "e.feed_id = $"+strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, feedID)
 	}
 }
@@ -45,7 +46,7 @@ func (e *EntryPaginationBuilder) WithFeedID(feedID int64) {
 // WithCategoryID adds category_id to the condition.
 func (e *EntryPaginationBuilder) WithCategoryID(categoryID int64) {
 	if categoryID != 0 {
-		e.conditions = append(e.conditions, fmt.Sprintf("f.category_id = $%d", len(e.args)+1))
+		e.conditions = append(e.conditions, "f.category_id = $"+strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, categoryID)
 	}
 }
@@ -53,7 +54,7 @@ func (e *EntryPaginationBuilder) WithCategoryID(categoryID int64) {
 // WithStatus adds status to the condition.
 func (e *EntryPaginationBuilder) WithStatus(status string) {
 	if status != "" {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.status = $%d", len(e.args)+1))
+		e.conditions = append(e.conditions, "e.status = $"+strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, status)
 	}
 }
@@ -124,7 +125,7 @@ func (e *EntryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID
 	`
 
 	subCondition := strings.Join(e.conditions, " AND ")
-	finalCondition := fmt.Sprintf("ep.id = $%d", len(e.args)+1)
+	finalCondition := "ep.id = $" + strconv.Itoa(len(e.args)+1)
 	query := fmt.Sprintf(cte, e.order, subCondition, finalCondition)
 	e.args = append(e.args, e.entryID)
 
