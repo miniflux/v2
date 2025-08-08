@@ -6,16 +6,19 @@ package storage // import "miniflux.app/v2/internal/storage"
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"strings"
 
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/urllib"
 )
 
 type BatchBuilder struct {
-	db         *sql.DB
-	args       []any
-	conditions []string
-	limit      int
+	db           *sql.DB
+	args         []any
+	conditions   []string
+	limit        int
+	limitPerHost int
 }
 
 func (s *Storage) NewBatchBuilder() *BatchBuilder {
@@ -59,15 +62,27 @@ func (b *BatchBuilder) WithoutDisabledFeeds() *BatchBuilder {
 	return b
 }
 
+func (b *BatchBuilder) WithLimitPerHost(limit int) *BatchBuilder {
+	if limit > 0 {
+		b.limitPerHost = limit
+	}
+	return b
+}
+
+// FetchJobs retrieves a batch of jobs based on the conditions set in the builder.
+// It ensures that each job is unique by feed URL to avoid making too many concurrent requests to the same website.
+// When limitPerHost is set, it limits the number of jobs per feed hostname to prevent overwhelming a single host.
 func (b *BatchBuilder) FetchJobs() (model.JobList, error) {
-	query := `SELECT id, user_id FROM feeds`
+	query := `SELECT DISTINCT ON (feed_url) id, user_id, feed_url FROM feeds`
 
 	if len(b.conditions) > 0 {
 		query += " WHERE " + strings.Join(b.conditions, " AND ")
 	}
 
+	query += " ORDER BY feed_url, next_check_at ASC"
+
 	if b.limit > 0 {
-		query += fmt.Sprintf(" ORDER BY next_check_at ASC LIMIT %d", b.limit)
+		query += fmt.Sprintf(" LIMIT %d", b.limit)
 	}
 
 	rows, err := b.db.Query(query, b.args...)
@@ -77,14 +92,33 @@ func (b *BatchBuilder) FetchJobs() (model.JobList, error) {
 	defer rows.Close()
 
 	jobs := make(model.JobList, 0, b.limit)
+	hosts := make(map[string]int)
 
 	for rows.Next() {
 		var job model.Job
-		if err := rows.Scan(&job.FeedID, &job.UserID); err != nil {
-			return nil, fmt.Errorf(`store: unable to fetch job: %v`, err)
+		if err := rows.Scan(&job.FeedID, &job.UserID, &job.FeedURL); err != nil {
+			return nil, fmt.Errorf(`store: unable to fetch job record: %v`, err)
+		}
+
+		if b.limitPerHost > 0 {
+			feedHostname := urllib.Domain(job.FeedURL)
+			if hosts[feedHostname] >= b.limitPerHost {
+				slog.Debug("Feed host limit reached for this batch",
+					slog.String("feed_url", job.FeedURL),
+					slog.String("feed_hostname", feedHostname),
+					slog.Int("limit_per_host", b.limitPerHost),
+					slog.Int("current", hosts[feedHostname]),
+				)
+				continue
+			}
+			hosts[feedHostname]++
 		}
 
 		jobs = append(jobs, job)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf(`store: error iterating on job records: %v`, err)
 	}
 
 	return jobs, nil

@@ -21,6 +21,7 @@ func runScheduler(store *storage.Storage, pool *worker.Pool) {
 		config.Opts.PollingFrequency(),
 		config.Opts.BatchSize(),
 		config.Opts.PollingParsingErrorLimit(),
+		config.Opts.PollingLimitPerHost(),
 	)
 
 	go cleanupScheduler(
@@ -29,7 +30,7 @@ func runScheduler(store *storage.Storage, pool *worker.Pool) {
 	)
 }
 
-func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSize, errorLimit int) {
+func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSize, errorLimit, limitPerHost int) {
 	for range time.Tick(time.Duration(frequency) * time.Minute) {
 		// Generate a batch of feeds for any user that has feeds to refresh.
 		batchBuilder := store.NewBatchBuilder()
@@ -37,6 +38,7 @@ func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSi
 		batchBuilder.WithErrorLimit(errorLimit)
 		batchBuilder.WithoutDisabledFeeds()
 		batchBuilder.WithNextCheckExpired()
+		batchBuilder.WithLimitPerHost(limitPerHost)
 
 		if jobs, err := batchBuilder.FetchJobs(); err != nil {
 			slog.Error("Unable to fetch jobs from database", slog.Any("error", err))
@@ -44,6 +46,7 @@ func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSi
 			slog.Info("Created a batch of feeds",
 				slog.Int("nb_jobs", len(jobs)),
 			)
+			slog.Debug("Feed URLs in this batch", slog.Any("feed_urls", jobs.FeedURLs()))
 			pool.Push(jobs)
 		}
 	}

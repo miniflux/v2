@@ -2104,3 +2104,36 @@ func TestInvalidHTTPClientProxy(t *testing.T) {
 		t.Fatalf(`Expected error for invalid HTTP_CLIENT_PROXY value, but got none`)
 	}
 }
+
+func TestDefaultPollingLimitPerHost(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 0
+	result := opts.PollingLimitPerHost()
+	if result != expected {
+		t.Fatalf(`Unexpected default PollingLimitPerHost value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestCustomPollingLimitPerHost(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("POLLING_LIMIT_PER_HOST", "10")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 10
+	result := opts.PollingLimitPerHost()
+	if result != expected {
+		t.Fatalf(`Unexpected custom PollingLimitPerHost value, got %v instead of %v`, result, expected)
+	}
+}
