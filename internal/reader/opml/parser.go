@@ -13,7 +13,7 @@ import (
 
 // parse reads an OPML file and returns a SubcriptionList.
 func parse(data io.Reader) (subcriptionList, error) {
-	opmlDocument := NewOPMLDocument()
+	opmlDocument := &opmlDocument{}
 	decoder := xml.NewDecoder(data)
 	decoder.Entity = xml.HTMLEntity
 	decoder.Strict = false

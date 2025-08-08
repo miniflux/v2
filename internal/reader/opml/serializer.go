@@ -32,7 +32,7 @@ func serialize(subscriptions subcriptionList) string {
 }
 
 func convertSubscriptionsToOPML(subscriptions subcriptionList) *opmlDocument {
-	opmlDocument := NewOPMLDocument()
+	opmlDocument := &opmlDocument{}
 	opmlDocument.Version = "2.0"
 	opmlDocument.Header.Title = "Miniflux"
 	opmlDocument.Header.DateCreated = time.Now().Format("Mon, 02 Jan 2006 15:04:05 MST")

@@ -18,11 +18,6 @@ type atom03Adapter struct {
 	atomFeed *atom03Feed
 }
 
-// TODO No need for a constructor, as it's only used in this package
-func NewAtom03Adapter(atomFeed *atom03Feed) *atom03Adapter {
-	return &atom03Adapter{atomFeed}
-}
-
 func (a *atom03Adapter) buildFeed(baseURL string) *model.Feed {
 	feed := new(model.Feed)
 

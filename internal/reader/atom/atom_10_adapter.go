@@ -18,15 +18,15 @@ import (
 	"miniflux.app/v2/internal/urllib"
 )
 
-type Atom10Adapter struct {
+type atom10Adapter struct {
 	atomFeed *atom10Feed
 }
 
-func NewAtom10Adapter(atomFeed *atom10Feed) *Atom10Adapter {
-	return &Atom10Adapter{atomFeed}
+func NewAtom10Adapter(atomFeed *atom10Feed) *atom10Adapter {
+	return &atom10Adapter{atomFeed}
 }
 
-func (a *Atom10Adapter) BuildFeed(baseURL string) *model.Feed {
+func (a *atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 	feed := new(model.Feed)
 
 	// Populate the feed URL.
@@ -72,7 +72,7 @@ func (a *Atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 	return feed
 }
 
-func (a *Atom10Adapter) populateEntries(siteURL string) model.Entries {
+func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 	entries := make(model.Entries, 0, len(a.atomFeed.Entries))
 
 	for _, atomEntry := range a.atomFeed.Entries {

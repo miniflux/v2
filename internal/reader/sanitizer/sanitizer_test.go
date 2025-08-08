@@ -13,6 +13,12 @@ import (
 	"miniflux.app/v2/internal/config"
 )
 
+func sanitizeHTMLWithDefaultOptions(baseURL, rawHTML string) string {
+	return SanitizeHTML(baseURL, rawHTML, &SanitizerOptions{
+		OpenLinksInNewTab: true,
+	})
+}
+
 func BenchmarkSanitize(b *testing.B) {
 	var testCases = map[string][]string{
 		"miniflux_github.html":    {"https://github.com/miniflux/v2", ""},

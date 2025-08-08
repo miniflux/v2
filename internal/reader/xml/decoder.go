@@ -88,7 +88,7 @@ func filterValidXMLChar(r rune) rune {
 
 // This function is copied from encoding/xml's procInst and adapted for []bytes instead of string
 func getEncoding(b []byte) string {
-	// TODO: this parsing is somewhat lame and not exact.
+	// This parsing is somewhat lame and not exact.
 	// It works for all actual cases, though.
 	idx := bytes.Index(b, []byte("encoding="))
 	if idx == -1 {
