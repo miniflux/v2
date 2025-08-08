@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-var textLinkRegex = regexp.MustCompile(`(?mi)(\bhttps?://[^\s]+)[.]?(?:\s|$)`)
+var textLinkRegex = regexp.MustCompile(`(?mi)(\bhttps?://[^\s]+)`)
 
 // Specs: https://www.rssboard.org/media-rss
 type MediaItemElement struct {
@@ -154,8 +154,8 @@ func (d *Description) HTML() string {
 		return d.Description
 	}
 
-	content := strings.ReplaceAll(d.Description, "\n", "<br>")
-	return textLinkRegex.ReplaceAllString(content, `<a href="${1}">${1}</a>`)
+	content := textLinkRegex.ReplaceAllString(d.Description, `<a href="${1}">${1}</a>`)
+	return strings.ReplaceAll(content, "\n", "<br>")
 }
 
 // DescriptionList represents a list of "media:description" XML elements.
