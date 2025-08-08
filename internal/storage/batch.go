@@ -70,16 +70,15 @@ func (b *BatchBuilder) WithLimitPerHost(limit int) *BatchBuilder {
 }
 
 // FetchJobs retrieves a batch of jobs based on the conditions set in the builder.
-// It ensures that each job is unique by feed URL to avoid making too many concurrent requests to the same website.
 // When limitPerHost is set, it limits the number of jobs per feed hostname to prevent overwhelming a single host.
 func (b *BatchBuilder) FetchJobs() (model.JobList, error) {
-	query := `SELECT DISTINCT ON (feed_url) id, user_id, feed_url FROM feeds`
+	query := `SELECT id, user_id, feed_url FROM feeds`
 
 	if len(b.conditions) > 0 {
 		query += " WHERE " + strings.Join(b.conditions, " AND ")
 	}
 
-	query += " ORDER BY feed_url, next_check_at ASC"
+	query += " ORDER BY next_check_at ASC"
 
 	if b.batchSize > 0 {
 		query += fmt.Sprintf(" LIMIT %d", b.batchSize)
