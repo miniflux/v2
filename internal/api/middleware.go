@@ -43,6 +43,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 			slog.Debug("[API] Skipped API token authentication because no API Key has been provided",
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
+				slog.String("request_uri", r.RequestURI),
 			)
 			next.ServeHTTP(w, r)
 			return
@@ -59,6 +60,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 				slog.Bool("authentication_failed", true),
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
+				slog.String("request_uri", r.RequestURI),
 			)
 			json.Unauthorized(w, r)
 			return
@@ -69,6 +71,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 			slog.String("client_ip", clientIP),
 			slog.String("user_agent", r.UserAgent()),
 			slog.String("username", user.Username),
+			slog.String("request_uri", r.RequestURI),
 		)
 
 		m.store.SetLastLogin(user.ID)
@@ -100,6 +103,7 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 				slog.Bool("authentication_failed", true),
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
+				slog.String("request_uri", r.RequestURI),
 			)
 			json.Unauthorized(w, r)
 			return
@@ -110,6 +114,7 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 				slog.Bool("authentication_failed", true),
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
+				slog.String("request_uri", r.RequestURI),
 			)
 			json.Unauthorized(w, r)
 			return
@@ -121,6 +126,7 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
 				slog.String("username", username),
+				slog.String("request_uri", r.RequestURI),
 			)
 			json.Unauthorized(w, r)
 			return
@@ -138,6 +144,7 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
 				slog.String("username", username),
+				slog.String("request_uri", r.RequestURI),
 			)
 			json.Unauthorized(w, r)
 			return
@@ -148,6 +155,7 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 			slog.String("client_ip", clientIP),
 			slog.String("user_agent", r.UserAgent()),
 			slog.String("username", username),
+			slog.String("request_uri", r.RequestURI),
 		)
 
 		m.store.SetLastLogin(user.ID)
