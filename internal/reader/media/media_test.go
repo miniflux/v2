@@ -83,6 +83,8 @@ func TestDescription(t *testing.T) {
 		{"", "", ""},
 		{"html", "a <b>c</b>", "a <b>c</b>"},
 		{"plain", "a\nhttp://www.example.org/", `a<br><a href="http://www.example.org/">http://www.example.org/</a>`},
+		{"plain", "Link: https://example.com/path\n\nAnother: https://example.org",
+			`Link: <a href="https://example.com/path">https://example.com/path</a><br><br>Another: <a href="https://example.org">https://example.org</a>`},
 	}
 
 	for _, scenario := range scenarios {
