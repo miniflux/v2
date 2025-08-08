@@ -76,6 +76,7 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 	batchBuilder.WithoutDisabledFeeds()
 	batchBuilder.WithNextCheckExpired()
 	batchBuilder.WithUserID(userID)
+	batchBuilder.WithLimitPerHost(config.Opts.PollingLimitPerHost())
 
 	jobs, err := batchBuilder.FetchJobs()
 	if err != nil {

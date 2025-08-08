@@ -32,6 +32,7 @@ func (w *worker) Run(c <-chan model.Job) {
 			slog.Int("worker_id", w.id),
 			slog.Int64("user_id", job.UserID),
 			slog.Int64("feed_id", job.FeedID),
+			slog.String("feed_url", job.FeedURL),
 		)
 
 		startTime := time.Now()

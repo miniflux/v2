@@ -143,6 +143,7 @@ func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) {
 	batchBuilder.WithUserID(userID)
 	batchBuilder.WithCategoryID(categoryID)
 	batchBuilder.WithNextCheckExpired()
+	batchBuilder.WithLimitPerHost(config.Opts.PollingLimitPerHost())
 
 	jobs, err := batchBuilder.FetchJobs()
 	if err != nil {

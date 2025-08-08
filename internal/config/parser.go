@@ -137,12 +137,16 @@ func (p *parser) parseLines(lines []string) (err error) {
 			p.opts.cleanupRemoveSessionsDays = parseInt(value, defaultCleanupRemoveSessionsDays)
 		case "WORKER_POOL_SIZE":
 			p.opts.workerPoolSize = parseInt(value, defaultWorkerPoolSize)
-		case "POLLING_FREQUENCY":
-			p.opts.pollingFrequency = parseInt(value, defaultPollingFrequency)
 		case "FORCE_REFRESH_INTERVAL":
 			p.opts.forceRefreshInterval = parseInt(value, defaultForceRefreshInterval)
 		case "BATCH_SIZE":
 			p.opts.batchSize = parseInt(value, defaultBatchSize)
+		case "POLLING_FREQUENCY":
+			p.opts.pollingFrequency = parseInt(value, defaultPollingFrequency)
+		case "POLLING_LIMIT_PER_HOST":
+			p.opts.pollingLimitPerHost = parseInt(value, 0)
+		case "POLLING_PARSING_ERROR_LIMIT":
+			p.opts.pollingParsingErrorLimit = parseInt(value, defaultPollingParsingErrorLimit)
 		case "POLLING_SCHEDULER":
 			p.opts.pollingScheduler = strings.ToLower(parseString(value, defaultPollingScheduler))
 		case "SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL":
@@ -155,8 +159,6 @@ func (p *parser) parseLines(lines []string) (err error) {
 			p.opts.schedulerRoundRobinMinInterval = parseInt(value, defaultSchedulerRoundRobinMinInterval)
 		case "SCHEDULER_ROUND_ROBIN_MAX_INTERVAL":
 			p.opts.schedulerRoundRobinMaxInterval = parseInt(value, defaultSchedulerRoundRobinMaxInterval)
-		case "POLLING_PARSING_ERROR_LIMIT":
-			p.opts.pollingParsingErrorLimit = parseInt(value, defaultPollingParsingErrorLimit)
 		case "MEDIA_PROXY_HTTP_CLIENT_TIMEOUT":
 			p.opts.mediaProxyHTTPClientTimeout = parseInt(value, defaultMediaProxyHTTPClientTimeout)
 		case "MEDIA_PROXY_MODE":

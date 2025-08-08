@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "June 23, 2025" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "August 8, 2025" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -490,19 +490,32 @@ Refresh interval in minutes for feeds\&.
 .br
 Default is 60 minutes\&.
 .TP
+.B POLLING_LIMIT_PER_HOST
+Limits the number of concurrent requests to the same hostname when polling feeds.
+.br
+This helps prevent overwhelming a single server during batch processing by the worker pool.
+.br
+Default is 0 (disabled)\&.
+.TP
 .B POLLING_PARSING_ERROR_LIMIT
-The maximum number of parsing errors that the program will try before stopping polling a feed. Once the limit is reached, the user must refresh the feed manually. Set to 0 for unlimited.
+The maximum number of parsing errors that the program will try before stopping polling a feed.
+.br
+Once the limit is reached, the user must refresh the feed manually. Set to 0 for unlimited.
 .br
 Default is 3\&.
 .TP
 .B POLLING_SCHEDULER
-Scheduler used for polling feeds. Possible values are "round_robin" or "entry_frequency"\&.
+Determines the strategy used to schedule feed polling.
 .br
-The maximum number of feeds polled for a given period is subject to POLLING_FREQUENCY and BATCH_SIZE\&.
+Supported values are "round_robin" and "entry_frequency".
 .br
-When "entry_frequency" is selected, the refresh interval for a given feed is equal to the average updating interval of the last week of the feed\&.
+- "round_robin": Feeds are polled in a fixed, rotating order.
 .br
-The actual number of feeds polled will not exceed the maximum number of feeds that could be polled for a given period\&.
+- "entry_frequency": The polling interval for each feed is based on the average update frequency over the past week.
+.br
+The number of feeds polled in a given period is limited by the POLLING_FREQUENCY and BATCH_SIZE settings.
+.br
+Regardless of the scheduler used, the total number of polled feeds will not exceed the maximum allowed per polling cycle.
 .br
 Default is "round_robin"\&.
 .TP
