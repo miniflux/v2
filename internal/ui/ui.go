@@ -19,9 +19,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	middleware := newMiddleware(router, store)
 
 	templateEngine := template.NewEngine(router)
-	if err := templateEngine.ParseTemplates(); err != nil {
-		panic(err)
-	}
+	templateEngine.ParseTemplates()
 
 	handler := &handler{router, store, templateEngine, pool}
 

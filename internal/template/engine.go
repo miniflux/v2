@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"embed"
 	"html/template"
-	"log/slog"
 	"time"
 
 	"miniflux.app/v2/internal/locale"
@@ -20,9 +19,6 @@ var commonTemplateFiles embed.FS
 
 //go:embed templates/views/*.html
 var viewTemplateFiles embed.FS
-
-//go:embed templates/standalone/*.html
-var standaloneTemplateFiles embed.FS
 
 // Engine handles the templating system.
 type Engine struct {
@@ -38,43 +34,66 @@ func NewEngine(router *mux.Router) *Engine {
 	}
 }
 
-// ParseTemplates parses template files embed into the application.
-func (e *Engine) ParseTemplates() error {
+func (e *Engine) ParseTemplates() {
 	funcMap := e.funcMap.Map()
-	commonTemplates := template.Must(template.New("").Funcs(funcMap).ParseFS(commonTemplateFiles, "templates/common/*.html"))
-
-	dirEntries, err := viewTemplateFiles.ReadDir("templates/views")
-	if err != nil {
-		return err
+	templates := map[string][]string{ // this isn't a global variable so that it can be garbage-collected.
+		"about.html":               {"layout.html", "settings_menu.html"},
+		"add_subscription.html":    {"feed_menu.html", "layout.html", "settings_menu.html"},
+		"api_keys.html":            {"layout.html", "settings_menu.html"},
+		"bookmark_entries.html":    {"item_meta.html", "layout.html", "pagination.html"},
+		"categories.html":          {"layout.html"},
+		"category_entries.html":    {"item_meta.html", "layout.html", "pagination.html"},
+		"category_feeds.html":      {"feed_list.html", "layout.html"},
+		"choose_subscription.html": {"feed_menu.html", "layout.html"},
+		"create_api_key.html":      {"layout.html", "settings_menu.html"},
+		"create_category.html":     {"layout.html"},
+		"create_user.html":         {"layout.html", "settings_menu.html"},
+		"edit_category.html":       {"layout.html", "settings_menu.html"},
+		"edit_feed.html":           {"layout.html"},
+		"edit_user.html":           {"layout.html", "settings_menu.html"},
+		"entry.html":               {"layout.html"},
+		"feed_entries.html":        {"item_meta.html", "layout.html", "pagination.html"},
+		"feeds.html":               {"feed_list.html", "feed_menu.html", "item_meta.html", "layout.html", "pagination.html"},
+		"history_entries.html":     {"item_meta.html", "layout.html", "pagination.html"},
+		"import.html":              {"feed_menu.html", "layout.html"},
+		"integrations.html":        {"layout.html", "settings_menu.html"},
+		"login.html":               {"layout.html"},
+		"offline.html":             {},
+		"search.html":              {"item_meta.html", "layout.html", "pagination.html"},
+		"sessions.html":            {"layout.html", "settings_menu.html"},
+		"settings.html":            {"layout.html", "settings_menu.html"},
+		"shared_entries.html":      {"layout.html", "pagination.html"},
+		"tag_entries.html":         {"item_meta.html", "layout.html", "pagination.html"},
+		"unread_entries.html":      {"item_meta.html", "layout.html", "pagination.html"},
+		"users.html":               {"layout.html", "settings_menu.html"},
+		"webauthn_rename.html":     {"layout.html"},
 	}
-	for _, dirEntry := range dirEntries {
-		fullName := "templates/views/" + dirEntry.Name()
-		slog.Debug("Parsing template", slog.String("template_name", fullName))
-		commonTemplatesClone, err := commonTemplates.Clone()
-		if err != nil {
-			panic("Unable to clone the common template")
+
+	for name, dependencies := range templates {
+		tpl := template.New("").Funcs(funcMap)
+		for _, dependency := range dependencies {
+			template.Must(tpl.ParseFS(commonTemplateFiles, "templates/common/"+dependency))
 		}
-		e.templates[dirEntry.Name()] = template.Must(commonTemplatesClone.ParseFS(viewTemplateFiles, fullName))
+		e.templates[name] = template.Must(tpl.ParseFS(viewTemplateFiles, "templates/views/"+name))
 	}
 
-	dirEntries, err = standaloneTemplateFiles.ReadDir("templates/standalone")
-	if err != nil {
-		return err
+	// Sanity check to ensure that all templates are correctly declared in `templates`.
+	if entries, err := viewTemplateFiles.ReadDir("templates/views"); err == nil {
+		for _, entry := range entries {
+			if _, ok := e.templates[entry.Name()]; !ok {
+				panic("Template " + entry.Name() + " isn't declared in ParseTemplates")
+			}
+		}
+	} else {
+		panic("Unable to read all embedded views templates")
 	}
-	for _, dirEntry := range dirEntries {
-		fullName := "templates/standalone/" + dirEntry.Name()
-		slog.Debug("Parsing template", slog.String("template_name", fullName))
-		e.templates[dirEntry.Name()] = template.Must(template.New(dirEntry.Name()).Funcs(funcMap).ParseFS(standaloneTemplateFiles, fullName))
-	}
-
-	return nil
 }
 
 // Render process a template.
 func (e *Engine) Render(name string, data map[string]any) []byte {
 	tpl, ok := e.templates[name]
 	if !ok {
-		panic("This template does not exists: " + name)
+		panic("The template " + name + " does not exists.")
 	}
 
 	printer := locale.NewPrinter(data["language"].(string))
@@ -89,8 +108,7 @@ func (e *Engine) Render(name string, data map[string]any) []byte {
 	})
 
 	var b bytes.Buffer
-	err := tpl.ExecuteTemplate(&b, "base", data)
-	if err != nil {
+	if err := tpl.ExecuteTemplate(&b, "base", data); err != nil {
 		panic(err)
 	}
 
