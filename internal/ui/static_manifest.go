@@ -9,6 +9,7 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -27,9 +28,15 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 
 	type webManifestIcon struct {
 		Source  string `json:"src"`
-		Sizes   string `json:"sizes"`
-		Type    string `json:"type"`
-		Purpose string `json:"purpose"`
+		Sizes   string `json:"sizes,omitempty"`
+		Type    string `json:"type,omitempty"`
+		Purpose string `json:"purpose,omitempty"`
+	}
+
+	type webManifestShortcut struct {
+		Name  string            `json:"name"`
+		URL   string            `json:"url"`
+		Icons []webManifestIcon `json:"icons,omitempty"`
 	}
 
 	type webManifest struct {
@@ -41,9 +48,18 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 		ShareTarget     webManifestShareTarget `json:"share_target"`
 		Display         string                 `json:"display"`
 		BackgroundColor string                 `json:"background_color"`
+		Shortcuts       []webManifestShortcut  `json:"shortcuts"`
 	}
 
 	displayMode := "standalone"
+	labelNewFeed := "Add Feed"
+	labelUnreadMenu := "Unread"
+	labelStarredMenu := "Starred"
+	labelHistoryMenu := "History"
+	labelFeedsMenu := "Feeds"
+	labelCategoriesMenu := "Categories"
+	labelSearchMenu := "Search"
+	labelSettingsMenu := "Settings"
 	if request.IsAuthenticated(r) {
 		user, err := h.store.UserByID(request.UserID(r))
 		if err != nil {
@@ -51,6 +67,15 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		displayMode = user.DisplayMode
+		printer := locale.NewPrinter(user.Language)
+		labelNewFeed = printer.Print("menu.add_feed")
+		labelUnreadMenu = printer.Print("menu.unread")
+		labelStarredMenu = printer.Print("menu.starred")
+		labelHistoryMenu = printer.Print("menu.history")
+		labelFeedsMenu = printer.Print("menu.feeds")
+		labelCategoriesMenu = printer.Print("menu.categories")
+		labelSearchMenu = printer.Print("menu.search")
+		labelSettingsMenu = printer.Print("menu.settings")
 	}
 	themeColor := model.ThemeColor(request.UserTheme(r), "light")
 	manifest := &webManifest{
@@ -73,6 +98,16 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 			Method:  http.MethodGet,
 			Enctype: "application/x-www-form-urlencoded",
 			Params:  webManifestShareTargetParams{URL: "uri", Text: "text"},
+		},
+		Shortcuts: []webManifestShortcut{
+			{Name: labelNewFeed, URL: route.Path(h.router, "addSubscription"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "add-feed-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelUnreadMenu, URL: route.Path(h.router, "unread"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "unread-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelStarredMenu, URL: route.Path(h.router, "starred"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "starred-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelHistoryMenu, URL: route.Path(h.router, "history"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "history-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelFeedsMenu, URL: route.Path(h.router, "feeds"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "feeds-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelCategoriesMenu, URL: route.Path(h.router, "categories"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "categories-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelSearchMenu, URL: route.Path(h.router, "search"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "search-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelSettingsMenu, URL: route.Path(h.router, "settings"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "settings-icon.png"), Sizes: "240x240", Type: "image/png"}}},
 		},
 	}
 
