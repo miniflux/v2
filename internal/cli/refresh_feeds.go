@@ -33,15 +33,9 @@ func refreshFeeds(store *storage.Storage) {
 		return
 	}
 
-	nbJobs := len(jobs)
-
-	slog.Info("Created a batch of feeds",
-		slog.Int("nb_jobs", nbJobs),
-		slog.Int("batch_size", config.Opts.BatchSize()),
-	)
-
 	slog.Debug("Feed URLs in this batch", slog.Any("feed_urls", jobs.FeedURLs()))
 
+	nbJobs := len(jobs)
 	var jobQueue = make(chan model.Job, nbJobs)
 
 	slog.Info("Starting a pool of workers",

@@ -17,7 +17,7 @@ type BatchBuilder struct {
 	db           *sql.DB
 	args         []any
 	conditions   []string
-	limit        int
+	batchSize    int
 	limitPerHost int
 }
 
@@ -28,7 +28,7 @@ func (s *Storage) NewBatchBuilder() *BatchBuilder {
 }
 
 func (b *BatchBuilder) WithBatchSize(batchSize int) *BatchBuilder {
-	b.limit = batchSize
+	b.batchSize = batchSize
 	return b
 }
 
@@ -81,8 +81,8 @@ func (b *BatchBuilder) FetchJobs() (model.JobList, error) {
 
 	query += " ORDER BY feed_url, next_check_at ASC"
 
-	if b.limit > 0 {
-		query += fmt.Sprintf(" LIMIT %d", b.limit)
+	if b.batchSize > 0 {
+		query += fmt.Sprintf(" LIMIT %d", b.batchSize)
 	}
 
 	rows, err := b.db.Query(query, b.args...)
@@ -91,14 +91,18 @@ func (b *BatchBuilder) FetchJobs() (model.JobList, error) {
 	}
 	defer rows.Close()
 
-	jobs := make(model.JobList, 0, b.limit)
+	jobs := make(model.JobList, 0, b.batchSize)
 	hosts := make(map[string]int)
+	nbRows := 0
+	nbSkippedFeeds := 0
 
 	for rows.Next() {
 		var job model.Job
 		if err := rows.Scan(&job.FeedID, &job.UserID, &job.FeedURL); err != nil {
 			return nil, fmt.Errorf(`store: unable to fetch job record: %v`, err)
 		}
+
+		nbRows++
 
 		if b.limitPerHost > 0 {
 			feedHostname := urllib.Domain(job.FeedURL)
@@ -109,6 +113,7 @@ func (b *BatchBuilder) FetchJobs() (model.JobList, error) {
 					slog.Int("limit_per_host", b.limitPerHost),
 					slog.Int("current", hosts[feedHostname]),
 				)
+				nbSkippedFeeds++
 				continue
 			}
 			hosts[feedHostname]++
@@ -120,6 +125,13 @@ func (b *BatchBuilder) FetchJobs() (model.JobList, error) {
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf(`store: error iterating on job records: %v`, err)
 	}
+
+	slog.Info("Created a batch of feeds",
+		slog.Int("batch_size", b.batchSize),
+		slog.Int("rows_count", nbRows),
+		slog.Int("skipped_feeds_count", nbSkippedFeeds),
+		slog.Int("jobs_count", len(jobs)),
+	)
 
 	return jobs, nil
 }
