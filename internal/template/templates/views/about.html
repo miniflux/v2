@@ -16,17 +16,18 @@
         <li><strong>{{ t "page.about.git_commit" }}</strong> <a href="https://github.com/miniflux/v2/commit/{{ .commit }}">{{ .commit }}</a></li>
 	{{ end }}
         <li><strong>{{ t "page.about.build_date" }}</strong> {{ .build_date }}</li>
-        {{ if .user.IsAdmin }}<li><strong>{{ t "page.about.postgres_version" }}</strong> {{ .postgres_version }}</li>{{ end }}
-	<li><strong>{{t "page.about.go_version" }}</strong> {{ .go_version }}</li>
-        {{ if .user.IsAdmin }}<li><strong>{{t "page.about.db_usage" }}</strong> {{ .db_usage }}</li>{{ end }}
+    	<li><strong>{{t "page.about.go_version" }}</strong> {{ .go_version }}</li>
+    {{ if .user.IsAdmin }}
+        <li><strong>{{ t "page.about.postgres_version" }}</strong> {{ .postgres_version }}</li>
+        <li><strong>{{t "page.about.db_usage" }}</strong> {{ .db_usage }}</li>
+    {{ end }}
     </ul>
 </div>
-
 <div class="panel">
     <h3>{{ t "page.about.credits" }}</h3>
     <ul>
         <li><strong>{{ t "page.about.author" }}</strong> Frédéric Guillot</li>
-        <li><strong>{{ t "page.about.license" }}</strong> Apache 2.0</li>
+        <li><strong>{{ t "page.about.license" }}</strong> <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></li>
     </ul>
 </div>
 
@@ -35,7 +36,7 @@
     <h3>{{ t "page.about.global_config_options" }}</h3>
     <ul>
     {{ range .globalConfigOptions }}
-    <li><code><strong>{{ .Key }}</strong>={{ .Value }}</code></li>
+        <li><code><strong>{{ .Key }}</strong>={{ .Value }}</code></li>
     {{ end }}
     </ul>
 </div>
