@@ -979,6 +979,10 @@ article.category-has-unread {
     line-height: 1.7em;
 }
 
+.entry-actions .icon-label {
+    vertical-align: middle;
+}
+
 .entry-meta {
     font-size: 0.95em;
     margin: 0 0 20px;
