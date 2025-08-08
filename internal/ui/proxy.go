@@ -30,13 +30,13 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	encodedDigest := request.RouteStringParam(r, "encodedDigest")
 	encodedURL := request.RouteStringParam(r, "encodedURL")
 	if encodedURL == "" {
 		html.BadRequest(w, r, errors.New("no URL provided"))
 		return
 	}
 
+	encodedDigest := request.RouteStringParam(r, "encodedDigest")
 	decodedDigest, err := base64.URLEncoding.DecodeString(encodedDigest)
 	if err != nil {
 		html.BadRequest(w, r, errors.New("unable to decode this digest"))

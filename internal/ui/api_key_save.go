@@ -17,7 +17,7 @@ import (
 )
 
 func (h *handler) saveAPIKey(w http.ResponseWriter, r *http.Request) {
-	loggedUser, err := h.store.UserByID(request.UserID(r))
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -28,20 +28,20 @@ func (h *handler) saveAPIKey(w http.ResponseWriter, r *http.Request) {
 		Description: apiKeyForm.Description,
 	}
 
-	if validationErr := validator.ValidateAPIKeyCreation(h.store, loggedUser.ID, apiKeyCreationRequest); validationErr != nil {
+	if validationErr := validator.ValidateAPIKeyCreation(h.store, user.ID, apiKeyCreationRequest); validationErr != nil {
 		sess := session.New(h.store, request.SessionID(r))
 		view := view.New(h.tpl, r, sess)
 		view.Set("form", apiKeyForm)
 		view.Set("menu", "settings")
-		view.Set("user", loggedUser)
-		view.Set("countUnread", h.store.CountUnreadEntries(loggedUser.ID))
-		view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(loggedUser.ID))
-		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
+		view.Set("user", user)
+		view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+		view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+		view.Set("errorMessage", validationErr.Translate(user.Language))
 		html.OK(w, r, view.Render("create_api_key"))
 		return
 	}
 
-	if _, err = h.store.CreateAPIKey(loggedUser.ID, apiKeyCreationRequest.Description); err != nil {
+	if _, err = h.store.CreateAPIKey(user.ID, apiKeyCreationRequest.Description); err != nil {
 		html.ServerError(w, r, err)
 		return
 	}

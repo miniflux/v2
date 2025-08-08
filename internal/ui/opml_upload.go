@@ -21,8 +21,7 @@ import (
 )
 
 func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
-	loggedUserID := request.UserID(r)
-	user, err := h.store.UserByID(loggedUserID)
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -31,7 +30,7 @@ func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
 		slog.Error("OPML file upload error",
-			slog.Int64("user_id", loggedUserID),
+			slog.Int64("user_id", user.ID),
 			slog.Any("error", err),
 		)
 
@@ -41,7 +40,7 @@ func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	slog.Info("OPML file uploaded",
-		slog.Int64("user_id", loggedUserID),
+		slog.Int64("user_id", user.ID),
 		slog.String("file_name", fileHeader.Filename),
 		slog.Int64("file_size", fileHeader.Size),
 	)
@@ -69,8 +68,7 @@ func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) fetchOPML(w http.ResponseWriter, r *http.Request) {
-	loggedUserID := request.UserID(r)
-	user, err := h.store.UserByID(loggedUserID)
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -83,7 +81,7 @@ func (h *handler) fetchOPML(w http.ResponseWriter, r *http.Request) {
 	}
 
 	slog.Info("Fetching OPML file remotely",
-		slog.Int64("user_id", loggedUserID),
+		slog.Int64("user_id", user.ID),
 		slog.String("opml_file_url", opmlFileURL),
 	)
 

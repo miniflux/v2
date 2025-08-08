@@ -20,10 +20,6 @@ import (
 )
 
 func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
-	clientIP := request.ClientIP(r)
-	printer := locale.NewPrinter(request.UserLanguage(r))
-	sess := session.New(h.store, request.SessionID(r))
-
 	provider := request.RouteStringParam(r, "provider")
 	if provider == "" {
 		slog.Warn("Invalid or missing OAuth2 provider")
@@ -67,6 +63,9 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		html.Redirect(w, r, route.Path(h.router, "login"))
 		return
 	}
+
+	printer := locale.NewPrinter(request.UserLanguage(r))
+	sess := session.New(h.store, request.SessionID(r))
 
 	if request.IsAuthenticated(r) {
 		loggedUser, err := h.store.UserByID(request.UserID(r))
@@ -124,6 +123,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	clientIP := request.ClientIP(r)
 	sessionToken, _, err := h.store.CreateUserSessionFromUsername(user.Username, r.UserAgent(), clientIP)
 	if err != nil {
 		html.ServerError(w, r, err)
