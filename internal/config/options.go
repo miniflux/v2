@@ -100,6 +100,9 @@ type option struct {
 	Value any
 }
 
+// Opts holds parsed configuration options.
+var Opts *options
+
 // options contains configuration options.
 type options struct {
 	HTTPS                              bool

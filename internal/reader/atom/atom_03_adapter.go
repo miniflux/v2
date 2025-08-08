@@ -14,15 +14,16 @@ import (
 	"miniflux.app/v2/internal/urllib"
 )
 
-type Atom03Adapter struct {
-	atomFeed *Atom03Feed
+type atom03Adapter struct {
+	atomFeed *atom03Feed
 }
 
-func NewAtom03Adapter(atomFeed *Atom03Feed) *Atom03Adapter {
-	return &Atom03Adapter{atomFeed}
+// TODO No need for a constructor, as it's only used in this package
+func NewAtom03Adapter(atomFeed *atom03Feed) *atom03Adapter {
+	return &atom03Adapter{atomFeed}
 }
 
-func (a *Atom03Adapter) BuildFeed(baseURL string) *model.Feed {
+func (a *atom03Adapter) buildFeed(baseURL string) *model.Feed {
 	feed := new(model.Feed)
 
 	// Populate the feed URL.
@@ -36,7 +37,7 @@ func (a *Atom03Adapter) BuildFeed(baseURL string) *model.Feed {
 	}
 
 	// Populate the site URL.
-	siteURL := a.atomFeed.Links.OriginalLink()
+	siteURL := a.atomFeed.Links.originalLink()
 	if siteURL != "" {
 		if absoluteSiteURL, err := urllib.AbsoluteURL(baseURL, siteURL); err == nil {
 			feed.SiteURL = absoluteSiteURL
@@ -46,7 +47,7 @@ func (a *Atom03Adapter) BuildFeed(baseURL string) *model.Feed {
 	}
 
 	// Populate the feed title.
-	feed.Title = a.atomFeed.Title.Content()
+	feed.Title = a.atomFeed.Title.content()
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
 	}
@@ -55,7 +56,7 @@ func (a *Atom03Adapter) BuildFeed(baseURL string) *model.Feed {
 		entry := model.NewEntry()
 
 		// Populate the entry URL.
-		entry.URL = atomEntry.Links.OriginalLink()
+		entry.URL = atomEntry.Links.originalLink()
 		if entry.URL != "" {
 			if absoluteEntryURL, err := urllib.AbsoluteURL(feed.SiteURL, entry.URL); err == nil {
 				entry.URL = absoluteEntryURL
@@ -63,13 +64,13 @@ func (a *Atom03Adapter) BuildFeed(baseURL string) *model.Feed {
 		}
 
 		// Populate the entry content.
-		entry.Content = atomEntry.Content.Content()
+		entry.Content = atomEntry.Content.content()
 		if entry.Content == "" {
-			entry.Content = atomEntry.Summary.Content()
+			entry.Content = atomEntry.Summary.content()
 		}
 
 		// Populate the entry title.
-		entry.Title = atomEntry.Title.Content()
+		entry.Title = atomEntry.Title.content()
 		if entry.Title == "" {
 			entry.Title = sanitizer.TruncateHTML(entry.Content, 100)
 		}
@@ -101,7 +102,7 @@ func (a *Atom03Adapter) BuildFeed(baseURL string) *model.Feed {
 		}
 
 		// Generate the entry hash.
-		for _, value := range []string{atomEntry.ID, atomEntry.Links.OriginalLink()} {
+		for _, value := range []string{atomEntry.ID, atomEntry.Links.originalLink()} {
 			if value != "" {
 				entry.Hash = crypto.SHA256(value)
 				break

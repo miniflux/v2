@@ -10,7 +10,7 @@ import (
 )
 
 // Specs: http://web.archive.org/web/20060811235523/http://www.mnot.net/drafts/draft-nottingham-atom-format-02.html
-type Atom03Feed struct {
+type atom03Feed struct {
 	Version string `xml:"version,attr"`
 
 	// The "atom:id" element's content conveys a permanent, globally unique identifier for the feed.
@@ -21,14 +21,14 @@ type Atom03Feed struct {
 	// The "atom:title" element is a Content construct that conveys a human-readable title for the feed.
 	// atom:feed elements MUST contain exactly one atom:title element.
 	// If the feed describes a Web resource, its content SHOULD be the same as that resource's title.
-	Title Atom03Content `xml:"http://purl.org/atom/ns# title"`
+	Title atom03Content `xml:"http://purl.org/atom/ns# title"`
 
 	// The "atom:link" element is a Link construct that conveys a URI associated with the feed.
 	// The nature of the relationship as well as the link itself is determined by the element's content.
 	// atom:feed elements MUST contain at least one atom:link element with a rel attribute value of "alternate".
 	// atom:feed elements MUST NOT contain more than one atom:link element with a rel attribute value of "alternate" that has the same type attribute value.
 	// atom:feed elements MAY contain additional atom:link elements beyond those described above.
-	Links AtomLinks `xml:"http://purl.org/atom/ns# link"`
+	Links atomLinks `xml:"http://purl.org/atom/ns# link"`
 
 	// The "atom:author" element is a Person construct that indicates the default author of the feed.
 	// atom:feed elements MUST contain exactly one atom:author element,
@@ -38,10 +38,10 @@ type Atom03Feed struct {
 
 	// The "atom:entry" element's represents an individual entry that is contained by the feed.
 	// atom:feed elements MAY contain one or more atom:entry elements.
-	Entries []Atom03Entry `xml:"http://purl.org/atom/ns# entry"`
+	Entries []atom03Entry `xml:"http://purl.org/atom/ns# entry"`
 }
 
-type Atom03Entry struct {
+type atom03Entry struct {
 	// The "atom:id" element's content conveys a permanent, globally unique identifier for the entry.
 	// It MUST NOT change over time, even if other representations of the entry (such as a web representation pointed to by the entry's atom:link element) are relocated.
 	// If the same entry is syndicated in two atom:feeds published by the same entity, the entry's atom:id MUST be the same in both feeds.
@@ -50,7 +50,7 @@ type Atom03Entry struct {
 	// The "atom:title" element is a Content construct that conveys a human-readable title for the entry.
 	// atom:entry elements MUST have exactly one "atom:title" element.
 	// If an entry describes a Web resource, its content SHOULD be the same as that resource's title.
-	Title Atom03Content `xml:"title"`
+	Title atom03Content `xml:"title"`
 
 	// The "atom:modified" element is a Date construct that indicates the time that the entry was last modified.
 	// atom:entry elements MUST contain an atom:modified element, but MUST NOT contain more than one.
@@ -73,15 +73,15 @@ type Atom03Entry struct {
 	// atom:entry elements MUST contain at least one atom:link element with a rel attribute value of "alternate".
 	// atom:entry elements MUST NOT contain more than one atom:link element with a rel attribute value of "alternate" that has the same type attribute value.
 	// atom:entry elements MAY contain additional atom:link elements beyond those described above.
-	Links AtomLinks `xml:"link"`
+	Links atomLinks `xml:"link"`
 
 	// The "atom:summary" element is a Content construct that conveys a short summary, abstract or excerpt of the entry.
 	// atom:entry elements MAY contain an atom:created element, but MUST NOT contain more than one.
-	Summary Atom03Content `xml:"summary"`
+	Summary atom03Content `xml:"summary"`
 
 	// The "atom:content" element is a Content construct that conveys the content of the entry.
 	// atom:entry elements MAY contain one or more atom:content elements.
-	Content Atom03Content `xml:"content"`
+	Content atom03Content `xml:"content"`
 
 	// The "atom:author" element is a Person construct that indicates the default author of the entry.
 	// atom:entry elements MUST contain exactly one atom:author element,
@@ -90,7 +90,7 @@ type Atom03Entry struct {
 	Author AtomPerson `xml:"author"`
 }
 
-type Atom03Content struct {
+type atom03Content struct {
 	// Content constructs MAY have a "type" attribute, whose value indicates the media type of the content.
 	// When present, this attribute's value MUST be a registered media type [RFC2045].
 	// If not present, its value MUST be considered to be "text/plain".
@@ -113,7 +113,7 @@ type Atom03Content struct {
 	InnerXML string `xml:",innerxml"`
 }
 
-func (a *Atom03Content) Content() string {
+func (a *atom03Content) content() string {
 	content := ""
 
 	switch a.Mode {

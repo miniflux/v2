@@ -10,14 +10,14 @@ import (
 	"miniflux.app/v2/internal/locale"
 )
 
-// AuthForm represents the authentication form.
-type AuthForm struct {
+// authForm represents the authentication form.
+type authForm struct {
 	Username string
 	Password string
 }
 
 // Validate makes sure the form values are valid.
-func (a AuthForm) Validate() *locale.LocalizedError {
+func (a authForm) Validate() *locale.LocalizedError {
 	if a.Username == "" || a.Password == "" {
 		return locale.NewLocalizedError("error.fields_mandatory")
 	}
@@ -26,8 +26,8 @@ func (a AuthForm) Validate() *locale.LocalizedError {
 }
 
 // NewAuthForm returns a new AuthForm.
-func NewAuthForm(r *http.Request) *AuthForm {
-	return &AuthForm{
+func NewAuthForm(r *http.Request) *authForm {
+	return &authForm{
 		Username: strings.TrimSpace(r.FormValue("username")),
 		Password: strings.TrimSpace(r.FormValue("password")),
 	}

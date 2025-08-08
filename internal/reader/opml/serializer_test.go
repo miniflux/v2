@@ -9,13 +9,13 @@ import (
 )
 
 func TestSerialize(t *testing.T) {
-	var subscriptions SubcriptionList
-	subscriptions = append(subscriptions, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed/1", SiteURL: "http://example.org/1", CategoryName: "Category 1"})
-	subscriptions = append(subscriptions, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed/2", SiteURL: "http://example.org/2", CategoryName: "Category 1"})
-	subscriptions = append(subscriptions, &Subcription{Title: "Feed 3", FeedURL: "http://example.org/feed/3", SiteURL: "http://example.org/3", CategoryName: "Category 2"})
+	var subscriptions subcriptionList
+	subscriptions = append(subscriptions, &subcription{Title: "Feed 1", FeedURL: "http://example.org/feed/1", SiteURL: "http://example.org/1", CategoryName: "Category 1"})
+	subscriptions = append(subscriptions, &subcription{Title: "Feed 2", FeedURL: "http://example.org/feed/2", SiteURL: "http://example.org/2", CategoryName: "Category 1"})
+	subscriptions = append(subscriptions, &subcription{Title: "Feed 3", FeedURL: "http://example.org/feed/3", SiteURL: "http://example.org/3", CategoryName: "Category 2"})
 
-	output := Serialize(subscriptions)
-	feeds, err := Parse(bytes.NewBufferString(output))
+	output := serialize(subscriptions)
+	feeds, err := parse(bytes.NewBufferString(output))
 	if err != nil {
 		t.Error(err)
 	}
@@ -48,10 +48,10 @@ func TestNormalizedCategoriesOrder(t *testing.T) {
 		{"Category 1", "Category 3"},
 	}
 
-	var subscriptions SubcriptionList
-	subscriptions = append(subscriptions, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed/1", SiteURL: "http://example.org/1", CategoryName: orderTests[0].naturalOrderName})
-	subscriptions = append(subscriptions, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed/2", SiteURL: "http://example.org/2", CategoryName: orderTests[1].naturalOrderName})
-	subscriptions = append(subscriptions, &Subcription{Title: "Feed 3", FeedURL: "http://example.org/feed/3", SiteURL: "http://example.org/3", CategoryName: orderTests[2].naturalOrderName})
+	var subscriptions subcriptionList
+	subscriptions = append(subscriptions, &subcription{Title: "Feed 1", FeedURL: "http://example.org/feed/1", SiteURL: "http://example.org/1", CategoryName: orderTests[0].naturalOrderName})
+	subscriptions = append(subscriptions, &subcription{Title: "Feed 2", FeedURL: "http://example.org/feed/2", SiteURL: "http://example.org/2", CategoryName: orderTests[1].naturalOrderName})
+	subscriptions = append(subscriptions, &subcription{Title: "Feed 3", FeedURL: "http://example.org/feed/3", SiteURL: "http://example.org/3", CategoryName: orderTests[2].naturalOrderName})
 
 	feeds := convertSubscriptionsToOPML(subscriptions)
 

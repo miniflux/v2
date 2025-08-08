@@ -3,8 +3,8 @@
 
 package opml // import "miniflux.app/v2/internal/reader/opml"
 
-// Subcription represents a feed that will be imported or exported.
-type Subcription struct {
+// subcription represents a feed that will be imported or exported.
+type subcription struct {
 	Title        string
 	SiteURL      string
 	FeedURL      string
@@ -12,12 +12,5 @@ type Subcription struct {
 	Description  string
 }
 
-// Equals compare two subscriptions.
-func (s Subcription) Equals(subscription *Subcription) bool {
-	return s.Title == subscription.Title && s.SiteURL == subscription.SiteURL &&
-		s.FeedURL == subscription.FeedURL && s.CategoryName == subscription.CategoryName &&
-		s.Description == subscription.Description
-}
-
-// SubcriptionList is a list of subscriptions.
-type SubcriptionList []*Subcription
+// subcriptionList is a list of subscriptions.
+type subcriptionList []*subcription

@@ -16,6 +16,7 @@ type opmlDocument struct {
 	Outlines opmlOutlineCollection `xml:"body>outline"`
 }
 
+// TODO remove as this is only used in the opml package
 func NewOPMLDocument() *opmlDocument {
 	return &opmlDocument{}
 }

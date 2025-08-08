@@ -30,9 +30,9 @@ func (a *AtomPerson) PersonName() string {
 	return strings.TrimSpace(a.Email)
 }
 
-type AtomPersons []*AtomPerson
+type atomPersons []*AtomPerson
 
-func (a AtomPersons) PersonNames() []string {
+func (a atomPersons) personNames() []string {
 	var names []string
 	authorNamesMap := make(map[string]bool)
 
@@ -56,9 +56,9 @@ type AtomLink struct {
 	Title  string `xml:"title,attr"`
 }
 
-type AtomLinks []*AtomLink
+type atomLinks []*AtomLink
 
-func (a AtomLinks) OriginalLink() string {
+func (a atomLinks) originalLink() string {
 	for _, link := range a {
 		if strings.EqualFold(link.Rel, "alternate") {
 			return strings.TrimSpace(link.Href)
@@ -72,7 +72,7 @@ func (a AtomLinks) OriginalLink() string {
 	return ""
 }
 
-func (a AtomLinks) firstLinkWithRelation(relation string) string {
+func (a atomLinks) firstLinkWithRelation(relation string) string {
 	for _, link := range a {
 		if strings.EqualFold(link.Rel, relation) {
 			return strings.TrimSpace(link.Href)
@@ -82,7 +82,7 @@ func (a AtomLinks) firstLinkWithRelation(relation string) string {
 	return ""
 }
 
-func (a AtomLinks) firstLinkWithRelationAndType(relation string, contentTypes ...string) string {
+func (a atomLinks) firstLinkWithRelationAndType(relation string, contentTypes ...string) string {
 	for _, link := range a {
 		if strings.EqualFold(link.Rel, relation) {
 			for _, contentType := range contentTypes {
@@ -96,7 +96,7 @@ func (a AtomLinks) firstLinkWithRelationAndType(relation string, contentTypes ..
 	return ""
 }
 
-func (a AtomLinks) findAllLinksWithRelation(relation string) []*AtomLink {
+func (a atomLinks) findAllLinksWithRelation(relation string) []*AtomLink {
 	var links []*AtomLink
 
 	for _, link := range a {
@@ -116,7 +116,7 @@ func (a AtomLinks) findAllLinksWithRelation(relation string) []*AtomLink {
 // meaning to the content (if any) of this element.
 //
 // Specs: https://datatracker.ietf.org/doc/html/rfc4287#section-4.2.2
-type AtomCategory struct {
+type atomCategory struct {
 	// The "term" attribute is a string that identifies the category to
 	// which the entry or feed belongs. Category elements MUST have a
 	// "term" attribute.
@@ -134,9 +134,9 @@ type AtomCategory struct {
 	Label string `xml:"label,attr"`
 }
 
-type AtomCategories []AtomCategory
+type atomCategories []atomCategory
 
-func (ac AtomCategories) CategoryNames() []string {
+func (ac atomCategories) CategoryNames() []string {
 	var categories []string
 
 	for _, category := range ac {

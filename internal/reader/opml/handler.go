@@ -23,9 +23,9 @@ func (h *Handler) Export(userID int64) (string, error) {
 		return "", err
 	}
 
-	subscriptions := make(SubcriptionList, 0, len(feeds))
+	subscriptions := make(subcriptionList, 0, len(feeds))
 	for _, feed := range feeds {
-		subscriptions = append(subscriptions, &Subcription{
+		subscriptions = append(subscriptions, &subcription{
 			Title:        feed.Title,
 			FeedURL:      feed.FeedURL,
 			SiteURL:      feed.SiteURL,
@@ -34,12 +34,12 @@ func (h *Handler) Export(userID int64) (string, error) {
 		})
 	}
 
-	return Serialize(subscriptions), nil
+	return serialize(subscriptions), nil
 }
 
 // Import parses and create feeds from an OPML import.
 func (h *Handler) Import(userID int64, data io.Reader) error {
-	subscriptions, err := Parse(data)
+	subscriptions, err := parse(data)
 	if err != nil {
 		return err
 	}

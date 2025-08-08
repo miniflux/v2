@@ -7,14 +7,14 @@ import (
 	"miniflux.app/v2/internal/reader/atom"
 )
 
-type AtomAuthor struct {
+type atomAuthor struct {
 	Author atom.AtomPerson `xml:"http://www.w3.org/2005/Atom author"`
 }
 
-func (a *AtomAuthor) PersonName() string {
+func (a *atomAuthor) PersonName() string {
 	return a.Author.PersonName()
 }
 
-type AtomLinks struct {
+type atomLinks struct {
 	Links []*atom.AtomLink `xml:"http://www.w3.org/2005/Atom link"`
 }
