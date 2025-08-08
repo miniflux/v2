@@ -19,12 +19,14 @@ func Parse(baseURL string, r io.ReadSeeker, version string) (*model.Feed, error)
 		if err := xml_decoder.NewXMLDecoder(r).Decode(atomFeed); err != nil {
 			return nil, fmt.Errorf("atom: unable to parse Atom 0.3 feed: %w", err)
 		}
-		return NewAtom03Adapter(atomFeed).buildFeed(baseURL), nil
+		adapter := &atom03Adapter{atomFeed}
+		return adapter.buildFeed(baseURL), nil
 	default:
 		atomFeed := new(atom10Feed)
 		if err := xml_decoder.NewXMLDecoder(r).Decode(atomFeed); err != nil {
 			return nil, fmt.Errorf("atom: unable to parse Atom 1.0 feed: %w", err)
 		}
-		return NewAtom10Adapter(atomFeed).BuildFeed(baseURL), nil
+		adapter := &atom10Adapter{atomFeed}
+		return adapter.BuildFeed(baseURL), nil
 	}
 }
