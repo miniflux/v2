@@ -43,9 +43,6 @@ func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSi
 		if jobs, err := batchBuilder.FetchJobs(); err != nil {
 			slog.Error("Unable to fetch jobs from database", slog.Any("error", err))
 		} else if len(jobs) > 0 {
-			slog.Info("Created a batch of feeds",
-				slog.Int("nb_jobs", len(jobs)),
-			)
 			slog.Debug("Feed URLs in this batch", slog.Any("feed_urls", jobs.FeedURLs()))
 			pool.Push(jobs)
 		}
