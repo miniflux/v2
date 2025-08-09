@@ -6,13 +6,15 @@ package static // import "miniflux.app/v2/internal/ui/static"
 import (
 	"bytes"
 	"embed"
-	"fmt"
+	"log/slog"
+	"strings"
 
 	"miniflux.app/v2/internal/crypto"
 
 	"github.com/tdewolff/minify/v2"
 	"github.com/tdewolff/minify/v2/css"
 	"github.com/tdewolff/minify/v2/js"
+	"github.com/tdewolff/minify/v2/svg"
 )
 
 type asset struct {
@@ -22,9 +24,9 @@ type asset struct {
 
 // Static assets.
 var (
-	StylesheetBundles   map[string]asset
-	JavascriptBundles   map[string]asset
-	binaryFileChecksums map[string]string
+	StylesheetBundles map[string]asset
+	JavascriptBundles map[string]asset
+	BinaryBundles     map[string]asset
 )
 
 //go:embed bin/*
@@ -36,38 +38,40 @@ var stylesheetFiles embed.FS
 //go:embed js/*.js
 var javascriptFiles embed.FS
 
-// CalculateBinaryFileChecksums generates hash of embed binary files.
-func CalculateBinaryFileChecksums() error {
+func GenerateBinaryBundles() error {
 	dirEntries, err := binaryFiles.ReadDir("bin")
 	if err != nil {
 		return err
 	}
-	binaryFileChecksums = make(map[string]string, len(dirEntries))
+	BinaryBundles = make(map[string]asset, len(dirEntries))
+
+	minifier := minify.New()
+	minifier.Add("image/svg+xml", &svg.Minifier{
+		KeepComments: true, // needed to keep the license
+	})
 
 	for _, dirEntry := range dirEntries {
-		data, err := LoadBinaryFile(dirEntry.Name())
+		name := dirEntry.Name()
+		data, err := binaryFiles.ReadFile("bin/" + name)
 		if err != nil {
 			return err
 		}
 
-		binaryFileChecksums[dirEntry.Name()] = crypto.HashFromBytes(data)
+		if strings.HasSuffix(name, ".svg") {
+			// minifier.Bytes returns the data unchanged in case of error.
+			data, err = minifier.Bytes("image/svg+xml", data)
+			if err != nil {
+				slog.Error("Unable to minimize the svg file", slog.String("filename", name), slog.Any("error", err))
+			}
+		}
+
+		BinaryBundles[name] = asset{
+			Data:     data,
+			Checksum: crypto.HashFromBytes(data),
+		}
 	}
 
 	return nil
-}
-
-// LoadBinaryFile loads an embed binary file.
-func LoadBinaryFile(filename string) ([]byte, error) {
-	return binaryFiles.ReadFile("bin/" + filename)
-}
-
-// GetBinaryFileChecksum returns a binary file checksum.
-func GetBinaryFileChecksum(filename string) (string, error) {
-	data, found := binaryFileChecksums[filename]
-	if !found {
-		return "", fmt.Errorf(`static: unable to find checksum for %q`, filename)
-	}
-	return data, nil
 }
 
 // GenerateStylesheetsBundles creates CSS bundles.

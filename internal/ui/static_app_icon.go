@@ -16,19 +16,13 @@ import (
 
 func (h *handler) showAppIcon(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "filename")
-	etag, err := static.GetBinaryFileChecksum(filename)
-	if err != nil {
+	value, ok := static.BinaryBundles[filename]
+	if !ok {
 		html.NotFound(w, r)
 		return
 	}
 
-	response.New(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
-		blob, err := static.LoadBinaryFile(filename)
-		if err != nil {
-			html.ServerError(w, r, err)
-			return
-		}
-
+	response.New(w, r).WithCaching(value.Checksum, 72*time.Hour, func(b *response.Builder) {
 		switch filepath.Ext(filename) {
 		case ".png":
 			b.WithoutCompression()
@@ -36,8 +30,7 @@ func (h *handler) showAppIcon(w http.ResponseWriter, r *http.Request) {
 		case ".svg":
 			b.WithHeader("Content-Type", "image/svg+xml")
 		}
-
-		b.WithBody(blob)
+		b.WithBody(value.Data)
 		b.Write()
 	})
 }
