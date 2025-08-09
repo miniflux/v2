@@ -131,6 +131,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				setweight(to_tsvector($11), 'A') || setweight(to_tsvector($12), 'B'),
 				$13
 			)
+		ON CONFLICT DO NOTHING
 		RETURNING
 			id, status, created_at, changed_at
 	`
@@ -163,8 +164,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 	for _, enclosure := range entry.Enclosures {
 		enclosure.EntryID = entry.ID
 		enclosure.UserID = entry.UserID
-		err := s.createEnclosure(tx, enclosure)
-		if err != nil {
+		if err := s.createEnclosure(tx, enclosure); err != nil {
 			return err
 		}
 	}
