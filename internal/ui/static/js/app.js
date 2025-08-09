@@ -635,7 +635,7 @@ function toggleEntryStatus(element, toasting) {
         setReadStatusButtonState(buttonElement, newStatus);
 
         if (toasting) {
-            showToastNotification(currentStatus, currentStatus === "read" ? buttonElement.dataset.toastUnread : buttonElement.dataset.toastRead);
+            showToastNotification(newStatus, currentStatus === "read" ? buttonElement.dataset.toastUnread : buttonElement.dataset.toastRead);
         }
 
         if (element.classList.contains("item-status-" + currentStatus)) {
@@ -716,13 +716,14 @@ function handleBookmarkAction(element) {
     setButtonToLoadingState(buttonElement);
 
     sendPOSTRequest(buttonElement.dataset.bookmarkUrl).then(() => {
-        const isStarred = buttonElement.dataset.value === "star";
+        const currentState = buttonElement.dataset.value;
+        const isStarred = currentState === "star";
         const newStarStatus = isStarred ? "unstar" : "star";
 
         setBookmarkButtonState(buttonElement, newStarStatus);
 
         if (isEntryView()) {
-            showToastNotification(newStarStatus, buttonElement.dataset[isStarred ? "toastUnstar" : "toastStar"]);
+            showToastNotification(currentState, buttonElement.dataset[isStarred ? "toastUnstar" : "toastStar"]);
         }
     });
 }
