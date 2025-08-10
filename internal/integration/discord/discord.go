@@ -3,7 +3,7 @@
 
 // Discord Webhooks documentation: https://discord.com/developers/docs/resources/webhook
 
-package discord // import "miniflux.app/v2/internal/integration/discord"
+package discord // import "influxeed-engine/v2/internal/integration/discord"
 
 import (
 	"bytes"
@@ -13,9 +13,9 @@ import (
 	"net/http"
 	"time"
 
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/urllib"
-	"miniflux.app/v2/internal/version"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/urllib"
+	"influxeed-engine/v2/internal/version"
 )
 
 const defaultClientTimeout = 10 * time.Second

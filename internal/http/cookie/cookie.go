@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package cookie // import "miniflux.app/v2/internal/http/cookie"
+package cookie // import "influxeed-engine/v2/internal/http/cookie"
 
 import (
 	"net/http"
 	"time"
 
-	"miniflux.app/v2/internal/config"
+	"influxeed-engine/v2/internal/config"
 )
 
 // Cookie names.

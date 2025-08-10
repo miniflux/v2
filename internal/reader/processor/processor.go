@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package processor // import "miniflux.app/v2/internal/reader/processor"
+package processor // import "influxeed-engine/v2/internal/reader/processor"
 
 import (
 	"log/slog"
@@ -9,18 +9,18 @@ import (
 	"slices"
 	"time"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/metric"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/proxyrotator"
-	"miniflux.app/v2/internal/reader/fetcher"
-	"miniflux.app/v2/internal/reader/filter"
-	"miniflux.app/v2/internal/reader/readingtime"
-	"miniflux.app/v2/internal/reader/rewrite"
-	"miniflux.app/v2/internal/reader/sanitizer"
-	"miniflux.app/v2/internal/reader/scraper"
-	"miniflux.app/v2/internal/reader/urlcleaner"
-	"miniflux.app/v2/internal/storage"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/metric"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/proxyrotator"
+	"influxeed-engine/v2/internal/reader/fetcher"
+	"influxeed-engine/v2/internal/reader/filter"
+	"influxeed-engine/v2/internal/reader/readingtime"
+	"influxeed-engine/v2/internal/reader/rewrite"
+	"influxeed-engine/v2/internal/reader/sanitizer"
+	"influxeed-engine/v2/internal/reader/scraper"
+	"influxeed-engine/v2/internal/reader/urlcleaner"
+	"influxeed-engine/v2/internal/storage"
 )
 
 // ProcessFeedEntries downloads original web page for entries and apply filters.

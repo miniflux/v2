@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package mediaproxy // import "miniflux.app/v2/internal/mediaproxy"
+package mediaproxy // import "influxeed-engine/v2/internal/mediaproxy"
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"miniflux.app/v2/internal/config"
+	"influxeed-engine/v2/internal/config"
 )
 
 func TestProxyFilterWithHttpDefault(t *testing.T) {

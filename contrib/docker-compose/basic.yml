@@ -1,7 +1,7 @@
 services:
-  miniflux:
-    image: ${MINIFLUX_IMAGE:-miniflux/miniflux:latest}
-    container_name: miniflux
+  influxeed-engine:
+    image: ${influxeed-engine_IMAGE:-influxeed-engine/influxeed-engine:latest}
+    container_name: influxeed-engine
     restart: always
     ports:
       - "80:8080"
@@ -9,7 +9,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      - DATABASE_URL=postgres://miniflux:secret@db/miniflux?sslmode=disable
+      - DATABASE_URL=postgres://influxeed-engine:secret@db/influxeed-engine?sslmode=disable
       - RUN_MIGRATIONS=1
       - CREATE_ADMIN=1
       - ADMIN_USERNAME=admin
@@ -17,19 +17,19 @@ services:
       - DEBUG=1
     # Optional health check:
     # healthcheck:
-    #  test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
+    #  test: ["CMD", "/usr/bin/influxeed-engine", "-healthcheck", "auto"]
   db:
     image: postgres:latest
     container_name: postgres
     environment:
-      - POSTGRES_USER=miniflux
+      - POSTGRES_USER=influxeed-engine
       - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=miniflux
+      - POSTGRES_DB=influxeed-engine
     volumes:
-      - miniflux-db:/var/lib/postgresql/data
+      - influxeed-engine-db:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "miniflux"]
+      test: ["CMD", "pg_isready", "-U", "influxeed-engine"]
       interval: 10s
       start_period: 30s
 volumes:
-  miniflux-db:
+  influxeed-engine-db:

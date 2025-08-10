@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package xml // import "miniflux.app/v2/internal/reader/xml"
+package xml // import "influxeed-engine/v2/internal/reader/xml"
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"miniflux.app/v2/internal/reader/encoding"
+	"influxeed-engine/v2/internal/reader/encoding"
 )
 
 // NewXMLDecoder returns a XML decoder that filters illegal characters.

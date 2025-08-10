@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package webhook // import "miniflux.app/v2/internal/integration/webhook"
+package webhook // import "influxeed-engine/v2/internal/integration/webhook"
 
 import (
 	"bytes"
@@ -10,9 +10,9 @@ import (
 	"net/http"
 	"time"
 
-	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/version"
+	"influxeed-engine/v2/internal/crypto"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/version"
 )
 
 const (

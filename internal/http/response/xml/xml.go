@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package xml // import "miniflux.app/v2/internal/http/response/xml"
+package xml // import "influxeed-engine/v2/internal/http/response/xml"
 
 import (
 	"net/http"
 
-	"miniflux.app/v2/internal/http/response"
+	"influxeed-engine/v2/internal/http/response"
 )
 
 // OK writes a standard XML response with a status 200 OK.

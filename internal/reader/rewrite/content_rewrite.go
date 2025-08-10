@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
+package rewrite // import "influxeed-engine/v2/internal/reader/rewrite"
 
 import (
 	"log/slog"
@@ -9,8 +9,8 @@ import (
 	"strings"
 	"text/scanner"
 
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/urllib"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/urllib"
 )
 
 type rule struct {

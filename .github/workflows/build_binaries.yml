@@ -24,6 +24,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: binaries
-          path: miniflux-*
+          path: influxeed-engine-*
           if-no-files-found: error
           retention-days: 5

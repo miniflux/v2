@@ -1,10 +1,10 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package rss // import "miniflux.app/v2/internal/reader/rss"
+package rss // import "influxeed-engine/v2/internal/reader/rss"
 
 import (
-	"miniflux.app/v2/internal/reader/atom"
+	"influxeed-engine/v2/internal/reader/atom"
 )
 
 type AtomAuthor struct {

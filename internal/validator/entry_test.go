@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package validator // import "miniflux.app/v2/internal/validator"
+package validator // import "influxeed-engine/v2/internal/validator"
 
 import (
 	"testing"
 
-	"miniflux.app/v2/internal/model"
+	"influxeed-engine/v2/internal/model"
 )
 
 func TestValidateEntriesStatusUpdateRequest(t *testing.T) {

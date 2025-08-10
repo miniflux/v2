@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package readability // import "miniflux.app/v2/internal/reader/readability"
+package readability // import "influxeed-engine/v2/internal/reader/readability"
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"log/slog"
 	"strings"
 
-	"miniflux.app/v2/internal/urllib"
+	"influxeed-engine/v2/internal/urllib"
 
 	"github.com/PuerkitoBio/goquery"
 	"golang.org/x/net/html"

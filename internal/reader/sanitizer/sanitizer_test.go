@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package sanitizer // import "miniflux.app/v2/internal/reader/sanitizer"
+package sanitizer // import "influxeed-engine/v2/internal/reader/sanitizer"
 
 import (
 	"os"
@@ -10,7 +10,7 @@ import (
 
 	"golang.org/x/net/html"
 
-	"miniflux.app/v2/internal/config"
+	"influxeed-engine/v2/internal/config"
 )
 
 func BenchmarkSanitize(b *testing.B) {

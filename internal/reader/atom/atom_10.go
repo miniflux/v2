@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package atom // import "miniflux.app/v2/internal/reader/atom"
+package atom // import "influxeed-engine/v2/internal/reader/atom"
 
 import (
 	"encoding/xml"
 	"html"
 	"strings"
 
-	"miniflux.app/v2/internal/reader/media"
+	"influxeed-engine/v2/internal/reader/media"
 )
 
 // The "atom:feed" element is the document (i.e., top-level) element of

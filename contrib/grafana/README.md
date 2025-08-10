@@ -1,1 +1,1 @@
-Grafana Dashboard for Miniflux
+Grafana Dashboard for influxeed-engine

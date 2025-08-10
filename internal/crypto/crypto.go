@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package crypto // import "miniflux.app/v2/internal/crypto"
+package crypto // import "influxeed-engine/v2/internal/crypto"
 
 import (
 	"crypto/hmac"

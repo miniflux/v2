@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ui // import "miniflux.app/v2/internal/ui"
+package ui // import "influxeed-engine/v2/internal/ui"
 
 import (
 	"bytes"
@@ -14,17 +14,17 @@ import (
 	"github.com/go-webauthn/webauthn/protocol"
 	"github.com/go-webauthn/webauthn/webauthn"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/http/cookie"
-	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/response/json"
-	"miniflux.app/v2/internal/http/route"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/ui/form"
-	"miniflux.app/v2/internal/ui/session"
-	"miniflux.app/v2/internal/ui/view"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/crypto"
+	"influxeed-engine/v2/internal/http/cookie"
+	"influxeed-engine/v2/internal/http/request"
+	"influxeed-engine/v2/internal/http/response/html"
+	"influxeed-engine/v2/internal/http/response/json"
+	"influxeed-engine/v2/internal/http/route"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/ui/form"
+	"influxeed-engine/v2/internal/ui/session"
+	"influxeed-engine/v2/internal/ui/view"
 )
 
 type WebAuthnUser struct {

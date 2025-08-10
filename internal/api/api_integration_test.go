@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package api // import "miniflux.app/v2/internal/api"
+package api // import "influxeed-engine/v2/internal/api"
 
 import (
 	"bytes"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 
-	miniflux "miniflux.app/v2/client"
+	miniflux "influxeed-engine/v2/client"
 )
 
 const skipIntegrationTestsMessage = `Set TEST_MINIFLUX_* environment variables to run the API integration tests`

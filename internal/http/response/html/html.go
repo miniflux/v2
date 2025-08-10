@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package html // import "miniflux.app/v2/internal/http/response/html"
+package html // import "influxeed-engine/v2/internal/http/response/html"
 
 import (
 	"html"
 	"log/slog"
 	"net/http"
 
-	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response"
+	"influxeed-engine/v2/internal/http/request"
+	"influxeed-engine/v2/internal/http/response"
 )
 
 // OK creates a new HTML response with a 200 status code.

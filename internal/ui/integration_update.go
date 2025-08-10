@@ -1,20 +1,20 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ui // import "miniflux.app/v2/internal/ui"
+package ui // import "influxeed-engine/v2/internal/ui"
 
 import (
 	"crypto/md5"
 	"fmt"
 	"net/http"
 
-	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
-	"miniflux.app/v2/internal/locale"
-	"miniflux.app/v2/internal/ui/form"
-	"miniflux.app/v2/internal/ui/session"
+	"influxeed-engine/v2/internal/crypto"
+	"influxeed-engine/v2/internal/http/request"
+	"influxeed-engine/v2/internal/http/response/html"
+	"influxeed-engine/v2/internal/http/route"
+	"influxeed-engine/v2/internal/locale"
+	"influxeed-engine/v2/internal/ui/form"
+	"influxeed-engine/v2/internal/ui/session"
 )
 
 func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {

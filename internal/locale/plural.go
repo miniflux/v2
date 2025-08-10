@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package locale // import "miniflux.app/v2/internal/locale"
+package locale // import "influxeed-engine/v2/internal/locale"
 
 // See https://localization-guide.readthedocs.io/en/latest/l10n/pluralforms.html
 // And http://www.unicode.org/cldr/charts/29/supplemental/language_plural_rules.html

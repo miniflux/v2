@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package rdf // import "miniflux.app/v2/internal/reader/rdf"
+package rdf // import "influxeed-engine/v2/internal/reader/rdf"
 
 import (
 	"html"
@@ -9,11 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/reader/date"
-	"miniflux.app/v2/internal/reader/sanitizer"
-	"miniflux.app/v2/internal/urllib"
+	"influxeed-engine/v2/internal/crypto"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/reader/date"
+	"influxeed-engine/v2/internal/reader/sanitizer"
+	"influxeed-engine/v2/internal/urllib"
 )
 
 type RDFAdapter struct {

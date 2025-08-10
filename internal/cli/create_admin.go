@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package cli // import "miniflux.app/v2/internal/cli"
+package cli // import "influxeed-engine/v2/internal/cli"
 
 import (
 	"log/slog"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/storage"
-	"miniflux.app/v2/internal/validator"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/storage"
+	"influxeed-engine/v2/internal/validator"
 )
 
 func createAdminUserFromEnvironmentVariables(store *storage.Storage) {

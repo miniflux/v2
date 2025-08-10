@@ -140,7 +140,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "max(miniflux_feeds{status=\"total\"})",
+          "expr": "max(influxeed-engine_feeds{status=\"total\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Total",
@@ -151,7 +151,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "max(miniflux_feeds{status=\"enabled\"})",
+          "expr": "max(influxeed-engine_feeds{status=\"enabled\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Enabled",
@@ -162,7 +162,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "max(miniflux_broken_feeds)",
+          "expr": "max(influxeed-engine_broken_feeds)",
           "interval": "",
           "legendFormat": "Broken",
           "refId": "A"
@@ -172,7 +172,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "max(miniflux_feeds{status=\"disabled\"})",
+          "expr": "max(influxeed-engine_feeds{status=\"disabled\"})",
           "interval": "",
           "legendFormat": "Disabled",
           "refId": "B"
@@ -235,7 +235,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "max(miniflux_users)",
+          "expr": "max(influxeed-engine_users)",
           "interval": "",
           "legendFormat": "Users",
           "refId": "A"
@@ -332,7 +332,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "max(miniflux_entries{status=\"total\"})",
+          "expr": "max(influxeed-engine_entries{status=\"total\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Total",
@@ -343,7 +343,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "max(miniflux_entries{status=\"unread\"})",
+          "expr": "max(influxeed-engine_entries{status=\"unread\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Unread",
@@ -354,7 +354,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "max(miniflux_entries{status=\"read\"})",
+          "expr": "max(influxeed-engine_entries{status=\"read\"})",
           "interval": "",
           "legendFormat": "Read",
           "refId": "C"
@@ -364,7 +364,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "max(miniflux_entries{status=\"removed\"})",
+          "expr": "max(influxeed-engine_entries{status=\"removed\"})",
           "interval": "",
           "legendFormat": "Removed",
           "refId": "D"
@@ -425,7 +425,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_sys_bytes{job=\"miniflux\"}",
+          "expr": "go_memstats_sys_bytes{job=\"influxeed-engine\"}",
           "interval": "",
           "legendFormat": "{{ instance }} - Memory Used",
           "refId": "A"
@@ -519,7 +519,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "histogram_quantile(0.95, sum(rate(miniflux_scraper_request_duration_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(influxeed-engine_scraper_request_duration_bucket[5m])) by (le))",
           "interval": "",
           "legendFormat": "Request Duration",
           "refId": "A"
@@ -614,7 +614,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "histogram_quantile(0.95, sum(rate(miniflux_background_feed_refresh_duration_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(influxeed-engine_background_feed_refresh_duration_bucket[5m])) by (le))",
           "interval": "",
           "legendFormat": "Refresh Duration",
           "refId": "A"
@@ -736,7 +736,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_sys_bytes{job=\"miniflux\"}",
+          "expr": "go_memstats_sys_bytes{job=\"influxeed-engine\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -838,7 +838,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "process_open_fds{job=\"miniflux\"}",
+          "expr": "process_open_fds{job=\"influxeed-engine\"}",
           "interval": "",
           "legendFormat": "{{instance }} - Open File Descriptors",
           "refId": "A"
@@ -973,7 +973,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_alloc_bytes{job=\"miniflux\"}",
+          "expr": "go_memstats_alloc_bytes{job=\"influxeed-engine\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -987,7 +987,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(go_memstats_alloc_bytes_total{job=\"miniflux\"}[30s])",
+          "expr": "rate(go_memstats_alloc_bytes_total{job=\"influxeed-engine\"}[30s])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -1001,7 +1001,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_stack_inuse_bytes{job=\"miniflux\"}",
+          "expr": "go_memstats_stack_inuse_bytes{job=\"influxeed-engine\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -1015,7 +1015,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_heap_inuse_bytes{job=\"miniflux\"}",
+          "expr": "go_memstats_heap_inuse_bytes{job=\"influxeed-engine\"}",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1119,7 +1119,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_goroutines{job=\"miniflux\"}",
+          "expr": "go_goroutines{job=\"influxeed-engine\"}",
           "interval": "",
           "legendFormat": "{{ instance }} - Goroutines",
           "refId": "A"
@@ -1129,7 +1129,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_threads{job=\"miniflux\"}",
+          "expr": "go_threads{job=\"influxeed-engine\"}",
           "interval": "",
           "legendFormat": "{{ instance }} - OS threads",
           "refId": "B"
@@ -1226,7 +1226,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_stack_inuse_bytes{job=\"miniflux\"}",
+          "expr": "go_memstats_stack_inuse_bytes{job=\"influxeed-engine\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1238,7 +1238,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_stack_sys_bytes{job=\"miniflux\"}",
+          "expr": "go_memstats_stack_sys_bytes{job=\"influxeed-engine\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1335,7 +1335,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_heap_alloc_bytes{job=\"miniflux\"}",
+          "expr": "go_memstats_heap_alloc_bytes{job=\"influxeed-engine\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1347,7 +1347,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_heap_sys_bytes{job=\"miniflux\"}",
+          "expr": "go_memstats_heap_sys_bytes{job=\"influxeed-engine\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1359,7 +1359,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_heap_idle_bytes{job=\"miniflux\"}",
+          "expr": "go_memstats_heap_idle_bytes{job=\"influxeed-engine\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1371,7 +1371,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_heap_inuse_bytes{job=\"miniflux\"}",
+          "expr": "go_memstats_heap_inuse_bytes{job=\"influxeed-engine\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1383,7 +1383,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_heap_released_bytes{job=\"miniflux\"}",
+          "expr": "go_memstats_heap_released_bytes{job=\"influxeed-engine\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1483,7 +1483,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_gc_duration_seconds{job=\"miniflux\"}",
+          "expr": "go_gc_duration_seconds{job=\"influxeed-engine\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -1582,7 +1582,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_mallocs_total{job=\"miniflux\"} - go_memstats_frees_total{job=\"miniflux\"}",
+          "expr": "go_memstats_mallocs_total{job=\"influxeed-engine\"} - go_memstats_frees_total{job=\"influxeed-engine\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1639,7 +1639,7 @@
     ]
   },
   "timezone": "",
-  "title": "Miniflux",
+  "title": "influxeed-engine",
   "uid": "vSaPgcFMk",
   "version": 3,
   "weekStart": ""

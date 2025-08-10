@@ -1,18 +1,18 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ui // import "miniflux.app/v2/internal/ui"
+package ui // import "influxeed-engine/v2/internal/ui"
 
 import (
 	"net/http"
 	"regexp"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/ui/form"
-	"miniflux.app/v2/internal/ui/session"
-	"miniflux.app/v2/internal/ui/view"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/http/request"
+	"influxeed-engine/v2/internal/http/response/html"
+	"influxeed-engine/v2/internal/ui/form"
+	"influxeed-engine/v2/internal/ui/session"
+	"influxeed-engine/v2/internal/ui/view"
 )
 
 // Best effort url extraction regexp

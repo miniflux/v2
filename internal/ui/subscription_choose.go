@@ -1,20 +1,20 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ui // import "miniflux.app/v2/internal/ui"
+package ui // import "influxeed-engine/v2/internal/ui"
 
 import (
 	"net/http"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
-	"miniflux.app/v2/internal/model"
-	feedHandler "miniflux.app/v2/internal/reader/handler"
-	"miniflux.app/v2/internal/ui/form"
-	"miniflux.app/v2/internal/ui/session"
-	"miniflux.app/v2/internal/ui/view"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/http/request"
+	"influxeed-engine/v2/internal/http/response/html"
+	"influxeed-engine/v2/internal/http/route"
+	"influxeed-engine/v2/internal/model"
+	feedHandler "influxeed-engine/v2/internal/reader/handler"
+	"influxeed-engine/v2/internal/ui/form"
+	"influxeed-engine/v2/internal/ui/session"
+	"influxeed-engine/v2/internal/ui/view"
 )
 
 func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Request) {

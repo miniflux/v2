@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package opml // import "miniflux.app/v2/internal/reader/opml"
+package opml // import "influxeed-engine/v2/internal/reader/opml"
 
 import (
 	"bytes"

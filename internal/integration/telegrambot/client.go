@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package telegrambot // import "miniflux.app/v2/internal/integration/telegrambot"
+package telegrambot // import "influxeed-engine/v2/internal/integration/telegrambot"
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ import (
 	"net/url"
 	"time"
 
-	"miniflux.app/v2/internal/version"
+	"influxeed-engine/v2/internal/version"
 )
 
 const (

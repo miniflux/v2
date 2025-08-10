@@ -1,10 +1,10 @@
-# Contributing to Miniflux
+# Contributing to influxeed-engine
 
-This document outlines how to contribute effectively to Miniflux.
+This document outlines how to contribute effectively to influxeed-engine.
 
 ## Philosophy
 
-Miniflux follows a **minimalist philosophy**. The feature set is intentionally kept limited to avoid bloatware. Before contributing, please understand that:
+influxeed-engine follows a **minimalist philosophy**. The feature set is intentionally kept limited to avoid bloatware. Before contributing, please understand that:
 
 - **Improving existing features takes priority over adding new ones**
 - **Quality over quantity** - well-implemented, focused features are preferred
@@ -16,7 +16,7 @@ Miniflux follows a **minimalist philosophy**. The feature set is intentionally k
 
 Before implementing a new feature:
 
-- Check if it aligns with Miniflux's philosophy
+- Check if it aligns with influxeed-engine's philosophy
 - Consider if the feature could be implemented differently to maintain simplicity
 - Remember that developing software takes significant time, and this is a volunteer-driven project
 - If you need a specific feature, the best approach is to contribute it yourself
@@ -27,7 +27,7 @@ When reporting bugs:
 
 - Search existing issues first to avoid duplicates
 - Provide clear reproduction steps
-- Include relevant system information (OS, browser, Miniflux version)
+- Include relevant system information (OS, browser, influxeed-engine version)
 - Include error messages, screenshots, and logs when applicable
 
 ## Development Setup
@@ -43,13 +43,13 @@ When reporting bugs:
 1. **Fork the repository** on GitHub
 2. **Clone your fork locally:**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/miniflux.git
-   cd miniflux
+   git clone https://github.com/YOUR_USERNAME/influxeed-engine.git
+   cd influxeed-engine
    ```
 
 3. **Build the application binary:**
    ```bash
-   make miniflux
+   make influxeed-engine
    ```
 
 4. **Run locally in debug mode:**
@@ -63,8 +63,8 @@ For development and testing, you can run a local PostgreSQL database with Docker
 
 ```bash
 # Start PostgreSQL container
-docker run --rm --name miniflux2-db -p 5432:5432 \
-  -e POSTGRES_DB=miniflux2 \
+docker run --rm --name influxeed-engine2-db -p 5432:5432 \
+  -e POSTGRES_DB=influxeed-engine2 \
   -e POSTGRES_USER=postgres \
   -e POSTGRES_PASSWORD=postgres \
   postgres
@@ -95,14 +95,14 @@ You can also use an existing PostgreSQL instance. Make sure to set the `DATABASE
 
 ### Building
 
-- **Current platform:** `make miniflux`
+- **Current platform:** `make influxeed-engine`
 - **All platforms:** `make build`
 - **Specific platforms:** `make linux-amd64`, `make darwin-arm64`, etc.
 - **Docker image:** `make docker-image`
 
 ### Cross-Platform Support
 
-Miniflux supports multiple architectures. When making changes, ensure compatibility across:
+influxeed-engine supports multiple architectures. When making changes, ensure compatibility across:
 - Linux (amd64, arm64, armv7, armv6, armv5)
 - macOS (amd64, arm64)
 - FreeBSD, OpenBSD, Windows (amd64)
@@ -173,6 +173,6 @@ When creating a pull request, please include:
 
 ## Questions?
 
-- Check the [FAQ](https://miniflux.app/faq.html) for common questions
-- Review the [development documentation](https://miniflux.app/docs/development.html) and [internationalization guide](https://miniflux.app/docs/i18n.html)
+- Check the [FAQ](https://influxeed-engine.app/faq.html) for common questions
+- Review the [development documentation](https://influxeed-engine.app/docs/development.html) and [internationalization guide](https://influxeed-engine.app/docs/i18n.html)
 - Look at existing issues and pull requests for examples

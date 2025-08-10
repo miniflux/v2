@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package worker // import "miniflux.app/v2/internal/worker"
+package worker // import "influxeed-engine/v2/internal/worker"
 
 import (
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/storage"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/storage"
 )
 
 // Pool handles a pool of workers.

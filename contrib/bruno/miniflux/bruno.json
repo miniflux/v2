@@ -1,5 +1,5 @@
 {
   "version": "1",
-  "name": "Miniflux",
+  "name": "influxeed-engine",
   "type": "collection"
 }

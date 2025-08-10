@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package template // import "miniflux.app/v2/internal/template"
+package template // import "influxeed-engine/v2/internal/template"
 
 import (
 	"fmt"
@@ -13,14 +13,14 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/http/route"
-	"miniflux.app/v2/internal/locale"
-	"miniflux.app/v2/internal/mediaproxy"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/timezone"
-	"miniflux.app/v2/internal/urllib"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/crypto"
+	"influxeed-engine/v2/internal/http/route"
+	"influxeed-engine/v2/internal/locale"
+	"influxeed-engine/v2/internal/mediaproxy"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/timezone"
+	"influxeed-engine/v2/internal/urllib"
 
 	"github.com/gorilla/mux"
 )

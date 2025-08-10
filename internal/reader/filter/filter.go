@@ -21,7 +21,7 @@
 // The order of the rules matters as the processor stops on the first match for both Block and Keep rules.
 // Invalid rules are ignored.
 
-package filter // import "miniflux.app/v2/internal/reader/filter"
+package filter // import "influxeed-engine/v2/internal/reader/filter"
 
 import (
 	"log/slog"
@@ -31,8 +31,8 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/model"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/model"
 )
 
 type filterRule struct {

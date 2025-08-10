@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"miniflux.app/v2/internal/config"
+	"influxeed-engine/v2/internal/config"
 )
 
 func TestEnclosure_Html5MimeTypeGivesOriginalMimeType(t *testing.T) {

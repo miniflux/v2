@@ -3,7 +3,7 @@
 
 // Readwise Reader API documentation: https://readwise.io/reader_api
 
-package readwise // import "miniflux.app/v2/internal/integration/readwise"
+package readwise // import "influxeed-engine/v2/internal/integration/readwise"
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ import (
 	"net/http"
 	"time"
 
-	"miniflux.app/v2/internal/version"
+	"influxeed-engine/v2/internal/version"
 )
 
 const (

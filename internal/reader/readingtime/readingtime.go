@@ -10,7 +10,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"miniflux.app/v2/internal/reader/sanitizer"
+	"influxeed-engine/v2/internal/reader/sanitizer"
 )
 
 // EstimateReadingTime returns the estimated reading time of an article in minute.

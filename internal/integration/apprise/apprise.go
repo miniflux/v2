@@ -11,9 +11,9 @@ import (
 	"net/http"
 	"time"
 
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/urllib"
-	"miniflux.app/v2/internal/version"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/urllib"
+	"influxeed-engine/v2/internal/version"
 )
 
 const defaultClientTimeout = 10 * time.Second

@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package template // import "miniflux.app/v2/internal/template"
+package template // import "influxeed-engine/v2/internal/template"
 
 import (
 	"testing"
 	"time"
 
-	"miniflux.app/v2/internal/locale"
+	"influxeed-engine/v2/internal/locale"
 )
 
 func TestDict(t *testing.T) {

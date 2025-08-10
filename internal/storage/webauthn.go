@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package storage // import "miniflux.app/v2/internal/storage"
+package storage // import "influxeed-engine/v2/internal/storage"
 
 import (
 	"database/sql"
@@ -9,7 +9,7 @@ import (
 	"log/slog"
 
 	"github.com/go-webauthn/webauthn/webauthn"
-	"miniflux.app/v2/internal/model"
+	"influxeed-engine/v2/internal/model"
 )
 
 // handle storage of webauthn credentials

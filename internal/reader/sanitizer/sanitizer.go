@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package sanitizer // import "miniflux.app/v2/internal/reader/sanitizer"
+package sanitizer // import "influxeed-engine/v2/internal/reader/sanitizer"
 
 import (
 	"io"
@@ -10,9 +10,9 @@ import (
 	"strconv"
 	"strings"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/reader/urlcleaner"
-	"miniflux.app/v2/internal/urllib"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/reader/urlcleaner"
+	"influxeed-engine/v2/internal/urllib"
 
 	"golang.org/x/net/html"
 )

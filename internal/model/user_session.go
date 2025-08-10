@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package model // import "miniflux.app/v2/internal/model"
+package model // import "influxeed-engine/v2/internal/model"
 
 import (
 	"fmt"
 	"time"
 
-	"miniflux.app/v2/internal/timezone"
+	"influxeed-engine/v2/internal/timezone"
 )
 
 // UserSession represents a user session in the system.

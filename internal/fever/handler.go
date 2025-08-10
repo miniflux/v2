@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package fever // import "miniflux.app/v2/internal/fever"
+package fever // import "influxeed-engine/v2/internal/fever"
 
 import (
 	"log/slog"
@@ -10,12 +10,12 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/json"
-	"miniflux.app/v2/internal/integration"
-	"miniflux.app/v2/internal/mediaproxy"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/storage"
+	"influxeed-engine/v2/internal/http/request"
+	"influxeed-engine/v2/internal/http/response/json"
+	"influxeed-engine/v2/internal/integration"
+	"influxeed-engine/v2/internal/mediaproxy"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/storage"
 
 	"github.com/gorilla/mux"
 )

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package googlereader // import "miniflux.app/v2/internal/googlereader"
+package googlereader // import "influxeed-engine/v2/internal/googlereader"
 
 import (
 	"errors"
@@ -11,20 +11,20 @@ import (
 	"strconv"
 	"time"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/response/json"
-	"miniflux.app/v2/internal/http/route"
-	"miniflux.app/v2/internal/integration"
-	"miniflux.app/v2/internal/mediaproxy"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/proxyrotator"
-	"miniflux.app/v2/internal/reader/fetcher"
-	mff "miniflux.app/v2/internal/reader/handler"
-	mfs "miniflux.app/v2/internal/reader/subscription"
-	"miniflux.app/v2/internal/storage"
-	"miniflux.app/v2/internal/validator"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/http/request"
+	"influxeed-engine/v2/internal/http/response"
+	"influxeed-engine/v2/internal/http/response/json"
+	"influxeed-engine/v2/internal/http/route"
+	"influxeed-engine/v2/internal/integration"
+	"influxeed-engine/v2/internal/mediaproxy"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/proxyrotator"
+	"influxeed-engine/v2/internal/reader/fetcher"
+	mff "influxeed-engine/v2/internal/reader/handler"
+	mfs "influxeed-engine/v2/internal/reader/subscription"
+	"influxeed-engine/v2/internal/storage"
+	"influxeed-engine/v2/internal/validator"
 
 	"github.com/gorilla/mux"
 )

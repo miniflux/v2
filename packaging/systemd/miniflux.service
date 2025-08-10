@@ -1,38 +1,38 @@
 # Changing the systemd config can be done like this:
-# 1) Edit the config file: systemctl edit --full miniflux
-# 2) Restart the process: systemctl restart miniflux
-# All your changes can be reverted with `systemctl revert miniflux.service`.
+# 1) Edit the config file: systemctl edit --full influxeed-engine
+# 2) Restart the process: systemctl restart influxeed-engine
+# All your changes can be reverted with `systemctl revert influxeed-engine.service`.
 # See https://wiki.archlinux.org/index.php/Systemd#Editing_provided_units.
 # Also see https://www.freedesktop.org/software/systemd/man/systemd.service.html
 # for available configuration options in this file.
 
 [Unit]
-Description=Miniflux
-Documentation=man:miniflux(1) https://miniflux.app/docs/index.html
+Description=influxeed-engine
+Documentation=man:influxeed-engine(1) https://influxeed-engine.app/docs/index.html
 After=network.target postgresql.service
 
 [Service]
-ExecStart=/usr/bin/miniflux
-User=miniflux
+ExecStart=/usr/bin/influxeed-engine
+User=influxeed-engine
 
-# Load environment variables from /etc/miniflux.conf.
-EnvironmentFile=/etc/miniflux.conf
+# Load environment variables from /etc/influxeed-engine.conf.
+EnvironmentFile=/etc/influxeed-engine.conf
 
-# Miniflux uses sd-notify protocol to notify about it's readiness.
+# influxeed-engine uses sd-notify protocol to notify about it's readiness.
 Type=notify
 
 # Enable watchdog.
 WatchdogSec=60s
 WatchdogSignal=SIGKILL
 
-# Automatically restart Miniflux if it crashes.
+# Automatically restart influxeed-engine if it crashes.
 Restart=always
 RestartSec=5
 
-# Allocate a directory at /run/miniflux for Unix sockets.
-RuntimeDirectory=miniflux
+# Allocate a directory at /run/influxeed-engine for Unix sockets.
+RuntimeDirectory=influxeed-engine
 
-# Allow Miniflux to bind to privileged ports.
+# Allow influxeed-engine to bind to privileged ports.
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 
 # Make the system tree read-only.

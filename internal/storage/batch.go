@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package storage // import "miniflux.app/v2/internal/storage"
+package storage // import "influxeed-engine/v2/internal/storage"
 
 import (
 	"database/sql"
 	"fmt"
 	"strings"
 
-	"miniflux.app/v2/internal/model"
+	"influxeed-engine/v2/internal/model"
 )
 
 type BatchBuilder struct {

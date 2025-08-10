@@ -1,16 +1,16 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package api // import "miniflux.app/v2/internal/api"
+package api // import "influxeed-engine/v2/internal/api"
 
 import (
 	"net/http"
 	"runtime"
 
-	"miniflux.app/v2/internal/http/response/json"
-	"miniflux.app/v2/internal/storage"
-	"miniflux.app/v2/internal/version"
-	"miniflux.app/v2/internal/worker"
+	"influxeed-engine/v2/internal/http/response/json"
+	"influxeed-engine/v2/internal/storage"
+	"influxeed-engine/v2/internal/version"
+	"influxeed-engine/v2/internal/worker"
 
 	"github.com/gorilla/mux"
 )

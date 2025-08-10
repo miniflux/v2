@@ -1,4 +1,4 @@
-module miniflux.app/v2
+module influxeed-engine/v2
 
 // +heroku goVersion go1.24
 

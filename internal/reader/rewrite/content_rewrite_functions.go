@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
+package rewrite // import "influxeed-engine/v2/internal/reader/rewrite"
 
 import (
 	"encoding/base64"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"unicode"
 
-	"miniflux.app/v2/internal/config"
+	"influxeed-engine/v2/internal/config"
 
 	nethtml "golang.org/x/net/html"
 

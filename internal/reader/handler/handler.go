@@ -1,23 +1,23 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package handler // import "miniflux.app/v2/internal/reader/handler"
+package handler // import "influxeed-engine/v2/internal/reader/handler"
 
 import (
 	"bytes"
 	"errors"
 	"log/slog"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/integration"
-	"miniflux.app/v2/internal/locale"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/proxyrotator"
-	"miniflux.app/v2/internal/reader/fetcher"
-	"miniflux.app/v2/internal/reader/icon"
-	"miniflux.app/v2/internal/reader/parser"
-	"miniflux.app/v2/internal/reader/processor"
-	"miniflux.app/v2/internal/storage"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/integration"
+	"influxeed-engine/v2/internal/locale"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/proxyrotator"
+	"influxeed-engine/v2/internal/reader/fetcher"
+	"influxeed-engine/v2/internal/reader/icon"
+	"influxeed-engine/v2/internal/reader/parser"
+	"influxeed-engine/v2/internal/reader/processor"
+	"influxeed-engine/v2/internal/storage"
 )
 
 var (

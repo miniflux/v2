@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ui // import "miniflux.app/v2/internal/ui"
+package ui // import "influxeed-engine/v2/internal/ui"
 
 import (
 	"fmt"
@@ -9,11 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
-	"miniflux.app/v2/internal/ui/static"
+	"influxeed-engine/v2/internal/http/request"
+	"influxeed-engine/v2/internal/http/response"
+	"influxeed-engine/v2/internal/http/response/html"
+	"influxeed-engine/v2/internal/http/route"
+	"influxeed-engine/v2/internal/ui/static"
 )
 
 const licensePrefix = "//@license magnet:?xt=urn:btih:8e4f440f4c65981c5bf93c76d35135ba5064d8b7&dn=apache-2.0.txt Apache-2.0\n"

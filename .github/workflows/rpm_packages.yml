@@ -56,4 +56,4 @@ jobs:
     - name: Upload package to repository
       env:
         FURY_TOKEN: ${{ secrets.FURY_TOKEN }}
-      run: for f in *.rpm; do curl -F package=@$f https://$FURY_TOKEN@push.fury.io/miniflux/; done
+      run: for f in *.rpm; do curl -F package=@$f https://$FURY_TOKEN@push.fury.io/influxeed-engine/; done

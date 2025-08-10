@@ -6,7 +6,7 @@ package validator
 import (
 	"fmt"
 
-	"miniflux.app/v2/internal/model"
+	"influxeed-engine/v2/internal/model"
 )
 
 func ValidateEnclosureUpdateRequest(request *model.EnclosureUpdateRequest) error {

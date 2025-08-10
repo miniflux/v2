@@ -1,15 +1,15 @@
-Miniflux API Client
+influxeed-engine API Client
 ===================
 
-[![PkgGoDev](https://pkg.go.dev/badge/miniflux.app/v2/client)](https://pkg.go.dev/miniflux.app/v2/client)
+[![PkgGoDev](https://pkg.go.dev/badge/influxeed-engine.app/v2/client)](https://pkg.go.dev/influxeed-engine.app/v2/client)
 
-Client library for Miniflux REST API.
+Client library for influxeed-engine REST API.
 
 Installation
 ------------
 
 ```bash
-go get -u miniflux.app/v2/client
+go get -u influxeed-engine.app/v2/client
 ```
 
 Example
@@ -22,15 +22,15 @@ import (
 	"fmt"
 	"os"
 
-	miniflux "miniflux.app/v2/client"
+	influxeed-engine "influxeed-engine.app/v2/client"
 )
 
 func main() {
     // Authentication with username/password:
-    client := miniflux.NewClient("https://api.example.org", "admin", "secret")
+    client := influxeed-engine.NewClient("https://api.example.org", "admin", "secret")
 
     // Authentication with an API Key:
-    client := miniflux.NewClient("https://api.example.org", "my-secret-token")
+    client := influxeed-engine.NewClient("https://api.example.org", "my-secret-token")
 
     // Fetch all feeds.
     feeds, err := client.Feeds()

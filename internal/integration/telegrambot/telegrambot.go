@@ -1,16 +1,16 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package telegrambot // import "miniflux.app/v2/internal/integration/telegrambot"
+package telegrambot // import "influxeed-engine/v2/internal/integration/telegrambot"
 
 import (
 	"fmt"
 	"log/slog"
 	"strconv"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/urllib"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/urllib"
 )
 
 func PushEntry(feed *model.Feed, entry *model.Entry, botToken, chatID string, topicID *int64, disableWebPagePreview, disableNotification bool, disableButtons bool) error {

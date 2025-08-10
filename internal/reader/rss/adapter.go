@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package rss // import "miniflux.app/v2/internal/reader/rss"
+package rss // import "influxeed-engine/v2/internal/reader/rss"
 
 import (
 	"html"
@@ -12,11 +12,11 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/reader/date"
-	"miniflux.app/v2/internal/reader/sanitizer"
-	"miniflux.app/v2/internal/urllib"
+	"influxeed-engine/v2/internal/crypto"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/reader/date"
+	"influxeed-engine/v2/internal/reader/sanitizer"
+	"influxeed-engine/v2/internal/urllib"
 )
 
 type RSSAdapter struct {

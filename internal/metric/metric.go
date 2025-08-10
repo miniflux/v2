@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package metric // import "miniflux.app/v2/internal/metric"
+package metric // import "influxeed-engine/v2/internal/metric"
 
 import (
 	"log/slog"
 	"time"
 
-	"miniflux.app/v2/internal/storage"
+	"influxeed-engine/v2/internal/storage"
 
 	"github.com/prometheus/client_golang/prometheus"
 )

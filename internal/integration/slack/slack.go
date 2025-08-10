@@ -3,7 +3,7 @@
 
 // Slack Webhooks documentation: https://api.slack.com/messaging/webhooks
 
-package slack // import "miniflux.app/v2/internal/integration/slack"
+package slack // import "influxeed-engine/v2/internal/integration/slack"
 
 import (
 	"bytes"
@@ -13,9 +13,9 @@ import (
 	"net/http"
 	"time"
 
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/urllib"
-	"miniflux.app/v2/internal/version"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/urllib"
+	"influxeed-engine/v2/internal/version"
 )
 
 const defaultClientTimeout = 10 * time.Second

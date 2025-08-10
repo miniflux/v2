@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package model // import "miniflux.app/v2/internal/model"
+package model // import "influxeed-engine/v2/internal/model"
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"math"
 	"time"
 
-	"miniflux.app/v2/internal/config"
+	"influxeed-engine/v2/internal/config"
 )
 
 // List of supported schedulers.

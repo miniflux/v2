@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package linkding // import "miniflux.app/v2/internal/integration/linkding"
+package linkding // import "influxeed-engine/v2/internal/integration/linkding"
 
 import (
 	"bytes"
@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/v2/internal/urllib"
-	"miniflux.app/v2/internal/version"
+	"influxeed-engine/v2/internal/urllib"
+	"influxeed-engine/v2/internal/version"
 )
 
 const defaultClientTimeout = 10 * time.Second

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package scraper // import "miniflux.app/v2/internal/reader/scraper"
+package scraper // import "influxeed-engine/v2/internal/reader/scraper"
 
 import (
 	"fmt"
@@ -9,11 +9,11 @@ import (
 	"log/slog"
 	"strings"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/reader/encoding"
-	"miniflux.app/v2/internal/reader/fetcher"
-	"miniflux.app/v2/internal/reader/readability"
-	"miniflux.app/v2/internal/urllib"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/reader/encoding"
+	"influxeed-engine/v2/internal/reader/fetcher"
+	"influxeed-engine/v2/internal/reader/readability"
+	"influxeed-engine/v2/internal/urllib"
 
 	"github.com/PuerkitoBio/goquery"
 )

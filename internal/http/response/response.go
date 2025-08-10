@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package response // import "miniflux.app/v2/internal/http/response"
+package response // import "influxeed-engine/v2/internal/http/response"
 
 // ContentSecurityPolicyForUntrustedContent is the default CSP for untrusted content.
 // default-src 'none' disables all content sources

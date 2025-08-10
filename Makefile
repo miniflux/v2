@@ -1,18 +1,18 @@
-APP             := miniflux
-DOCKER_IMAGE    := miniflux/miniflux
+APP             := influxeed-engine
+DOCKER_IMAGE    := influxeed-engine/influxeed-engine
 VERSION         := $(shell git describe --tags --abbrev=0 2>/dev/null)
 COMMIT          := $(shell git rev-parse --short HEAD 2>/dev/null)
 BUILD_DATE      := `date +%FT%T%z`
-LD_FLAGS        := "-s -w -X 'miniflux.app/v2/internal/version.Version=$(VERSION)' -X 'miniflux.app/v2/internal/version.Commit=$(COMMIT)' -X 'miniflux.app/v2/internal/version.BuildDate=$(BUILD_DATE)'"
+LD_FLAGS        := "-s -w -X 'influxeed-engine/v2/internal/version.Version=$(VERSION)' -X 'influxeed-engine/v2/internal/version.Commit=$(COMMIT)' -X 'influxeed-engine/v2/internal/version.BuildDate=$(BUILD_DATE)'"
 PKG_LIST        := $(shell go list ./... | grep -v /vendor/)
-DB_URL          := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
+DB_URL          := postgres://postgres:postgres@localhost/influxeed-engine_test?sslmode=disable
 DOCKER_PLATFORM := amd64
 
 export PGPASSWORD := postgres
 
 .PHONY: \
-	miniflux \
-	miniflux-no-pie \
+	influxeed-engine \
+	influxeed-engine-no-pie \
 	linux-amd64 \
 	linux-arm64 \
 	linux-armv7 \
@@ -39,10 +39,10 @@ export PGPASSWORD := postgres
 	debian \
 	debian-packages
 
-miniflux:
+influxeed-engine:
 	@ go build -buildmode=pie -ldflags=$(LD_FLAGS) -o $(APP) main.go
 
-miniflux-no-pie:
+influxeed-engine-no-pie:
 	@ go build -ldflags=$(LD_FLAGS) -o $(APP) main.go
 
 linux-amd64:
@@ -106,9 +106,9 @@ lint:
 	golangci-lint run --disable errcheck --enable sqlclosecheck --enable misspell --enable gofmt --enable goimports --enable whitespace
 
 integration-test:
-	psql -U postgres -c 'drop database if exists miniflux_test;'
-	psql -U postgres -c 'create database miniflux_test;'
-	go build -o miniflux-test main.go
+	psql -U postgres -c 'drop database if exists influxeed-engine_test;'
+	psql -U postgres -c 'create database influxeed-engine_test;'
+	go build -o influxeed-engine-test main.go
 
 	DATABASE_URL=$(DB_URL) \
 	ADMIN_USERNAME=admin \
@@ -116,20 +116,20 @@ integration-test:
 	CREATE_ADMIN=1 \
 	RUN_MIGRATIONS=1 \
 	LOG_LEVEL=debug \
-	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
+	./influxeed-engine-test >/tmp/influxeed-engine.log 2>&1 & echo "$$!" > "/tmp/influxeed-engine.pid"
 
 	while ! nc -z localhost 8080; do sleep 1; done
 
-	TEST_MINIFLUX_BASE_URL=http://127.0.0.1:8080 \
-	TEST_MINIFLUX_ADMIN_USERNAME=admin \
-	TEST_MINIFLUX_ADMIN_PASSWORD=test123 \
+	TEST_influxeed-engine_BASE_URL=http://127.0.0.1:8080 \
+	TEST_influxeed-engine_ADMIN_USERNAME=admin \
+	TEST_influxeed-engine_ADMIN_PASSWORD=test123 \
 	go test -v -count=1 ./internal/api
 
 clean-integration-test:
-	@ kill -9 `cat /tmp/miniflux.pid`
-	@ rm -f /tmp/miniflux.pid /tmp/miniflux.log
-	@ rm miniflux-test
-	@ psql -U postgres -c 'drop database if exists miniflux_test;'
+	@ kill -9 `cat /tmp/influxeed-engine.pid`
+	@ rm -f /tmp/influxeed-engine.pid /tmp/influxeed-engine.log
+	@ rm influxeed-engine-test
+	@ psql -U postgres -c 'drop database if exists influxeed-engine_test;'
 
 docker-image:
 	docker build --pull -t $(DOCKER_IMAGE):$(VERSION) -f packaging/docker/alpine/Dockerfile .
@@ -146,21 +146,21 @@ docker-images:
 
 rpm: clean
 	@ docker build \
-		-t miniflux-rpm-builder \
+		-t influxeed-engine-rpm-builder \
 		-f packaging/rpm/Dockerfile \
 		.
 	@ docker run --rm \
-		-v ${PWD}:/root/rpmbuild/RPMS/x86_64 miniflux-rpm-builder \
-		rpmbuild -bb --define "_miniflux_version $(VERSION)" /root/rpmbuild/SPECS/miniflux.spec
+		-v ${PWD}:/root/rpmbuild/RPMS/x86_64 influxeed-engine-rpm-builder \
+		rpmbuild -bb --define "_influxeed-engine_version $(VERSION)" /root/rpmbuild/SPECS/influxeed-engine.spec
 
 debian:
 	@ docker buildx build --load \
 		--platform linux/$(DOCKER_PLATFORM) \
-		-t miniflux-deb-builder \
+		-t influxeed-engine-deb-builder \
 		-f packaging/debian/Dockerfile \
 		.
 	@ docker run --rm --platform linux/$(DOCKER_PLATFORM) \
-		-v ${PWD}:/pkg miniflux-deb-builder
+		-v ${PWD}:/pkg influxeed-engine-deb-builder
 
 debian-packages: clean
 	$(MAKE) debian DOCKER_PLATFORM=amd64

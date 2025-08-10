@@ -62,7 +62,7 @@ body:
     id: version
     attributes:
       label: "Version"
-      description: "Which version of Miniflux are you using?"
+      description: "Which version of influxeed-engine are you using?"
       placeholder: "e.g., 2.2.6"
     validations:
       required: true

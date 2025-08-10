@@ -1,17 +1,17 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package worker // import "miniflux.app/v2/internal/worker"
+package worker // import "influxeed-engine/v2/internal/worker"
 
 import (
 	"log/slog"
 	"time"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/metric"
-	"miniflux.app/v2/internal/model"
-	feedHandler "miniflux.app/v2/internal/reader/handler"
-	"miniflux.app/v2/internal/storage"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/metric"
+	"influxeed-engine/v2/internal/model"
+	feedHandler "influxeed-engine/v2/internal/reader/handler"
+	"influxeed-engine/v2/internal/storage"
 )
 
 // Worker refreshes a feed in the background.

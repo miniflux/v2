@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package googlereader // import "miniflux.app/v2/internal/googlereader"
+package googlereader // import "influxeed-engine/v2/internal/googlereader"
 
 import (
 	"context"
@@ -12,9 +12,9 @@ import (
 	"net/http"
 	"strings"
 
-	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/storage"
+	"influxeed-engine/v2/internal/http/request"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/storage"
 )
 
 type middleware struct {

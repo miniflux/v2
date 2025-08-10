@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package static // import "miniflux.app/v2/internal/ui/static"
+package static // import "influxeed-engine/v2/internal/ui/static"
 
 import (
 	"bytes"
 	"embed"
 	"fmt"
 
-	"miniflux.app/v2/internal/crypto"
+	"influxeed-engine/v2/internal/crypto"
 
 	"github.com/tdewolff/minify/v2"
 	"github.com/tdewolff/minify/v2/css"

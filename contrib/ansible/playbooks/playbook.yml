@@ -1,4 +1,4 @@
 ---
-- hosts: miniflux
+- hosts: influxeed-engine
   roles:
-    - { role: mgrote.miniflux, tags: "miniflux" }
+    - { role: mgrote.influxeed-engine, tags: "influxeed-engine" }

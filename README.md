@@ -1,10 +1,10 @@
-Miniflux 2
+influxeed-engine 2
 ==========
 
-Miniflux is a minimalist and opinionated feed reader.
+influxeed-engine is a minimalist and opinionated feed reader.
 It's simple, fast, lightweight and super easy to install.
 
-Official website: <https://miniflux.app>
+Official website: <https://influxeed-engine.app>
 
 Features
 --------
@@ -14,7 +14,7 @@ Features
 - Supported feed formats: Atom 0.3/1.0, RSS 1.0/2.0, and JSON Feed 1.0/1.1.
 - [OPML](https://en.wikipedia.org/wiki/OPML) file import/export and URL import.
 - Supports multiple attachments (podcasts, videos, music, and images enclosures).
-- Plays videos from YouTube directly inside Miniflux.
+- Plays videos from YouTube directly inside influxeed-engine.
 - Organizes articles using categories and bookmarks.
 - Share individual articles publicly.
 - Fetches website icons (favicons).
@@ -76,7 +76,7 @@ Features
 - Bookmarklet for subscribing to websites directly from any web browser.
 - Webhooks for real-time notifications or custom integrations.
 - Compatibility with existing mobile applications using the Fever or Google Reader API.
-- REST API with client libraries available in [Go](https://github.com/miniflux/v2/tree/main/client) and [Python](https://github.com/miniflux/python-client).
+- REST API with client libraries available in [Go](https://github.com/influxeed-engine/v2/tree/main/client) and [Python](https://github.com/influxeed-engine/python-client).
 
 ### Authentication
 
@@ -112,37 +112,37 @@ Features
 Documentation
 -------------
 
-The Miniflux documentation is available here: <https://miniflux.app/docs/> ([Man page](https://miniflux.app/miniflux.1.html))
+The influxeed-engine documentation is available here: <https://influxeed-engine.app/docs/> ([Man page](https://influxeed-engine.app/influxeed-engine.1.html))
 
-- [Opinionated?](https://miniflux.app/opinionated.html)
-- [Features](https://miniflux.app/features.html)
-- [Requirements](https://miniflux.app/docs/requirements.html)
-- [Installation Instructions](https://miniflux.app/docs/installation.html)
-- [Upgrading to a New Version](https://miniflux.app/docs/upgrade.html)
-- [Configuration](https://miniflux.app/docs/configuration.html)
-- [Command Line Usage](https://miniflux.app/docs/cli.html)
-- [User Interface Usage](https://miniflux.app/docs/ui.html)
-- [Keyboard Shortcuts](https://miniflux.app/docs/keyboard_shortcuts.html)
-- [Integration with External Services](https://miniflux.app/docs/#integrations)
-- [Rewrite and Scraper Rules](https://miniflux.app/docs/rules.html)
-- [API Reference](https://miniflux.app/docs/api.html)
-- [Development](https://miniflux.app/docs/development.html)
-- [Internationalization](https://miniflux.app/docs/i18n.html)
-- [Frequently Asked Questions](https://miniflux.app/faq.html)
+- [Opinionated?](https://influxeed-engine.app/opinionated.html)
+- [Features](https://influxeed-engine.app/features.html)
+- [Requirements](https://influxeed-engine.app/docs/requirements.html)
+- [Installation Instructions](https://influxeed-engine.app/docs/installation.html)
+- [Upgrading to a New Version](https://influxeed-engine.app/docs/upgrade.html)
+- [Configuration](https://influxeed-engine.app/docs/configuration.html)
+- [Command Line Usage](https://influxeed-engine.app/docs/cli.html)
+- [User Interface Usage](https://influxeed-engine.app/docs/ui.html)
+- [Keyboard Shortcuts](https://influxeed-engine.app/docs/keyboard_shortcuts.html)
+- [Integration with External Services](https://influxeed-engine.app/docs/#integrations)
+- [Rewrite and Scraper Rules](https://influxeed-engine.app/docs/rules.html)
+- [API Reference](https://influxeed-engine.app/docs/api.html)
+- [Development](https://influxeed-engine.app/docs/development.html)
+- [Internationalization](https://influxeed-engine.app/docs/i18n.html)
+- [Frequently Asked Questions](https://influxeed-engine.app/faq.html)
 
 Screenshots
 -----------
 
 Default theme:
 
-![Default theme](https://miniflux.app/images/overview.png)
+![Default theme](https://influxeed-engine.app/images/overview.png)
 
 Dark theme when using keyboard navigation:
 
-![Dark theme](https://miniflux.app/images/item-selection-black-theme.png)
+![Dark theme](https://influxeed-engine.app/images/item-selection-black-theme.png)
 
 Credits
 -------
 
-- Authors: Frédéric Guillot - [List of contributors](https://github.com/miniflux/v2/graphs/contributors)
+- Authors: Frédéric Guillot - [List of contributors](https://github.com/influxeed-engine/v2/graphs/contributors)
 - Distributed under Apache 2.0 License

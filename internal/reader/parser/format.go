@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package parser // import "miniflux.app/v2/internal/reader/parser"
+package parser // import "influxeed-engine/v2/internal/reader/parser"
 
 import (
 	"encoding/xml"
 	"io"
 	"unicode"
 
-	rxml "miniflux.app/v2/internal/reader/xml"
+	rxml "influxeed-engine/v2/internal/reader/xml"
 )
 
 // List of feed formats.

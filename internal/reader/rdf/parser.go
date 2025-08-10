@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package rdf // import "miniflux.app/v2/internal/reader/rdf"
+package rdf // import "influxeed-engine/v2/internal/reader/rdf"
 
 import (
 	"fmt"
 	"io"
 
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/reader/xml"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/reader/xml"
 )
 
 // Parse returns a normalized feed struct from a RDF feed.

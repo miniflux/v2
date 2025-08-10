@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package googleplay // import "miniflux.app/v2/internal/reader/googleplay"
+package googleplay // import "influxeed-engine/v2/internal/reader/googleplay"
 
 // Specs:
 // https://support.google.com/googleplay/podcasts/answer/6260341

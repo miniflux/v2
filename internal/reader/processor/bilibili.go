@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package processor // import "miniflux.app/v2/internal/reader/processor"
+package processor // import "influxeed-engine/v2/internal/reader/processor"
 
 import (
 	"encoding/json"
@@ -10,10 +10,10 @@ import (
 	"regexp"
 	"strings"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/proxyrotator"
-	"miniflux.app/v2/internal/reader/fetcher"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/proxyrotator"
+	"influxeed-engine/v2/internal/reader/fetcher"
 )
 
 var (

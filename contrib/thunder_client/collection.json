@@ -1,6 +1,6 @@
 {
     "client": "Thunder Client",
-    "collectionName": "Miniflux v2",
+    "collectionName": "influxeed-engine v2",
     "dateExported": "2023-07-31T01:53:38.743Z",
     "version": "1.1",
     "folders": [],
@@ -19,7 +19,7 @@
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "\n{\n    \"url\": \"https://miniflux.app/\"\n}",
+                "raw": "\n{\n    \"url\": \"https://influxeed-engine.app/\"\n}",
                 "form": []
             },
             "tests": []
@@ -106,7 +106,7 @@
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n    \"feed_url\": \"https://miniflux.app/feed.xml\",\n    \"category_id\": 1\n}",
+                "raw": "{\n    \"feed_url\": \"https://influxeed-engine.app/feed.xml\",\n    \"category_id\": 1\n}",
                 "form": []
             },
             "tests": []
@@ -574,7 +574,7 @@
             "params": [],
             "body": {
                 "type": "xml",
-                "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<opml version=\"2.0\">\n    <head>\n        <title>Miniflux</title>\n        <dateCreated>Sun, 30 Jul 2023 18:41:08 PDT</dateCreated>\n    </head>\n    <body>\n        <outline text=\"All\">\n            <outline title=\"Miniflux\" text=\"Miniflux\" xmlUrl=\"https://miniflux.app/feed.xml\" htmlUrl=\"https://miniflux.app\"></outline>\n        </outline>\n    </body>\n</opml>",
+                "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<opml version=\"2.0\">\n    <head>\n        <title>influxeed-engine</title>\n        <dateCreated>Sun, 30 Jul 2023 18:41:08 PDT</dateCreated>\n    </head>\n    <body>\n        <outline text=\"All\">\n            <outline title=\"influxeed-engine\" text=\"influxeed-engine\" xmlUrl=\"https://influxeed-engine.app/feed.xml\" htmlUrl=\"https://influxeed-engine.app\"></outline>\n        </outline>\n    </body>\n</opml>",
                 "form": []
             },
             "tests": []

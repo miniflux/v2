@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package instapaper // import "miniflux.app/v2/internal/integration/instapaper"
+package instapaper // import "influxeed-engine/v2/internal/integration/instapaper"
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"time"
 
-	"miniflux.app/v2/internal/version"
+	"influxeed-engine/v2/internal/version"
 )
 
 const defaultClientTimeout = 10 * time.Second

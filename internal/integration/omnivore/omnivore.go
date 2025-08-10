@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package omnivore // import "miniflux.app/v2/internal/integration/omnivore"
+package omnivore // import "influxeed-engine/v2/internal/integration/omnivore"
 
 import (
 	"bytes"
@@ -11,8 +11,8 @@ import (
 	"net/http"
 	"time"
 
-	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/version"
+	"influxeed-engine/v2/internal/crypto"
+	"influxeed-engine/v2/internal/version"
 )
 
 const defaultClientTimeout = 10 * time.Second

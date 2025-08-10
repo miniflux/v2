@@ -1,5 +1,5 @@
 {
-  "name": "Miniflux",
+  "name": "influxeed-engine",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",

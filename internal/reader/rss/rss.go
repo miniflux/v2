@@ -1,17 +1,17 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package rss // import "miniflux.app/v2/internal/reader/rss"
+package rss // import "influxeed-engine/v2/internal/reader/rss"
 
 import (
 	"encoding/xml"
 	"strconv"
 	"strings"
 
-	"miniflux.app/v2/internal/reader/dublincore"
-	"miniflux.app/v2/internal/reader/googleplay"
-	"miniflux.app/v2/internal/reader/itunes"
-	"miniflux.app/v2/internal/reader/media"
+	"influxeed-engine/v2/internal/reader/dublincore"
+	"influxeed-engine/v2/internal/reader/googleplay"
+	"influxeed-engine/v2/internal/reader/itunes"
+	"influxeed-engine/v2/internal/reader/media"
 )
 
 // Specs: https://www.rssboard.org/rss-specification

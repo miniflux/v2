@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package filter // import "miniflux.app/v2/internal/reader/filter"
+package filter // import "influxeed-engine/v2/internal/reader/filter"
 
 import (
 	"os"
 	"testing"
 	"time"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/model"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/model"
 )
 
 // Test helper functions

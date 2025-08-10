@@ -1,4 +1,4 @@
-This folder contains Miniflux API collection for [Bruno](https://www.usebruno.com).
+This folder contains influxeed-engine API collection for [Bruno](https://www.usebruno.com).
 
 Bruno is a lightweight alternative to Postman/Insomnia.
 

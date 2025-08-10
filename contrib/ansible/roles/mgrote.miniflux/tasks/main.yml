@@ -1,43 +1,43 @@
-  - name: add Apt-key for miniflux-repo
+  - name: add Apt-key for influxeed-engine-repo
     become: yes
     apt_key:
-      url: https://apt.miniflux.app/KEY.gpg
+      url: https://apt.influxeed-engine.app/KEY.gpg
       state: present
 
-  - name: add miniflux-repo
+  - name: add influxeed-engine-repo
     become: yes
     apt_repository:
-      repo: 'deb https://apt.miniflux.app/ /' 
+      repo: 'deb https://apt.influxeed-engine.app/ /' 
       state: present
-      filename: miniflux_repo
+      filename: influxeed-engine_repo
       update_cache: yes
 
-  - name: install miniflux
+  - name: install influxeed-engine
     become: yes
     apt:
-      name: miniflux
+      name: influxeed-engine
       state: present
 
-  - name: add miniflux linux_user
+  - name: add influxeed-engine linux_user
     become: yes
     user:
-      name: "{{ miniflux_linux_user }}"
+      name: "{{ influxeed-engine_linux_user }}"
       home: "/var/empty"
       create_home: "no"
       system: "yes"
       shell: "/bin/false"
 
-  - name: create directory "/etc/miniflux.d"
+  - name: create directory "/etc/influxeed-engine.d"
     become: yes
     file:
-      path: /etc/miniflux.d
+      path: /etc/influxeed-engine.d
       state: directory
 
-  - name: copy miniflux.conf
+  - name: copy influxeed-engine.conf
     become: yes
     template:
-      src: "miniflux.conf"
-      dest: "/etc/miniflux.conf"
+      src: "influxeed-engine.conf"
+      dest: "/etc/influxeed-engine.conf"
     notify:
-      - start_miniflux.service
-      - miniflux_wait
+      - start_influxeed-engine.service
+      - influxeed-engine_wait

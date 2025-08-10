@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package form // import "miniflux.app/v2/internal/ui/form"
+package form // import "influxeed-engine/v2/internal/ui/form"
 
 import (
 	"net/http"
 	"strconv"
 
-	"miniflux.app/v2/internal/locale"
-	"miniflux.app/v2/internal/validator"
+	"influxeed-engine/v2/internal/locale"
+	"influxeed-engine/v2/internal/validator"
 )
 
 // SubscriptionForm represents the subscription form.

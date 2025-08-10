@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package client // import "miniflux.app/v2/client"
+package client // import "influxeed-engine/v2/client"
 
 import (
 	"bytes"

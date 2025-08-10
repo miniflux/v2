@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package session // import "miniflux.app/v2/internal/ui/session"
+package session // import "influxeed-engine/v2/internal/ui/session"
 
 import (
 	"time"
 
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/storage"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/storage"
 )
 
 // Session handles session data.

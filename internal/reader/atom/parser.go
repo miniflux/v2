@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package atom // import "miniflux.app/v2/internal/reader/atom"
+package atom // import "influxeed-engine/v2/internal/reader/atom"
 
 import (
 	"fmt"
 	"io"
 
-	"miniflux.app/v2/internal/model"
-	xml_decoder "miniflux.app/v2/internal/reader/xml"
+	"influxeed-engine/v2/internal/model"
+	xml_decoder "influxeed-engine/v2/internal/reader/xml"
 )
 
 // Parse returns a normalized feed struct from a Atom feed.

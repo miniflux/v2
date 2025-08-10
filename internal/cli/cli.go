@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package cli // import "miniflux.app/v2/internal/cli"
+package cli // import "influxeed-engine/v2/internal/cli"
 
 import (
 	"errors"
@@ -11,12 +11,12 @@ import (
 	"log/slog"
 	"os"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/database"
-	"miniflux.app/v2/internal/proxyrotator"
-	"miniflux.app/v2/internal/storage"
-	"miniflux.app/v2/internal/ui/static"
-	"miniflux.app/v2/internal/version"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/database"
+	"influxeed-engine/v2/internal/proxyrotator"
+	"influxeed-engine/v2/internal/storage"
+	"influxeed-engine/v2/internal/ui/static"
+	"influxeed-engine/v2/internal/version"
 )
 
 const (

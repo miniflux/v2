@@ -1,23 +1,23 @@
-## mgrote.miniflux
+## mgrote.influxeed-engine
 
 ### Details
-Installs and configures Miniflux v2 with ansible
+Installs and configures influxeed-engine v2 with ansible
 
 ### Works on...
 - [x] Ubuntu (>=18.04)
 
 ### Variables and Defaults
 ##### Linux User
-    miniflux_linux_user: miniflux
+    influxeed-engine_linux_user: influxeed-engine
 ##### DB User
-    miniflux_db_user_name: miniflux_db_user
+    influxeed-engine_db_user_name: influxeed-engine_db_user
 ##### DB Password
-    miniflux_db_user_password: qqqqqqqqqqqqq
+    influxeed-engine_db_user_password: qqqqqqqqqqqqq
 ##### Database
-    miniflux_db: miniflux_db
-##### Username Miniflux Admin
-    miniflux_admin_name: admin
-##### Password Miniflux Admin
-    miniflux_admin_passwort: hallowelt
-##### Port for Miniflux Frontend
-    miniflux_port: 8080
+    influxeed-engine_db: influxeed-engine_db
+##### Username influxeed-engine Admin
+    influxeed-engine_admin_name: admin
+##### Password influxeed-engine Admin
+    influxeed-engine_admin_passwort: hallowelt
+##### Port for influxeed-engine Frontend
+    influxeed-engine_port: 8080

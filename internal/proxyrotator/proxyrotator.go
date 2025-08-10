@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package proxyrotator // import "miniflux.app/v2/internal/proxyrotator"
+package proxyrotator // import "influxeed-engine/v2/internal/proxyrotator"
 
 import (
 	"net/url"

@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package database // import "miniflux.app/v2/internal/database"
+package database // import "influxeed-engine/v2/internal/database"
 
 import (
 	"database/sql"
 
-	"miniflux.app/v2/internal/crypto"
+	"influxeed-engine/v2/internal/crypto"
 )
 
 var schemaVersion = len(migrations)

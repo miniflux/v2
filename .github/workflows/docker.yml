@@ -26,9 +26,9 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            docker.io/${{ github.repository_owner }}/miniflux
-            ghcr.io/${{ github.repository_owner }}/miniflux
-            quay.io/${{ github.repository_owner }}/miniflux
+            docker.io/${{ github.repository_owner }}/influxeed-engine
+            ghcr.io/${{ github.repository_owner }}/influxeed-engine
+            quay.io/${{ github.repository_owner }}/influxeed-engine
           tags: |
             type=ref,event=pr
             type=schedule,pattern=nightly
@@ -39,9 +39,9 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            docker.io/${{ github.repository_owner }}/miniflux
-            ghcr.io/${{ github.repository_owner }}/miniflux
-            quay.io/${{ github.repository_owner }}/miniflux
+            docker.io/${{ github.repository_owner }}/influxeed-engine
+            ghcr.io/${{ github.repository_owner }}/influxeed-engine
+            quay.io/${{ github.repository_owner }}/influxeed-engine
           tags: |
             type=ref,event=pr
             type=schedule,pattern=nightly

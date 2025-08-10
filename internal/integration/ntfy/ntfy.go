@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ntfy // import "miniflux.app/v2/internal/integration/ntfy"
+package ntfy // import "influxeed-engine/v2/internal/integration/ntfy"
 
 import (
 	"bytes"
@@ -12,9 +12,9 @@ import (
 	"net/url"
 	"time"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/version"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/version"
 )
 
 const (

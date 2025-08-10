@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package config // import "miniflux.app/v2/internal/config"
+package config // import "influxeed-engine/v2/internal/config"
 
 import (
 	"fmt"
@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/version"
+	"influxeed-engine/v2/internal/crypto"
+	"influxeed-engine/v2/internal/version"
 )
 
 const (
@@ -39,7 +39,7 @@ const (
 	defaultSchedulerRoundRobinMaxInterval     = 1440
 	defaultPollingParsingErrorLimit           = 3
 	defaultRunMigrations                      = false
-	defaultDatabaseURL                        = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
+	defaultDatabaseURL                        = "user=postgres password=postgres dbname=influxeed_engine sslmode=disable"
 	defaultDatabaseMaxConns                   = 20
 	defaultDatabaseMinConns                   = 1
 	defaultDatabaseConnectionLifetime         = 5

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package processor // import "miniflux.app/v2/internal/reader/processor"
+package processor // import "influxeed-engine/v2/internal/reader/processor"
 
 import (
 	"errors"
@@ -10,12 +10,12 @@ import (
 	"strconv"
 
 	"github.com/PuerkitoBio/goquery"
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/proxyrotator"
-	"miniflux.app/v2/internal/reader/fetcher"
-	"miniflux.app/v2/internal/reader/readingtime"
-	"miniflux.app/v2/internal/storage"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/model"
+	"influxeed-engine/v2/internal/proxyrotator"
+	"influxeed-engine/v2/internal/reader/fetcher"
+	"influxeed-engine/v2/internal/reader/readingtime"
+	"influxeed-engine/v2/internal/storage"
 )
 
 func fetchWatchTime(websiteURL, query string, isoDate bool) (int, error) {

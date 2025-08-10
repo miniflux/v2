@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ui // import "miniflux.app/v2/internal/ui"
+package ui // import "influxeed-engine/v2/internal/ui"
 
 import (
 	"context"
 
-	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/oauth2"
+	"influxeed-engine/v2/internal/config"
+	"influxeed-engine/v2/internal/oauth2"
 )
 
 func getOAuth2Manager(ctx context.Context) *oauth2.Manager {

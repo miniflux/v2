@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
+package rewrite // import "influxeed-engine/v2/internal/reader/rewrite"
 
 import (
 	"log/slog"
 	"regexp"
 
-	"miniflux.app/v2/internal/model"
+	"influxeed-engine/v2/internal/model"
 )
 
 var customReplaceRuleRegex = regexp.MustCompile(`^rewrite\("([^"]+)"\|"([^"]+)"\)$`)

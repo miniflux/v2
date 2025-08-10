@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package oauth2 // import "miniflux.app/v2/internal/oauth2"
+package oauth2 // import "influxeed-engine/v2/internal/oauth2"
 
 import (
 	"context"
 
 	"golang.org/x/oauth2"
 
-	"miniflux.app/v2/internal/model"
+	"influxeed-engine/v2/internal/model"
 )
 
 // Provider is an interface for OAuth2 providers.

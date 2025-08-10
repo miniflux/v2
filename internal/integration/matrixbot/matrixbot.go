@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package matrixbot // import "miniflux.app/v2/internal/integration/matrixbot"
+package matrixbot // import "influxeed-engine/v2/internal/integration/matrixbot"
 
 import (
 	"fmt"
 	"strings"
 
-	"miniflux.app/v2/internal/model"
+	"influxeed-engine/v2/internal/model"
 )
 
 // PushEntries pushes entries to matrix chat using integration settings provided

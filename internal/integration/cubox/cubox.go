@@ -3,7 +3,7 @@
 
 // Cubox API documentation: https://help.cubox.cc/save/api/
 
-package cubox // import "miniflux.app/v2/internal/integration/cubox"
+package cubox // import "influxeed-engine/v2/internal/integration/cubox"
 
 import (
 	"bytes"
@@ -14,7 +14,7 @@ import (
 	"net/http"
 	"time"
 
-	"miniflux.app/v2/internal/version"
+	"influxeed-engine/v2/internal/version"
 )
 
 const defaultClientTimeout = 10 * time.Second

@@ -1,11 +1,11 @@
 ---
-  - name: start_miniflux.service
+  - name: start_influxeed-engine.service
     become: yes
     systemd:
-      name: miniflux
+      name: influxeed-engine
       state: restarted
       enabled: yes
 # wait 15 seconds(for systemd)
-  - name: miniflux_wait
+  - name: influxeed-engine_wait
     wait_for:
       timeout: 15

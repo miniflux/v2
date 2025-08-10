@@ -17,7 +17,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
     hostname: postgres
     environment:
-      POSTGRES_DB: miniflux2
+      POSTGRES_DB: influxeed-engine2
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_HOST_AUTH_METHOD: trust
