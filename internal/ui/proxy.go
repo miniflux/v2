@@ -96,7 +96,7 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 		req.Header.Set("Referer", referer)
 	}
 
-	forwardedRequestHeader := []string{"Range", "Accept", "Accept-Encoding", "User-Agent"}
+	forwardedRequestHeader := [...]string{"Range", "Accept", "Accept-Encoding", "User-Agent"}
 	for _, requestHeaderName := range forwardedRequestHeader {
 		if r.Header.Get(requestHeaderName) != "" {
 			req.Header.Set(requestHeaderName, r.Header.Get(requestHeaderName))
@@ -151,7 +151,7 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 			b.WithHeader("Content-Disposition", fmt.Sprintf(`inline; filename="%s"`, filename))
 		}
 
-		forwardedResponseHeader := []string{"Content-Encoding", "Content-Type", "Content-Length", "Accept-Ranges", "Content-Range"}
+		forwardedResponseHeader := [...]string{"Content-Encoding", "Content-Type", "Content-Length", "Accept-Ranges", "Content-Range"}
 		for _, responseHeaderName := range forwardedResponseHeader {
 			if resp.Header.Get(responseHeaderName) != "" {
 				b.WithHeader(responseHeaderName, resp.Header.Get(responseHeaderName))

@@ -11,7 +11,7 @@ import (
 
 // FindClientIP returns the client real IP address based on trusted Reverse-Proxy HTTP headers.
 func FindClientIP(r *http.Request) string {
-	headers := []string{"X-Forwarded-For", "X-Real-Ip"}
+	headers := [...]string{"X-Forwarded-For", "X-Real-Ip"}
 	for _, header := range headers {
 		value := r.Header.Get(header)
 

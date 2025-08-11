@@ -65,7 +65,7 @@ func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *mod
 	}
 
 	// Define watch time fetching scenarios
-	watchTimeScenarios := []struct {
+	watchTimeScenarios := [...]struct {
 		shouldFetch func(*model.Entry) bool
 		fetchFunc   func(string) (int, error)
 		platform    string

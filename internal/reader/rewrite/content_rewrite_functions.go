@@ -107,7 +107,7 @@ func addDynamicImage(entryContent string) string {
 	doc := goquery.NewDocumentFromNode(parserHtml)
 
 	// Ordered most preferred to least preferred.
-	candidateAttrs := []string{
+	candidateAttrs := [...]string{
 		"data-src",
 		"data-original",
 		"data-orig",
@@ -124,7 +124,7 @@ func addDynamicImage(entryContent string) string {
 		"data-380src",
 	}
 
-	candidateSrcsetAttrs := []string{
+	candidateSrcsetAttrs := [...]string{
 		"data-srcset",
 	}
 

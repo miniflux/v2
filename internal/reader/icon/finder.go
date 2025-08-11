@@ -251,7 +251,7 @@ func findIconURLsFromHTMLDocument(body io.Reader, contentType string) ([]string,
 		return nil, fmt.Errorf("icon: unable to read document: %v", err)
 	}
 
-	queries := []string{
+	queries := [...]string{
 		"link[rel='icon' i][href]",
 		"link[rel='shortcut icon' i][href]",
 		"link[rel='icon shortcut' i][href]",
