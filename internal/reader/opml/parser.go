@@ -11,8 +11,8 @@ import (
 	"miniflux.app/v2/internal/reader/encoding"
 )
 
-// parse reads an OPML file and returns a SubcriptionList.
-func parse(data io.Reader) (subcriptionList, error) {
+// parse reads an OPML file and returns a list of subscription.
+func parse(data io.Reader) ([]subcription, error) {
 	opmlDocument := &opmlDocument{}
 	decoder := xml.NewDecoder(data)
 	decoder.Entity = xml.HTMLEntity
@@ -27,10 +27,12 @@ func parse(data io.Reader) (subcriptionList, error) {
 	return getSubscriptionsFromOutlines(opmlDocument.Outlines, ""), nil
 }
 
-func getSubscriptionsFromOutlines(outlines opmlOutlineCollection, category string) (subscriptions subcriptionList) {
+func getSubscriptionsFromOutlines(outlines opmlOutlineCollection, category string) []subcription {
+	subscriptions := make([]subcription, 0, len(outlines))
+
 	for _, outline := range outlines {
 		if outline.IsSubscription() {
-			subscriptions = append(subscriptions, &subcription{
+			subscriptions = append(subscriptions, subcription{
 				Title:        outline.GetTitle(),
 				FeedURL:      outline.FeedURL,
 				SiteURL:      outline.GetSiteURL(),
