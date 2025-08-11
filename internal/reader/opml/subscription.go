@@ -11,6 +11,3 @@ type subcription struct {
 	CategoryName string
 	Description  string
 }
-
-// subcriptionList is a list of subscriptions.
-type subcriptionList []*subcription
