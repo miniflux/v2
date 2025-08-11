@@ -30,7 +30,7 @@ func (u *UserSession) UseTimezone(tz string) {
 }
 
 // UserSessions represents a list of sessions.
-type UserSessions []*UserSession
+type UserSessions []UserSession
 
 // UseTimezone converts creation date of all sessions to the given timezone.
 func (u UserSessions) UseTimezone(tz string) {

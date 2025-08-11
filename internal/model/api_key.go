@@ -8,6 +8,8 @@ import (
 )
 
 // APIKey represents an application API key.
+// We need to use a pointer for LastUsedAt,
+// as the value obtained from the database might sometimes be nil.
 type APIKey struct {
 	ID          int64      `json:"id"`
 	UserID      int64      `json:"user_id"`
@@ -18,7 +20,7 @@ type APIKey struct {
 }
 
 // APIKeys represents a collection of API Key.
-type APIKeys []*APIKey
+type APIKeys []APIKey
 
 // APIKeyCreationRequest represents the request to create a new API Key.
 type APIKeyCreationRequest struct {
