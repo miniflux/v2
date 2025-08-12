@@ -378,8 +378,19 @@ func (s *Storage) ArchiveEntries(status string, days, limit int) (int64, error) 
 
 // SetEntriesStatus update the status of the given list of entries.
 func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string) error {
-	query := `UPDATE entries SET status=$1, changed_at=now() WHERE user_id=$2 AND id=ANY($3)`
-	if _, err := s.db.Exec(query, status, userID, pq.Array(entryIDs)); err != nil {
+	// Entries that have the model.EntryStatusRemoved status are immutable.
+	query := `
+		UPDATE
+			entries
+		SET
+			status=$1,
+			changed_at=now()
+		WHERE
+			user_id=$2 AND
+			id=ANY($3) AND
+			status!=$4
+		`
+	if _, err := s.db.Exec(query, status, userID, pq.Array(entryIDs), model.EntryStatusRemoved); err != nil {
 		return fmt.Errorf(`store: unable to update entries statuses %v: %v`, entryIDs, err)
 	}
 
