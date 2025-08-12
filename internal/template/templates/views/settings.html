@@ -56,9 +56,12 @@
     <fieldset>
         <legend>{{ t "page.settings.webauthn.passkeys" }}</legend>
 
-        <div role="alert" class="alert alert-error hidden" id="webauthn-error">
-            {{ t "page.settings.webauthn.register.error" }}
-        </div>
+        <template id="webauthn-error">
+            <div role="alert" class="alert alert-error" id="webauthn-error-alert">
+                <h4>{{ t "page.settings.webauthn.register.error" }}</h4>
+                <p id="webauthn-error-message"></p>
+            </div>
+        </template>
 
         {{ if .webAuthnCerts}}
         <table>
