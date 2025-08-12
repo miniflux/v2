@@ -24,7 +24,6 @@ func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	printer := locale.NewPrinter(request.UserLanguage(r))
 	provider := request.RouteStringParam(r, "provider")
 	if provider == "" {
 		slog.Warn("Invalid or missing OAuth2 provider")
@@ -42,7 +41,6 @@ func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess := session.New(h.store, request.SessionID(r))
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -55,6 +53,8 @@ func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	sess := session.New(h.store, request.SessionID(r))
+	printer := locale.NewPrinter(request.UserLanguage(r))
 	if !hasPassword {
 		sess.NewFlashErrorMessage(printer.Print("error.unlink_account_without_password"))
 		html.Redirect(w, r, route.Path(h.router, "settings"))
