@@ -62,7 +62,7 @@ func (s *Storage) APIKeys(userID int64) (model.APIKeys, error) {
 			return nil, fmt.Errorf(`store: unable to fetch API Key row: %v`, err)
 		}
 
-		apiKeys = append(apiKeys, &apiKey)
+		apiKeys = append(apiKeys, apiKey)
 	}
 
 	return apiKeys, nil

@@ -103,7 +103,7 @@ func (s *Storage) Categories(userID int64) (model.Categories, error) {
 			return nil, fmt.Errorf(`store: unable to fetch category row: %v`, err)
 		}
 
-		categories = append(categories, &category)
+		categories = append(categories, category)
 	}
 
 	return categories, nil
@@ -158,7 +158,7 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 			return nil, fmt.Errorf(`store: unable to fetch category row: %v`, err)
 		}
 
-		categories = append(categories, &category)
+		categories = append(categories, category)
 	}
 
 	return categories, nil

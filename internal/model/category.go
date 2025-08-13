@@ -11,8 +11,9 @@ type Category struct {
 	Title        string `json:"title"`
 	UserID       int64  `json:"user_id"`
 	HideGlobally bool   `json:"hide_globally"`
-	FeedCount    *int   `json:"feed_count,omitempty"`
-	TotalUnread  *int   `json:"total_unread,omitempty"`
+	// Pointers are needed to avoid breaking /v1/categories?counts=true
+	FeedCount   *int `json:"feed_count,omitempty"`
+	TotalUnread *int `json:"total_unread,omitempty"`
 }
 
 func (c *Category) String() string {
@@ -40,4 +41,4 @@ func (c *CategoryModificationRequest) Patch(category *Category) {
 }
 
 // Categories represents a list of categories.
-type Categories []*Category
+type Categories []Category

@@ -48,7 +48,7 @@ func (s *Storage) UserSessions(userID int64) (model.UserSessions, error) {
 			return nil, fmt.Errorf(`store: unable to fetch user session row: %v`, err)
 		}
 
-		sessions = append(sessions, &session)
+		sessions = append(sessions, session)
 	}
 
 	return sessions, nil
