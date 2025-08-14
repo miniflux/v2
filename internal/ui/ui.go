@@ -146,9 +146,11 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	uiRouter.HandleFunc("/fetch", handler.fetchOPML).Name("fetchOPML").Methods(http.MethodPost)
 
 	// OAuth2 flow.
-	uiRouter.HandleFunc("/oauth2/{provider}/unlink", handler.oauth2Unlink).Name("oauth2Unlink").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/oauth2/{provider}/redirect", handler.oauth2Redirect).Name("oauth2Redirect").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/oauth2/{provider}/callback", handler.oauth2Callback).Name("oauth2Callback").Methods(http.MethodGet)
+	if config.Opts.OAuth2Provider() != "" {
+		uiRouter.HandleFunc("/oauth2/{provider}/unlink", handler.oauth2Unlink).Name("oauth2Unlink").Methods(http.MethodGet)
+		uiRouter.HandleFunc("/oauth2/{provider}/redirect", handler.oauth2Redirect).Name("oauth2Redirect").Methods(http.MethodGet)
+		uiRouter.HandleFunc("/oauth2/{provider}/callback", handler.oauth2Callback).Name("oauth2Callback").Methods(http.MethodGet)
+	}
 
 	// Offline page
 	uiRouter.HandleFunc("/offline", handler.showOfflinePage).Name("offline").Methods(http.MethodGet)
