@@ -27,6 +27,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"golang.org/x/image/draw"
+	"golang.org/x/image/webp"
 )
 
 type iconFinder struct {
@@ -195,8 +196,8 @@ func (f *iconFinder) downloadIcon(iconURL string) (*model.Icon, error) {
 func resizeIcon(icon *model.Icon) *model.Icon {
 	r := bytes.NewReader(icon.Content)
 
-	if !slices.Contains([]string{"image/jpeg", "image/png", "image/gif"}, icon.MimeType) {
-		slog.Info("icon isn't a png/gif/jpeg, can't resize", slog.String("mimetype", icon.MimeType))
+	if !slices.Contains([]string{"image/jpeg", "image/png", "image/gif", "image/webp"}, icon.MimeType) {
+		slog.Info("icon isn't a png/gif/jpeg/webp, can't resize", slog.String("mimetype", icon.MimeType))
 		return icon
 	}
 
@@ -221,6 +222,8 @@ func resizeIcon(icon *model.Icon) *model.Icon {
 		src, err = png.Decode(r)
 	case "image/gif":
 		src, err = gif.Decode(r)
+	case "image/webp":
+		src, err = webp.Decode(r)
 	}
 	if err != nil || src == nil {
 		slog.Warn("unable to decode the icon", slog.Any("error", err))
