@@ -69,9 +69,7 @@
         <li class="item-meta-icons-external-url">
             <a href="{{ .entry.URL | safeURL  }}"
                 aria-describedby="entry-title-{{ .entry.ID }}"
-                {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}
-                rel="noopener noreferrer"
-                referrerpolicy="no-referrer"
+                {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ else }}rel="noopener"{{ end }}
                 data-original-link="{{ .user.MarkReadOnView }}">{{ icon "external-link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
         </li>
         {{ if .entry.CommentsURL }}
@@ -79,9 +77,7 @@
                 <a href="{{ .entry.CommentsURL | safeURL  }}"
                     aria-describedby="entry-title-{{ .entry.ID }}"
                     title="{{ t "entry.comments.title" }}"
-                    {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}
-                    rel="noopener noreferrer"
-                    referrerpolicy="no-referrer"
+                    {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ else }}rel="noopener"{{ end }}
                     data-comments-link="true">{{ icon "comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>
             </li>
         {{ end -}}

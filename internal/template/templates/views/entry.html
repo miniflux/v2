@@ -43,7 +43,7 @@
 <section class="entry" data-id="{{ .entry.ID }}" aria-labelledby="page-header-title">
     <header class="entry-header">
         <h1 id="page-header-title" dir="auto">
-            <a href="{{ .entry.URL | safeURL }}" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }} rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
+            <a href="{{ .entry.URL | safeURL }}" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ else }}rel="noopener"{{ end }}>{{ .entry.Title }}</a>
         </h1>
         {{ if .user }}
         <div class="entry-actions">
@@ -128,9 +128,7 @@
                     <a href="{{ .entry.CommentsURL | safeURL }}"
                         class="page-link"
                         title="{{ t "entry.comments.title" }}"
-                        {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}
-                        rel="noopener noreferrer"
-                        referrerpolicy="no-referrer"
+                        {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ else }}rel="noopener"{{ end }}
                         data-comments-link="true"
                         >{{ icon "comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>
                 </li>
@@ -207,9 +205,7 @@
         <div class="entry-external-link">
             <a
                 href="{{ .entry.URL | safeURL  }}"
-                {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}
-                rel="noopener noreferrer"
-                referrerpolicy="no-referrer"
+                {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ else }}rel="noopener"{{ end }}
                 data-original-link="{{ $.user.MarkReadOnView }}">{{ .entry.URL }}</span></a>
         </div>
         <div class="entry-date">
@@ -306,7 +302,7 @@
         {{ end }}
 
         <div class="entry-enclosure-download">
-            <a href="{{ .URL | safeURL }}" title="{{ t "action.download" }}{{ if gt .Size 0 }} - {{ formatFileSize .Size }}{{ end }}" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }} rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL | safeURL  }}</a>
+            <a href="{{ .URL | safeURL }}" title="{{ t "action.download" }}{{ if gt .Size 0 }} - {{ formatFileSize .Size }}{{ end }}" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ else }}rel="noopener"{{ end }}>{{ .URL | safeURL  }}</a>
             <small>{{ if gt .Size 0 }} - <strong>{{ formatFileSize .Size }}</strong>{{ end }}</small>
         </div>
     </div>
