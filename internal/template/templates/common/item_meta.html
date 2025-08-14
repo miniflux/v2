@@ -1,4 +1,4 @@
-{{ define "item_meta" }}
+{{ define "item_meta" -}}
 <div class="item-meta">
     <ul class="item-meta-info">
         <li class="item-meta-info-title">
@@ -7,13 +7,11 @@
         <li class="item-meta-info-timestamp">
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>
         </li>
-        {{ if and .user.ShowReadingTime (gt .entry.ReadingTime 0) }}
+        {{ if and .user.ShowReadingTime (gt .entry.ReadingTime 0) -}}
         <li class="item-meta-info-reading-time">
-            <span>
-            {{ plural "entry.estimated_reading_time" .entry.ReadingTime .entry.ReadingTime }}
-            </span>
+            <span>{{ plural "entry.estimated_reading_time" .entry.ReadingTime .entry.ReadingTime }}</span>
         </li>
-        {{ end }}
+        {{ end -}}
     </ul>
     <ul class="item-meta-icons">
         <li class="item-meta-icons-read">
@@ -55,7 +53,7 @@
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}">{{ icon "delete" }}<span class="icon-label">{{ t "entry.unshare.label" }}</span></button>
             </li>
-        {{ end }}
+        {{ end -}}
         {{ if .hasSaveEntry }}
             <li>
                 <button
@@ -67,7 +65,7 @@
                     data-label-done="{{ t "entry.save.completed" }}"
                     >{{ icon "save" }}<span class="icon-label">{{ t "entry.save.label" }}</span></button>
             </li>
-        {{ end }}
+        {{ end -}}
         <li class="item-meta-icons-external-url">
             <a href="{{ .entry.URL | safeURL  }}"
                 aria-describedby="entry-title-{{ .entry.ID }}"
@@ -86,7 +84,7 @@
                     referrerpolicy="no-referrer"
                     data-comments-link="true">{{ icon "comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>
             </li>
-        {{ end }}
+        {{ end -}}
     </ul>
 </div>
 {{ end }}
