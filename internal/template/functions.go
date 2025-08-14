@@ -86,7 +86,7 @@ func (f *funcMap) Map() template.FuncMap {
 		"theme_color": model.ThemeColor,
 		"icon": func(iconName string) template.HTML {
 			return template.HTML(fmt.Sprintf(
-				`<svg class="icon" aria-hidden="true"><use href="%s#icon-%s"/></svg>`,
+				`<svg aria-hidden="true"><use href="%s#icon-%s"/></svg>`,
 				route.Path(f.router, "appIcon", "filename", "sprite.svg"),
 				iconName,
 			))
