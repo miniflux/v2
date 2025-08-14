@@ -30,6 +30,8 @@ import (
 	"golang.org/x/image/webp"
 )
 
+const icoMimetype = "image/vnd.microsoft.icon"
+
 type iconFinder struct {
 	requestBuilder *fetcher.RequestBuilder
 	websiteURL     string
@@ -44,34 +46,58 @@ func newIconFinder(requestBuilder *fetcher.RequestBuilder, websiteURL, feedIconU
 	}
 }
 
+// findIcon will do its very best to find the feed's icon,
+// prioritizing anything over .ico files
 func (f *iconFinder) findIcon() (*model.Icon, error) {
 	slog.Debug("Begin icon discovery process",
 		slog.String("website_url", f.websiteURL),
 		slog.String("feed_icon_url", f.feedIconURL),
 	)
+	var icoIcon *model.Icon // ico icon fallback should no other icons be found
 
-	if f.feedIconURL != "" {
-		if icon, err := f.fetchFeedIcon(); err != nil {
-			slog.Debug("Unable to download icon from feed",
-				slog.String("website_url", f.websiteURL),
-				slog.String("feed_icon_url", f.feedIconURL),
-				slog.Any("error", err),
-			)
-		} else if icon != nil {
+	icon, err := f.fetchFeedIcon()
+	if err != nil {
+		slog.Debug("Unable to download icon from feed",
+			slog.String("website_url", f.websiteURL),
+			slog.String("feed_icon_url", f.feedIconURL),
+			slog.Any("error", err))
+	} else if icon != nil {
+		if icon.MimeType != icoMimetype {
 			return icon, nil
 		}
+		icoIcon = icon
 	}
 
-	if icon, err := f.fetchIconsFromHTMLDocument(); err != nil {
+	icon, err = f.fetchIconsFromHTMLDocument()
+	if err != nil {
 		slog.Debug("Unable to fetch icons from HTML document",
 			slog.String("website_url", f.websiteURL),
 			slog.Any("error", err),
 		)
 	} else if icon != nil {
-		return icon, nil
+		if icon.MimeType != icoMimetype {
+			return icon, nil
+		}
+		if icoIcon == nil {
+			icoIcon = icon
+		}
 	}
 
-	return f.fetchDefaultIcon()
+	icon, err = f.fetchDefaultIcon()
+	if err != nil {
+		slog.Debug("Unable to fetch default icon",
+			slog.String("website_url", f.websiteURL),
+			slog.Any("error", err))
+	} else if icon != nil {
+		if icon.MimeType != icoMimetype {
+			return icon, nil
+		}
+		if icoIcon == nil {
+			icoIcon = icon
+		}
+	}
+
+	return icoIcon, nil
 }
 
 func (f *iconFinder) fetchDefaultIcon() (*model.Icon, error) {
@@ -93,6 +119,10 @@ func (f *iconFinder) fetchDefaultIcon() (*model.Icon, error) {
 }
 
 func (f *iconFinder) fetchFeedIcon() (*model.Icon, error) {
+	if f.feedIconURL != "" {
+		return nil, nil
+	}
+
 	slog.Debug("Fetching feed icon",
 		slog.String("website_url", f.websiteURL),
 		slog.String("feed_icon_url", f.feedIconURL),
@@ -275,6 +305,20 @@ func findIconURLsFromHTMLDocument(body io.Reader, contentType string) ([]string,
 			}
 		}
 	}
+
+	slices.SortFunc(iconURLs, func(a, b string) int {
+		if strings.HasSuffix(a, ".ico") {
+			if strings.HasSuffix(b, ".ico") {
+				return 0
+			}
+			return 1 // prioritize b
+		}
+
+		if strings.HasSuffix(b, ".ico") {
+			return -1 // prioritize a
+		}
+		return 0 // none are .ico
+	})
 
 	return iconURLs, nil
 }

@@ -194,3 +194,24 @@ func TestResizeInvalidImage(t *testing.T) {
 		t.Fatalf("Tried to convert an invalid image")
 	}
 }
+
+func TestParseDocumentWithIcoAndPng(t *testing.T) {
+	html := `<link rel="shortcut icon" href="/static/img/favicon.ico">
+	<link rel="shortcut icon" href="/static/img/favicon.png">
+	<link rel="shortcut icon" href="/static/img/favicon.jpeg">
+	<link rel="shortcut icon" href="/static/img/favicon_max.ico">
+	`
+
+	iconURLs, err := findIconURLsFromHTMLDocument(strings.NewReader(html), "text/html")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(iconURLs) != 4 {
+		t.Fatalf(`Invalid number of icon URLs, got %d`, len(iconURLs))
+	}
+
+	if iconURLs[0] != "/static/img/favicon.png" {
+		t.Errorf(`Expected favicon.png first, go %q instead`, iconURLs[0])
+	}
+}
