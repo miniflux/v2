@@ -228,6 +228,37 @@
         </div>
     </details>
 
+    <details {{ if .form.LinktacoEnabled }}open{{ end }}>
+        <summary>LinkTaco</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="linktaco_enabled" value="1" {{ if .form.LinktacoEnabled }}checked{{ end }}> {{ t "form.integration.linktaco_activate" }}
+            </label>
+
+            <label for="form-linktaco-api-token">{{ t "form.integration.linktaco_api_token" }}</label>
+            <input type="password" name="linktaco_api_token" id="form-linktaco-api-token" value="{{ .form.LinktacoAPIToken }}" spellcheck="false">
+            <p class="hint">{{ t "form.integration.linktaco_api_token_hint" }} <a href="https://linktaco.com/oauth2/personal" target="_blank" rel="noopener noreferrer">https://linktaco.com/oauth2/personal</a></p>
+
+            <label for="form-linktaco-org-slug">{{ t "form.integration.linktaco_org_slug" }}</label>
+            <input type="text" name="linktaco_org_slug" id="form-linktaco-org-slug" value="{{ .form.LinktacoOrgSlug }}" placeholder="my-organization" spellcheck="false">
+
+            <label for="form-linktaco-tags">{{ t "form.integration.linktaco_tags" }}</label>
+            <input type="text" name="linktaco_tags" id="form-linktaco-tags" value="{{ .form.LinktacoTags }}" placeholder="miniflux, bookmarks" spellcheck="false">
+            <p class="hint">{{ t "form.integration.linktaco_tags_hint" }}</p>
+
+            <label for="form-linktaco-visibility">{{ t "form.integration.linktaco_visibility" }}</label>
+            <select name="linktaco_visibility" id="form-linktaco-visibility">
+                <option value="PUBLIC" {{ if eq .form.LinktacoVisibility "PUBLIC" }}selected{{ end }}>{{ t "form.integration.linktaco_visibility_public" }}</option>
+                <option value="PRIVATE" {{ if eq .form.LinktacoVisibility "PRIVATE" }}selected{{ end }}>{{ t "form.integration.linktaco_visibility_private" }}</option>
+            </select>
+            <p class="hint">{{ t "form.integration.linktaco_visibility_hint" }}</p>
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.LinkwardenEnabled }}open{{ end }}>
         <summary>Linkwarden</summary>
         <div class="form-section">
