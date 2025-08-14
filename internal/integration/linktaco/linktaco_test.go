@@ -148,7 +148,7 @@ func TestCreateBookmark(t *testing.T) {
 				json.NewEncoder(w).Encode(map[string]interface{}{
 					"errors": []interface{}{
 						map[string]interface{}{
-							"message": "Permission denied: PRIVATE visibility requires premium",
+							"message": "PRIVATE visibility requires a paid LinkTaco account",
 						},
 					},
 				})
@@ -167,16 +167,16 @@ func TestCreateBookmark(t *testing.T) {
 				body, _ := io.ReadAll(r.Body)
 				var req map[string]interface{}
 				json.Unmarshal(body, &req)
-				
+
 				// Check that description was truncated
 				variables := req["variables"].(map[string]interface{})
 				input := variables["input"].(map[string]interface{})
 				description := input["description"].(string)
-				
+
 				if len(description) != maxDescriptionLength {
 					t.Errorf("Expected description length %d, got %d", maxDescriptionLength, len(description))
 				}
-				
+
 				w.WriteHeader(http.StatusOK)
 				json.NewEncoder(w).Encode(map[string]interface{}{
 					"data": map[string]interface{}{
@@ -198,48 +198,17 @@ func TestCreateBookmark(t *testing.T) {
 				body, _ := io.ReadAll(r.Body)
 				var req map[string]interface{}
 				json.Unmarshal(body, &req)
-				
+
 				// Check that only 10 tags were sent
 				variables := req["variables"].(map[string]interface{})
 				input := variables["input"].(map[string]interface{})
 				tags := input["tags"].(string)
-				
+
 				tagCount := len(strings.Split(tags, ","))
 				if tagCount != maxTags {
 					t.Errorf("Expected %d tags, got %d", maxTags, tagCount)
 				}
-				
-				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(map[string]interface{}{
-					"data": map[string]interface{}{
-						"addLink": map[string]interface{}{"id": "123"},
-					},
-				})
-			},
-			wantErr: false,
-		},
-		{
-			name:         "default visibility when empty",
-			apiToken:     "test-token",
-			orgSlug:      "test-org",
-			visibility:   "", // Empty visibility should default to PUBLIC in NewClient
-			entryURL:     "https://example.com",
-			entryTitle:   "Test",
-			entryContent: "Content",
-			serverResponse: func(w http.ResponseWriter, r *http.Request) {
-				body, _ := io.ReadAll(r.Body)
-				var req map[string]interface{}
-				json.Unmarshal(body, &req)
-				
-				// Check that empty visibility defaults to PUBLIC in CreateBookmark
-				variables := req["variables"].(map[string]interface{})
-				input := variables["input"].(map[string]interface{})
-				visibility := input["visibility"].(string)
-				
-				if visibility != "PUBLIC" {
-					t.Errorf("Expected visibility 'PUBLIC', got %s", visibility)
-				}
-				
+
 				w.WriteHeader(http.StatusOK)
 				json.NewEncoder(w).Encode(map[string]interface{}{
 					"data": map[string]interface{}{
@@ -333,7 +302,7 @@ func TestNewClient(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			client := NewClient(tt.apiToken, tt.orgSlug, tt.tags, tt.visibility)
-			
+
 			if client.apiToken != tt.apiToken {
 				t.Errorf("Expected apiToken %s, got %s", tt.apiToken, client.apiToken)
 			}
@@ -456,7 +425,7 @@ func BenchmarkCreateBookmark(b *testing.B) {
 func BenchmarkTagProcessing(b *testing.B) {
 	// Benchmark tag splitting and limiting
 	tags := "tag1,tag2,tag3,tag4,tag5,tag6,tag7,tag8,tag9,tag10,tag11,tag12,tag13,tag14,tag15"
-	
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		tagsSplitFn := func(c rune) bool {

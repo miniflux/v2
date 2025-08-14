@@ -53,13 +53,13 @@ func (c *Client) CreateBookmark(entryURL, entryTitle, entryContent string) error
 	}
 
 	// tags (limit to 10)
-	tagsSplitFn := func(c rune) bool {
+	tags := strings.FieldsFunc(c.tags, func(c rune) bool {
 		return c == ',' || c == ' '
-	}
-	tags := strings.FieldsFunc(c.tags, tagsSplitFn)
+	})
 	if len(tags) > maxTags {
 		tags = tags[:maxTags]
 	}
+	// tagsStr is used in GraphQL query to pass comma separated tags
 	tagsStr := strings.Join(tags, ",")
 
 	mutation := `
@@ -72,19 +72,13 @@ func (c *Client) CreateBookmark(entryURL, entryTitle, entryContent string) error
 		}
 	`
 
-	// Ensure visibility has a value
-	visibility := c.visibility
-	if visibility == "" {
-		visibility = "PUBLIC"
-	}
-
 	variables := map[string]any{
 		"input": map[string]any{
 			"url":         entryURL,
 			"title":       entryTitle,
 			"description": description,
 			"orgSlug":     c.orgSlug,
-			"visibility":  visibility,
+			"visibility":  c.visibility,
 			"unread":      true,
 			"starred":     false,
 			"archive":     false,
@@ -141,14 +135,11 @@ func (c *Client) CreateBookmark(entryURL, entryTitle, entryContent string) error
 				break
 			}
 		}
-		if errorMsg != "" {
-			// Check for common permission errors
-			if strings.Contains(strings.ToLower(errorMsg), "permission") || strings.Contains(strings.ToLower(errorMsg), "private") {
-				return fmt.Errorf("linktaco: %s (Note: PRIVATE visibility requires a paid LinkTaco account)", errorMsg)
-			}
-			return fmt.Errorf("linktaco: %s", errorMsg)
+		if errorMsg == "" {
+			// Fallback. Should never be reached.
+			errorMsg = "GraphQL error occurred (fallback message)"
 		}
-		return fmt.Errorf("linktaco: GraphQL error occurred")
+		return fmt.Errorf("linktaco: %s", errorMsg)
 	}
 
 	return nil
