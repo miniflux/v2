@@ -720,7 +720,7 @@ func TestWorkerPoolSize(t *testing.T) {
 	}
 }
 
-func TestDefautPollingFrequencyValue(t *testing.T) {
+func TestDefaultPollingFrequencyValue(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -755,7 +755,7 @@ func TestPollingFrequency(t *testing.T) {
 	}
 }
 
-func TestDefautForceRefreshInterval(t *testing.T) {
+func TestDefaultForceRefreshInterval(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -825,7 +825,7 @@ func TestBatchSize(t *testing.T) {
 	}
 }
 
-func TestDefautPollingSchedulerValue(t *testing.T) {
+func TestDefaultPollingSchedulerValue(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -860,7 +860,7 @@ func TestPollingScheduler(t *testing.T) {
 	}
 }
 
-func TestDefautSchedulerEntryFrequencyMaxIntervalValue(t *testing.T) {
+func TestDefaultSchedulerEntryFrequencyMaxIntervalValue(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -895,7 +895,7 @@ func TestSchedulerEntryFrequencyMaxInterval(t *testing.T) {
 	}
 }
 
-func TestDefautSchedulerEntryFrequencyMinIntervalValue(t *testing.T) {
+func TestDefaultSchedulerEntryFrequencyMinIntervalValue(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -930,7 +930,7 @@ func TestSchedulerEntryFrequencyMinInterval(t *testing.T) {
 	}
 }
 
-func TestDefautSchedulerEntryFrequencyFactorValue(t *testing.T) {
+func TestDefaultSchedulerEntryFrequencyFactorValue(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
