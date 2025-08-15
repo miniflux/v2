@@ -170,6 +170,21 @@ func TestResizeIconPng(t *testing.T) {
 	}
 }
 
+func TestResizeIconWebp(t *testing.T) {
+	data, err := base64.StdEncoding.DecodeString("UklGRkAAAABXRUJQVlA4IDQAAADwAQCdASoBAAEAAQAcJaACdLoB+AAETAAA/vW4f/6aR40jxpHxcP/ugT90CfugT/3NoAAA")
+	if err != nil {
+		t.Fatal(err)
+	}
+	icon := model.Icon{
+		Content:  data,
+		MimeType: "image/webp",
+	}
+
+	if !bytes.Equal(icon.Content, resizeIcon(&icon).Content) {
+		t.Fatalf("Converted webp smaller than 16x16")
+	}
+}
+
 func TestResizeInvalidImage(t *testing.T) {
 	icon := model.Icon{
 		Content:  []byte("invalid data"),
