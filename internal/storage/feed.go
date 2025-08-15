@@ -157,7 +157,7 @@ func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
 	return getFeedsSorted(builder)
 }
 
-// Return read and unread count.
+// FetchCounters returns read and unread count.
 func (s *Storage) FetchCounters(userID int64) (model.FeedCounters, error) {
 	builder := NewFeedQueryBuilder(s, userID)
 	builder.WithCounters()
