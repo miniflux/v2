@@ -18,9 +18,8 @@ import (
 )
 
 const (
-	defaultHTTPClientTimeout     = 20
-	defaultHTTPClientMaxBodySize = 15 * 1024 * 1024
-	defaultAcceptHeader          = "application/xml, application/atom+xml, application/rss+xml, application/rdf+xml, application/feed+json, text/html, */*;q=0.9"
+	defaultHTTPClientTimeout = 20
+	defaultAcceptHeader      = "application/xml, application/atom+xml, application/rss+xml, application/rdf+xml, application/feed+json, text/html, */*;q=0.9"
 )
 
 type RequestBuilder struct {
@@ -40,11 +39,6 @@ func NewRequestBuilder() *RequestBuilder {
 		headers:       make(http.Header),
 		clientTimeout: defaultHTTPClientTimeout,
 	}
-}
-
-func (r *RequestBuilder) WithHeader(key, value string) *RequestBuilder {
-	r.headers.Set(key, value)
-	return r
 }
 
 func (r *RequestBuilder) WithETag(etag string) *RequestBuilder {
