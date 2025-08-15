@@ -12,7 +12,7 @@ import (
 	"miniflux.app/v2/internal/model"
 )
 
-// handle storage of webauthn credentials
+// AddWebAuthnCredential handles storage of webauthn credentials.
 func (s *Storage) AddWebAuthnCredential(userID int64, handle []byte, credential *webauthn.Credential) error {
 	query := `
 		INSERT INTO webauthn_credentials

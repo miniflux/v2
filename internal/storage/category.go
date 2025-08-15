@@ -236,8 +236,8 @@ func (s *Storage) RemoveCategory(userID, categoryID int64) error {
 	return nil
 }
 
-// delete the given categories, replacing those categories with the user's first
-// category on affected feeds
+// RemoveAndReplaceCategoriesByName deletes the given categories, replacing those categories with the user's first
+// category on affected feeds.
 func (s *Storage) RemoveAndReplaceCategoriesByName(userid int64, titles []string) error {
 	tx, err := s.db.Begin()
 	if err != nil {

@@ -155,7 +155,6 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		&entry.CreatedAt,
 		&entry.ChangedAt,
 	)
-
 	if err != nil {
 		return fmt.Errorf(`store: unable to create entry %q (feed #%d): %v`, entry.URL, entry.FeedID, err)
 	}
@@ -208,7 +207,6 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.Hash,
 		pq.Array(entry.Tags),
 	).Scan(&entry.ID)
-
 	if err != nil {
 		return fmt.Errorf(`store: unable to update entry %q: %v`, entry.URL, err)
 	}
@@ -421,7 +419,7 @@ func (s *Storage) SetEntriesStatusCount(userID int64, entryIDs []int64, status s
 	return visible, nil
 }
 
-// SetEntriesBookmarked update the bookmarked state for the given list of entries.
+// SetEntriesBookmarkedState updates the bookmarked state for the given list of entries.
 func (s *Storage) SetEntriesBookmarkedState(userID int64, entryIDs []int64, starred bool) error {
 	query := `UPDATE entries SET starred=$1, changed_at=now() WHERE user_id=$2 AND id=ANY($3)`
 	result, err := s.db.Exec(query, starred, userID, pq.Array(entryIDs))

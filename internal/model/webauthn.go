@@ -14,7 +14,7 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 )
 
-// handle marshalling / unmarshalling session data
+// WebAuthnSession handles marshalling / unmarshalling session data
 type WebAuthnSession struct {
 	*webauthn.SessionData
 }
