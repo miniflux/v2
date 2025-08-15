@@ -20,6 +20,7 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/rewrite"
 )
 
@@ -84,33 +85,21 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 		slog.String("media_url", mediaURL),
 	)
 
-	req, err := http.NewRequest("GET", mediaURL, nil)
-	if err != nil {
-		html.ServerError(w, r, err)
-		return
-	}
-
-	req.Header.Set("Connection", "close")
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithTimeout(config.Opts.MediaProxyHTTPClientTimeout())
 
 	if referer := rewrite.GetRefererForURL(mediaURL); referer != "" {
-		req.Header.Set("Referer", referer)
+		requestBuilder.WithHeader("Referer", referer)
 	}
 
 	forwardedRequestHeader := [...]string{"Range", "Accept", "Accept-Encoding", "User-Agent"}
 	for _, requestHeaderName := range forwardedRequestHeader {
 		if r.Header.Get(requestHeaderName) != "" {
-			req.Header.Set(requestHeaderName, r.Header.Get(requestHeaderName))
+			requestBuilder.WithHeader(requestHeaderName, r.Header.Get(requestHeaderName))
 		}
 	}
 
-	clt := &http.Client{
-		Transport: &http.Transport{
-			IdleConnTimeout: time.Duration(config.Opts.MediaProxyHTTPClientTimeout()) * time.Second,
-		},
-		Timeout: time.Duration(config.Opts.MediaProxyHTTPClientTimeout()) * time.Second,
-	}
-
-	resp, err := clt.Do(req)
+	resp, err := requestBuilder.ExecuteRequest(mediaURL)
 	if err != nil {
 		slog.Error("MediaProxy: Unable to initialize HTTP client",
 			slog.String("media_url", mediaURL),
