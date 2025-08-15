@@ -816,6 +816,11 @@ template {
     font-size: inherit;
 }
 
+.item-title img {
+    width: 16px;
+    height: 16px;
+}
+
 .feed-entries-counter {
     display: inline-flex;
     gap: 2px;
