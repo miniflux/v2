@@ -42,10 +42,10 @@
     <p role="alert" class="alert">{{ t "alert.no_unread_entry" }}</p>
 {{ else }}
     <div class="pagination-top">
-        {{ template "pagination" .pagination }}
+        {{ template "pagination" .pagination -}}
     </div>
     <div class="items hide-read-items">
-        {{ range .entries }}
+        {{ range .entries -}}
         <article
             class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}"
             data-id="{{ .ID }}"
@@ -55,9 +55,9 @@
             <header class="item-header" dir="auto">
                 <h2 id="entry-title-{{ .ID }}" class="item-title">
                     <a href="{{ route "unreadEntry" "entryID" .ID }}">
-                        {{ if ne .Feed.Icon.IconID 0 }}
+                        {{ if ne .Feed.Icon.IconID 0 -}}
                         <img src="{{ route "feedIcon" "externalIconID" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
-                        {{ end }}
+                        {{ end -}}
                         {{ .Title }}
                     </a>
                 </h2>
@@ -67,7 +67,7 @@
                     </a>
                 </span>
             </header>
-            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry -}}
         </article>
         {{ end }}
     </div>
