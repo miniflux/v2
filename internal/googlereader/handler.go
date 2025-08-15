@@ -230,7 +230,7 @@ func (h *handler) tokenHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token := request.GoolgeReaderToken(r)
+	token := request.GoogleReaderToken(r)
 	if token == "" {
 		slog.Warn("[GoogleReader] User does not have token",
 			slog.String("client_ip", clientIP),
