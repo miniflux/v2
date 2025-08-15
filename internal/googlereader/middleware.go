@@ -181,7 +181,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, request.UserTimezoneContextKey, user.Timezone)
 		ctx = context.WithValue(ctx, request.IsAdminUserContextKey, user.IsAdmin)
 		ctx = context.WithValue(ctx, request.IsAuthenticatedContextKey, true)
-		ctx = context.WithValue(ctx, request.GoogleReaderToken, token)
+		ctx = context.WithValue(ctx, request.GoogleReaderTokenKey, token)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
