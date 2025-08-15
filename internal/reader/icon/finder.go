@@ -255,7 +255,7 @@ func findIconURLsFromHTMLDocument(body io.Reader, contentType string) ([]string,
 		"link[rel='icon' i][href]",
 		"link[rel='shortcut icon' i][href]",
 		"link[rel='icon shortcut' i][href]",
-		"link[rel='apple-touch-icon-precomposed.png'][href]",
+		"link[rel='apple-touch-icon'][href]",
 	}
 
 	var iconURLs []string
