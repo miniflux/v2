@@ -164,7 +164,7 @@ func Parse() {
 		printErrorAndExit(fmt.Errorf("unable to generate stylesheets bundle: %v", err))
 	}
 
-	if err := static.GenerateJavascriptBundles(); err != nil {
+	if err := static.GenerateJavascriptBundles(config.Opts.WebAuthn()); err != nil {
 		printErrorAndExit(fmt.Errorf("unable to generate javascript bundle: %v", err))
 	}
 
