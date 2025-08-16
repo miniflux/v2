@@ -7,11 +7,11 @@ import (
 	"runtime/debug"
 )
 
-// Variables populated at build time.
+// Variables populated at build time when using LD_FLAGS.
 var (
-	Version   = "Development Version"
-	Commit    = getCommit()
-	BuildDate = getBuildDate()
+	Version   = ""
+	Commit    = ""
+	BuildDate = ""
 )
 
 func getCommit() string {
@@ -37,4 +37,18 @@ func getBuildDate() string {
 		}
 	}
 	return "Unknown (built outside VCS)"
+}
+
+// Populate build information from VCS metadata if LDFLAGS are not set.
+// Falls back to values from the Go module's build info when available.
+func init() {
+	if Version == "" {
+		Version = "Development Version"
+	}
+	if Commit == "" {
+		Commit = getCommit()
+	}
+	if BuildDate == "" {
+		BuildDate = getBuildDate()
+	}
 }
