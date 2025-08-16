@@ -26,15 +26,7 @@ func (p *Printer) Print(key string) string {
 
 // Printf is like fmt.Printf, but using language-specific formatting.
 func (p *Printer) Printf(key string, args ...any) string {
-	translation := key
-
-	if dict, err := getTranslationDict(p.language); err == nil {
-		if str, ok := dict.singulars[key]; ok {
-			translation = str
-		}
-	}
-
-	return fmt.Sprintf(translation, args...)
+	return fmt.Sprintf(p.Print(key), args...)
 }
 
 // Plural returns the translation of the given key by using the language plural form.
