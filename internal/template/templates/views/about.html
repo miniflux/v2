@@ -11,9 +11,23 @@
 <div class="panel">
     <h3>Miniflux</h3>
     <ul>
-        <li><strong>{{ t "page.about.version" }}</strong> <a href="https://github.com/miniflux/v2/releases/tag/{{ .version }}">{{ .version }}</a></li>
+        <li>
+            <strong>{{ t "page.about.version" }}</strong>&nbsp;
+            {{ if startsWith .version "2." }}
+                <a href="https://github.com/miniflux/v2/releases/tag/{{ .version }}">{{ .version }}</a>
+            {{ else }}
+                {{ .version }}
+            {{ end }}
+        </li>
 	{{ if .commit }}
-        <li><strong>{{ t "page.about.git_commit" }}</strong> <a href="https://github.com/miniflux/v2/commit/{{ .commit }}">{{ .commit }}</a></li>
+        <li>
+            <strong>{{ t "page.about.git_commit" }}</strong>&nbsp;
+            {{ if startsWith .commit "Unknown" }}
+                {{ .commit }}
+            {{ else }}
+                <a href="https://github.com/miniflux/v2/commit/{{ .commit }}">{{ .commit }}</a>
+            {{ end }}
+        </li>
 	{{ end }}
         <li><strong>{{ t "page.about.build_date" }}</strong> {{ .build_date }}</li>
     	<li><strong>{{t "page.about.go_version" }}</strong> {{ .go_version }}</li>
