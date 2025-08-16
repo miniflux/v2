@@ -32,6 +32,7 @@ type funcMap struct {
 // Map returns a map of template functions that are compiled during template parsing.
 func (f *funcMap) Map() template.FuncMap {
 	return template.FuncMap{
+		"startsWith":       strings.HasPrefix,
 		"formatFileSize":   formatFileSize,
 		"dict":             dict,
 		"truncate":         truncate,
