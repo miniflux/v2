@@ -5,7 +5,6 @@ package version // import "miniflux.app/v2/internal/version"
 
 import (
 	"runtime/debug"
-	"time"
 )
 
 // Variables populated at build time.
@@ -19,11 +18,14 @@ func getCommit() string {
 	if info, ok := debug.ReadBuildInfo(); ok {
 		for _, setting := range info.Settings {
 			if setting.Key == "vcs.revision" {
-				return setting.Value[:8] // Short commit hash
+				if len(setting.Value) >= 8 {
+					return setting.Value[:8]
+				}
+				return setting.Value
 			}
 		}
 	}
-	return "HEAD"
+	return "Unknown (built outside VCS)"
 }
 
 func getBuildDate() string {
@@ -34,5 +36,5 @@ func getBuildDate() string {
 			}
 		}
 	}
-	return time.Now().Format(time.RFC3339)
+	return "Unknown (built outside VCS)"
 }
