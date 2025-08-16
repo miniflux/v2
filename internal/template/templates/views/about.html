@@ -12,7 +12,7 @@
     <h3>Miniflux</h3>
     <ul>
         <li>
-            <strong>{{ t "page.about.version" }}</strong>&nbsp;
+            <strong>{{ t "page.about.version" }}</strong>
             {{ if startsWith .version "2." }}
                 <a href="https://github.com/miniflux/v2/releases/tag/{{ .version }}">{{ .version }}</a>
             {{ else }}
@@ -21,7 +21,7 @@
         </li>
 	{{ if .commit }}
         <li>
-            <strong>{{ t "page.about.git_commit" }}</strong>&nbsp;
+            <strong>{{ t "page.about.git_commit" }}</strong>
             {{ if startsWith .commit "Unknown" }}
                 {{ .commit }}
             {{ else }}
