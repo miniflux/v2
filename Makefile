@@ -1,9 +1,7 @@
 APP             := miniflux
 DOCKER_IMAGE    := miniflux/miniflux
 VERSION         := $(shell git describe --tags --abbrev=0 2>/dev/null)
-COMMIT          := $(shell git rev-parse --short HEAD 2>/dev/null)
-BUILD_DATE      := `date +%FT%T%z`
-LD_FLAGS        := "-s -w -X 'miniflux.app/v2/internal/version.Version=$(VERSION)' -X 'miniflux.app/v2/internal/version.Commit=$(COMMIT)' -X 'miniflux.app/v2/internal/version.BuildDate=$(BUILD_DATE)'"
+LD_FLAGS        := "-s -w -X 'miniflux.app/v2/internal/version.Version=$(VERSION)'"
 PKG_LIST        := $(shell go list ./... | grep -v /vendor/)
 DB_URL          := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 DOCKER_PLATFORM := amd64
@@ -40,45 +38,45 @@ export PGPASSWORD := postgres
 	debian-packages
 
 miniflux:
-	@ go build -buildmode=pie -ldflags=$(LD_FLAGS) -o $(APP) main.go
+	@ go build -buildmode=pie -ldflags=$(LD_FLAGS) -o $(APP)
 
 miniflux-no-pie:
-	@ go build -ldflags=$(LD_FLAGS) -o $(APP) main.go
+	@ go build -ldflags=$(LD_FLAGS) -o $(APP)
 
 linux-amd64:
-	@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
+	@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@
 	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
 
 linux-arm64:
-	@ CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
+	@ CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@
 	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
 
 linux-armv7:
-	@ CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=7 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
+	@ CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=7 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@
 	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
 
 linux-armv6:
-	@ CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=6 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
+	@ CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=6 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@
 	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
 
 linux-armv5:
-	@ CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=5 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
+	@ CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=5 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@
 	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
 
 darwin-amd64:
-	@ GOOS=darwin GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
+	@ GOOS=darwin GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@
 	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
 
 darwin-arm64:
-	@ GOOS=darwin GOARCH=arm64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
+	@ GOOS=darwin GOARCH=arm64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@
 	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
 
 freebsd-amd64:
-	@ CGO_ENABLED=0 GOOS=freebsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
+	@ CGO_ENABLED=0 GOOS=freebsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@
 	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
 
 openbsd-amd64:
-	@ GOOS=openbsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
+	@ GOOS=openbsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@
 	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
 
 build: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 darwin-arm64 freebsd-amd64 openbsd-amd64
