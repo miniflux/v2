@@ -1,0 +1,65 @@
+version: 2
+
+builds:
+  - id: miniflux
+    binary: miniflux
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      # We will enable cross-compilation for other OSes later
+      # - darwin
+      # - freebsd
+      # - openbsd
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - 6
+      - 7
+    ignore:
+      - goos: darwin
+        goarch: arm
+      - goos: darwin
+        goarch: amd64
+      - goos: freebsd
+        goarch: arm64
+      - goos: freebsd
+        goarch: arm
+      - goos: openbsd
+        goarch: arm64
+      - goos: openbsd
+        goarch: arm
+    ldflags:
+      - "-s -w -X miniflux.app/v2/internal/version.Version={{.Version}}"
+
+nfpms:
+  - id: miniflux-packages
+    package_name: miniflux
+    vendor: Miniflux
+    maintainer: "Frédéric Guillot <f@miniflux.net>"
+    description: "Minimalist and opinionated feed reader"
+    homepage: "https://miniflux.app/"
+    license: Apache 2.0
+    file_name_template: "{{ .PackageName }}_{{ .Version }}_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}"
+    formats:
+      - deb
+      - rpm
+    contents:
+      - src: "./packaging/miniflux.conf"
+        dst: "/etc/miniflux.conf"
+        file_info:
+          mode: 0644
+      - src: "./packaging/systemd/miniflux.service"
+        dst: "/etc/systemd/system/miniflux.service"
+        file_info:
+          mode: 0644
+      - src: "./miniflux.1"
+        dst: "/usr/share/man/man1/miniflux.1"
+        file_info:
+          mode: 0644
+    deb:
+      lintian_overrides:
+        - statically-linked-binary
+        - changelog-file-missing-in-native-package

@@ -1,0 +1,92 @@
+name: RPM and Debian Packages
+permissions: read-all
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'packaging/**' # Only run on changes to the packaging files
+jobs:
+  build-packages:
+    name: Build Packages
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
+      with:
+          fetch-depth: 0
+    - name: Set up Golang
+      uses: actions/setup-go@v5
+      with:
+        go-version: stable
+    - name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@v6
+      with:
+        version: '~> v2'
+        args: release -f packaging/goreleaser.yaml --clean ${{ github.event_name == 'pull_request' && '--snapshot' || '' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Cache Packages
+      uses: actions/cache/save@v4
+      with:
+        path: |
+          dist/*.deb
+          dist/*.rpm
+        key: packages-${{ github.run_id }}-${{ github.run_attempt }}
+    - name: Upload Artifacts
+      if: github.event_name != 'pull_request'
+      uses: actions/upload-artifact@v4
+      with:
+          name: packages
+          path: |
+            dist/*.deb
+            dist/*.rpm
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+  test-debian-package:
+    name: Test Debian Package
+    runs-on: ubuntu-latest
+    needs: build-packages
+    services:
+      postgres:
+        image: postgres:9.5
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: miniflux2
+        ports:
+        - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+    - name: Restore Packages Cache
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          dist/*.deb
+          dist/*.rpm
+        key: packages-${{ github.run_id }}-${{ github.run_attempt }}
+        fail-on-cache-miss: true
+    - name: Install Debian Package
+      run: |
+        sudo apt-get update
+        sudo dpkg -i dist/miniflux*amd64.deb
+    - name: Test Installation
+      run: |
+        which miniflux
+        miniflux -i
+    - name: Test Systemd Service
+      run: |
+        # Verify service file exists and is properly installed
+        systemctl cat miniflux
+
+        # Check if service is enabled by default
+        sudo systemctl is-enabled miniflux || echo "Service not enabled by default"
+
+        # Check service status (should be inactive/dead but loadable)
+        sudo systemctl status miniflux --no-pager || true
+
+        # Verify service can be started (will fail due to missing config, but should load)
+        sudo systemctl start miniflux || echo "Service failed to start (expected without proper config)"
+
+        # Check if service is properly defined
+        systemctl show miniflux --property=Type,ExecStart,User,Group --no-pager

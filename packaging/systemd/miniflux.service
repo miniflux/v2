@@ -13,7 +13,7 @@ After=network.target postgresql.service
 
 [Service]
 ExecStart=/usr/bin/miniflux
-User=miniflux
+DynamicUser=yes
 
 # Load environment variables from /etc/miniflux.conf.
 EnvironmentFile=/etc/miniflux.conf

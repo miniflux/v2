@@ -1,7 +1,8 @@
 ./*.sha256
-/miniflux
 .idea
 .vscode
 *.deb
 *.rpm
+/miniflux
+dist
 miniflux-*
