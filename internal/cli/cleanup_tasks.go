@@ -47,10 +47,17 @@ func runCleanupTasks(store *storage.Storage) {
 		}
 	}
 
-	if rowsAffected, err := store.DeleteContentRemovedEntries(); err != nil {
-		slog.Error("Unable to delete the content of removed entries", slog.Any("error", err))
+	if enclosuresAffected, err := store.DeleteRemovedEntriesEnclosures(); err != nil {
+		slog.Error("Unable to delete enclosures from removed entries", slog.Any("error", err))
 	} else {
-		slog.Info("Deleting content of removed entries completed",
-			slog.Int64("removed_entries_content_removed", rowsAffected))
+		slog.Info("Deleting enclosures from removed entries completed",
+			slog.Int64("removed_entries_enclosures_deleted", enclosuresAffected))
+	}
+
+	if contentAffected, err := store.ClearRemovedEntriesContent(); err != nil {
+		slog.Error("Unable to clear content from removed entries", slog.Any("error", err))
+	} else {
+		slog.Info("Clearing content from removed entries completed",
+			slog.Int64("removed_entries_content_cleared", contentAffected))
 	}
 }
