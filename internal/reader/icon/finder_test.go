@@ -194,3 +194,16 @@ func TestResizeInvalidImage(t *testing.T) {
 		t.Fatalf("Tried to convert an invalid image")
 	}
 }
+func TestMinifySvg(t *testing.T) {
+	data := []byte(`<svg path d=" M1 4h-.001 V1h2v.001 M1 2.6 h1v.001"/></svg>`)
+	want := []byte(`<svg path="" d="M1 4H.999V1h2v.001M1 2.6h1v.001"/></svg>`)
+
+	icon := model.Icon{
+		Content:  data,
+		MimeType: "image/svg+xml",
+	}
+	got := resizeIcon(&icon).Content
+	if !bytes.Equal(want, got) {
+		t.Fatalf("Didn't correctly minimize the svg: got %s instead of %s", got, want)
+	}
+}
