@@ -15,14 +15,13 @@ jobs:
       max-parallel: 4
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
-        go-version: ["1.25.x"]
     steps:
     - name: Checkout
       uses: actions/checkout@v5
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: ${{ matrix.go-version }}
+        go-version: stable
     - name: Run unit tests with coverage and race conditions checking
       if: matrix.os == 'ubuntu-latest'
       run: make test
@@ -49,12 +48,11 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: "1.25.x"
+        go-version: stable
     - name: Install Postgres client
       run: sudo apt update && sudo apt install -y postgresql-client
     - name: Run integration tests
       run: make integration-test
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PGHOST: 127.0.0.1
         PGPASSWORD: postgres
