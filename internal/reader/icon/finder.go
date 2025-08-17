@@ -26,6 +26,8 @@ import (
 	"miniflux.app/v2/internal/urllib"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/tdewolff/minify/v2"
+	"github.com/tdewolff/minify/v2/svg"
 	"golang.org/x/image/draw"
 	"golang.org/x/image/webp"
 )
@@ -194,12 +196,24 @@ func (f *iconFinder) downloadIcon(iconURL string) (*model.Icon, error) {
 }
 
 func resizeIcon(icon *model.Icon) *model.Icon {
-	r := bytes.NewReader(icon.Content)
+	if icon.MimeType == "image/svg+xml" {
+		minifier := minify.New()
+		minifier.AddFunc("image/svg+xml", svg.Minify)
+		var err error
+		// minifier.Bytes returns the data unchanged in case of error.
+		icon.Content, err = minifier.Bytes("image/svg+xml", icon.Content)
+		if err != nil {
+			slog.Error("Unable to minimize the svg file", slog.Any("error", err))
+		}
+		return icon
+	}
 
 	if !slices.Contains([]string{"image/jpeg", "image/png", "image/gif", "image/webp"}, icon.MimeType) {
 		slog.Info("icon isn't a png/gif/jpeg/webp, can't resize", slog.String("mimetype", icon.MimeType))
 		return icon
 	}
+
+	r := bytes.NewReader(icon.Content)
 
 	// Don't resize icons that we can't decode, or that already have the right size.
 	config, _, err := image.DecodeConfig(r)
