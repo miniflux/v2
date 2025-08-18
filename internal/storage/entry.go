@@ -69,6 +69,7 @@ func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 
 // UpdateEntryTitleAndContent updates entry title and content.
 func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
+	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
 	query := `
 		UPDATE
 			entries
@@ -86,8 +87,8 @@ func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 		entry.Title,
 		entry.Content,
 		entry.ReadingTime,
-		truncateStringForTSVectorField(entry.Title),
-		truncateStringForTSVectorField(entry.Content),
+		truncatedTitle,
+		truncatedContent,
 		entry.ID,
 		entry.UserID); err != nil {
 		return fmt.Errorf(`store: unable to update entry #%d: %v`, entry.ID, err)
@@ -98,6 +99,7 @@ func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 
 // createEntry add a new entry.
 func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
+	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
 	query := `
 		INSERT INTO entries
 			(
@@ -146,8 +148,8 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.UserID,
 		entry.FeedID,
 		entry.ReadingTime,
-		truncateStringForTSVectorField(entry.Title),
-		truncateStringForTSVectorField(entry.Content),
+		truncatedTitle,
+		truncatedContent,
 		pq.Array(entry.Tags),
 	).Scan(
 		&entry.ID,
@@ -175,6 +177,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 // Note: we do not update the published date because some feeds do not contains any date,
 // it default to time.Now() which could change the order of items on the history page.
 func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
+	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
 	query := `
 		UPDATE
 			entries
@@ -200,8 +203,8 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.Content,
 		entry.Author,
 		entry.ReadingTime,
-		truncateStringForTSVectorField(entry.Title),
-		truncateStringForTSVectorField(entry.Content),
+		truncatedTitle,
+		truncatedContent,
 		entry.UserID,
 		entry.FeedID,
 		entry.Hash,
@@ -702,17 +705,20 @@ func (s *Storage) UnshareEntry(userID int64, entryID int64) (err error) {
 	return
 }
 
-// truncateStringForTSVectorField truncates a string to fit within the maximum size for a TSVector field in PostgreSQL.
-func truncateStringForTSVectorField(s string) string {
+func truncateTitleAndContentForTSVectorField(title, content string) (string, string) {
 	// The length of a tsvector (lexemes + positions) must be less than 1 megabyte.
-	const maxTSVectorSize = 1024 * 1024
+	// We don't need to index the entire content, and we need to keep a buffer for the positions.
+	return truncateStringForTSVectorField(title, 200000), truncateStringForTSVectorField(content, 500000)
+}
 
-	if len(s) < maxTSVectorSize {
+// truncateStringForTSVectorField truncates a string and don't break UTF-8 characters.
+func truncateStringForTSVectorField(s string, maxSize int) string {
+	if len(s) < maxSize {
 		return s
 	}
 
 	// Truncate to fit under the limit, ensuring we don't break UTF-8 characters
-	truncated := s[:maxTSVectorSize-1]
+	truncated := s[:maxSize-1]
 
 	// Walk backwards to find the last complete UTF-8 character
 	for i := len(truncated) - 1; i >= 0; i-- {
