@@ -12,7 +12,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"miniflux.app/v2/internal/api"
 	"miniflux.app/v2/internal/config"
@@ -67,9 +66,9 @@ func StartWebServer(store *storage.Storage, pool *worker.Pool) []*http.Server {
 
 	for i, listenAddr := range listenAddresses {
 		server := &http.Server{
-			ReadTimeout:  time.Duration(config.Opts.HTTPServerTimeout()) * time.Second,
-			WriteTimeout: time.Duration(config.Opts.HTTPServerTimeout()) * time.Second,
-			IdleTimeout:  time.Duration(config.Opts.HTTPServerTimeout()) * time.Second,
+			ReadTimeout:  config.Opts.HTTPServerTimeout(),
+			WriteTimeout: config.Opts.HTTPServerTimeout(),
+			IdleTimeout:  config.Opts.HTTPServerTimeout(),
 			Handler:      setupHandler(store, pool),
 		}
 
