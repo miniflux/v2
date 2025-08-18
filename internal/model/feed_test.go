@@ -4,8 +4,8 @@
 package model // import "miniflux.app/v2/internal/model"
 
 import (
-	"fmt"
 	"os"
+	"strconv"
 	"testing"
 	"time"
 
@@ -171,7 +171,7 @@ func TestFeedScheduleNextCheckRoundRobinMinInterval(t *testing.T) {
 	minInterval := 1
 	os.Clearenv()
 	os.Setenv("POLLING_SCHEDULER", "round_robin")
-	os.Setenv("SCHEDULER_ROUND_ROBIN_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+	os.Setenv("SCHEDULER_ROUND_ROBIN_MIN_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
 	parser := config.NewParser()
@@ -197,8 +197,8 @@ func TestFeedScheduleNextCheckEntryFrequencyMaxInterval(t *testing.T) {
 	minInterval := 1
 	os.Clearenv()
 	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
-	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
-	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", strconv.Itoa(maxInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
 	parser := config.NewParser()
@@ -226,8 +226,8 @@ func TestFeedScheduleNextCheckEntryFrequencyMaxIntervalZeroWeeklyCount(t *testin
 	minInterval := 1
 	os.Clearenv()
 	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
-	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
-	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", strconv.Itoa(maxInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
 	parser := config.NewParser()
@@ -255,8 +255,8 @@ func TestFeedScheduleNextCheckEntryFrequencyMinInterval(t *testing.T) {
 	minInterval := 100
 	os.Clearenv()
 	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
-	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
-	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", strconv.Itoa(maxInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
 	parser := config.NewParser()
@@ -283,7 +283,7 @@ func TestFeedScheduleNextCheckEntryFrequencyFactor(t *testing.T) {
 	factor := 2
 	os.Clearenv()
 	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
-	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_FACTOR", fmt.Sprintf("%d", factor))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_FACTOR", strconv.Itoa(factor))
 
 	var err error
 	parser := config.NewParser()
@@ -311,8 +311,8 @@ func TestFeedScheduleNextCheckEntryFrequencySmallNewTTL(t *testing.T) {
 	minInterval := 100
 	os.Clearenv()
 	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
-	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
-	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", strconv.Itoa(maxInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
 	parser := config.NewParser()
@@ -347,8 +347,8 @@ func TestFeedScheduleNextCheckEntryFrequencyLargeNewTTL(t *testing.T) {
 	minInterval := 100
 	os.Clearenv()
 	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
-	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
-	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", strconv.Itoa(maxInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
 	parser := config.NewParser()
