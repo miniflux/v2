@@ -232,9 +232,9 @@ func TestRequestBuilder_CustomAcceptHeaderNotOverridden(t *testing.T) {
 
 func TestRequestBuilder_WithTimeout(t *testing.T) {
 	builder := NewRequestBuilder()
-	builder = builder.WithTimeout(30)
+	builder = builder.WithTimeout(30 * time.Second)
 
-	if builder.clientTimeout != 30 {
+	if builder.clientTimeout != 30*time.Second {
 		t.Errorf("Expected timeout to be 30, got %d", builder.clientTimeout)
 	}
 }
@@ -382,9 +382,8 @@ func TestRequestBuilder_ChainedMethods(t *testing.T) {
 		WithUserAgent("TestAgent/1.0", "DefaultAgent/1.0").
 		WithCookie("test=value").
 		WithETag("etag123").
-		WithTimeout(10).
+		WithTimeout(10 * time.Second).
 		ExecuteRequest(server.URL)
-
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -409,7 +408,7 @@ func TestRequestBuilder_TimeoutConfiguration(t *testing.T) {
 
 	builder := NewRequestBuilder()
 	start := time.Now()
-	_, err := builder.WithTimeout(1).ExecuteRequest(server.URL)
+	_, err := builder.WithTimeout(1 * time.Second).ExecuteRequest(server.URL)
 	duration := time.Since(start)
 
 	if err == nil {

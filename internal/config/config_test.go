@@ -1607,11 +1607,21 @@ func TestMediaProxyHTTPClientTimeout(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 24
+	expected := 24 * time.Second
 	result := opts.MediaProxyHTTPClientTimeout()
 
 	if result != expected {
 		t.Fatalf(`Unexpected MEDIA_PROXY_HTTP_CLIENT_TIMEOUT value, got %d instead of %d`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "MEDIA_PROXY_HTTP_CLIENT_TIMEOUT"
+	})
+
+	expectedSerialized := 24
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 
@@ -1629,6 +1639,16 @@ func TestDefaultMediaProxyHTTPClientTimeoutValue(t *testing.T) {
 
 	if result != expected {
 		t.Fatalf(`Unexpected MEDIA_PROXY_HTTP_CLIENT_TIMEOUT value, got %d instead of %d`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "MEDIA_PROXY_HTTP_CLIENT_TIMEOUT"
+	})
+
+	expectedSerialized := int(defaultMediaProxyHTTPClientTimeout / time.Second)
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 
@@ -1706,11 +1726,21 @@ func TestHTTPClientTimeout(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 42
+	expected := 42 * time.Second
 	result := opts.HTTPClientTimeout()
 
 	if result != expected {
 		t.Fatalf(`Unexpected HTTP_CLIENT_TIMEOUT value, got %d instead of %d`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "HTTP_CLIENT_TIMEOUT"
+	})
+
+	expectedSerialized := 42
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 

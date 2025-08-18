@@ -161,7 +161,7 @@ func (p *parser) parseLines(lines []string) (err error) {
 		case "SCHEDULER_ROUND_ROBIN_MAX_INTERVAL":
 			p.opts.schedulerRoundRobinMaxInterval = parseInterval(value, time.Minute, defaultSchedulerRoundRobinMaxInterval)
 		case "MEDIA_PROXY_HTTP_CLIENT_TIMEOUT":
-			p.opts.mediaProxyHTTPClientTimeout = parseInt(value, defaultMediaProxyHTTPClientTimeout)
+			p.opts.mediaProxyHTTPClientTimeout = parseInterval(value, time.Second, defaultMediaProxyHTTPClientTimeout)
 		case "MEDIA_PROXY_MODE":
 			p.opts.mediaProxyMode = parseString(value, defaultMediaProxyMode)
 		case "MEDIA_PROXY_RESOURCE_TYPES":
@@ -206,7 +206,7 @@ func (p *parser) parseLines(lines []string) (err error) {
 		case "DISABLE_LOCAL_AUTH":
 			p.opts.disableLocalAuth = parseBool(value, defaultDisableLocalAuth)
 		case "HTTP_CLIENT_TIMEOUT":
-			p.opts.httpClientTimeout = parseInt(value, defaultHTTPClientTimeout)
+			p.opts.httpClientTimeout = parseInterval(value, time.Second, defaultHTTPClientTimeout)
 		case "HTTP_CLIENT_MAX_BODY_SIZE":
 			p.opts.httpClientMaxBodySize = int64(parseInt(value, defaultHTTPClientMaxBodySize) * 1024 * 1024)
 		case "HTTP_CLIENT_PROXY":
