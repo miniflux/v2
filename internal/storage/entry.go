@@ -392,9 +392,9 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 	return newEntries, nil
 }
 
-// ArchiveEntries changes the status of entries to "removed" after the given number of days.
-func (s *Storage) ArchiveEntries(status string, days, limit int) (int64, error) {
-	if days < 0 || limit <= 0 {
+// ArchiveEntries changes the status of entries to "removed" after the interval (24h minimum).
+func (s *Storage) ArchiveEntries(status string, interval time.Duration, limit int) (int64, error) {
+	if interval < 0 || limit <= 0 {
 		return 0, nil
 	}
 
@@ -418,6 +418,8 @@ func (s *Storage) ArchiveEntries(status string, days, limit int) (int64, error) 
 					created_at ASC LIMIT $4
 				)
 	`
+
+	days := max(int(interval/(24*time.Hour)), 1)
 
 	result, err := s.db.Exec(query, model.EntryStatusRemoved, status, fmt.Sprintf("%d days", days), limit)
 	if err != nil {

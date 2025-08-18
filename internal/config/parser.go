@@ -129,13 +129,13 @@ func (p *parser) parseLines(lines []string) (err error) {
 		case "CLEANUP_FREQUENCY_HOURS":
 			p.opts.cleanupFrequencyInterval = parseInterval(value, time.Hour, defaultCleanupFrequency)
 		case "CLEANUP_ARCHIVE_READ_DAYS":
-			p.opts.cleanupArchiveReadDays = parseInt(value, defaultCleanupArchiveReadDays)
+			p.opts.cleanupArchiveReadInterval = parseInterval(value, 24*time.Hour, defaultCleanupArchiveReadInterval)
 		case "CLEANUP_ARCHIVE_UNREAD_DAYS":
-			p.opts.cleanupArchiveUnreadDays = parseInt(value, defaultCleanupArchiveUnreadDays)
+			p.opts.cleanupArchiveUnreadInterval = parseInterval(value, 24*time.Hour, defaultCleanupArchiveUnreadInterval)
 		case "CLEANUP_ARCHIVE_BATCH_SIZE":
 			p.opts.cleanupArchiveBatchSize = parseInt(value, defaultCleanupArchiveBatchSize)
 		case "CLEANUP_REMOVE_SESSIONS_DAYS":
-			p.opts.cleanupRemoveSessionsDays = parseInt(value, defaultCleanupRemoveSessionsDays)
+			p.opts.cleanupRemoveSessionsInterval = parseInterval(value, 24*time.Hour, defaultCleanupRemoveSessionsInterval)
 		case "WORKER_POOL_SIZE":
 			p.opts.workerPoolSize = parseInt(value, defaultWorkerPoolSize)
 		case "FORCE_REFRESH_INTERVAL":

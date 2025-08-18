@@ -7,6 +7,7 @@ import (
 	"crypto/rand"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"miniflux.app/v2/internal/model"
 )
@@ -43,7 +44,6 @@ func (s *Storage) UserSessions(userID int64) (model.UserSessions, error) {
 			&session.UserAgent,
 			&session.IP,
 		)
-
 		if err != nil {
 			return nil, fmt.Errorf(`store: unable to fetch user session row: %v`, err)
 		}
@@ -164,14 +164,17 @@ func (s *Storage) RemoveUserSessionByID(userID, sessionID int64) error {
 	return nil
 }
 
-// CleanOldUserSessions removes user sessions older than specified days.
-func (s *Storage) CleanOldUserSessions(days int) int64 {
+// CleanOldUserSessions removes user sessions older than specified interval (24h minimum).
+func (s *Storage) CleanOldUserSessions(interval time.Duration) int64 {
 	query := `
 		DELETE FROM
 			user_sessions
 		WHERE
 			created_at < now() - $1::interval
 	`
+
+	days := max(int(interval/(24*time.Hour)), 1)
+
 	result, err := s.db.Exec(query, fmt.Sprintf("%d days", days))
 	if err != nil {
 		return 0
