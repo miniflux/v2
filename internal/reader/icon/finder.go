@@ -51,8 +51,8 @@ func (f *iconFinder) findIcon() (*model.Icon, error) {
 	)
 
 	if f.feedIconURL != "" {
-		if icon, err := f.fetchFeedIcon(); err != nil {
-			slog.Debug("Unable to download icon from feed",
+		if icon, err := f.downloadIcon(f.feedIconURL); err != nil {
+			slog.Debug("Unable to fetch the feed's icon",
 				slog.String("website_url", f.websiteURL),
 				slog.String("feed_icon_url", f.feedIconURL),
 				slog.Any("error", err),
@@ -90,20 +90,6 @@ func (f *iconFinder) fetchDefaultIcon() (*model.Icon, error) {
 	}
 
 	return icon, nil
-}
-
-func (f *iconFinder) fetchFeedIcon() (*model.Icon, error) {
-	slog.Debug("Fetching feed icon",
-		slog.String("website_url", f.websiteURL),
-		slog.String("feed_icon_url", f.feedIconURL),
-	)
-
-	iconURL, err := urllib.AbsoluteURL(f.websiteURL, f.feedIconURL)
-	if err != nil {
-		return nil, fmt.Errorf(`icon: unable to convert icon URL to absolute URL: %w`, err)
-	}
-
-	return f.downloadIcon(iconURL)
 }
 
 func (f *iconFinder) fetchIconsFromHTMLDocument() (*model.Icon, error) {
