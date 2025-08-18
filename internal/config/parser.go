@@ -127,7 +127,7 @@ func (p *parser) parseLines(lines []string) (err error) {
 		case "CERT_DOMAIN":
 			p.opts.certDomain = parseString(value, defaultCertDomain)
 		case "CLEANUP_FREQUENCY_HOURS":
-			p.opts.cleanupFrequencyHours = parseInt(value, defaultCleanupFrequencyHours)
+			p.opts.cleanupFrequencyInterval = parseInterval(value, time.Hour, defaultCleanupFrequency)
 		case "CLEANUP_ARCHIVE_READ_DAYS":
 			p.opts.cleanupArchiveReadDays = parseInt(value, defaultCleanupArchiveReadDays)
 		case "CLEANUP_ARCHIVE_UNREAD_DAYS":
@@ -143,7 +143,7 @@ func (p *parser) parseLines(lines []string) (err error) {
 		case "BATCH_SIZE":
 			p.opts.batchSize = parseInt(value, defaultBatchSize)
 		case "POLLING_FREQUENCY":
-			p.opts.pollingFrequency = parseInt(value, defaultPollingFrequency)
+			p.opts.pollingFrequency = parseInterval(value, time.Minute, defaultPollingFrequency)
 		case "POLLING_LIMIT_PER_HOST":
 			p.opts.pollingLimitPerHost = parseInt(value, 0)
 		case "POLLING_PARSING_ERROR_LIMIT":

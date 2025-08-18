@@ -589,11 +589,21 @@ func TestDefaultCleanupFrequencyHoursValue(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := defaultCleanupFrequencyHours
-	result := opts.CleanupFrequencyHours()
+	expected := defaultCleanupFrequency
+	result := opts.CleanupFrequency()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CLEANUP_FREQUENCY_HOURS value, got %v instead of %v`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "CLEANUP_FREQUENCY_HOURS"
+	})
+
+	expectedSerialized := int(defaultCleanupFrequency / time.Hour)
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 
@@ -608,11 +618,21 @@ func TestCleanupFrequencyHours(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 42
-	result := opts.CleanupFrequencyHours()
+	expected := 42 * time.Hour
+	result := opts.CleanupFrequency()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CLEANUP_FREQUENCY_HOURS value, got %v instead of %v`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "CLEANUP_FREQUENCY_HOURS"
+	})
+
+	expectedSerialized := 42
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 
@@ -737,6 +757,16 @@ func TestDefaultPollingFrequencyValue(t *testing.T) {
 	if result != expected {
 		t.Fatalf(`Unexpected POLLING_FREQUENCY value, got %v instead of %v`, result, expected)
 	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "POLLING_FREQUENCY"
+	})
+
+	expectedSerialized := int(defaultPollingFrequency / time.Minute)
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
+	}
 }
 
 func TestPollingFrequency(t *testing.T) {
@@ -749,11 +779,21 @@ func TestPollingFrequency(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 42
+	expected := 42 * time.Minute
 	result := opts.PollingFrequency()
 
 	if result != expected {
 		t.Fatalf(`Unexpected POLLING_FREQUENCY value, got %v instead of %v`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "POLLING_FREQUENCY"
+	})
+
+	expectedSerialized := 42
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 
