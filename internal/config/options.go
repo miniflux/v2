@@ -77,7 +77,7 @@ const (
 	defaultHTTPClientTimeout                  = 20
 	defaultHTTPClientMaxBodySize              = 15
 	defaultHTTPClientProxy                    = ""
-	defaultHTTPServerTimeout                  = 300
+	defaultHTTPServerTimeout                  = 300 * time.Second
 	defaultAuthProxyHeader                    = ""
 	defaultAuthProxyUserCreation              = false
 	defaultMaintenanceMode                    = false
@@ -170,7 +170,7 @@ type options struct {
 	httpClientProxyURL                 *url.URL
 	httpClientProxies                  []string
 	httpClientUserAgent                string
-	httpServerTimeout                  int
+	httpServerTimeout                  time.Duration
 	authProxyHeader                    string
 	authProxyUserCreation              bool
 	maintenanceMode                    bool
@@ -617,8 +617,8 @@ func (o *options) HasHTTPClientProxiesConfigured() bool {
 	return len(o.httpClientProxies) > 0
 }
 
-// HTTPServerTimeout returns the time limit in seconds before the HTTP server cancel the request.
-func (o *options) HTTPServerTimeout() int {
+// HTTPServerTimeout returns the time limit before the HTTP server cancel the request.
+func (o *options) HTTPServerTimeout() time.Duration {
 	return o.httpServerTimeout
 }
 
@@ -745,7 +745,7 @@ func (o *options) SortedOptions(redactSecret bool) []*option {
 		"HTTP_CLIENT_PROXY":                      clientProxyURLRedacted,
 		"HTTP_CLIENT_TIMEOUT":                    o.httpClientTimeout,
 		"HTTP_CLIENT_USER_AGENT":                 o.httpClientUserAgent,
-		"HTTP_SERVER_TIMEOUT":                    o.httpServerTimeout,
+		"HTTP_SERVER_TIMEOUT":                    int(o.httpServerTimeout.Seconds()),
 		"HTTP_SERVICE":                           o.httpService,
 		"INVIDIOUS_INSTANCE":                     o.invidiousInstance,
 		"KEY_FILE":                               o.certKeyFile,

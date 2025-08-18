@@ -219,7 +219,7 @@ func (p *parser) parseLines(lines []string) (err error) {
 		case "HTTP_CLIENT_USER_AGENT":
 			p.opts.httpClientUserAgent = parseString(value, defaultHTTPClientUserAgent)
 		case "HTTP_SERVER_TIMEOUT":
-			p.opts.httpServerTimeout = parseInt(value, defaultHTTPServerTimeout)
+			p.opts.httpServerTimeout = parseInterval(value, time.Second, defaultHTTPServerTimeout)
 		case "AUTH_PROXY_HEADER":
 			p.opts.authProxyHeader = parseString(value, defaultAuthProxyHeader)
 		case "AUTH_PROXY_USER_CREATION":

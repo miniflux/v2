@@ -1776,11 +1776,21 @@ func TestHTTPServerTimeout(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 342
+	expected := 342 * time.Second
 	result := opts.HTTPServerTimeout()
 
 	if result != expected {
 		t.Fatalf(`Unexpected HTTP_SERVER_TIMEOUT value, got %d instead of %d`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "HTTP_SERVER_TIMEOUT"
+	})
+
+	expectedSerialized := 342
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 
