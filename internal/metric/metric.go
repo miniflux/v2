@@ -138,11 +138,11 @@ var (
 // collector represents a metric collector.
 type collector struct {
 	store           *storage.Storage
-	refreshInterval int
+	refreshInterval time.Duration
 }
 
 // NewCollector initializes a new metric collector.
-func NewCollector(store *storage.Storage, refreshInterval int) *collector {
+func NewCollector(store *storage.Storage, refreshInterval time.Duration) *collector {
 	prometheus.MustRegister(BackgroundFeedRefreshDuration)
 	prometheus.MustRegister(ScraperRequestDuration)
 	prometheus.MustRegister(ArchiveEntriesDuration)
@@ -163,7 +163,7 @@ func NewCollector(store *storage.Storage, refreshInterval int) *collector {
 
 // GatherStorageMetrics polls the database to fetch metrics.
 func (c *collector) GatherStorageMetrics() {
-	for range time.Tick(time.Duration(c.refreshInterval) * time.Second) {
+	for range time.Tick(c.refreshInterval) {
 		slog.Debug("Collecting metrics from the database")
 
 		usersGauge.Set(float64(c.store.CountUsers()))

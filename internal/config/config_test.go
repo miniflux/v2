@@ -2230,3 +2230,58 @@ func TestCustomPollingLimitPerHost(t *testing.T) {
 		t.Fatalf(`Unexpected custom PollingLimitPerHost value, got %v instead of %v`, result, expected)
 	}
 }
+
+func TestMetricsRefreshInterval(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("METRICS_REFRESH_INTERVAL", "33")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 33 * time.Second
+	result := opts.MetricsRefreshInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected METRICS_REFRESH_INTERVAL value, got %d instead of %d`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "METRICS_REFRESH_INTERVAL"
+	})
+
+	expectedSerialized := 33
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
+	}
+}
+
+func TestDefaultMetricsRefreshInterval(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := defaultMetricsRefreshInterval
+	result := opts.MetricsRefreshInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected METRICS_REFRESH_INTERVAL value, got %d instead of %d`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "METRICS_REFRESH_INTERVAL"
+	})
+
+	expectedSerialized := int(defaultMetricsRefreshInterval / time.Second)
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
+	}
+}
