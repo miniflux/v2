@@ -1,6 +1,6 @@
 {{ define "feed_list" }}
     <div class="items">
-        {{ range .feeds }}
+        {{ range .feeds -}}
         <article
             class="item feed-item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ else if ne .UnreadCount 0 }}feed-has-unread{{ end }}"
             aria-labelledby="feed-title-{{ .ID }} feed-entries-counter"
@@ -9,25 +9,24 @@
             <header class="item-header" dir="auto">
                 <h2 id="feed-title-{{ .ID }}" class="item-title">
                     <a href="{{ route "feedEntries" "feedID" .ID }}">
-                        {{ if and (.Icon) (gt .Icon.IconID 0) }}
+                        {{ if and (.Icon) (gt .Icon.IconID 0) -}}
                         <img src="{{ route "feedIcon" "externalIconID" .Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
-                        {{ end }}
-                        {{ if .Disabled }} 🚫 {{ end }}
-                        {{ .Title }}
+                        {{ end -}}
+                        {{ if .Disabled }} 🚫 {{ end -}}
+                        {{ .Title -}}
                     </a>
                 </h2>
                 <span id="feed-entries-counter" class="feed-entries-counter">
-                    <span aria-hidden="true">(</span>
-                    <span class="sr-only">{{ plural "page.unread_entry_count" .UnreadCount .UnreadCount }}</span>
-                    <span aria-hidden="true">{{ .UnreadCount }} /</span>
-                    <span class="sr-only">{{ plural "page.total_entry_count" .NumberOfVisibleEntries .NumberOfVisibleEntries }}</span>
-                    <span aria-hidden="true">{{ .NumberOfVisibleEntries }} )</span>
+                    <span aria-hidden="true">( {{ .UnreadCount }} / {{ .NumberOfVisibleEntries }} )</span>
+                    <span class="sr-only">
+                        {{ plural "page.unread_entry_count" .UnreadCount .UnreadCount }}
+                        {{ plural "page.total_entry_count" .NumberOfVisibleEntries .NumberOfVisibleEntries }}
+                    </span>
                 </span>
                 <span class="category">
                     <a id="feed-category-{{ .ID }}"
                        href="{{ route "categoryEntries" "categoryID" .Category.ID }}"
-                       aria-label="{{ t "page.category_label" .Category.Title }}"
-                    >
+                       aria-label="{{ t "page.category_label" .Category.Title }}">
                         {{ .Category.Title }}
                     </a>
                 </span>
@@ -40,14 +39,14 @@
                         </a>
                     </li>
                     <li class="item-meta-info-checked-at">
-                        {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
+                        {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
                     </li>
-                    {{ $nextCheckDuration := duration .NextCheckAt }}
-                    {{ if ne $nextCheckDuration "" }}
+                    {{ $nextCheckDuration := duration .NextCheckAt -}}
+                    {{ if ne $nextCheckDuration "" -}}
                     <li class="item-meta-info-next-check-at">
-                        {{ t "page.feeds.next_check" }} <time datetime="{{ isodate .NextCheckAt }}" title="{{ isodate .NextCheckAt }}">{{ $nextCheckDuration }}</time>
+                        {{ t "page.feeds.next_check" }} <time datetime="{{ isodate .NextCheckAt }}">{{ $nextCheckDuration }}</time>
                     </li>
-                    {{ end }}
+                    {{ end -}}
                 </ul>
                 <ul class="item-meta-icons">
                     <li class="item-meta-icons-refresh">
@@ -68,13 +67,13 @@
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            {{ if $.categoryID }}
+                            {{ if $.categoryID -}}
                                 data-url="{{ route "removeCategoryFeed" "categoryID" $.categoryID "feedID" .ID }}"
-                            {{ else }}
+                            {{ else -}}
                                 data-url="{{ route "removeFeed" "feedID" .ID }}"
-                            {{ end }}>{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></button>
+                            {{ end -}}>{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></button>
                     </li>
-                    {{ if .UnreadCount }}
+                    {{ if .UnreadCount -}}
                     <li class="item-meta-icons-mark-as-read">
                         <button
                             aria-describedby="feed-title-{{ .ID }}"
@@ -87,16 +86,16 @@
                                 {{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span>
                         </button>
                     </li>
-                    {{ end }}
+                    {{ end -}}
                 </ul>
             </div>
-            {{ if ne .ParsingErrorCount 0 }}
+            {{ if ne .ParsingErrorCount 0 -}}
             <div class="parsing-error">
                 <strong title="{{ .ParsingErrorMsg }}" class="parsing-error-count">{{ plural "page.feeds.error_count" .ParsingErrorCount .ParsingErrorCount }}</strong>
                 - <small class="parsing-error-message">{{ .ParsingErrorMsg }}</small>
             </div>
-            {{ end }}
+            {{ end -}}
         </article>
-        {{ end }}
+        {{ end -}}
     </div>
-{{ end }}
+{{ end -}}
