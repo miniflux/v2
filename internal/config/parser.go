@@ -358,6 +358,20 @@ func parseBytes(value string, fallback []byte) []byte {
 	return []byte(value)
 }
 
+// parseInterval converts an integer "value" to [time.Duration] using "unit" as multiplier.
+func parseInterval(value string, unit time.Duration, fallback time.Duration) time.Duration {
+	if value == "" {
+		return fallback
+	}
+
+	v, err := strconv.Atoi(value)
+	if err != nil {
+		return fallback
+	}
+
+	return time.Duration(v) * unit
+}
+
 func readSecretFile(filename, fallback string) string {
 	data, err := os.ReadFile(filename)
 	if err != nil {
