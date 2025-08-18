@@ -784,11 +784,21 @@ func TestForceRefreshInterval(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 42
+	expected := 42 * time.Second
 	result := opts.ForceRefreshInterval()
 
 	if result != expected {
 		t.Fatalf(`Unexpected FORCE_REFRESH_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "FORCE_REFRESH_INTERVAL"
+	})
+
+	expectedSerialized := 42
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 

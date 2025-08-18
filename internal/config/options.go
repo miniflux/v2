@@ -29,7 +29,7 @@ const (
 	defaultBasePath                           = ""
 	defaultWorkerPoolSize                     = 16
 	defaultPollingFrequency                   = 60
-	defaultForceRefreshInterval               = 30
+	defaultForceRefreshInterval               = 30 * time.Second
 	defaultBatchSize                          = 100
 	defaultPollingScheduler                   = "round_robin"
 	defaultSchedulerEntryFrequencyMinInterval = 5 * time.Minute
@@ -130,7 +130,7 @@ type options struct {
 	cleanupArchiveUnreadDays           int
 	cleanupArchiveBatchSize            int
 	cleanupRemoveSessionsDays          int
-	forceRefreshInterval               int
+	forceRefreshInterval               time.Duration
 	batchSize                          int
 	schedulerEntryFrequencyMinInterval time.Duration
 	schedulerEntryFrequencyMaxInterval time.Duration
@@ -392,7 +392,7 @@ func (o *options) WorkerPoolSize() int {
 }
 
 // ForceRefreshInterval returns the force refresh interval
-func (o *options) ForceRefreshInterval() int {
+func (o *options) ForceRefreshInterval() time.Duration {
 	return o.forceRefreshInterval
 }
 
@@ -769,7 +769,7 @@ func (o *options) SortedOptions(redactSecret bool) []*option {
 		"OAUTH2_REDIRECT_URL":                    o.oauth2RedirectURL,
 		"OAUTH2_USER_CREATION":                   o.oauth2UserCreationAllowed,
 		"DISABLE_LOCAL_AUTH":                     o.disableLocalAuth,
-		"FORCE_REFRESH_INTERVAL":                 o.forceRefreshInterval,
+		"FORCE_REFRESH_INTERVAL":                 int(o.forceRefreshInterval.Seconds()),
 		"POLLING_FREQUENCY":                      o.pollingFrequency,
 		"POLLING_LIMIT_PER_HOST":                 o.pollingLimitPerHost,
 		"POLLING_PARSING_ERROR_LIMIT":            o.pollingParsingErrorLimit,
