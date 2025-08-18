@@ -28,7 +28,7 @@ const (
 	defaultRootURL                            = "http://localhost"
 	defaultBasePath                           = ""
 	defaultWorkerPoolSize                     = 16
-	defaultPollingFrequency                   = 60
+	defaultPollingFrequency                   = 60 * time.Minute
 	defaultForceRefreshInterval               = 30 * time.Second
 	defaultBatchSize                          = 100
 	defaultPollingScheduler                   = "round_robin"
@@ -47,7 +47,7 @@ const (
 	defaultCertFile                           = ""
 	defaultKeyFile                            = ""
 	defaultCertDomain                         = ""
-	defaultCleanupFrequencyHours              = 24
+	defaultCleanupFrequency                   = 24 * time.Hour
 	defaultCleanupArchiveReadDays             = 60
 	defaultCleanupArchiveUnreadDays           = 180
 	defaultCleanupArchiveBatchSize            = 10000
@@ -125,7 +125,7 @@ type options struct {
 	certFile                           string
 	certDomain                         string
 	certKeyFile                        string
-	cleanupFrequencyHours              int
+	cleanupFrequencyInterval           time.Duration
 	cleanupArchiveReadDays             int
 	cleanupArchiveUnreadDays           int
 	cleanupArchiveBatchSize            int
@@ -137,7 +137,7 @@ type options struct {
 	schedulerEntryFrequencyFactor      int
 	schedulerRoundRobinMinInterval     time.Duration
 	schedulerRoundRobinMaxInterval     time.Duration
-	pollingFrequency                   int
+	pollingFrequency                   time.Duration
 	pollingLimitPerHost                int
 	pollingParsingErrorLimit           int
 	pollingScheduler                   string
@@ -209,7 +209,7 @@ func NewOptions() *options {
 		certFile:                           defaultCertFile,
 		certDomain:                         defaultCertDomain,
 		certKeyFile:                        defaultKeyFile,
-		cleanupFrequencyHours:              defaultCleanupFrequencyHours,
+		cleanupFrequencyInterval:           defaultCleanupFrequency,
 		cleanupArchiveReadDays:             defaultCleanupArchiveReadDays,
 		cleanupArchiveUnreadDays:           defaultCleanupArchiveUnreadDays,
 		cleanupArchiveBatchSize:            defaultCleanupArchiveBatchSize,
@@ -361,9 +361,9 @@ func (o *options) CertDomain() string {
 	return o.certDomain
 }
 
-// CleanupFrequencyHours returns the interval in hours for cleanup jobs.
-func (o *options) CleanupFrequencyHours() int {
-	return o.cleanupFrequencyHours
+// CleanupFrequencyHours returns the interval for cleanup jobs.
+func (o *options) CleanupFrequency() time.Duration {
+	return o.cleanupFrequencyInterval
 }
 
 // CleanupArchiveReadDays returns the number of days after which marking read items as removed.
@@ -402,7 +402,7 @@ func (o *options) BatchSize() int {
 }
 
 // PollingFrequency returns the interval to refresh feeds in the background.
-func (o *options) PollingFrequency() int {
+func (o *options) PollingFrequency() time.Duration {
 	return o.pollingFrequency
 }
 
@@ -721,10 +721,10 @@ func (o *options) SortedOptions(redactSecret bool) []*option {
 		"BATCH_SIZE":                             o.batchSize,
 		"CERT_DOMAIN":                            o.certDomain,
 		"CERT_FILE":                              o.certFile,
+		"CLEANUP_FREQUENCY_HOURS":                int(o.cleanupFrequencyInterval.Hours()),
 		"CLEANUP_ARCHIVE_BATCH_SIZE":             o.cleanupArchiveBatchSize,
 		"CLEANUP_ARCHIVE_READ_DAYS":              o.cleanupArchiveReadDays,
 		"CLEANUP_ARCHIVE_UNREAD_DAYS":            o.cleanupArchiveUnreadDays,
-		"CLEANUP_FREQUENCY_HOURS":                o.cleanupFrequencyHours,
 		"CLEANUP_REMOVE_SESSIONS_DAYS":           o.cleanupRemoveSessionsDays,
 		"CREATE_ADMIN":                           o.createAdmin,
 		"DATABASE_CONNECTION_LIFETIME":           o.databaseConnectionLifetime,
@@ -770,7 +770,7 @@ func (o *options) SortedOptions(redactSecret bool) []*option {
 		"OAUTH2_USER_CREATION":                   o.oauth2UserCreationAllowed,
 		"DISABLE_LOCAL_AUTH":                     o.disableLocalAuth,
 		"FORCE_REFRESH_INTERVAL":                 int(o.forceRefreshInterval.Seconds()),
-		"POLLING_FREQUENCY":                      o.pollingFrequency,
+		"POLLING_FREQUENCY":                      int(o.pollingFrequency.Minutes()),
 		"POLLING_LIMIT_PER_HOST":                 o.pollingLimitPerHost,
 		"POLLING_PARSING_ERROR_LIMIT":            o.pollingParsingErrorLimit,
 		"POLLING_SCHEDULER":                      o.pollingScheduler,

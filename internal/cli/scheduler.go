@@ -26,12 +26,12 @@ func runScheduler(store *storage.Storage, pool *worker.Pool) {
 
 	go cleanupScheduler(
 		store,
-		config.Opts.CleanupFrequencyHours(),
+		config.Opts.CleanupFrequency(),
 	)
 }
 
-func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSize, errorLimit, limitPerHost int) {
-	for range time.Tick(time.Duration(frequency) * time.Minute) {
+func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency time.Duration, batchSize, errorLimit, limitPerHost int) {
+	for range time.Tick(frequency) {
 		// Generate a batch of feeds for any user that has feeds to refresh.
 		batchBuilder := store.NewBatchBuilder()
 		batchBuilder.WithBatchSize(batchSize)
@@ -49,8 +49,8 @@ func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSi
 	}
 }
 
-func cleanupScheduler(store *storage.Storage, frequency int) {
-	for range time.Tick(time.Duration(frequency) * time.Hour) {
+func cleanupScheduler(store *storage.Storage, frequency time.Duration) {
+	for range time.Tick(frequency) {
 		runCleanupTasks(store)
 	}
 }
