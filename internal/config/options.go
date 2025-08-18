@@ -52,7 +52,7 @@ const (
 	defaultCleanupArchiveUnreadDays           = 180
 	defaultCleanupArchiveBatchSize            = 10000
 	defaultCleanupRemoveSessionsDays          = 30
-	defaultMediaProxyHTTPClientTimeout        = 120
+	defaultMediaProxyHTTPClientTimeout        = 120 * time.Second
 	defaultMediaProxyMode                     = "http-only"
 	defaultMediaResourceTypes                 = "image"
 	defaultMediaProxyURL                      = ""
@@ -74,7 +74,7 @@ const (
 	defaultOauth2OidcProviderName             = "OpenID Connect"
 	defaultOAuth2Provider                     = ""
 	defaultDisableLocalAuth                   = false
-	defaultHTTPClientTimeout                  = 20
+	defaultHTTPClientTimeout                  = 20 * time.Second
 	defaultHTTPClientMaxBodySize              = 15
 	defaultHTTPClientProxy                    = ""
 	defaultHTTPServerTimeout                  = 300 * time.Second
@@ -145,7 +145,7 @@ type options struct {
 	createAdmin                        bool
 	adminUsername                      string
 	adminPassword                      string
-	mediaProxyHTTPClientTimeout        int
+	mediaProxyHTTPClientTimeout        time.Duration
 	mediaProxyMode                     string
 	mediaProxyResourceTypes            []string
 	mediaProxyCustomURL                *url.URL
@@ -165,7 +165,7 @@ type options struct {
 	oidcProviderName                   string
 	oauth2Provider                     string
 	disableLocalAuth                   bool
-	httpClientTimeout                  int
+	httpClientTimeout                  time.Duration
 	httpClientMaxBodySize              int64
 	httpClientProxyURL                 *url.URL
 	httpClientProxies                  []string
@@ -567,8 +567,8 @@ func (o *options) MediaCustomProxyURL() *url.URL {
 	return o.mediaProxyCustomURL
 }
 
-// MediaProxyHTTPClientTimeout returns the time limit in seconds before the proxy HTTP client cancel the request.
-func (o *options) MediaProxyHTTPClientTimeout() int {
+// MediaProxyHTTPClientTimeout returns the time limit before the proxy HTTP client cancel the request.
+func (o *options) MediaProxyHTTPClientTimeout() time.Duration {
 	return o.mediaProxyHTTPClientTimeout
 }
 
@@ -588,7 +588,7 @@ func (o *options) HasSchedulerService() bool {
 }
 
 // HTTPClientTimeout returns the time limit in seconds before the HTTP client cancel the request.
-func (o *options) HTTPClientTimeout() int {
+func (o *options) HTTPClientTimeout() time.Duration {
 	return o.httpClientTimeout
 }
 
@@ -743,7 +743,7 @@ func (o *options) SortedOptions(redactSecret bool) []*option {
 		"HTTP_CLIENT_MAX_BODY_SIZE":              o.httpClientMaxBodySize,
 		"HTTP_CLIENT_PROXIES":                    clientProxyURLsRedacted,
 		"HTTP_CLIENT_PROXY":                      clientProxyURLRedacted,
-		"HTTP_CLIENT_TIMEOUT":                    o.httpClientTimeout,
+		"HTTP_CLIENT_TIMEOUT":                    int(o.httpClientTimeout.Seconds()),
 		"HTTP_CLIENT_USER_AGENT":                 o.httpClientUserAgent,
 		"HTTP_SERVER_TIMEOUT":                    int(o.httpServerTimeout.Seconds()),
 		"HTTP_SERVICE":                           o.httpService,
@@ -774,7 +774,7 @@ func (o *options) SortedOptions(redactSecret bool) []*option {
 		"POLLING_LIMIT_PER_HOST":                 o.pollingLimitPerHost,
 		"POLLING_PARSING_ERROR_LIMIT":            o.pollingParsingErrorLimit,
 		"POLLING_SCHEDULER":                      o.pollingScheduler,
-		"MEDIA_PROXY_HTTP_CLIENT_TIMEOUT":        o.mediaProxyHTTPClientTimeout,
+		"MEDIA_PROXY_HTTP_CLIENT_TIMEOUT":        int(o.mediaProxyHTTPClientTimeout.Seconds()),
 		"MEDIA_PROXY_RESOURCE_TYPES":             o.mediaProxyResourceTypes,
 		"MEDIA_PROXY_MODE":                       o.mediaProxyMode,
 		"MEDIA_PROXY_PRIVATE_KEY":                mediaProxyPrivateKeyValue,

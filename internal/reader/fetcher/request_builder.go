@@ -18,14 +18,14 @@ import (
 )
 
 const (
-	defaultHTTPClientTimeout = 20
+	defaultHTTPClientTimeout = 20 * time.Second
 	defaultAcceptHeader      = "application/xml, application/atom+xml, application/rss+xml, application/rdf+xml, application/feed+json, text/html, */*;q=0.9"
 )
 
 type RequestBuilder struct {
 	headers            http.Header
 	clientProxyURL     *url.URL
-	clientTimeout      int
+	clientTimeout      time.Duration
 	useClientProxy     bool
 	withoutRedirects   bool
 	ignoreTLSErrors    bool
@@ -104,7 +104,7 @@ func (r *RequestBuilder) WithCustomFeedProxyURL(proxyURL string) *RequestBuilder
 	return r
 }
 
-func (r *RequestBuilder) WithTimeout(timeout int) *RequestBuilder {
+func (r *RequestBuilder) WithTimeout(timeout time.Duration) *RequestBuilder {
 	r.clientTimeout = timeout
 	return r
 }
@@ -185,7 +185,7 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	}
 
 	client := &http.Client{
-		Timeout: time.Duration(r.clientTimeout) * time.Second,
+		Timeout: r.clientTimeout,
 	}
 
 	if r.withoutRedirects {
