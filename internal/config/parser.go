@@ -260,6 +260,8 @@ func (p *parser) parseLines(lines []string) (err error) {
 			p.opts.invidiousInstance = parseString(value, defaultInvidiousInstance)
 		case "WEBAUTHN":
 			p.opts.webAuthn = parseBool(value, defaultWebAuthn)
+		case "DISABLE_API":
+			p.opts.API = !parseBool(value, defaultDisableAPI)
 		}
 	}
 
