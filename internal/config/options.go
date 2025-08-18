@@ -83,7 +83,7 @@ const (
 	defaultMaintenanceMode                    = false
 	defaultMaintenanceMessage                 = "Miniflux is currently under maintenance"
 	defaultMetricsCollector                   = false
-	defaultMetricsRefreshInterval             = 60
+	defaultMetricsRefreshInterval             = 60 * time.Second
 	defaultMetricsAllowedNetworks             = "127.0.0.1/8"
 	defaultMetricsUsername                    = ""
 	defaultMetricsPassword                    = ""
@@ -176,7 +176,7 @@ type options struct {
 	maintenanceMode                    bool
 	maintenanceMessage                 string
 	metricsCollector                   bool
-	metricsRefreshInterval             int
+	metricsRefreshInterval             time.Duration
 	metricsAllowedNetworks             []string
 	metricsUsername                    string
 	metricsPassword                    string
@@ -639,8 +639,8 @@ func (o *options) HasMetricsCollector() bool {
 	return o.metricsCollector
 }
 
-// MetricsRefreshInterval returns the refresh interval in seconds.
-func (o *options) MetricsRefreshInterval() int {
+// MetricsRefreshInterval returns the refresh interval.
+func (o *options) MetricsRefreshInterval() time.Duration {
 	return o.metricsRefreshInterval
 }
 
@@ -759,7 +759,7 @@ func (o *options) SortedOptions(redactSecret bool) []*option {
 		"METRICS_ALLOWED_NETWORKS":               strings.Join(o.metricsAllowedNetworks, ","),
 		"METRICS_COLLECTOR":                      o.metricsCollector,
 		"METRICS_PASSWORD":                       redactSecretValue(o.metricsPassword, redactSecret),
-		"METRICS_REFRESH_INTERVAL":               o.metricsRefreshInterval,
+		"METRICS_REFRESH_INTERVAL":               int(o.metricsRefreshInterval.Seconds()),
 		"METRICS_USERNAME":                       o.metricsUsername,
 		"OAUTH2_CLIENT_ID":                       o.oauth2ClientID,
 		"OAUTH2_CLIENT_SECRET":                   redactSecretValue(o.oauth2ClientSecret, redactSecret),

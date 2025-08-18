@@ -231,7 +231,7 @@ func (p *parser) parseLines(lines []string) (err error) {
 		case "METRICS_COLLECTOR":
 			p.opts.metricsCollector = parseBool(value, defaultMetricsCollector)
 		case "METRICS_REFRESH_INTERVAL":
-			p.opts.metricsRefreshInterval = parseInt(value, defaultMetricsRefreshInterval)
+			p.opts.metricsRefreshInterval = parseInterval(value, time.Second, defaultMetricsRefreshInterval)
 		case "METRICS_ALLOWED_NETWORKS":
 			p.opts.metricsAllowedNetworks = parseStringList(value, []string{defaultMetricsAllowedNetworks})
 		case "METRICS_USERNAME":
