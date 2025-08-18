@@ -297,7 +297,7 @@ func (s *Storage) DeleteRemovedEntriesEnclosures() (int64, error) {
 }
 
 // ClearRemovedEntriesContent clears the content fields of entries marked as "removed", keeping only their metadata.
-func (s *Storage) ClearRemovedEntriesContent() (int64, error) {
+func (s *Storage) ClearRemovedEntriesContent(limit int) (int64, error) {
 	query := `
 		UPDATE
 			entries
@@ -305,12 +305,19 @@ func (s *Storage) ClearRemovedEntriesContent() (int64, error) {
 			title='',
 			content=NULL,
 			url='',
-			author=NULL
-		WHERE
-			status=$1 AND content IS NOT NULL
+			author=NULL,
+			comments_url=NULL,
+			document_vectors=NULL
+		WHERE id IN (
+			SELECT id
+			FROM entries
+			WHERE status = $1 AND content IS NOT NULL
+			ORDER BY id ASC
+			LIMIT $2
+		)
 	`
 
-	result, err := s.db.Exec(query, model.EntryStatusRemoved)
+	result, err := s.db.Exec(query, model.EntryStatusRemoved, limit)
 	if err != nil {
 		return 0, fmt.Errorf(`store: unable to clear content from removed entries: %v`, err)
 	}

@@ -54,7 +54,7 @@ func runCleanupTasks(store *storage.Storage) {
 			slog.Int64("removed_entries_enclosures_deleted", enclosuresAffected))
 	}
 
-	if contentAffected, err := store.ClearRemovedEntriesContent(); err != nil {
+	if contentAffected, err := store.ClearRemovedEntriesContent(config.Opts.CleanupArchiveBatchSize()); err != nil {
 		slog.Error("Unable to clear content from removed entries", slog.Any("error", err))
 	} else {
 		slog.Info("Clearing content from removed entries completed",
