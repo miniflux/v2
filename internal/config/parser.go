@@ -14,6 +14,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // parser handles configuration parsing.
@@ -150,15 +151,15 @@ func (p *parser) parseLines(lines []string) (err error) {
 		case "POLLING_SCHEDULER":
 			p.opts.pollingScheduler = strings.ToLower(parseString(value, defaultPollingScheduler))
 		case "SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL":
-			p.opts.schedulerEntryFrequencyMaxInterval = parseInt(value, defaultSchedulerEntryFrequencyMaxInterval)
+			p.opts.schedulerEntryFrequencyMaxInterval = parseInterval(value, time.Minute, defaultSchedulerEntryFrequencyMaxInterval)
 		case "SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL":
-			p.opts.schedulerEntryFrequencyMinInterval = parseInt(value, defaultSchedulerEntryFrequencyMinInterval)
+			p.opts.schedulerEntryFrequencyMinInterval = parseInterval(value, time.Minute, defaultSchedulerEntryFrequencyMinInterval)
 		case "SCHEDULER_ENTRY_FREQUENCY_FACTOR":
 			p.opts.schedulerEntryFrequencyFactor = parseInt(value, defaultSchedulerEntryFrequencyFactor)
 		case "SCHEDULER_ROUND_ROBIN_MIN_INTERVAL":
-			p.opts.schedulerRoundRobinMinInterval = parseInt(value, defaultSchedulerRoundRobinMinInterval)
+			p.opts.schedulerRoundRobinMinInterval = parseInterval(value, time.Minute, defaultSchedulerRoundRobinMinInterval)
 		case "SCHEDULER_ROUND_ROBIN_MAX_INTERVAL":
-			p.opts.schedulerRoundRobinMaxInterval = parseInt(value, defaultSchedulerRoundRobinMaxInterval)
+			p.opts.schedulerRoundRobinMaxInterval = parseInterval(value, time.Minute, defaultSchedulerRoundRobinMaxInterval)
 		case "MEDIA_PROXY_HTTP_CLIENT_TIMEOUT":
 			p.opts.mediaProxyHTTPClientTimeout = parseInt(value, defaultMediaProxyHTTPClientTimeout)
 		case "MEDIA_PROXY_MODE":

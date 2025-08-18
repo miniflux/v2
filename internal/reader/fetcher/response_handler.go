@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
-	"math"
 	"net"
 	"net/http"
 	"net/url"
@@ -54,18 +53,19 @@ func (r *ResponseHandler) ETag() string {
 	return r.httpResponse.Header.Get("ETag")
 }
 
-func (r *ResponseHandler) ExpiresInMinutes() int {
+func (r *ResponseHandler) Expires() time.Duration {
 	expiresHeaderValue := r.httpResponse.Header.Get("Expires")
 	if expiresHeaderValue != "" {
 		t, err := time.Parse(time.RFC1123, expiresHeaderValue)
 		if err == nil {
-			return int(math.Ceil(time.Until(t).Minutes()))
+			// This rounds up to the next minute by rounding down and just adding a minute.
+			return time.Until(t).Truncate(time.Minute) + time.Minute
 		}
 	}
 	return 0
 }
 
-func (r *ResponseHandler) CacheControlMaxAgeInMinutes() int {
+func (r *ResponseHandler) CacheControlMaxAge() time.Duration {
 	cacheControlHeaderValue := r.httpResponse.Header.Get("Cache-Control")
 	if cacheControlHeaderValue != "" {
 		for _, directive := range strings.Split(cacheControlHeaderValue, ",") {
@@ -73,7 +73,7 @@ func (r *ResponseHandler) CacheControlMaxAgeInMinutes() int {
 			if strings.HasPrefix(directive, "max-age=") {
 				maxAge, err := strconv.Atoi(strings.TrimPrefix(directive, "max-age="))
 				if err == nil {
-					return int(math.Ceil(float64(maxAge) / 60))
+					return time.Duration(maxAge) * time.Second
 				}
 			}
 		}
@@ -81,17 +81,17 @@ func (r *ResponseHandler) CacheControlMaxAgeInMinutes() int {
 	return 0
 }
 
-func (r *ResponseHandler) ParseRetryDelay() int {
+func (r *ResponseHandler) ParseRetryDelay() time.Duration {
 	retryAfterHeaderValue := r.httpResponse.Header.Get("Retry-After")
 	if retryAfterHeaderValue != "" {
 		// First, try to parse as an integer (number of seconds)
 		if seconds, err := strconv.Atoi(retryAfterHeaderValue); err == nil {
-			return seconds
+			return time.Duration(seconds) * time.Second
 		}
 
 		// If not an integer, try to parse as an HTTP-date
 		if t, err := time.Parse(time.RFC1123, retryAfterHeaderValue); err == nil {
-			return int(time.Until(t).Seconds())
+			return time.Until(t).Truncate(time.Second)
 		}
 	}
 	return 0

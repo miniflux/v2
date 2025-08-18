@@ -72,7 +72,7 @@ func TestIsModified(t *testing.T) {
 func TestRetryDelay(t *testing.T) {
 	var testCases = map[string]struct {
 		RetryAfterHeader string
-		ExpectedDelay    int
+		ExpectedDelay    time.Duration
 	}{
 		"Empty header": {
 			RetryAfterHeader: "",
@@ -80,11 +80,11 @@ func TestRetryDelay(t *testing.T) {
 		},
 		"Integer value": {
 			RetryAfterHeader: "42",
-			ExpectedDelay:    42,
+			ExpectedDelay:    42 * time.Second,
 		},
 		"HTTP-date": {
 			RetryAfterHeader: time.Now().Add(42 * time.Second).Format(time.RFC1123),
-			ExpectedDelay:    41,
+			ExpectedDelay:    41 * time.Second,
 		},
 	}
 	for name, tc := range testCases {
@@ -105,20 +105,20 @@ func TestRetryDelay(t *testing.T) {
 
 func TestExpiresInMinutes(t *testing.T) {
 	var testCases = map[string]struct {
-		ExpiresHeader   string
-		ExpectedMinutes int
+		ExpiresHeader string
+		Expected      time.Duration
 	}{
 		"Empty header": {
-			ExpiresHeader:   "",
-			ExpectedMinutes: 0,
+			ExpiresHeader: "",
+			Expected:      0,
 		},
 		"Valid Expires header": {
-			ExpiresHeader:   time.Now().Add(10 * time.Minute).Format(time.RFC1123),
-			ExpectedMinutes: 10,
+			ExpiresHeader: time.Now().Add(10 * time.Minute).Format(time.RFC1123),
+			Expected:      10 * time.Minute,
 		},
 		"Invalid Expires header": {
-			ExpiresHeader:   "invalid-date",
-			ExpectedMinutes: 0,
+			ExpiresHeader: "invalid-date",
+			Expected:      0,
 		},
 	}
 	for name, tc := range testCases {
@@ -130,8 +130,8 @@ func TestExpiresInMinutes(t *testing.T) {
 					Header: header,
 				},
 			}
-			if tc.ExpectedMinutes != rh.ExpiresInMinutes() {
-				t.Errorf("Expected %d, got %d for scenario %q", tc.ExpectedMinutes, rh.ExpiresInMinutes(), name)
+			if tc.Expected != rh.Expires() {
+				t.Errorf("Expected %d, got %d for scenario %q", tc.Expected, rh.Expires(), name)
 			}
 		})
 	}
@@ -140,23 +140,23 @@ func TestExpiresInMinutes(t *testing.T) {
 func TestCacheControlMaxAgeInMinutes(t *testing.T) {
 	var testCases = map[string]struct {
 		CacheControlHeader string
-		ExpectedMinutes    int
+		Expected           time.Duration
 	}{
 		"Empty header": {
 			CacheControlHeader: "",
-			ExpectedMinutes:    0,
+			Expected:           0,
 		},
 		"Valid max-age": {
 			CacheControlHeader: "max-age=600",
-			ExpectedMinutes:    10,
+			Expected:           10 * time.Minute,
 		},
 		"Invalid max-age": {
 			CacheControlHeader: "max-age=invalid",
-			ExpectedMinutes:    0,
+			Expected:           0,
 		},
 		"Multiple directives": {
 			CacheControlHeader: "no-cache, max-age=300",
-			ExpectedMinutes:    5,
+			Expected:           5 * time.Minute,
 		},
 	}
 	for name, tc := range testCases {
@@ -168,8 +168,8 @@ func TestCacheControlMaxAgeInMinutes(t *testing.T) {
 					Header: header,
 				},
 			}
-			if tc.ExpectedMinutes != rh.CacheControlMaxAgeInMinutes() {
-				t.Errorf("Expected %d, got %d for scenario %q", tc.ExpectedMinutes, rh.CacheControlMaxAgeInMinutes(), name)
+			if tc.Expected != rh.CacheControlMaxAge() {
+				t.Errorf("Expected %d, got %d for scenario %q", tc.Expected, rh.CacheControlMaxAge(), name)
 			}
 		})
 	}

@@ -55,7 +55,7 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 	// Get TTL if defined.
 	if r.rss.Channel.TTL != "" {
 		if ttl, err := strconv.Atoi(r.rss.Channel.TTL); err == nil {
-			feed.TTL = ttl
+			feed.TTL = time.Duration(ttl) * time.Minute
 		}
 	}
 

@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"errors"
 	"log/slog"
+	"time"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/integration"
@@ -208,7 +209,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	weeklyEntryCount := 0
-	refreshDelayInMinutes := 0
+	var refreshDelay time.Duration
 	if config.Opts.PollingScheduler() == model.SchedulerEntryFrequency {
 		var weeklyCountErr error
 		weeklyEntryCount, weeklyCountErr = store.WeeklyFeedEntryCount(userID, feedID)
@@ -218,7 +219,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	originalFeed.CheckedNow()
-	originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelayInMinutes)
+	originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelay)
 
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithUsernameAndPassword(originalFeed.Username, originalFeed.Password)
@@ -242,15 +243,14 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	defer responseHandler.Close()
 
 	if responseHandler.IsRateLimited() {
-		retryDelayInSeconds := responseHandler.ParseRetryDelay()
-		refreshDelayInMinutes = retryDelayInSeconds / 60
-		calculatedNextCheckIntervalInMinutes := originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelayInMinutes)
+		retryDelay := responseHandler.ParseRetryDelay()
+		calculatedNextCheckInterval := originalFeed.ScheduleNextCheck(weeklyEntryCount, retryDelay)
 
 		slog.Warn("Feed is rate limited",
 			slog.String("feed_url", originalFeed.FeedURL),
-			slog.Int("retry_delay_in_seconds", retryDelayInSeconds),
-			slog.Int("refresh_delay_in_minutes", refreshDelayInMinutes),
-			slog.Int("calculated_next_check_interval_in_minutes", calculatedNextCheckIntervalInMinutes),
+			slog.Int("retry_delay_in_seconds", int(retryDelay.Seconds())),
+			slog.Int("refresh_delay_in_minutes", int(refreshDelay.Minutes())),
+			slog.Int("calculated_next_check_interval_in_minutes", int(calculatedNextCheckInterval.Minutes())),
 			slog.Time("new_next_check_at", originalFeed.NextCheckAt),
 		)
 	}
@@ -316,22 +316,22 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		// Use the RSS TTL value, or the Cache-Control or Expires HTTP headers if available.
 		// Otherwise, we use the default value from the configuration (min interval parameter).
 		feedTTLValue := updatedFeed.TTL
-		cacheControlMaxAgeValue := responseHandler.CacheControlMaxAgeInMinutes()
-		expiresValue := responseHandler.ExpiresInMinutes()
-		refreshDelayInMinutes = max(feedTTLValue, cacheControlMaxAgeValue, expiresValue)
+		cacheControlMaxAgeValue := responseHandler.CacheControlMaxAge()
+		expiresValue := responseHandler.Expires()
+		refreshDelay = max(feedTTLValue, cacheControlMaxAgeValue, expiresValue)
 
 		// Set the next check at with updated arguments.
-		calculatedNextCheckIntervalInMinutes := originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelayInMinutes)
+		calculatedNextCheckInterval := originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelay)
 
 		slog.Debug("Updated next check date",
 			slog.Int64("user_id", userID),
 			slog.Int64("feed_id", feedID),
 			slog.String("feed_url", originalFeed.FeedURL),
-			slog.Int("feed_ttl_minutes", feedTTLValue),
-			slog.Int("cache_control_max_age_in_minutes", cacheControlMaxAgeValue),
-			slog.Int("expires_in_minutes", expiresValue),
-			slog.Int("refresh_delay_in_minutes", refreshDelayInMinutes),
-			slog.Int("calculated_next_check_interval_in_minutes", calculatedNextCheckIntervalInMinutes),
+			slog.Int("feed_ttl_minutes", int(feedTTLValue.Minutes())),
+			slog.Int("cache_control_max_age_in_minutes", int(cacheControlMaxAgeValue.Minutes())),
+			slog.Int("expires_in_minutes", int(expiresValue.Minutes())),
+			slog.Int("refresh_delay_in_minutes", int(refreshDelay.Minutes())),
+			slog.Int("calculated_next_check_interval_in_minutes", int(calculatedNextCheckInterval.Minutes())),
 			slog.Time("new_next_check_at", originalFeed.NextCheckAt),
 		)
 

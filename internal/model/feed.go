@@ -6,7 +6,6 @@ package model // import "miniflux.app/v2/internal/model"
 import (
 	"fmt"
 	"io"
-	"math"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -69,11 +68,11 @@ type Feed struct {
 	Entries  Entries   `json:"entries,omitempty"`
 
 	// Internal attributes (not exposed in the API and not persisted in the database)
-	TTL                    int    `json:"-"`
-	IconURL                string `json:"-"`
-	UnreadCount            int    `json:"-"`
-	ReadCount              int    `json:"-"`
-	NumberOfVisibleEntries int    `json:"-"`
+	TTL                    time.Duration `json:"-"`
+	IconURL                string        `json:"-"`
+	UnreadCount            int           `json:"-"`
+	ReadCount              int           `json:"-"`
+	NumberOfVisibleEntries int           `json:"-"`
 }
 
 type FeedCounters struct {
@@ -119,35 +118,33 @@ func (f *Feed) CheckedNow() {
 }
 
 // ScheduleNextCheck set "next_check_at" of a feed based on the scheduler selected from the configuration.
-func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelayInMinutes int) int {
+func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelay time.Duration) time.Duration {
 	// Default to the global config Polling Frequency.
-	intervalMinutes := config.Opts.SchedulerRoundRobinMinInterval()
+	interval := config.Opts.SchedulerRoundRobinMinInterval()
 
 	if config.Opts.PollingScheduler() == SchedulerEntryFrequency {
 		if weeklyCount <= 0 {
-			intervalMinutes = config.Opts.SchedulerEntryFrequencyMaxInterval()
+			interval = config.Opts.SchedulerEntryFrequencyMaxInterval()
 		} else {
-			intervalMinutes = int(math.Round(float64(7*24*60) / float64(weeklyCount*config.Opts.SchedulerEntryFrequencyFactor())))
-			intervalMinutes = min(intervalMinutes, config.Opts.SchedulerEntryFrequencyMaxInterval())
-			intervalMinutes = max(intervalMinutes, config.Opts.SchedulerEntryFrequencyMinInterval())
+			interval = (7 * 24 * time.Hour) / time.Duration(weeklyCount*config.Opts.SchedulerEntryFrequencyFactor())
+			interval = min(interval, config.Opts.SchedulerEntryFrequencyMaxInterval())
+			interval = max(interval, config.Opts.SchedulerEntryFrequencyMinInterval())
 		}
 	}
 
 	// Use the RSS TTL field, Retry-After, Cache-Control or Expires HTTP headers if defined.
-	if refreshDelayInMinutes > 0 && refreshDelayInMinutes > intervalMinutes {
-		intervalMinutes = refreshDelayInMinutes
-	}
+	interval = max(interval, refreshDelay)
 
 	// Limit the max interval value for misconfigured feeds.
 	switch config.Opts.PollingScheduler() {
 	case SchedulerRoundRobin:
-		intervalMinutes = min(intervalMinutes, config.Opts.SchedulerRoundRobinMaxInterval())
+		interval = min(interval, config.Opts.SchedulerRoundRobinMaxInterval())
 	case SchedulerEntryFrequency:
-		intervalMinutes = min(intervalMinutes, config.Opts.SchedulerEntryFrequencyMaxInterval())
+		interval = min(interval, config.Opts.SchedulerEntryFrequencyMaxInterval())
 	}
 
-	f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(intervalMinutes))
-	return intervalMinutes
+	f.NextCheckAt = time.Now().Add(interval)
+	return interval
 }
 
 // FeedCreationRequest represents the request to create a feed.
