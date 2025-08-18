@@ -7,7 +7,9 @@ import (
 	"bytes"
 	"os"
 	"reflect"
+	"slices"
 	"testing"
+	"time"
 )
 
 func TestLogFileDefaultValue(t *testing.T) {
@@ -887,11 +889,21 @@ func TestSchedulerEntryFrequencyMaxInterval(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 30
+	expected := 30 * time.Minute
 	result := opts.SchedulerEntryFrequencyMaxInterval()
 
 	if result != expected {
 		t.Fatalf(`Unexpected SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL"
+	})
+
+	expectedSerialized := 30
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 
@@ -922,11 +934,21 @@ func TestSchedulerEntryFrequencyMinInterval(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 30
+	expected := 30 * time.Minute
 	result := opts.SchedulerEntryFrequencyMinInterval()
 
 	if result != expected {
 		t.Fatalf(`Unexpected SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL"
+	})
+
+	expectedSerialized := 30
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 
@@ -992,11 +1014,21 @@ func TestSchedulerRoundRobin(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 15
+	expected := 15 * time.Minute
 	result := opts.SchedulerRoundRobinMinInterval()
 
 	if result != expected {
 		t.Fatalf(`Unexpected SCHEDULER_ROUND_ROBIN_MIN_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "SCHEDULER_ROUND_ROBIN_MIN_INTERVAL"
+	})
+
+	expectedSerialized := 15
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 
@@ -1027,11 +1059,21 @@ func TestSchedulerRoundRobinMaxInterval(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 150
+	expected := 150 * time.Minute
 	result := opts.SchedulerRoundRobinMaxInterval()
 
 	if result != expected {
 		t.Fatalf(`Unexpected SCHEDULER_ROUND_ROBIN_MAX_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "SCHEDULER_ROUND_ROBIN_MAX_INTERVAL"
+	})
+
+	expectedSerialized := 150
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 

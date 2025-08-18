@@ -32,11 +32,11 @@ const (
 	defaultForceRefreshInterval               = 30
 	defaultBatchSize                          = 100
 	defaultPollingScheduler                   = "round_robin"
-	defaultSchedulerEntryFrequencyMinInterval = 5
-	defaultSchedulerEntryFrequencyMaxInterval = 24 * 60
+	defaultSchedulerEntryFrequencyMinInterval = 5 * time.Minute
+	defaultSchedulerEntryFrequencyMaxInterval = 24 * time.Hour
 	defaultSchedulerEntryFrequencyFactor      = 1
-	defaultSchedulerRoundRobinMinInterval     = 60
-	defaultSchedulerRoundRobinMaxInterval     = 1440
+	defaultSchedulerRoundRobinMinInterval     = 1 * time.Hour
+	defaultSchedulerRoundRobinMaxInterval     = 24 * time.Hour
 	defaultPollingParsingErrorLimit           = 3
 	defaultRunMigrations                      = false
 	defaultDatabaseURL                        = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
@@ -132,11 +132,11 @@ type options struct {
 	cleanupRemoveSessionsDays          int
 	forceRefreshInterval               int
 	batchSize                          int
-	schedulerEntryFrequencyMinInterval int
-	schedulerEntryFrequencyMaxInterval int
+	schedulerEntryFrequencyMinInterval time.Duration
+	schedulerEntryFrequencyMaxInterval time.Duration
 	schedulerEntryFrequencyFactor      int
-	schedulerRoundRobinMinInterval     int
-	schedulerRoundRobinMaxInterval     int
+	schedulerRoundRobinMinInterval     time.Duration
+	schedulerRoundRobinMaxInterval     time.Duration
 	pollingFrequency                   int
 	pollingLimitPerHost                int
 	pollingParsingErrorLimit           int
@@ -422,13 +422,13 @@ func (o *options) PollingScheduler() string {
 	return o.pollingScheduler
 }
 
-// SchedulerEntryFrequencyMaxInterval returns the maximum interval in minutes for the entry frequency scheduler.
-func (o *options) SchedulerEntryFrequencyMaxInterval() int {
+// SchedulerEntryFrequencyMaxInterval returns the maximum interval for the entry frequency scheduler.
+func (o *options) SchedulerEntryFrequencyMaxInterval() time.Duration {
 	return o.schedulerEntryFrequencyMaxInterval
 }
 
-// SchedulerEntryFrequencyMinInterval returns the minimum interval in minutes for the entry frequency scheduler.
-func (o *options) SchedulerEntryFrequencyMinInterval() int {
+// SchedulerEntryFrequencyMinInterval returns the minimum interval for the entry frequency scheduler.
+func (o *options) SchedulerEntryFrequencyMinInterval() time.Duration {
 	return o.schedulerEntryFrequencyMinInterval
 }
 
@@ -437,11 +437,11 @@ func (o *options) SchedulerEntryFrequencyFactor() int {
 	return o.schedulerEntryFrequencyFactor
 }
 
-func (o *options) SchedulerRoundRobinMinInterval() int {
+func (o *options) SchedulerRoundRobinMinInterval() time.Duration {
 	return o.schedulerRoundRobinMinInterval
 }
 
-func (o *options) SchedulerRoundRobinMaxInterval() int {
+func (o *options) SchedulerRoundRobinMaxInterval() time.Duration {
 	return o.schedulerRoundRobinMaxInterval
 }
 
@@ -781,11 +781,11 @@ func (o *options) SortedOptions(redactSecret bool) []*option {
 		"MEDIA_PROXY_CUSTOM_URL":                 o.mediaProxyCustomURL,
 		"ROOT_URL":                               o.rootURL,
 		"RUN_MIGRATIONS":                         o.runMigrations,
-		"SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL": o.schedulerEntryFrequencyMaxInterval,
-		"SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL": o.schedulerEntryFrequencyMinInterval,
+		"SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL": int(o.schedulerEntryFrequencyMaxInterval.Minutes()),
+		"SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL": int(o.schedulerEntryFrequencyMinInterval.Minutes()),
 		"SCHEDULER_ENTRY_FREQUENCY_FACTOR":       o.schedulerEntryFrequencyFactor,
-		"SCHEDULER_ROUND_ROBIN_MIN_INTERVAL":     o.schedulerRoundRobinMinInterval,
-		"SCHEDULER_ROUND_ROBIN_MAX_INTERVAL":     o.schedulerRoundRobinMaxInterval,
+		"SCHEDULER_ROUND_ROBIN_MIN_INTERVAL":     int(o.schedulerRoundRobinMinInterval.Minutes()),
+		"SCHEDULER_ROUND_ROBIN_MAX_INTERVAL":     int(o.schedulerRoundRobinMaxInterval.Minutes()),
 		"SCHEDULER_SERVICE":                      o.schedulerService,
 		"WATCHDOG":                               o.watchdog,
 		"WORKER_POOL_SIZE":                       o.workerPoolSize,

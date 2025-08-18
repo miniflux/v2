@@ -2151,7 +2151,7 @@ func TestParseFeedWithTTLField(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.TTL != 60 {
+	if feed.TTL != 60*time.Minute {
 		t.Errorf("Incorrect TTL, got: %d", feed.TTL)
 	}
 }
