@@ -24,7 +24,7 @@ func New(name, value string, isHTTPS bool, path string) *http.Cookie {
 		Path:     basePath(path),
 		Secure:   isHTTPS,
 		HttpOnly: true,
-		Expires:  time.Now().Add(time.Duration(config.Opts.CleanupRemoveSessionsDays()) * 24 * time.Hour),
+		Expires:  time.Now().Add(config.Opts.CleanupRemoveSessionsInterval()),
 		SameSite: http.SameSiteLaxMode,
 	}
 }

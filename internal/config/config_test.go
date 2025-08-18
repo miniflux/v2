@@ -645,11 +645,21 @@ func TestDefaultCleanupArchiveReadDaysValue(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 60
-	result := opts.CleanupArchiveReadDays()
+	expected := 60 * 24 * time.Hour
+	result := opts.CleanupArchiveReadInterval()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CLEANUP_ARCHIVE_READ_DAYS value, got %v instead of %v`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "CLEANUP_ARCHIVE_READ_DAYS"
+	})
+
+	expectedSerialized := 60
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 
@@ -664,11 +674,21 @@ func TestCleanupArchiveReadDays(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 7
-	result := opts.CleanupArchiveReadDays()
+	expected := 7 * 24 * time.Hour
+	result := opts.CleanupArchiveReadInterval()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CLEANUP_ARCHIVE_READ_DAYS value, got %v instead of %v`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "CLEANUP_ARCHIVE_READ_DAYS"
+	})
+
+	expectedSerialized := 7
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 
@@ -681,11 +701,21 @@ func TestDefaultCleanupRemoveSessionsDaysValue(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 30
-	result := opts.CleanupRemoveSessionsDays()
+	expected := 30 * 24 * time.Hour
+	result := opts.CleanupRemoveSessionsInterval()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CLEANUP_REMOVE_SESSIONS_DAYS value, got %v instead of %v`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "CLEANUP_REMOVE_SESSIONS_DAYS"
+	})
+
+	expectedSerialized := 30
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 
@@ -699,11 +729,21 @@ func TestCleanupRemoveSessionsDays(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 7
-	result := opts.CleanupRemoveSessionsDays()
+	expected := 7 * 24 * time.Hour
+	result := opts.CleanupRemoveSessionsInterval()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CLEANUP_REMOVE_SESSIONS_DAYS value, got %v instead of %v`, result, expected)
+	}
+
+	sorted := opts.SortedOptions(false)
+	i := slices.IndexFunc(sorted, func(opt *option) bool {
+		return opt.Key == "CLEANUP_REMOVE_SESSIONS_DAYS"
+	})
+
+	expectedSerialized := 7
+	if got := sorted[i].Value; got != expectedSerialized {
+		t.Fatalf(`Unexpected value in option output, got %q instead of %q`, got, expectedSerialized)
 	}
 }
 

@@ -48,10 +48,10 @@ const (
 	defaultKeyFile                            = ""
 	defaultCertDomain                         = ""
 	defaultCleanupFrequency                   = 24 * time.Hour
-	defaultCleanupArchiveReadDays             = 60
-	defaultCleanupArchiveUnreadDays           = 180
+	defaultCleanupArchiveReadInterval         = 60 * 24 * time.Hour
+	defaultCleanupArchiveUnreadInterval       = 180 * 24 * time.Hour
 	defaultCleanupArchiveBatchSize            = 10000
-	defaultCleanupRemoveSessionsDays          = 30
+	defaultCleanupRemoveSessionsInterval      = 30 * 24 * time.Hour
 	defaultMediaProxyHTTPClientTimeout        = 120 * time.Second
 	defaultMediaProxyMode                     = "http-only"
 	defaultMediaResourceTypes                 = "image"
@@ -126,10 +126,10 @@ type options struct {
 	certDomain                         string
 	certKeyFile                        string
 	cleanupFrequencyInterval           time.Duration
-	cleanupArchiveReadDays             int
-	cleanupArchiveUnreadDays           int
+	cleanupArchiveReadInterval         time.Duration
+	cleanupArchiveUnreadInterval       time.Duration
 	cleanupArchiveBatchSize            int
-	cleanupRemoveSessionsDays          int
+	cleanupRemoveSessionsInterval      time.Duration
 	forceRefreshInterval               time.Duration
 	batchSize                          int
 	schedulerEntryFrequencyMinInterval time.Duration
@@ -210,10 +210,10 @@ func NewOptions() *options {
 		certDomain:                         defaultCertDomain,
 		certKeyFile:                        defaultKeyFile,
 		cleanupFrequencyInterval:           defaultCleanupFrequency,
-		cleanupArchiveReadDays:             defaultCleanupArchiveReadDays,
-		cleanupArchiveUnreadDays:           defaultCleanupArchiveUnreadDays,
+		cleanupArchiveReadInterval:         defaultCleanupArchiveReadInterval,
+		cleanupArchiveUnreadInterval:       defaultCleanupArchiveUnreadInterval,
 		cleanupArchiveBatchSize:            defaultCleanupArchiveBatchSize,
-		cleanupRemoveSessionsDays:          defaultCleanupRemoveSessionsDays,
+		cleanupRemoveSessionsInterval:      defaultCleanupRemoveSessionsInterval,
 		pollingFrequency:                   defaultPollingFrequency,
 		forceRefreshInterval:               defaultForceRefreshInterval,
 		batchSize:                          defaultBatchSize,
@@ -366,14 +366,14 @@ func (o *options) CleanupFrequency() time.Duration {
 	return o.cleanupFrequencyInterval
 }
 
-// CleanupArchiveReadDays returns the number of days after which marking read items as removed.
-func (o *options) CleanupArchiveReadDays() int {
-	return o.cleanupArchiveReadDays
+// CleanupArchiveReadDays returns the interval after which marking read items as removed.
+func (o *options) CleanupArchiveReadInterval() time.Duration {
+	return o.cleanupArchiveReadInterval
 }
 
-// CleanupArchiveUnreadDays returns the number of days after which marking unread items as removed.
-func (o *options) CleanupArchiveUnreadDays() int {
-	return o.cleanupArchiveUnreadDays
+// CleanupArchiveUnreadDays returns the interval after which marking unread items as removed.
+func (o *options) CleanupArchiveUnreadInterval() time.Duration {
+	return o.cleanupArchiveUnreadInterval
 }
 
 // CleanupArchiveBatchSize returns the number of entries to archive for each interval.
@@ -381,9 +381,9 @@ func (o *options) CleanupArchiveBatchSize() int {
 	return o.cleanupArchiveBatchSize
 }
 
-// CleanupRemoveSessionsDays returns the number of days after which to remove sessions.
-func (o *options) CleanupRemoveSessionsDays() int {
-	return o.cleanupRemoveSessionsDays
+// CleanupRemoveSessionsDays returns the interval after which to remove sessions.
+func (o *options) CleanupRemoveSessionsInterval() time.Duration {
+	return o.cleanupRemoveSessionsInterval
 }
 
 // WorkerPoolSize returns the number of background worker.
@@ -723,9 +723,9 @@ func (o *options) SortedOptions(redactSecret bool) []*option {
 		"CERT_FILE":                              o.certFile,
 		"CLEANUP_FREQUENCY_HOURS":                int(o.cleanupFrequencyInterval.Hours()),
 		"CLEANUP_ARCHIVE_BATCH_SIZE":             o.cleanupArchiveBatchSize,
-		"CLEANUP_ARCHIVE_READ_DAYS":              o.cleanupArchiveReadDays,
-		"CLEANUP_ARCHIVE_UNREAD_DAYS":            o.cleanupArchiveUnreadDays,
-		"CLEANUP_REMOVE_SESSIONS_DAYS":           o.cleanupRemoveSessionsDays,
+		"CLEANUP_ARCHIVE_READ_DAYS":              int(o.cleanupArchiveReadInterval.Hours() / 24),
+		"CLEANUP_ARCHIVE_UNREAD_DAYS":            int(o.cleanupArchiveUnreadInterval.Hours() / 24),
+		"CLEANUP_REMOVE_SESSIONS_DAYS":           int(o.cleanupRemoveSessionsInterval.Hours() / 24),
 		"CREATE_ADMIN":                           o.createAdmin,
 		"DATABASE_CONNECTION_LIFETIME":           o.databaseConnectionLifetime,
 		"DATABASE_MAX_CONNS":                     o.databaseMaxConns,
