@@ -276,6 +276,22 @@ func (c *Client) Categories() (Categories, error) {
 	return categories, nil
 }
 
+// CategoriesWithCounters fetches the categories with their respective feed and unread counts.
+func (c *Client) CategoriesWithCounters() (Categories, error) {
+	body, err := c.request.Get("/v1/categories?counts=true")
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var categories Categories
+	if err := json.NewDecoder(body).Decode(&categories); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return categories, nil
+}
+
 // CreateCategory creates a new category.
 func (c *Client) CreateCategory(title string) (*Category, error) {
 	body, err := c.request.Post("/v1/categories", &CategoryCreationRequest{
