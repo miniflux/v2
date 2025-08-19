@@ -1262,6 +1262,14 @@ func TestGetCategoriesEndpoint(t *testing.T) {
 		t.Fatalf(`Invalid title, got %q instead of %q`, categories[0].Title, "All")
 	}
 
+	if categories[0].FeedCount != nil {
+		t.Errorf(`Expected FeedCount to be nil, got %d`, *categories[0].FeedCount)
+	}
+
+	if categories[0].TotalUnread != nil {
+		t.Errorf(`Expected TotalUnread to be nil, got %d`, *categories[0].TotalUnread)
+	}
+
 	if categories[1].ID != category.ID {
 		t.Fatalf(`Invalid categoryID, got %d`, categories[0].ID)
 	}
@@ -1272,6 +1280,40 @@ func TestGetCategoriesEndpoint(t *testing.T) {
 
 	if categories[1].Title != "My category" {
 		t.Fatalf(`Invalid title, got %q instead of %q`, categories[0].Title, "My category")
+	}
+
+	if categories[1].FeedCount != nil {
+		t.Errorf(`Expected FeedCount to be nil, got %d`, *categories[1].FeedCount)
+	}
+
+	if categories[1].TotalUnread != nil {
+		t.Errorf(`Expected TotalUnread to be nil, got %d`, *categories[1].TotalUnread)
+	}
+
+	categories, err = regularUserClient.CategoriesWithCounters()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(categories) != 2 {
+		t.Fatalf(`Invalid number of categories, got %d instead of %d`, len(categories), 1)
+	}
+
+	if categories[1].FeedCount == nil {
+		t.Fatalf(`Expected FeedCount to be not nil`)
+	}
+
+	if categories[1].TotalUnread == nil {
+		t.Fatalf(`Expected TotalUnread to be not nil`)
+	}
+
+	expectedCounterValue := 0
+	if *categories[1].FeedCount != expectedCounterValue {
+		t.Errorf(`Expected FeedCount to be %d, got %d`, expectedCounterValue, *categories[1].FeedCount)
+	}
+
+	if *categories[1].TotalUnread != expectedCounterValue {
+		t.Errorf(`Expected TotalUnread to be %d, got %d`, expectedCounterValue, *categories[1].TotalUnread)
 	}
 }
 
