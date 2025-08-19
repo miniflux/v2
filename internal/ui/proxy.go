@@ -88,6 +88,9 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithTimeout(config.Opts.MediaProxyHTTPClientTimeout())
 
+	// Disable compression for the media proxy requests (not implemented).
+	requestBuilder.WithoutCompression()
+
 	if referer := rewrite.GetRefererForURL(mediaURL); referer != "" {
 		requestBuilder.WithHeader("Referer", referer)
 	}
