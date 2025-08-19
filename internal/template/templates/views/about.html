@@ -13,10 +13,10 @@
     <ul>
         <li>
             <strong>{{ t "page.about.version" }}</strong>
-            {{ if startsWith .version "2." }}
-                <a href="https://github.com/miniflux/v2/releases/tag/{{ .version }}">{{ .version }}</a>
-            {{ else }}
+            {{ if contains .version "dev" }}
                 {{ .version }}
+            {{ else }}
+                <a href="https://github.com/miniflux/v2/releases/tag/{{ .version }}">{{ .version }}</a>
             {{ end }}
         </li>
 	{{ if .commit }}

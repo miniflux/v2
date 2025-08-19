@@ -43,7 +43,9 @@ func getBuildDate() string {
 // Falls back to values from the Go module's build info when available.
 func init() {
 	if Version == "" {
-		Version = "Development Version"
+		// Some Miniflux clients expect a specific version format.
+		// For example, Flux News converts the string version to an integer.
+		Version = "2.2.x-dev"
 	}
 	if Commit == "" {
 		Commit = getCommit()
