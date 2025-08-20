@@ -4,7 +4,6 @@
 package response // import "miniflux.app/v2/internal/http/response"
 
 import (
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -102,27 +101,6 @@ func TestBuildResponseWithAttachment(t *testing.T) {
 	actual := resp.Header.Get("Content-Disposition")
 	if actual != expected {
 		t.Fatalf(`Unexpected header value, got %q instead of %q`, actual, expected)
-	}
-}
-
-func TestBuildResponseWithError(t *testing.T) {
-	r, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	w := httptest.NewRecorder()
-
-	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBody(errors.New("Some error")).Write()
-	})
-
-	handler.ServeHTTP(w, r)
-
-	expectedBody := `Some error`
-	actualBody := w.Body.String()
-	if actualBody != expectedBody {
-		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
 	}
 }
 
