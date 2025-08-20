@@ -194,16 +194,37 @@ func TestResizeInvalidImage(t *testing.T) {
 		t.Fatalf("Tried to convert an invalid image")
 	}
 }
+
 func TestMinifySvg(t *testing.T) {
 	data := []byte(`<svg path d=" M1 4h-.001 V1h2v.001 M1 2.6 h1v.001"/></svg>`)
 	want := []byte(`<svg path="" d="M1 4H.999V1h2v.001M1 2.6h1v.001"/></svg>`)
+	icon := model.Icon{Content: data, MimeType: "image/svg+xml"}
+	got := resizeIcon(&icon).Content
+	if !bytes.Equal(want, got) {
+		t.Fatalf("Didn't correctly minify the svg: got %s instead of %s", got, want)
+	}
+}
+
+func TestMinifySvgWithError(t *testing.T) {
+	// Invalid SVG with malformed XML that should cause minification to fail
+	data := []byte(`<svg><><invalid-tag<>unclosed`)
+	original := make([]byte, len(data))
+	copy(original, data)
 
 	icon := model.Icon{
 		Content:  data,
 		MimeType: "image/svg+xml",
 	}
-	got := resizeIcon(&icon).Content
-	if !bytes.Equal(want, got) {
-		t.Fatalf("Didn't correctly minimize the svg: got %s instead of %s", got, want)
+
+	result := resizeIcon(&icon)
+
+	// When minification fails, the original content should be preserved
+	if !bytes.Equal(original, result.Content) {
+		t.Fatalf("Expected original content to be preserved on minification error, got %s instead of %s", result.Content, original)
+	}
+
+	// MimeType should remain unchanged
+	if result.MimeType != "image/svg+xml" {
+		t.Fatalf("Expected MimeType to remain image/svg+xml, got %s", result.MimeType)
 	}
 }
