@@ -2749,7 +2749,7 @@ func TestUpdateEntryEndpoint(t *testing.T) {
 	}
 }
 
-func TestToggleBookmarkEndpoint(t *testing.T) {
+func TestToggleStarredEndpoint(t *testing.T) {
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
 		t.Skip(skipIntegrationTestsMessage)
@@ -2777,7 +2777,7 @@ func TestToggleBookmarkEndpoint(t *testing.T) {
 		t.Fatalf(`Failed to get entries: %v`, err)
 	}
 
-	if err := regularUserClient.ToggleBookmark(result.Entries[0].ID); err != nil {
+	if err := regularUserClient.ToggleStarred(result.Entries[0].ID); err != nil {
 		t.Fatal(err)
 	}
 
@@ -2787,7 +2787,7 @@ func TestToggleBookmarkEndpoint(t *testing.T) {
 	}
 
 	if !entry.Starred {
-		t.Fatalf(`The entry should be bookmarked`)
+		t.Fatalf(`The entry should be starred`)
 	}
 }
 

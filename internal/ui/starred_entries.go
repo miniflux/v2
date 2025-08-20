@@ -53,5 +53,5 @@ func (h *handler) showStarredPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 
-	html.OK(w, r, view.Render("bookmark_entries"))
+	html.OK(w, r, view.Render("starred_entries"))
 }

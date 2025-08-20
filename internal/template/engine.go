@@ -40,7 +40,7 @@ func (e *Engine) ParseTemplates() {
 		"about.html":               {"layout.html", "settings_menu.html"},
 		"add_subscription.html":    {"feed_menu.html", "layout.html", "settings_menu.html"},
 		"api_keys.html":            {"layout.html", "settings_menu.html"},
-		"bookmark_entries.html":    {"item_meta.html", "layout.html", "pagination.html"},
+		"starred_entries.html":     {"item_meta.html", "layout.html", "pagination.html"},
 		"categories.html":          {"layout.html"},
 		"category_entries.html":    {"item_meta.html", "layout.html", "pagination.html"},
 		"category_feeds.html":      {"feed_list.html", "layout.html"},

@@ -479,12 +479,12 @@ func (s *Storage) SetEntriesStatusCount(userID int64, entryIDs []int64, status s
 	return visible, nil
 }
 
-// SetEntriesBookmarkedState updates the bookmarked state for the given list of entries.
-func (s *Storage) SetEntriesBookmarkedState(userID int64, entryIDs []int64, starred bool) error {
+// SetEntriesStarredState updates the starred state for the given list of entries.
+func (s *Storage) SetEntriesStarredState(userID int64, entryIDs []int64, starred bool) error {
 	query := `UPDATE entries SET starred=$1, changed_at=now() WHERE user_id=$2 AND id=ANY($3)`
 	result, err := s.db.Exec(query, starred, userID, pq.Array(entryIDs))
 	if err != nil {
-		return fmt.Errorf(`store: unable to update the bookmarked state %v: %v`, entryIDs, err)
+		return fmt.Errorf(`store: unable to update the starred state %v: %v`, entryIDs, err)
 	}
 
 	count, err := result.RowsAffected()
@@ -499,17 +499,17 @@ func (s *Storage) SetEntriesBookmarkedState(userID int64, entryIDs []int64, star
 	return nil
 }
 
-// ToggleBookmark toggles entry bookmark value.
-func (s *Storage) ToggleBookmark(userID int64, entryID int64) error {
+// ToggleStarred toggles entry starred value.
+func (s *Storage) ToggleStarred(userID int64, entryID int64) error {
 	query := `UPDATE entries SET starred = NOT starred, changed_at=now() WHERE user_id=$1 AND id=$2`
 	result, err := s.db.Exec(query, userID, entryID)
 	if err != nil {
-		return fmt.Errorf(`store: unable to toggle bookmark flag for entry #%d: %v`, entryID, err)
+		return fmt.Errorf(`store: unable to toggle starred flag for entry #%d: %v`, entryID, err)
 	}
 
 	count, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf(`store: unable to toggle bookmark flag for entry #%d: %v`, entryID, err)
+		return fmt.Errorf(`store: unable to toggle starred flag for entry #%d: %v`, entryID, err)
 	}
 
 	if count == 0 {

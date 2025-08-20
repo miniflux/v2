@@ -455,7 +455,7 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 			slog.Int64("user_id", userID),
 			slog.Int64("entry_id", entryID),
 		)
-		if err := h.store.ToggleBookmark(userID, entryID); err != nil {
+		if err := h.store.ToggleStarred(userID, entryID); err != nil {
 			json.ServerError(w, r, err)
 			return
 		}
@@ -474,7 +474,7 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 			slog.Int64("user_id", userID),
 			slog.Int64("entry_id", entryID),
 		)
-		if err := h.store.ToggleBookmark(userID, entryID); err != nil {
+		if err := h.store.ToggleStarred(userID, entryID); err != nil {
 			json.ServerError(w, r, err)
 			return
 		}

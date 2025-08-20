@@ -650,9 +650,9 @@ func (c *Client) UpdateEntry(entryID int64, entryChanges *EntryModificationReque
 	return entry, nil
 }
 
-// ToggleBookmark toggles entry bookmark value.
-func (c *Client) ToggleBookmark(entryID int64) error {
-	_, err := c.request.Put(fmt.Sprintf("/v1/entries/%d/bookmark", entryID), nil)
+// ToggleStarred toggles entry starred value.
+func (c *Client) ToggleStarred(entryID int64) error {
+	_, err := c.request.Put(fmt.Sprintf("/v1/entries/%d/star", entryID), nil)
 	return err
 }
 
