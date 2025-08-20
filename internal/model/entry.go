@@ -33,6 +33,7 @@ type Entry struct {
 	Author      string        `json:"author"`
 	ShareCode   string        `json:"share_code"`
 	Starred     bool          `json:"starred"`
+	Opened      bool          `json:"opened"`
 	ReadingTime int           `json:"reading_time"`
 	Enclosures  EnclosureList `json:"enclosures"`
 	Feed        *Feed         `json:"feed,omitempty"`
@@ -79,6 +80,7 @@ type EntriesStatusUpdateRequest struct {
 type EntryUpdateRequest struct {
 	Title   *string `json:"title"`
 	Content *string `json:"content"`
+	Opened  *bool   `json:"opened"`
 }
 
 func (e *EntryUpdateRequest) Patch(entry *Entry) {
@@ -88,5 +90,9 @@ func (e *EntryUpdateRequest) Patch(entry *Entry) {
 
 	if e.Content != nil && *e.Content != "" {
 		entry.Content = *e.Content
+	}
+
+	if e.Opened != nil {
+		entry.Opened = *e.Opened
 	}
 }

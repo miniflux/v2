@@ -70,6 +70,14 @@ func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
 		entry.Status = model.EntryStatusRead
 	}
 
+	if !entry.Opened {
+		entry.Opened = true
+		if err := h.store.UpdateEntryOpened(entry); err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
+	}
+
 	// Restore entry read status if needed after fetching the pagination.
 	if entry.Status == model.EntryStatusRead {
 		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
