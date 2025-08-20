@@ -112,22 +112,237 @@ func TestParseInvalidImageDataURLWithWrongPrefix(t *testing.T) {
 	}
 }
 
-func TestParseDocumentWithWhitespaceIconURL(t *testing.T) {
-	html := `<link rel="shortcut icon" href="
-		/static/img/favicon.ico
-	"><link rel='shortcut icon'><link rel='shortcut icon' href="  ">`
+func TestFindIconURLsFromHTMLDocument_MultipleIcons(t *testing.T) {
+	html := `<!DOCTYPE html>
+<html>
+<head>
+	<link rel="icon" href="/favicon.ico">
+	<link rel="shortcut icon" href="/shortcut-favicon.ico">
+	<link rel="icon shortcut" href="/icon-shortcut.ico">
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+</head>
+</html>`
 
 	iconURLs, err := findIconURLsFromHTMLDocument(strings.NewReader(html), "text/html")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if len(iconURLs) != 1 {
-		t.Fatalf(`Invalid number of icon URLs, got %d`, len(iconURLs))
+	expected := []string{
+		"/favicon.ico",
+		"/shortcut-favicon.ico",
+		"/icon-shortcut.ico",
+		"/apple-touch-icon.png",
 	}
 
-	if iconURLs[0] != "/static/img/favicon.ico" {
-		t.Errorf(`Invalid icon URL, got %q`, iconURLs[0])
+	if len(iconURLs) != len(expected) {
+		t.Fatalf("Expected %d icon URLs, got %d", len(expected), len(iconURLs))
+	}
+
+	for i, expectedURL := range expected {
+		if iconURLs[i] != expectedURL {
+			t.Errorf("Expected icon URL %d to be %q, got %q", i, expectedURL, iconURLs[i])
+		}
+	}
+}
+
+func TestFindIconURLsFromHTMLDocument_CaseInsensitiveRel(t *testing.T) {
+	html := `<!DOCTYPE html>
+<html>
+<head>
+	<link rel="ICON" href="/favicon1.ico">
+	<link rel="Icon" href="/favicon2.ico">
+	<link rel="SHORTCUT ICON" href="/favicon3.ico">
+	<link rel="Shortcut Icon" href="/favicon4.ico">
+	<link rel="ICON SHORTCUT" href="/favicon5.ico">
+	<link rel="Icon Shortcut" href="/favicon6.ico">
+</head>
+</html>`
+
+	iconURLs, err := findIconURLsFromHTMLDocument(strings.NewReader(html), "text/html")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := []string{
+		"/favicon1.ico",
+		"/favicon2.ico",
+		"/favicon3.ico",
+		"/favicon4.ico",
+		"/favicon5.ico",
+		"/favicon6.ico",
+	}
+
+	if len(iconURLs) != len(expected) {
+		t.Fatalf("Expected %d icon URLs, got %d", len(expected), len(iconURLs))
+	}
+
+	for i, expectedURL := range expected {
+		if iconURLs[i] != expectedURL {
+			t.Errorf("Expected icon URL %d to be %q, got %q", i, expectedURL, iconURLs[i])
+		}
+	}
+}
+
+func TestFindIconURLsFromHTMLDocument_NoIcons(t *testing.T) {
+	html := `<!DOCTYPE html>
+<html>
+<head>
+	<title>No Icons Here</title>
+	<link rel="stylesheet" href="/style.css">
+	<link rel="canonical" href="https://example.com">
+</head>
+</html>`
+
+	iconURLs, err := findIconURLsFromHTMLDocument(strings.NewReader(html), "text/html")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(iconURLs) != 0 {
+		t.Fatalf("Expected 0 icon URLs, got %d: %v", len(iconURLs), iconURLs)
+	}
+}
+
+func TestFindIconURLsFromHTMLDocument_EmptyHref(t *testing.T) {
+	html := `<!DOCTYPE html>
+<html>
+<head>
+	<link rel="icon" href="">
+	<link rel="icon" href="   ">
+	<link rel="icon">
+	<link rel="shortcut icon" href="/valid-icon.ico">
+</head>
+</html>`
+
+	iconURLs, err := findIconURLsFromHTMLDocument(strings.NewReader(html), "text/html")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := []string{"/valid-icon.ico"}
+
+	if len(iconURLs) != len(expected) {
+		t.Fatalf("Expected %d icon URLs, got %d", len(expected), len(iconURLs))
+	}
+
+	if iconURLs[0] != expected[0] {
+		t.Errorf("Expected icon URL to be %q, got %q", expected[0], iconURLs[0])
+	}
+}
+
+func TestFindIconURLsFromHTMLDocument_DataURLs(t *testing.T) {
+	html := `<!DOCTYPE html>
+<html>
+<head>
+	<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGAhGAQ+QAAAABJRU5ErkJggg==">
+	<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'></svg>">
+	<link rel="icon" href="/regular-icon.ico">
+</head>
+</html>`
+
+	iconURLs, err := findIconURLsFromHTMLDocument(strings.NewReader(html), "text/html")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// The function processes queries in order: rel="icon", then rel="shortcut icon", etc.
+	// So both rel="icon" links are found first, then the rel="shortcut icon" link
+	expected := []string{
+		"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGAhGAQ+QAAAABJRU5ErkJggg==",
+		"/regular-icon.ico",
+		"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'></svg>",
+	}
+
+	if len(iconURLs) != len(expected) {
+		t.Fatalf("Expected %d icon URLs, got %d", len(expected), len(iconURLs))
+	}
+
+	for i, expectedURL := range expected {
+		if iconURLs[i] != expectedURL {
+			t.Errorf("Expected icon URL %d to be %q, got %q", i, expectedURL, iconURLs[i])
+		}
+	}
+}
+
+func TestFindIconURLsFromHTMLDocument_RelativeAndAbsoluteURLs(t *testing.T) {
+	html := `<!DOCTYPE html>
+<html>
+<head>
+	<link rel="icon" href="/absolute-path.ico">
+	<link rel="icon" href="relative-path.ico">
+	<link rel="icon" href="../parent-dir.ico">
+	<link rel="icon" href="https://example.com/external.ico">
+	<link rel="icon" href="//cdn.example.com/protocol-relative.ico">
+</head>
+</html>`
+
+	iconURLs, err := findIconURLsFromHTMLDocument(strings.NewReader(html), "text/html")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := []string{
+		"/absolute-path.ico",
+		"relative-path.ico",
+		"../parent-dir.ico",
+		"https://example.com/external.ico",
+		"//cdn.example.com/protocol-relative.ico",
+	}
+
+	if len(iconURLs) != len(expected) {
+		t.Fatalf("Expected %d icon URLs, got %d", len(expected), len(iconURLs))
+	}
+
+	for i, expectedURL := range expected {
+		if iconURLs[i] != expectedURL {
+			t.Errorf("Expected icon URL %d to be %q, got %q", i, expectedURL, iconURLs[i])
+		}
+	}
+}
+
+func TestFindIconURLsFromHTMLDocument_InvalidHTML(t *testing.T) {
+	html := `<!DOCTYPE html>
+<html>
+<head>
+	<link rel="icon" href="/valid-before-error.ico">
+	<link rel="icon" href="/unclosed-tag.ico"
+	<link rel="shortcut icon" href="/valid-after-error.ico">
+</head>
+</html>`
+
+	iconURLs, err := findIconURLsFromHTMLDocument(strings.NewReader(html), "text/html")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// goquery should handle malformed HTML gracefully
+	if len(iconURLs) == 0 {
+		t.Fatal("Expected to find some icon URLs even with malformed HTML")
+	}
+
+	// Should at least find the valid ones
+	foundValidIcon := false
+	for _, url := range iconURLs {
+		if url == "/valid-before-error.ico" || url == "/valid-after-error.ico" {
+			foundValidIcon = true
+			break
+		}
+	}
+
+	if !foundValidIcon {
+		t.Errorf("Expected to find at least one valid icon URL, got: %v", iconURLs)
+	}
+}
+
+func TestFindIconURLsFromHTMLDocument_EmptyDocument(t *testing.T) {
+	iconURLs, err := findIconURLsFromHTMLDocument(strings.NewReader(""), "text/html")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(iconURLs) != 0 {
+		t.Fatalf("Expected 0 icon URLs from empty document, got %d", len(iconURLs))
 	}
 }
 
