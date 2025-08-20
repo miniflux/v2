@@ -2,6 +2,17 @@
 const TOP = 9999;
 const BOTTOM = -9999;
 
+// Simple Polyfill for browsers that don't support Trusted Types
+// See https://caniuse.com/?search=trusted%20types
+if (!window.trustedTypes || !trustedTypes.createPolicy) {
+    window.trustedTypes = {
+        createPolicy: (name, policy) => ({
+            createScriptURL: src => src,
+            createHTML: html => html,
+        })
+    };
+}
+
 /**
  * Send a POST request to the specified URL with the given body.
  *
@@ -746,6 +757,7 @@ function handleFetchOriginalContentAction() {
 
         response.json().then((data) => {
             if (data.content && data.reading_time) {
+                const ttpolicy = trustedTypes.createPolicy('html', {createHTML: html => html});
                 document.querySelector(".entry-content").innerHTML = ttpolicy.createHTML(data.content);
                 const entryReadingtimeElement = document.querySelector(".entry-reading-time");
                 if (entryReadingtimeElement) {
@@ -1081,6 +1093,7 @@ function initializeServiceWorker() {
     if ("serviceWorker" in navigator) {
         const serviceWorkerURL = document.body.dataset.serviceWorkerUrl;
         if (serviceWorkerURL) {
+            const ttpolicy = trustedTypes.createPolicy('url', {createScriptURL: src => src});
             navigator.serviceWorker.register(ttpolicy.createScriptURL(serviceWorkerURL), {
                 type: "module"
             }).catch((error) => {
