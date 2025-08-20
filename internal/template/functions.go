@@ -32,6 +32,7 @@ type funcMap struct {
 // Map returns a map of template functions that are compiled during template parsing.
 func (f *funcMap) Map() template.FuncMap {
 	return template.FuncMap{
+		"csp":              csp,
 		"contains":         strings.Contains,
 		"startsWith":       strings.HasPrefix,
 		"formatFileSize":   formatFileSize,
@@ -114,6 +115,33 @@ func (f *funcMap) Map() template.FuncMap {
 			return ""
 		},
 	}
+}
+
+func csp(user *model.User, nonce string) string {
+	policies := map[string]string{
+		"default-src":               "'none'",
+		"img-src":                   "* data:",
+		"media-src":                 "*",
+		"frame-src":                 "*",
+		"style-src":                 "'nonce-" + nonce + "'",
+		"script-src":                "'nonce-" + nonce + "' 'strict-dynamic'",
+		"require-trusted-types-for": "'script'",
+		"trusted-types":             "ttpolicy",
+	}
+
+	if user != nil {
+		if user.ExternalFontHosts != "" {
+			policies["font-src"] = user.ExternalFontHosts
+			if user.Stylesheet != "" {
+				policies["style-src"] += " " + user.ExternalFontHosts
+			}
+		}
+	}
+	policy := ""
+	for k, v := range policies {
+		policy += k + " " + v + "; "
+	}
+	return `<meta http-equiv="Content-Security-Policy" content="` + policy + `">`
 }
 
 func dict(values ...any) (map[string]any, error) {
