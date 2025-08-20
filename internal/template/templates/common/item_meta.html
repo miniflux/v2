@@ -28,13 +28,13 @@
         <li class="item-meta-icons-star">
             <button
                 aria-describedby="entry-title-{{ .entry.ID }}"
-                data-toggle-bookmark="true"
-                data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
+                data-toggle-starred="true"
+                data-star-url="{{ route "toggleStarred" "entryID" .entry.ID }}"
                 data-label-loading="{{ t "entry.state.saving" }}"
-                data-label-star="{{ t "entry.bookmark.toggle.on" }}"
-                data-label-unstar="{{ t "entry.bookmark.toggle.off" }}"
+                data-label-star="{{ t "entry.starred.toggle.on" }}"
+                data-label-unstar="{{ t "entry.starred.toggle.off" }}"
                 data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                >{{ if .entry.Starred }}{{ icon "unstar" }}{{ else }}{{ icon "star" }}{{ end }}<span class="icon-label">{{ if .entry.Starred }}{{ t "entry.bookmark.toggle.off" }}{{ else }}{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></button>
+                >{{ if .entry.Starred }}{{ icon "unstar" }}{{ else }}{{ icon "star" }}{{ end }}<span class="icon-label">{{ if .entry.Starred }}{{ t "entry.starred.toggle.off" }}{{ else }}{{ t "entry.starred.toggle.on" }}{{ end }}</span></button>
         </li>
         {{ if .entry.ShareCode }}
             <li class="item-meta-icons-share">
