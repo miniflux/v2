@@ -5,28 +5,25 @@
     <meta charset="utf-8">
     <title>{{template "title" .}} - Miniflux</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Miniflux">
-    <link rel="manifest" href="{{ route "webManifest" }}" crossorigin="use-credentials">
-
-    <meta name="robots" content="noindex,nofollow">
+    <meta name="googlebot" content="notranslate">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="referrer" content="no-referrer">
-    <meta name="google" content="notranslate">
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="{{ theme_color .theme "light" }}" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="{{ theme_color .theme "dark" }}" media="(prefers-color-scheme: dark)">
+
+    <link rel="manifest" href="{{ route "webManifest" }}" crossorigin="use-credentials">
 
     <link rel="icon" type="image/png" sizes="16x16" href="{{ route "appIcon" "filename" "icon-16.png" }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ route "appIcon" "filename" "icon-32.png" }}">
     <link rel="icon" type="image/png" sizes="128x128" href="{{ route "appIcon" "filename" "icon-128.png" }}">
     <link rel="icon" type="image/png" sizes="192x192" href="{{ route "appIcon" "filename" "icon-192.png" }}">
-
-    <!-- iOS icons -->
     <link rel="apple-touch-icon" sizes="120x120" href="{{ route "appIcon" "filename" "icon-120.png" }}">
     <link rel="apple-touch-icon" sizes="152x152" href="{{ route "appIcon" "filename" "icon-152.png" }}">
     <link rel="apple-touch-icon" sizes="167x167" href="{{ route "appIcon" "filename" "icon-167.png" }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ route "appIcon" "filename" "icon-180.png" }}">
-
-    <meta name="theme-color" content="{{ theme_color .theme "light" }}" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="{{ theme_color .theme "dark" }}" media="(prefers-color-scheme: dark)">
 
     <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .theme "checksum" .theme_checksum }}">
 
@@ -34,16 +31,16 @@
         {{ $cspNonce := nonce }}
         <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; {{ if .user.ExternalFontHosts }}font-src {{ .user.ExternalFontHosts }}; {{ end }}style-src 'self'{{ if .user.Stylesheet }}{{ if .user.ExternalFontHosts }} {{ .user.ExternalFontHosts }}{{ end }} 'nonce-{{ $cspNonce }}'{{ end }}{{ if .user.CustomJS }}; script-src 'self' 'nonce-{{ $cspNonce }}'{{ end }}; require-trusted-types-for 'script'; trusted-types ttpolicy;">
 
-        {{ if .user.Stylesheet }}
+        {{ if .user.Stylesheet -}}
         <style nonce="{{ $cspNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
-        {{ end }}
+        {{ end -}}
 
-        {{ if .user.CustomJS }}
+        {{ if .user.CustomJS -}}
         <script type="module" nonce="{{ $cspNonce }}">{{ .user.CustomJS | safeJS }}</script>
-        {{ end }}
-    {{ else }}
+        {{ end -}}
+    {{ else -}}
         <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; require-trusted-types-for 'script'; trusted-types ttpolicy;">
-    {{ end }}
+    {{ end -}}
 
     <script src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" type="module"></script>
 </head>
