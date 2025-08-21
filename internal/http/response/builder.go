@@ -84,8 +84,6 @@ func (b *Builder) Write() {
 		b.compress(v)
 	case string:
 		b.compress([]byte(v))
-	case error:
-		b.compress([]byte(v.Error()))
 	case io.Reader:
 		// Compression not implemented in this case
 		b.writeHeaders()
@@ -117,24 +115,24 @@ func (b *Builder) compress(data []byte) {
 			b.writeHeaders()
 
 			brotliWriter := brotli.NewWriterV2(b.w, brotli.DefaultCompression)
-			defer brotliWriter.Close()
 			brotliWriter.Write(data)
+			brotliWriter.Close()
 			return
 		case strings.Contains(acceptEncoding, "gzip"):
 			b.headers["Content-Encoding"] = "gzip"
 			b.writeHeaders()
 
 			gzipWriter := gzip.NewWriter(b.w)
-			defer gzipWriter.Close()
 			gzipWriter.Write(data)
+			gzipWriter.Close()
 			return
 		case strings.Contains(acceptEncoding, "deflate"):
 			b.headers["Content-Encoding"] = "deflate"
 			b.writeHeaders()
 
 			flateWriter, _ := flate.NewWriter(b.w, -1)
-			defer flateWriter.Close()
 			flateWriter.Write(data)
+			flateWriter.Close()
 			return
 		}
 	}
