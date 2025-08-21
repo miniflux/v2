@@ -29,7 +29,7 @@
 
     {{ if .user }}
         {{ $cspNonce := nonce }}
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; {{ if .user.ExternalFontHosts }}font-src {{ .user.ExternalFontHosts }}; {{ end }}style-src 'self'{{ if .user.Stylesheet }}{{ if .user.ExternalFontHosts }} {{ .user.ExternalFontHosts }}{{ end }} 'nonce-{{ $cspNonce }}'{{ end }}{{ if .user.CustomJS }}; script-src 'self' 'nonce-{{ $cspNonce }}'{{ end }}; require-trusted-types-for 'script'; trusted-types ttpolicy;">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; {{ if .user.ExternalFontHosts }}font-src {{ .user.ExternalFontHosts }}; {{ end }}style-src 'self'{{ if .user.Stylesheet }}{{ if .user.ExternalFontHosts }} {{ .user.ExternalFontHosts }}{{ end }} 'nonce-{{ $cspNonce }}'{{ end }}{{ if .user.CustomJS }}; script-src 'self' 'nonce-{{ $cspNonce }}'{{ end }}; require-trusted-types-for 'script'; trusted-types html url;">
 
         {{ if .user.Stylesheet -}}
         <style nonce="{{ $cspNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
@@ -39,7 +39,7 @@
         <script type="module" nonce="{{ $cspNonce }}">{{ .user.CustomJS | safeJS }}</script>
         {{ end -}}
     {{ else -}}
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; require-trusted-types-for 'script'; trusted-types ttpolicy;">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; require-trusted-types-for 'script'; trusted-types html url;">
     {{ end -}}
 
     <script src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" type="module"></script>
