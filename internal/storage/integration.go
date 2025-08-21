@@ -220,7 +220,12 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			rssbridge_token,
 			karakeep_enabled,
 			karakeep_api_key,
-			karakeep_url
+			karakeep_url,
+			linktaco_enabled,
+			linktaco_api_token,
+			linktaco_org_slug,
+			linktaco_tags,
+			linktaco_visibility
 		FROM
 			integrations
 		WHERE
@@ -340,6 +345,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.KarakeepEnabled,
 		&integration.KarakeepAPIKey,
 		&integration.KarakeepURL,
+		&integration.LinktacoEnabled,
+		&integration.LinktacoAPIToken,
+		&integration.LinktacoOrgSlug,
+		&integration.LinktacoTags,
+		&integration.LinktacoVisibility,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -467,9 +477,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			rssbridge_token=$108,
 			karakeep_enabled=$109,
 			karakeep_api_key=$110,
-			karakeep_url=$111
+			karakeep_url=$111,
+			linktaco_enabled=$112,
+			linktaco_api_token=$113,
+			linktaco_org_slug=$114,
+			linktaco_tags=$115,
+			linktaco_visibility=$116
 		WHERE
-			user_id=$112
+			user_id=$117
 	`
 	_, err := s.db.Exec(
 		query,
@@ -584,6 +599,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.KarakeepEnabled,
 		integration.KarakeepAPIKey,
 		integration.KarakeepURL,
+		integration.LinktacoEnabled,
+		integration.LinktacoAPIToken,
+		integration.LinktacoOrgSlug,
+		integration.LinktacoTags,
+		integration.LinktacoVisibility,
 		integration.UserID,
 	)
 
@@ -614,6 +634,7 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				readwise_enabled='t' OR
 				linkace_enabled='t' OR
 				linkding_enabled='t' OR
+				linktaco_enabled='t' OR
 				linkwarden_enabled='t' OR
 				apprise_enabled='t' OR
 				shiori_enabled='t' OR

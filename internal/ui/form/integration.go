@@ -62,6 +62,11 @@ type IntegrationForm struct {
 	LinkdingAPIKey                   string
 	LinkdingTags                     string
 	LinkdingMarkAsUnread             bool
+	LinktacoEnabled                  bool
+	LinktacoAPIToken                 string
+	LinktacoOrgSlug                  string
+	LinktacoTags                     string
+	LinktacoVisibility               string
 	LinkwardenEnabled                bool
 	LinkwardenURL                    string
 	LinkwardenAPIKey                 string
@@ -175,6 +180,11 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.LinkdingAPIKey = i.LinkdingAPIKey
 	integration.LinkdingTags = i.LinkdingTags
 	integration.LinkdingMarkAsUnread = i.LinkdingMarkAsUnread
+	integration.LinktacoEnabled = i.LinktacoEnabled
+	integration.LinktacoAPIToken = i.LinktacoAPIToken
+	integration.LinktacoOrgSlug = i.LinktacoOrgSlug
+	integration.LinktacoTags = i.LinktacoTags
+	integration.LinktacoVisibility = i.LinktacoVisibility
 	integration.LinkwardenEnabled = i.LinkwardenEnabled
 	integration.LinkwardenURL = i.LinkwardenURL
 	integration.LinkwardenAPIKey = i.LinkwardenAPIKey
@@ -290,6 +300,11 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		LinkdingAPIKey:                   r.FormValue("linkding_api_key"),
 		LinkdingTags:                     r.FormValue("linkding_tags"),
 		LinkdingMarkAsUnread:             r.FormValue("linkding_mark_as_unread") == "1",
+		LinktacoEnabled:                  r.FormValue("linktaco_enabled") == "1",
+		LinktacoAPIToken:                 r.FormValue("linktaco_api_token"),
+		LinktacoOrgSlug:                  r.FormValue("linktaco_org_slug"),
+		LinktacoTags:                     r.FormValue("linktaco_tags"),
+		LinktacoVisibility:               r.FormValue("linktaco_visibility"),
 		LinkwardenEnabled:                r.FormValue("linkwarden_enabled") == "1",
 		LinkwardenURL:                    r.FormValue("linkwarden_url"),
 		LinkwardenAPIKey:                 r.FormValue("linkwarden_api_key"),

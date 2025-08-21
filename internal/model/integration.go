@@ -59,6 +59,11 @@ type Integration struct {
 	LinkdingAPIKey                   string
 	LinkdingTags                     string
 	LinkdingMarkAsUnread             bool
+	LinktacoEnabled                  bool
+	LinktacoAPIToken                 string
+	LinktacoOrgSlug                  string
+	LinktacoTags                     string
+	LinktacoVisibility               string
 	LinkwardenEnabled                bool
 	LinkwardenURL                    string
 	LinkwardenAPIKey                 string

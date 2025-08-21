@@ -1135,4 +1135,20 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			CREATE TYPE linktaco_link_visibility AS ENUM (
+				'PUBLIC',
+				'PRIVATE'
+  			);
+			ALTER TABLE integrations
+				ADD COLUMN linktaco_enabled bool default 'f',
+				ADD COLUMN linktaco_api_token text default '',
+				ADD COLUMN linktaco_org_slug text default '',
+				ADD COLUMN linktaco_tags text default '',
+				ADD COLUMN linktaco_visibility linktaco_link_visibility default 'PUBLIC';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }
