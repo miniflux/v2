@@ -60,7 +60,7 @@ func (f *funcMap) Map() template.FuncMap {
 		"safeJS": func(str string) template.JS {
 			return template.JS(str)
 		},
-		"noescape": func(str string) template.HTML {
+		"safeHTML": func(str string) template.HTML {
 			return template.HTML(str)
 		},
 		"proxyFilter": func(data string) string {
