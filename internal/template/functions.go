@@ -33,6 +33,7 @@ type funcMap struct {
 func (f *funcMap) Map() template.FuncMap {
 	return template.FuncMap{
 		"contains":         strings.Contains,
+		"csp":              csp,
 		"startsWith":       strings.HasPrefix,
 		"formatFileSize":   formatFileSize,
 		"dict":             dict,
@@ -114,6 +115,40 @@ func (f *funcMap) Map() template.FuncMap {
 			return ""
 		},
 	}
+}
+
+func csp(user *model.User, nonce string) string {
+	policies := map[string]string{
+		"default-src":               "'none'",
+		"frame-src":                 "*",
+		"img-src":                   "* data:",
+		"manifest-src":              "'self'",
+		"media-src":                 "*",
+		"require-trusted-types-for": "'script'",
+		"script-src":                "'nonce-" + nonce + "' 'strict-dynamic'",
+		"style-src":                 "'nonce-" + nonce + "'",
+		"trusted-types":             "html url",
+		"connect-src":               "'self'",
+	}
+
+	if user != nil {
+		if user.ExternalFontHosts != "" {
+			policies["font-src"] = user.ExternalFontHosts
+			if user.Stylesheet != "" {
+				policies["style-src"] += " " + user.ExternalFontHosts
+			}
+		}
+	}
+
+	var policy strings.Builder
+	for key, value := range policies {
+		policy.WriteString(key)
+		policy.WriteString(" ")
+		policy.WriteString(value)
+		policy.WriteString("; ")
+	}
+
+	return `<meta http-equiv="Content-Security-Policy" content="` + policy.String() + `">`
 }
 
 func dict(values ...any) (map[string]any, error) {

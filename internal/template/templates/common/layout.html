@@ -25,24 +25,18 @@
     <link rel="apple-touch-icon" sizes="167x167" href="{{ route "appIcon" "filename" "icon-167.png" }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ route "appIcon" "filename" "icon-180.png" }}">
 
-    <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .theme "checksum" .theme_checksum }}">
-
-    {{ if .user }}
-        {{ $cspNonce := nonce }}
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; {{ if .user.ExternalFontHosts }}font-src {{ .user.ExternalFontHosts }}; {{ end }}style-src 'self'{{ if .user.Stylesheet }}{{ if .user.ExternalFontHosts }} {{ .user.ExternalFontHosts }}{{ end }} 'nonce-{{ $cspNonce }}'{{ end }}{{ if .user.CustomJS }}; script-src 'self' 'nonce-{{ $cspNonce }}'{{ end }}; require-trusted-types-for 'script'; trusted-types html url;">
-
+    {{ $cspNonce := nonce }}
+    {{ csp .user $cspNonce | safeHTML }}
+    <link rel="stylesheet" nonce="{{ $cspNonce }}" type="text/css" href="{{ route "stylesheet" "name" .theme "checksum" .theme_checksum }}">
+    <script nonce="{{ $cspNonce }}" src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" type="module"></script>
+    {{ if .user -}}
         {{ if .user.Stylesheet -}}
         <style nonce="{{ $cspNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
         {{ end -}}
-
         {{ if .user.CustomJS -}}
         <script type="module" nonce="{{ $cspNonce }}">{{ .user.CustomJS | safeJS }}</script>
         {{ end -}}
-    {{ else -}}
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; require-trusted-types-for 'script'; trusted-types html url;">
     {{ end -}}
-
-    <script src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" type="module"></script>
 </head>
 <body
     data-service-worker-url="{{ route "javascript" "name" "service-worker" "checksum" .sw_js_checksum }}"
