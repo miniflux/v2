@@ -280,9 +280,9 @@
     {{ end }}
 
     {{ if .user }}
-        {{ noescape (proxyFilter .entry.Content) }}
+        {{ safeHTML (proxyFilter .entry.Content) }}
     {{ else }}
-        {{ noescape .entry.Content }}
+        {{ safeHTML .entry.Content }}
     {{ end }}
 </article>
 {{ if .entry.Enclosures }}
