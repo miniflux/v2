@@ -2381,7 +2381,6 @@ func TestGetGlobalEntriesEndpoint(t *testing.T) {
 	}
 
 	feedIDEntry, err := regularUserClient.Feed(feedID)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2410,6 +2409,64 @@ func TestGetGlobalEntriesEndpoint(t *testing.T) {
 
 	if len(globallyVisibleEntries.Entries) != 0 {
 		t.Fatalf(`Expected no entries, got %d`, len(globallyVisibleEntries.Entries))
+	}
+}
+
+func TestCannotGetRemovedEntries(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedEntries, err := regularUserClient.Entries(&miniflux.Filter{FeedID: feedID})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feedEntries.Total == 0 {
+		t.Fatalf(`Expected at least one entry, got none`)
+	}
+
+	if err := regularUserClient.UpdateEntries([]int64{feedEntries.Entries[0].ID}, miniflux.EntryStatusRemoved); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := regularUserClient.Entry(feedEntries.Entries[0].ID); err != miniflux.ErrNotFound {
+		t.Fatalf(`Expected entry to be not found, got %v`, err)
+	}
+
+	if _, err := regularUserClient.FeedEntry(feedID, feedEntries.Entries[0].ID); err != miniflux.ErrNotFound {
+		t.Fatalf(`Expected entry to be not found, got %v`, err)
+	}
+
+	if _, err := regularUserClient.CategoryEntry(feedEntries.Entries[0].Feed.Category.ID, feedEntries.Entries[0].ID); err != miniflux.ErrNotFound {
+		t.Fatalf(`Expected entry to be not found, got %v`, err)
+	}
+
+	updatedFeedEntries, err := regularUserClient.Entries(&miniflux.Filter{FeedID: feedID})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeedEntries.Total != feedEntries.Total-1 {
+		t.Fatalf(`Expected %d entries, got %d`, feedEntries.Total-1, updatedFeedEntries.Total)
 	}
 }
 
@@ -2628,64 +2685,6 @@ func TestUpdateEntryStatusEndpoint(t *testing.T) {
 
 	if entry.Status != miniflux.EntryStatusRead {
 		t.Fatalf(`Invalid status, got %q`, entry.Status)
-	}
-}
-
-func TestUpdateEntryRemovedStatusEndpoint(t *testing.T) {
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
-
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
-
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: testConfig.testFeedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	result, err := regularUserClient.FeedEntries(feedID, nil)
-	if err != nil {
-		t.Fatalf(`Failed to get entries: %v`, err)
-	}
-
-	// First we set the entry as "removed"
-	if err := regularUserClient.UpdateEntries([]int64{result.Entries[0].ID}, miniflux.EntryStatusRemoved); err != nil {
-		t.Fatal(err)
-	}
-
-	entry, err := regularUserClient.Entry(result.Entries[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if entry.Status != miniflux.EntryStatusRemoved {
-		t.Fatalf(`Invalid status, got %q instead of %q`, entry.Status, miniflux.EntryStatusRemoved)
-	}
-
-	// Then we try to set it to "unread"
-	if err := regularUserClient.UpdateEntries([]int64{result.Entries[0].ID}, miniflux.EntryStatusUnread); err != nil {
-		t.Fatal(err)
-	}
-
-	entry, err = regularUserClient.Entry(result.Entries[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// It should stay set to "removed"
-	if entry.Status != miniflux.EntryStatusRemoved {
-		t.Fatalf(`Modified immutable status: got %q instead of %q`, entry.Status, miniflux.EntryStatusRemoved)
 	}
 }
 
@@ -2931,14 +2930,5 @@ func TestFlushHistoryEndpoint(t *testing.T) {
 
 	if readEntries.Total != 0 {
 		t.Fatalf(`Invalid total, got %d`, readEntries.Total)
-	}
-
-	removedEntries, err := regularUserClient.Entries(&miniflux.Filter{Status: miniflux.EntryStatusRemoved})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if removedEntries.Total != 2 {
-		t.Fatalf(`Invalid total, got %d`, removedEntries.Total)
 	}
 }
