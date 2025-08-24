@@ -32,6 +32,7 @@ type IntegrationForm struct {
 	WallabagClientSecret             string
 	WallabagUsername                 string
 	WallabagPassword                 string
+	WallabagTags                     string
 	NotionEnabled                    bool
 	NotionPageID                     string
 	NotionToken                      string
@@ -150,6 +151,7 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.WallabagClientSecret = i.WallabagClientSecret
 	integration.WallabagUsername = i.WallabagUsername
 	integration.WallabagPassword = i.WallabagPassword
+	integration.WallabagTags = i.WallabagTags
 	integration.NotionEnabled = i.NotionEnabled
 	integration.NotionPageID = i.NotionPageID
 	integration.NotionToken = i.NotionToken
@@ -270,6 +272,7 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		WallabagClientSecret:             r.FormValue("wallabag_client_secret"),
 		WallabagUsername:                 r.FormValue("wallabag_username"),
 		WallabagPassword:                 r.FormValue("wallabag_password"),
+		WallabagTags:                     r.FormValue("wallabag_tags"),
 		NotionEnabled:                    r.FormValue("notion_enabled") == "1",
 		NotionPageID:                     r.FormValue("notion_page_id"),
 		NotionToken:                      r.FormValue("notion_token"),
