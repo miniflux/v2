@@ -139,7 +139,7 @@ func (p *parser) parseLines(lines []string) (err error) {
 		case "WORKER_POOL_SIZE":
 			p.opts.workerPoolSize = parseInt(value, defaultWorkerPoolSize)
 		case "FORCE_REFRESH_INTERVAL":
-			p.opts.forceRefreshInterval = parseInterval(value, time.Second, defaultForceRefreshInterval)
+			p.opts.forceRefreshInterval = parseInterval(value, time.Minute, defaultForceRefreshInterval)
 		case "BATCH_SIZE":
 			p.opts.batchSize = parseInt(value, defaultBatchSize)
 		case "POLLING_FREQUENCY":

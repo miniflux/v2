@@ -29,7 +29,7 @@ const (
 	defaultBasePath                           = ""
 	defaultWorkerPoolSize                     = 16
 	defaultPollingFrequency                   = 60 * time.Minute
-	defaultForceRefreshInterval               = 30 * time.Second
+	defaultForceRefreshInterval               = 30 * time.Minute
 	defaultBatchSize                          = 100
 	defaultPollingScheduler                   = "round_robin"
 	defaultSchedulerEntryFrequencyMinInterval = 5 * time.Minute
@@ -769,7 +769,7 @@ func (o *options) SortedOptions(redactSecret bool) []*option {
 		"OAUTH2_REDIRECT_URL":                    o.oauth2RedirectURL,
 		"OAUTH2_USER_CREATION":                   o.oauth2UserCreationAllowed,
 		"DISABLE_LOCAL_AUTH":                     o.disableLocalAuth,
-		"FORCE_REFRESH_INTERVAL":                 int(o.forceRefreshInterval.Seconds()),
+		"FORCE_REFRESH_INTERVAL":                 int(o.forceRefreshInterval.Minutes()),
 		"POLLING_FREQUENCY":                      int(o.pollingFrequency.Minutes()),
 		"POLLING_LIMIT_PER_HOST":                 o.pollingLimitPerHost,
 		"POLLING_PARSING_ERROR_LIMIT":            o.pollingParsingErrorLimit,

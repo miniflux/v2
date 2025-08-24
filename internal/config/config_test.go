@@ -864,7 +864,7 @@ func TestForceRefreshInterval(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := 42 * time.Second
+	expected := 42 * time.Minute
 	result := opts.ForceRefreshInterval()
 
 	if result != expected {
