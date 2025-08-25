@@ -23,7 +23,7 @@ type MediaItemElement struct {
 
 // AllMediaThumbnails returns all thumbnail elements merged together.
 func (e *MediaItemElement) AllMediaThumbnails() []Thumbnail {
-	var items []Thumbnail
+	items := make([]Thumbnail, 0, len(e.MediaThumbnails)+len(e.MediaGroups))
 	items = append(items, e.MediaThumbnails...)
 	for _, mediaGroup := range e.MediaGroups {
 		items = append(items, mediaGroup.MediaThumbnails...)
@@ -33,7 +33,7 @@ func (e *MediaItemElement) AllMediaThumbnails() []Thumbnail {
 
 // AllMediaContents returns all content elements merged together.
 func (e *MediaItemElement) AllMediaContents() []Content {
-	var items []Content
+	items := make([]Content, 0, len(e.MediaContents)+len(e.MediaGroups))
 	items = append(items, e.MediaContents...)
 	for _, mediaGroup := range e.MediaGroups {
 		items = append(items, mediaGroup.MediaContents...)
@@ -43,7 +43,7 @@ func (e *MediaItemElement) AllMediaContents() []Content {
 
 // AllMediaPeerLinks returns all peer link elements merged together.
 func (e *MediaItemElement) AllMediaPeerLinks() []PeerLink {
-	var items []PeerLink
+	items := make([]PeerLink, 0, len(e.MediaPeerLinks)+len(e.MediaGroups))
 	items = append(items, e.MediaPeerLinks...)
 	for _, mediaGroup := range e.MediaGroups {
 		items = append(items, mediaGroup.MediaPeerLinks...)
