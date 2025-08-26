@@ -28,13 +28,3 @@ func (u *UserSession) String() string {
 func (u *UserSession) UseTimezone(tz string) {
 	u.CreatedAt = timezone.Convert(tz, u.CreatedAt)
 }
-
-// UserSessions represents a list of sessions.
-type UserSessions []UserSession
-
-// UseTimezone converts creation date of all sessions to the given timezone.
-func (u UserSessions) UseTimezone(tz string) {
-	for _, session := range u {
-		session.UseTimezone(tz)
-	}
-}
