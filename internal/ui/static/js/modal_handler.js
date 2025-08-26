@@ -1,57 +1,21 @@
-class ModalHandler {
-    static exists() {
-        return document.getElementById("modal-container") !== null;
-    }
-
-    static getModalContainer() {
-        return document.getElementById("modal-container");
-    }
-
-    static getFocusableElements() {
-        const container = this.getModalContainer();
-
-        if (container === null) {
-            return null;
-        }
-
-        return container.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-    }
-
+class KeyboardModalHandler {
     static setupFocusTrap() {
-        const focusableElements = this.getFocusableElements();
-
-        if (focusableElements === null) {
-            return;
+        const container = document.getElementById("modal-container");
+        if (container !== null) {
+            container.onkeydown = (e) => {
+                if (e.key === 'Tab') {
+                    // Since there is only one focusable button in the keyboard modal we always want to focus it with the tab key. This handles
+                    // the special case of having just one focusable element in a dialog/ where keyboard focus is placed on an element that is not in the
+                    // tab order.
+                    container.querySelectorAll('button')[0].focus();
+                    e.preventDefault();
+                }
+            };
         }
-
-        const firstFocusableElement = focusableElements[0];
-        const lastFocusableElement = focusableElements[focusableElements.length - 1];
-
-        this.getModalContainer().onkeydown = (e) => {
-            if (e.key !== 'Tab') {
-                return;
-            }
-
-            // If there is only one focusable element in the dialog we always want to focus that one with the tab key.
-            // This handles the special case of having just one focusable element in a dialog where keyboard focus is placed on an element that is not in the tab order.
-            if (focusableElements.length === 1) {
-                firstFocusableElement.focus();
-                e.preventDefault();
-                return;
-            }
-
-            if (e.shiftKey && document.activeElement === firstFocusableElement) {
-                lastFocusableElement.focus();
-                e.preventDefault();
-            } else if (!e.shiftKey && document.activeElement === lastFocusableElement) {
-                firstFocusableElement.focus();
-                e.preventDefault();
-            }
-        };
     }
 
     static open(fragment, initialFocusElementId) {
-        if (ModalHandler.exists()) {
+        if (document.getElementById("modal-container") !== null){
             return;
         }
 
@@ -67,20 +31,11 @@ class ModalHandler {
         if (closeButton !== null) {
             closeButton.onclick = (event) => {
                 event.preventDefault();
-                ModalHandler.close();
+                KeyboardModalHandler.close();
             };
         }
 
-        let initialFocusElement;
-        if (initialFocusElementId !== undefined) {
-            initialFocusElement = document.getElementById(initialFocusElementId);
-        } else {
-            let focusableElements = this.getFocusableElements();
-            if (focusableElements !== null) {
-                initialFocusElement = focusableElements[0];
-            }
-        }
-
+        const initialFocusElement = document.getElementById(initialFocusElementId);
         if (initialFocusElement !== undefined) {
             initialFocusElement.focus();
         }
@@ -89,13 +44,12 @@ class ModalHandler {
     }
 
     static close() {
-        const container = this.getModalContainer();
+        const container = document.getElementById("modal-container");
         if (container !== null) {
             container.parentNode.removeChild(container);
-        }
-
-        if (this.activeElement !== undefined && this.activeElement !== null) {
-            this.activeElement.focus();
+            if (this.activeElement !== undefined && this.activeElement !== null) {
+                this.activeElement.focus();
+            }
         }
     }
 }
