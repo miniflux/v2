@@ -50,7 +50,7 @@ func (c *Client) SaveURL(entryURL string) error {
 		return fmt.Errorf("karakeep: unable to create request: %v", err)
 	}
 
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.apiToken))
+	req.Header.Set("Authorization", "Bearer "+c.apiToken)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
