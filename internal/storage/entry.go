@@ -17,20 +17,20 @@ import (
 )
 
 // CountAllEntries returns the number of entries for each status in the database.
-func (s *Storage) CountAllEntries() map[string]int64 {
+func (s *Storage) CountAllEntries() map[model.EntryStatus]int64 {
 	rows, err := s.db.Query(`SELECT status, count(*) FROM entries GROUP BY status`)
 	if err != nil {
 		return nil
 	}
 	defer rows.Close()
 
-	results := make(map[string]int64)
+	results := make(map[model.EntryStatus]int64)
 	results[model.EntryStatusUnread] = 0
 	results[model.EntryStatusRead] = 0
 	results[model.EntryStatusRemoved] = 0
 
 	for rows.Next() {
-		var status string
+		var status model.EntryStatus
 		var count int64
 
 		if err := rows.Scan(&status, &count); err != nil {
@@ -393,7 +393,7 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 }
 
 // ArchiveEntries changes the status of entries to "removed" after the interval (24h minimum).
-func (s *Storage) ArchiveEntries(status string, interval time.Duration, limit int) (int64, error) {
+func (s *Storage) ArchiveEntries(status model.EntryStatus, interval time.Duration, limit int) (int64, error) {
 	if interval < 0 || limit <= 0 {
 		return 0, nil
 	}
@@ -435,7 +435,7 @@ func (s *Storage) ArchiveEntries(status string, interval time.Duration, limit in
 }
 
 // SetEntriesStatus update the status of the given list of entries.
-func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string) error {
+func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status model.EntryStatus) error {
 	// Entries that have the model.EntryStatusRemoved status are immutable.
 	query := `
 		UPDATE
@@ -455,7 +455,7 @@ func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string
 	return nil
 }
 
-func (s *Storage) SetEntriesStatusCount(userID int64, entryIDs []int64, status string) (int, error) {
+func (s *Storage) SetEntriesStatusCount(userID int64, entryIDs []int64, status model.EntryStatus) (int, error) {
 	if err := s.SetEntriesStatus(userID, entryIDs, status); err != nil {
 		return 0, err
 	}

@@ -176,7 +176,7 @@ func (c *collector) GatherStorageMetrics() {
 
 		entriesCount := c.store.CountAllEntries()
 		for status, count := range entriesCount {
-			entriesGauge.WithLabelValues(status).Set(float64(count))
+			entriesGauge.WithLabelValues(string(status)).Set(float64(count))
 		}
 
 		dbStats := c.store.DBStats()

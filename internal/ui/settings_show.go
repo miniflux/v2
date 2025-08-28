@@ -43,7 +43,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		CJKReadingSpeed:           user.CJKReadingSpeed,
 		DefaultHomePage:           user.DefaultHomePage,
 		CategoriesSortingOrder:    user.CategoriesSortingOrder,
-		MarkReadBehavior:          form.MarkAsReadBehavior(user.MarkReadOnView, user.MarkReadOnMediaPlayerCompletion),
+		MarkReadBehavior:          model.MarkAsReadBehavior(user.MarkReadOnView, user.MarkReadOnMediaPlayerCompletion),
 		MediaPlaybackRate:         user.MediaPlaybackRate,
 		BlockFilterEntryRules:     user.BlockFilterEntryRules,
 		KeepFilterEntryRules:      user.KeepFilterEntryRules,
@@ -61,10 +61,10 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	view := view.New(h.tpl, r, sess)
 	view.Set("form", settingsForm)
 	view.Set("readBehaviors", map[string]any{
-		"NoAutoMarkAsRead":                           form.NoAutoMarkAsRead,
-		"MarkAsReadOnView":                           form.MarkAsReadOnView,
-		"MarkAsReadOnViewButWaitForPlayerCompletion": form.MarkAsReadOnViewButWaitForPlayerCompletion,
-		"MarkAsReadOnlyOnPlayerCompletion":           form.MarkAsReadOnlyOnPlayerCompletion,
+		"NoAutoMarkAsRead":                           model.NoAutoMarkAsRead,
+		"MarkAsReadOnView":                           model.MarkAsReadOnView,
+		"MarkAsReadOnViewButWaitForPlayerCompletion": model.MarkAsReadOnViewButWaitForPlayerCompletion,
+		"MarkAsReadOnlyOnPlayerCompletion":           model.MarkAsReadOnlyOnPlayerCompletion,
 	})
 	view.Set("themes", model.Themes())
 	view.Set("languages", locale.AvailableLanguages)

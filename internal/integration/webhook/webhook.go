@@ -166,7 +166,7 @@ type WebhookEntry struct {
 	ID          int64               `json:"id"`
 	UserID      int64               `json:"user_id"`
 	FeedID      int64               `json:"feed_id"`
-	Status      string              `json:"status"`
+	Status      model.EntryStatus   `json:"status"`
 	Hash        string              `json:"hash"`
 	Title       string              `json:"title"`
 	URL         string              `json:"url"`

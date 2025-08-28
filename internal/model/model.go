@@ -3,6 +3,12 @@
 
 package model // import "miniflux.app/v2/internal/model"
 
+import "strconv"
+
+func OptionalField[T any](value T) *T {
+	return &value
+}
+
 type Number interface {
 	int | int64 | float64
 }
@@ -21,6 +27,11 @@ func OptionalString(value string) *string {
 	return nil
 }
 
-func SetOptionalField[T any](value T) *T {
-	return &value
+func OptionalInt64(value string) *int64 {
+	if value != "" {
+		if intValue, err := strconv.ParseInt(value, 10, 64); err == nil {
+			return &intValue
+		}
+	}
+	return nil
 }

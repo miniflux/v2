@@ -90,7 +90,7 @@ func (h *handler) getEntries(w http.ResponseWriter, r *http.Request) {
 func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int64, categoryID int64) {
 	statuses := request.QueryStringParamList(r, "status")
 	for _, status := range statuses {
-		if err := validator.ValidateEntryStatus(status); err != nil {
+		if err := validator.ValidateEntryStatus(model.EntryStatus(status)); err != nil {
 			json.BadRequest(w, r, err)
 			return
 		}
@@ -133,7 +133,7 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithFeedID(feedID)
 	builder.WithCategoryID(categoryID)
-	builder.WithStatuses(statuses)
+	builder.WithStatuses(model.ToStatuses(statuses))
 	builder.WithSorting(order, direction)
 	builder.WithOffset(offset)
 	builder.WithLimit(limit)
