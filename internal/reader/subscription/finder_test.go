@@ -390,7 +390,7 @@ func TestParseWebPageWithMultipleFeeds(t *testing.T) {
 	<html>
 		<head>
 			<link href="http://example.org/atom.xml" rel="alternate" type="application/atom+xml" title="Atom Feed">
-			<link href="http://example.org/feed.json" rel="alternate" type="application/feed+json" title="JSON Feed">
+			<link href="http://example.org/feed.json" rel="alternate" type="application/json" title="JSON Feed">
 		</head>
 		<body>
 		</body>
