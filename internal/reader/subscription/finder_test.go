@@ -34,7 +34,7 @@ func TestFindYoutubePlaylistFeed(t *testing.T) {
 		// Channel URL
 		{
 			websiteURL: "https://www.youtube.com/channel/UC-Qj80avWItNRjkZ41rzHyw",
-			feedURL:    "",
+			feedURL:    "https://www.youtube.com/feeds/videos.xml?channel_id=UC-Qj80avWItNRjkZ41rzHyw",
 		},
 		// Channel URL with name
 		{
@@ -70,7 +70,7 @@ func TestFindYoutubePlaylistFeed(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		subscriptions, localizedError := NewSubscriptionFinder(nil).findSubscriptionsFromYouTubePlaylistPage(scenario.websiteURL)
+		subscriptions, localizedError := NewSubscriptionFinder(nil).findSubscriptionsFromYouTube(scenario.websiteURL)
 		if scenario.discoveryError {
 			if localizedError == nil {
 				t.Fatalf(`Parsing an invalid URL should return an error`)
@@ -84,95 +84,6 @@ func TestFindYoutubePlaylistFeed(t *testing.T) {
 		} else {
 			if localizedError != nil {
 				t.Fatalf(`Parsing a correctly formatted YouTube playlist page should not return any error: %v`, localizedError)
-			}
-
-			if len(subscriptions) != 1 {
-				t.Fatalf(`Incorrect number of subscriptions returned`)
-			}
-
-			if subscriptions[0].URL != scenario.feedURL {
-				t.Errorf(`Unexpected Feed, got %s, instead of %s`, subscriptions[0].URL, scenario.feedURL)
-			}
-		}
-	}
-}
-
-func TestFindYoutubeChannelFeed(t *testing.T) {
-	type testResult struct {
-		websiteURL     string
-		feedURL        string
-		discoveryError bool
-	}
-
-	scenarios := []testResult{
-		// Video URL
-		{
-			websiteURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-			feedURL:    "",
-		},
-		// Video URL with position argument
-		{
-			websiteURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=1",
-			feedURL:    "",
-		},
-		// Video URL with position argument
-		{
-			websiteURL: "https://www.youtube.com/watch?t=1&v=dQw4w9WgXcQ",
-			feedURL:    "",
-		},
-		// Channel URL
-		{
-			websiteURL: "https://www.youtube.com/channel/UC-Qj80avWItNRjkZ41rzHyw",
-			feedURL:    "https://www.youtube.com/feeds/videos.xml?channel_id=UC-Qj80avWItNRjkZ41rzHyw",
-		},
-		// Channel URL with name
-		{
-			websiteURL: "https://www.youtube.com/@ABCDEFG",
-			feedURL:    "",
-		},
-		// Playlist URL
-		{
-			websiteURL: "https://www.youtube.com/playlist?list=PLOOwEPgFWm_NHcQd9aCi5JXWASHO_n5uR",
-			feedURL:    "",
-		},
-		// Playlist URL with video ID
-		{
-			websiteURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=PLOOwEPgFWm_N42HlCLhqyJ0ZBWr5K1QDM",
-			feedURL:    "",
-		},
-		// Playlist URL with video ID and index argument
-		{
-			websiteURL: "https://www.youtube.com/watch?v=6IutBmRJNLk&list=PLOOwEPgFWm_NHcQd9aCi5JXWASHO_n5uR&index=4",
-			feedURL:    "",
-		},
-		// Non-Youtube URL
-		{
-			websiteURL: "https://www.example.com/channel/UC-Qj80avWItNRjkZ41rzHyw",
-			feedURL:    "",
-		},
-		// Invalid URL
-		{
-			websiteURL:     "https://example|org/",
-			feedURL:        "",
-			discoveryError: true,
-		},
-	}
-
-	for _, scenario := range scenarios {
-		subscriptions, localizedError := NewSubscriptionFinder(nil).findSubscriptionsFromYouTubeChannelPage(scenario.websiteURL)
-		if scenario.discoveryError {
-			if localizedError == nil {
-				t.Fatalf(`Parsing an invalid URL should return an error`)
-			}
-		}
-
-		if scenario.feedURL == "" {
-			if len(subscriptions) > 0 {
-				t.Fatalf(`Parsing a non-channel URL should not return any subscription: %q`, scenario.websiteURL)
-			}
-		} else {
-			if localizedError != nil {
-				t.Fatalf(`Parsing a correctly formatted YouTube channel page should not return any error: %v`, localizedError)
 			}
 
 			if len(subscriptions) != 1 {
