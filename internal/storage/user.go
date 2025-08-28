@@ -14,7 +14,6 @@ import (
 	"miniflux.app/v2/internal/model"
 
 	"github.com/lib/pq"
-	"golang.org/x/crypto/bcrypt"
 )
 
 // CountUsers returns the total number of users.
@@ -740,7 +739,7 @@ func (s *Storage) CheckPassword(username, password string) error {
 		return fmt.Errorf(`store: unable to fetch user: %v`, err)
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
+	if err := crypto.CompareHashAndPassword(hash, password); err != nil {
 		return fmt.Errorf(`store: invalid password for "%s" (%v)`, username, err)
 	}
 

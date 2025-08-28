@@ -45,6 +45,10 @@ func HashPassword(password string) (string, error) {
 	return string(bytes), err
 }
 
+func CompareHashAndPassword(hash, password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+}
+
 func GenerateSHA256Hmac(secret string, data []byte) string {
 	h := hmac.New(sha256.New, []byte(secret))
 	h.Write(data)
