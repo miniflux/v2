@@ -87,7 +87,7 @@ func TestRewriteEntryURL(t *testing.T) {
 			feed: &model.Feed{
 				ID:              1,
 				FeedURL:         "https://example.com/feed.xml",
-				UrlRewriteRules: `rewrite("^https://example.com/[invalid"|"https://rewritten.com/$1")`,
+				UrlRewriteRules: `rewrite("^https://example.com/invalid"|"https://rewritten.com/$1")`,
 			},
 			entry: &model.Entry{
 				URL: "https://example.com/article/123",

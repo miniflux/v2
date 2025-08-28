@@ -100,7 +100,7 @@ func (e *EntryUpdateRequest) Patch(entry *Entry) {
 func ToStatuses(statuses []string) []EntryStatus {
 	// Could use unsafe to make this more optimized
 	// but I don't think it's worth it
-	var result []EntryStatus
+	result := make([]EntryStatus, 0, len(statuses))
 	for _, status := range statuses {
 		result = append(result, EntryStatus(status))
 	}
@@ -108,7 +108,7 @@ func ToStatuses(statuses []string) []EntryStatus {
 }
 
 func StatusesToString(statuses []EntryStatus) []string {
-	var result []string
+	result := make([]string, 0, len(statuses))
 	for _, status := range statuses {
 		result = append(result, string(status))
 	}
