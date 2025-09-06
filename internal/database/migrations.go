@@ -123,13 +123,9 @@ var migrations = [...]func(tx *sql.Tx) error{
 		return err
 	},
 	func(tx *sql.Tx) (err error) {
-		sql := `
-			CREATE EXTENSION IF NOT EXISTS hstore;
-			ALTER TABLE users ADD COLUMN extra hstore;
-			CREATE INDEX users_extra_idx ON users using gin(extra);
-			`
-		_, err = tx.Exec(sql)
-		return err
+		// This used to create a HSTORE `extra` column in the table `users`,
+		// which hasn't been used since Miniflux 2.0.27.
+		return nil
 	},
 	func(tx *sql.Tx) (err error) {
 		sql := `
@@ -436,6 +432,18 @@ var migrations = [...]func(tx *sql.Tx) error{
 		return err
 	},
 	func(tx *sql.Tx) (err error) {
+
+		hasExtra := false
+		if err := tx.QueryRow(`
+			SELECT true 
+			FROM information_schema.columns
+			WHERE
+				table_name='users' AND
+				column_name='extra';
+			`).Scan(&hasExtra); err != nil && err != sql.ErrNoRows {
+			return err
+		}
+
 		_, err = tx.Exec(`
 			ALTER TABLE users
 				ADD column stylesheet text not null default '',
@@ -444,6 +452,11 @@ var migrations = [...]func(tx *sql.Tx) error{
 		`)
 		if err != nil {
 			return err
+		}
+
+		if !hasExtra {
+			// No need to migrate things from the `extra` column if it's not present
+			return nil
 		}
 
 		_, err = tx.Exec(`
@@ -495,7 +508,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 		return err
 	},
 	func(tx *sql.Tx) (err error) {
-		if _, err = tx.Exec(`ALTER TABLE users DROP COLUMN extra;`); err != nil {
+		if _, err = tx.Exec(`ALTER TABLE users DROP COLUMN IF EXISTS extra;`); err != nil {
 			return err
 		}
 		_, err = tx.Exec(`
@@ -1345,6 +1358,11 @@ var migrations = [...]func(tx *sql.Tx) error{
 		sql := `
 			ALTER TABLE integrations ADD COLUMN archiveorg_enabled bool default 'f'
 		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `DROP EXTENSION IF EXISTS hstore;`
 		_, err = tx.Exec(sql)
 		return err
 	},
