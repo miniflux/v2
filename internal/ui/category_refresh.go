@@ -33,8 +33,8 @@ func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) int64 
 
 	// Avoid accidental and excessive refreshes.
 	if time.Since(request.LastForceRefresh(r)) < config.Opts.ForceRefreshInterval() {
-		seconds := int(config.Opts.ForceRefreshInterval().Seconds())
-		sess.NewFlashErrorMessage(printer.Plural("alert.too_many_feeds_refresh", seconds, seconds))
+		interval := int(config.Opts.ForceRefreshInterval().Minutes())
+		sess.NewFlashErrorMessage(printer.Plural("alert.too_many_feeds_refresh", interval, interval))
 	} else {
 		userID := request.UserID(r)
 		// We allow the end-user to force refresh all its feeds in this category
