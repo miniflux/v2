@@ -12,7 +12,7 @@ import (
 var schemaVersion = len(migrations)
 
 // Order is important. Add new migrations at the end of the list.
-var migrations = []func(tx *sql.Tx) error{
+var migrations = [...]func(tx *sql.Tx) error{
 	func(tx *sql.Tx) (err error) {
 		sql := `
 			CREATE TABLE schema_version (

@@ -12,14 +12,14 @@ import (
 )
 
 // RFC822, RFC850, and RFC1123 formats should be applied only to local times.
-var dateFormatsLocalTimesOnly = []string{
+var dateFormatsLocalTimesOnly = [...]string{
 	time.RFC822, // RSS
 	time.RFC850,
 	time.RFC1123,
 }
 
 // dateFormats taken from github.com/mjibson/goread
-var dateFormats = []string{
+var dateFormats = [...]string{
 	time.RFC822Z, // RSS
 	time.RFC3339, // Atom
 	time.UnixDate,
