@@ -19,7 +19,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: Set up Go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@v6
       with:
         go-version: stable
     - name: Run unit tests with coverage and race conditions checking
@@ -46,7 +46,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: Set up Go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@v6
       with:
         go-version: stable
     - name: Install Postgres client
