@@ -5,6 +5,7 @@ package cli // import "miniflux.app/v2/internal/cli"
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -16,7 +17,7 @@ func askCredentials() (string, string) {
 	fd := int(os.Stdin.Fd())
 
 	if !term.IsTerminal(fd) {
-		printErrorAndExit(fmt.Errorf("this is not an interactive terminal, exiting"))
+		printErrorAndExit(errors.New("this is not an interactive terminal, exiting"))
 	}
 
 	fmt.Print("Enter Username: ")
@@ -30,6 +31,6 @@ func askCredentials() (string, string) {
 	defer term.Restore(fd, state)
 	bytePassword, _ := term.ReadPassword(fd)
 
-	fmt.Printf("\n")
+	fmt.Print("\n")
 	return strings.TrimSpace(username), strings.TrimSpace(string(bytePassword))
 }

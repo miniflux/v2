@@ -140,7 +140,7 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 		b.WithHeader("Content-Type", resp.Header.Get("Content-Type"))
 
 		if filename := path.Base(parsedMediaURL.Path); filename != "" {
-			b.WithHeader("Content-Disposition", fmt.Sprintf(`inline; filename="%s"`, filename))
+			b.WithHeader("Content-Disposition", `inline; filename="`+filename+`"`)
 		}
 
 		forwardedResponseHeader := [...]string{"Content-Encoding", "Content-Type", "Content-Length", "Accept-Ranges", "Content-Range"}

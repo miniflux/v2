@@ -90,7 +90,7 @@ func (c *Client) makeRequest(payload any) error {
 
 	// See https://docs.ntfy.sh/publish/#access-tokens
 	if c.ntfyApiToken != "" {
-		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.ntfyApiToken))
+		request.Header.Set("Authorization", "Bearer "+c.ntfyApiToken)
 	}
 
 	// See https://docs.ntfy.sh/publish/#username-password
