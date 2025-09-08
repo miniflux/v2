@@ -54,8 +54,10 @@ func NewXMLDecoder(data io.ReadSeeker) *xml.Decoder {
 // filterValidXMLChars filters inplace invalid XML characters.
 // This function is inspired from bytes.Map
 func filterValidXMLChars(s []byte) []byte {
-	j := 0
-	for i := 0; i < len(s); {
+	var i uint // declaring it as an uint removes a bound check in the loop.
+	var j int
+
+	for i = 0; i < uint(len(s)); {
 		wid := 1
 		r := rune(s[i])
 		if r >= utf8.RuneSelf {
@@ -67,7 +69,7 @@ func filterValidXMLChars(s []byte) []byte {
 				j += wid
 			}
 		}
-		i += wid
+		i += uint(wid)
 	}
 	return s[:j]
 }
