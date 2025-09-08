@@ -13,7 +13,7 @@ import (
 )
 
 // UserSessions returns the list of sessions for the given user.
-func (s *Storage) UserSessions(userID int64) (model.UserSessions, error) {
+func (s *Storage) UserSessions(userID int64) ([]model.UserSession, error) {
 	query := `
 		SELECT
 			id,
@@ -33,7 +33,7 @@ func (s *Storage) UserSessions(userID int64) (model.UserSessions, error) {
 	}
 	defer rows.Close()
 
-	var sessions model.UserSessions
+	var sessions []model.UserSession
 	for rows.Next() {
 		var session model.UserSession
 		err := rows.Scan(
