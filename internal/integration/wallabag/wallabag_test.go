@@ -138,7 +138,7 @@ func TestCreateEntry(t *testing.T) {
 					t.Errorf("Expected entryTitle %s, got %s", entryTitle, requestEntryTitle)
 				}
 				if requestEntryContent := req["content"]; requestEntryContent != entryContent {
-					t.Errorf("Expected entryURL %s, got %s", entryContent, requestEntryContent)
+					t.Errorf("Expected entryContent %s, got %s", entryContent, requestEntryContent)
 				}
 				if requestTags := req["tags"]; requestTags != tags {
 					t.Errorf("Expected tags %s, got %s", tags, requestTags)
