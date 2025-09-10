@@ -64,13 +64,17 @@ func (f *iconFinder) findIcon() (*model.Icon, error) {
 		}
 	}
 
-	if icon, err := f.fetchIconsFromHTMLDocument(); err != nil {
-		slog.Debug("Unable to fetch icons from HTML document",
-			slog.String("website_url", f.websiteURL),
-			slog.Any("error", err),
-		)
-	} else if icon != nil {
-		return icon, nil
+	// Try the website URL first, then fall back to the root URL if no icon is found.
+	// The website URL may include a subdirectory (e.g., https://example.org/subfolder/), and icons can be referenced relative to that path.
+	for _, documentURL := range []string{f.websiteURL, urllib.RootURL(f.websiteURL)} {
+		if icon, err := f.fetchIconsFromHTMLDocument(documentURL); err != nil {
+			slog.Debug("Unable to fetch icons from HTML document",
+				slog.String("document_url", documentURL),
+				slog.Any("error", err),
+			)
+		} else if icon != nil {
+			return icon, nil
+		}
 	}
 
 	return f.fetchDefaultIcon()
@@ -94,14 +98,12 @@ func (f *iconFinder) fetchDefaultIcon() (*model.Icon, error) {
 	return icon, nil
 }
 
-func (f *iconFinder) fetchIconsFromHTMLDocument() (*model.Icon, error) {
+func (f *iconFinder) fetchIconsFromHTMLDocument(documentURL string) (*model.Icon, error) {
 	slog.Debug("Searching icons from HTML document",
-		slog.String("website_url", f.websiteURL),
+		slog.String("document_url", documentURL),
 	)
 
-	rootURL := urllib.RootURL(f.websiteURL)
-
-	responseHandler := fetcher.NewResponseHandler(f.requestBuilder.ExecuteRequest(rootURL))
+	responseHandler := fetcher.NewResponseHandler(f.requestBuilder.ExecuteRequest(documentURL))
 	defer responseHandler.Close()
 
 	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
@@ -109,6 +111,7 @@ func (f *iconFinder) fetchIconsFromHTMLDocument() (*model.Icon, error) {
 	}
 
 	iconURLs, err := findIconURLsFromHTMLDocument(
+		documentURL,
 		responseHandler.Body(config.Opts.HTTPClientMaxBodySize()),
 		responseHandler.ContentType(),
 	)
@@ -117,32 +120,27 @@ func (f *iconFinder) fetchIconsFromHTMLDocument() (*model.Icon, error) {
 	}
 
 	slog.Debug("Searched icon from HTML document",
-		slog.String("website_url", f.websiteURL),
+		slog.String("document_url", documentURL),
 		slog.String("icon_urls", strings.Join(iconURLs, ",")),
 	)
 
 	for _, iconURL := range iconURLs {
 		if strings.HasPrefix(iconURL, "data:") {
 			slog.Debug("Found icon with data URL",
-				slog.String("website_url", f.websiteURL),
+				slog.String("document_url", documentURL),
 			)
 			return parseImageDataURL(iconURL)
 		}
 
-		iconURL, err = urllib.AbsoluteURL(f.websiteURL, iconURL)
-		if err != nil {
-			return nil, fmt.Errorf(`icon: unable to convert icon URL to absolute URL: %w`, err)
-		}
-
 		if icon, err := f.downloadIcon(iconURL); err != nil {
 			slog.Debug("Unable to download icon from HTML document",
-				slog.String("website_url", f.websiteURL),
+				slog.String("document_url", documentURL),
 				slog.String("icon_url", iconURL),
 				slog.Any("error", err),
 			)
 		} else if icon != nil {
 			slog.Debug("Downloaded icon from HTML document",
-				slog.String("website_url", f.websiteURL),
+				slog.String("document_url", documentURL),
 				slog.String("icon_url", iconURL),
 			)
 			return icon, nil
@@ -195,7 +193,7 @@ func resizeIcon(icon *model.Icon) *model.Icon {
 	}
 
 	if !slices.Contains([]string{"image/jpeg", "image/png", "image/gif", "image/webp"}, icon.MimeType) {
-		slog.Info("Icon resize skipped: unsupported MIME type", slog.String("mime_type", icon.MimeType))
+		slog.Debug("Icon resize skipped: unsupported MIME type", slog.String("mime_type", icon.MimeType))
 		return icon
 	}
 
@@ -244,7 +242,7 @@ func resizeIcon(icon *model.Icon) *model.Icon {
 	return icon
 }
 
-func findIconURLsFromHTMLDocument(body io.Reader, contentType string) ([]string, error) {
+func findIconURLsFromHTMLDocument(documentURL string, body io.Reader, contentType string) ([]string, error) {
 	htmlDocumentReader, err := encoding.NewCharsetReader(body, contentType)
 	if err != nil {
 		return nil, fmt.Errorf("icon: unable to create charset reader: %w", err)
@@ -268,11 +266,20 @@ func findIconURLsFromHTMLDocument(body io.Reader, contentType string) ([]string,
 
 		for _, s := range doc.Find(query).EachIter() {
 			href, _ := s.Attr("href")
-			if iconURL := strings.TrimSpace(href); iconURL != "" {
-				iconURLs = append(iconURLs, iconURL)
+			href = strings.TrimSpace(href)
+			if href == "" {
+				continue
+			}
+
+			if absoluteIconURL, err := urllib.AbsoluteURL(documentURL, href); err != nil {
+				slog.Warn("Unable to convert icon URL to absolute URL", slog.Any("error", err), slog.String("icon_href", href))
+			} else {
+				iconURLs = append(iconURLs, absoluteIconURL)
 				slog.Debug("Found icon URL in HTML document",
 					slog.String("query", query),
-					slog.String("icon_url", iconURL))
+					slog.String("icon_href", href),
+					slog.String("absolute_icon_url", absoluteIconURL),
+				)
 			}
 		}
 	}
