@@ -330,6 +330,7 @@
     "form.integration.wallabag_only_url": "僅傳送網址（而不是完整內容）",
     "form.integration.wallabag_password": "Wallabag 密碼",
     "form.integration.wallabag_username": "Wallabag 使用者名稱",
+    "form.integration.wallabag_tags": "Wallabag Tags",
     "form.integration.webhook_activate": "啟用 Webhooks",
     "form.integration.webhook_secret": "Webhooks Secret",
     "form.integration.webhook_url": "Default Webhook 網址",

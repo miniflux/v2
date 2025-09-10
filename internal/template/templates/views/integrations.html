@@ -664,6 +664,9 @@
             <label for="form-wallabag-password">{{ t "form.integration.wallabag_password" }}</label>
             <input type="password" name="wallabag_password" id="form-wallabag-password" value="{{ .form.WallabagPassword }}" autocomplete="new-password">
 
+            <label for="form-wallabag-tags">{{ t "form.integration.wallabag_tags" }}</label>
+            <input type="text" name="wallabag_tags" id="form-wallabag-tags" value="{{ .form.WallabagTags }}" spellcheck="false">
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>

@@ -330,6 +330,7 @@
     "form.integration.wallabag_only_url": "Kirim hanya URL (alih-alih konten penuh)",
     "form.integration.wallabag_password": "Kata Sandi Wallabag",
     "form.integration.wallabag_username": "Nama Pengguna Wallabag",
+    "form.integration.wallabag_tags": "Wallabag Tags",
     "form.integration.webhook_activate": "Aktifkan Webhook",
     "form.integration.webhook_secret": "Rahasia Webhook",
     "form.integration.webhook_url": "URL Webhook baku",

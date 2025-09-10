@@ -333,6 +333,7 @@
     "form.integration.wallabag_only_url": "Yalnızca URL gönder (tam makale yerine)",
     "form.integration.wallabag_password": "Wallabag Parolası",
     "form.integration.wallabag_username": "Wallabag Kullanıcı Adı",
+    "form.integration.wallabag_tags": "Wallabag Tags",
     "form.integration.webhook_activate": "Webhook'u etkinleştir",
     "form.integration.webhook_secret": "Webhooks Secret",
     "form.integration.webhook_url": "Default Webhook URL",

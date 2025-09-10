@@ -333,6 +333,7 @@
     "form.integration.wallabag_only_url": "Enviar solo URL (en lugar de contenido completo)",
     "form.integration.wallabag_password": "Contraseña de Wallabag",
     "form.integration.wallabag_username": "Nombre de usuario de Wallabag",
+    "form.integration.wallabag_tags": "Wallabag Tags",
     "form.integration.webhook_activate": "Habilitar Webhooks",
     "form.integration.webhook_secret": "Secreto de Webhooks",
     "form.integration.webhook_url": "Defecto URL de Webhook",

@@ -333,6 +333,7 @@
     "form.integration.wallabag_only_url": "Αποστολή μόνο URL (αντί για πλήρες περιεχόμενο)",
     "form.integration.wallabag_password": "Wallabag Κωδικός Πρόσβασης",
     "form.integration.wallabag_username": "Όνομα Χρήστη Wallabag",
+    "form.integration.wallabag_tags": "Wallabag Tags",
     "form.integration.webhook_activate": "Ενεργοποίηση Webhooks",
     "form.integration.webhook_secret": "Μυστικό Webhooks",
     "form.integration.webhook_url": "Προεπιλεγμένη διεύθυνση URL Webhook",

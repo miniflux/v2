@@ -333,6 +333,7 @@
     "form.integration.wallabag_only_url": "Lähetä vain URL-osoite (koko sisällön sijaan)",
     "form.integration.wallabag_password": "Wallabag-salasana",
     "form.integration.wallabag_username": "Wallabag-käyttäjätunnus",
+    "form.integration.wallabag_tags": "Wallabag Tags",
     "form.integration.webhook_activate": "Enable Webhooks",
     "form.integration.webhook_secret": "Webhooks Secret",
     "form.integration.webhook_url": "Default Webhook URL",

@@ -330,6 +330,7 @@
     "form.integration.wallabag_only_url": "URL のみを送信 (完全なコンテンツではなく)",
     "form.integration.wallabag_password": "Wallabag のパスワード",
     "form.integration.wallabag_username": "Wallabag のユーザー名",
+    "form.integration.wallabag_tags": "Wallabag Tags",
     "form.integration.webhook_activate": "Enable Webhooks",
     "form.integration.webhook_secret": "Webhooks Secret",
     "form.integration.webhook_url": "Default Webhook URL",

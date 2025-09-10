@@ -333,6 +333,7 @@
     "form.integration.wallabag_client_id": "ID Client Wallabag",
     "form.integration.wallabag_client_secret": "Secret Client Wallabag",
     "form.integration.wallabag_endpoint": "URL Wallabag",
+    "form.integration.wallabag_tags": "Wallabag Tags",
     "form.integration.wallabag_only_url": "Trimite numai URL-ul (fără conținut complet)",
     "form.integration.wallabag_password": "Parolă Wallabag",
     "form.integration.wallabag_username": "Utilizator Wallabag",
