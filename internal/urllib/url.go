@@ -18,7 +18,7 @@ func IsAbsoluteURL(link string) bool {
 	return u.IsAbs()
 }
 
-// GetAbsoluteURL return the absolute form of `input` is possible, as well as its parser form.
+// GetAbsoluteURL returns the absolute form of `input` if possible, as well as its parsed form.
 func GetAbsoluteURL(input string) (string, *url.URL, error) {
 	if strings.HasPrefix(input, "//") {
 		return "https:" + input, nil, nil
