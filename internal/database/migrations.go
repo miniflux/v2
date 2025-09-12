@@ -1158,4 +1158,187 @@ var migrations = [...]func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	// This migration replaces deprecated timezones by their equivalent on Debian Trixie.
+	func(tx *sql.Tx) (err error) {
+		var deprecatedTimeZoneMap = map[string]string{
+			// Africa
+			"Africa/Asmera": "Africa/Asmara",
+
+			// America - Argentina
+			"America/Argentina/ComodRivadavia": "America/Argentina/Catamarca",
+			"America/Buenos_Aires":             "America/Argentina/Buenos_Aires",
+			"America/Catamarca":                "America/Argentina/Catamarca",
+			"America/Cordoba":                  "America/Argentina/Cordoba",
+			"America/Jujuy":                    "America/Argentina/Jujuy",
+			"America/Mendoza":                  "America/Argentina/Mendoza",
+			"America/Rosario":                  "America/Argentina/Cordoba",
+
+			// America - US
+			"America/Fort_Wayne":   "America/Indiana/Indianapolis",
+			"America/Indianapolis": "America/Indiana/Indianapolis",
+			"America/Knox_IN":      "America/Indiana/Knox",
+			"America/Louisville":   "America/Kentucky/Louisville",
+
+			// America - Greenland
+			"America/Godthab": "America/Nuuk",
+
+			// Antarctica
+			"Antarctica/South_Pole": "Pacific/Auckland",
+
+			// Asia
+			"Asia/Ashkhabad":     "Asia/Ashgabat",
+			"Asia/Calcutta":      "Asia/Kolkata",
+			"Asia/Choibalsan":    "Asia/Ulaanbaatar",
+			"Asia/Chungking":     "Asia/Chongqing",
+			"Asia/Dacca":         "Asia/Dhaka",
+			"Asia/Katmandu":      "Asia/Kathmandu",
+			"Asia/Macao":         "Asia/Macau",
+			"Asia/Rangoon":       "Asia/Yangon",
+			"Asia/Saigon":        "Asia/Ho_Chi_Minh",
+			"Asia/Thimbu":        "Asia/Thimphu",
+			"Asia/Ujung_Pandang": "Asia/Makassar",
+			"Asia/Ulan_Bator":    "Asia/Ulaanbaatar",
+
+			// Atlantic
+			"Atlantic/Faeroe": "Atlantic/Faroe",
+
+			// Australia
+			"Australia/ACT":        "Australia/Sydney",
+			"Australia/LHI":        "Australia/Lord_Howe",
+			"Australia/North":      "Australia/Darwin",
+			"Australia/NSW":        "Australia/Sydney",
+			"Australia/Queensland": "Australia/Brisbane",
+			"Australia/South":      "Australia/Adelaide",
+			"Australia/Tasmania":   "Australia/Hobart",
+			"Australia/Victoria":   "Australia/Melbourne",
+			"Australia/West":       "Australia/Perth",
+
+			// Brazil
+			"Brazil/Acre":      "America/Rio_Branco",
+			"Brazil/DeNoronha": "America/Noronha",
+			"Brazil/East":      "America/Sao_Paulo",
+			"Brazil/West":      "America/Manaus",
+
+			// Canada
+			"Canada/Atlantic":     "America/Halifax",
+			"Canada/Central":      "America/Winnipeg",
+			"Canada/Eastern":      "America/Toronto",
+			"Canada/Mountain":     "America/Edmonton",
+			"Canada/Newfoundland": "America/St_Johns",
+			"Canada/Pacific":      "America/Vancouver",
+			"Canada/Saskatchewan": "America/Regina",
+			"Canada/Yukon":        "America/Whitehorse",
+
+			// Europe
+			"CET":               "Europe/Paris",
+			"EET":               "Europe/Sofia",
+			"Europe/Kiev":       "Europe/Kyiv",
+			"Europe/Uzhgorod":   "Europe/Kyiv",
+			"Europe/Zaporozhye": "Europe/Kyiv",
+			"MET":               "Europe/Paris",
+			"WET":               "Europe/Lisbon",
+
+			// Chile
+			"Chile/Continental":  "America/Santiago",
+			"Chile/EasterIsland": "Pacific/Easter",
+
+			// Fixed offset and generic zones
+			"CST6CDT": "America/Chicago",
+			"EST":     "America/New_York",
+			"EST5EDT": "America/New_York",
+			"HST":     "Pacific/Honolulu",
+			"MST":     "America/Denver",
+			"MST7MDT": "America/Denver",
+			"PST8PDT": "America/Los_Angeles",
+
+			// Countries/Regions
+			"Cuba":      "America/Havana",
+			"Egypt":     "Africa/Cairo",
+			"Eire":      "Europe/Dublin",
+			"GB":        "Europe/London",
+			"GB-Eire":   "Europe/London",
+			"Hongkong":  "Asia/Hong_Kong",
+			"Iceland":   "Atlantic/Reykjavik",
+			"Iran":      "Asia/Tehran",
+			"Israel":    "Asia/Jerusalem",
+			"Jamaica":   "America/Jamaica",
+			"Japan":     "Asia/Tokyo",
+			"Libya":     "Africa/Tripoli",
+			"Poland":    "Europe/Warsaw",
+			"Portugal":  "Europe/Lisbon",
+			"PRC":       "Asia/Shanghai",
+			"ROC":       "Asia/Taipei",
+			"ROK":       "Asia/Seoul",
+			"Singapore": "Asia/Singapore",
+			"Turkey":    "Europe/Istanbul",
+
+			// GMT variations
+			"GMT+0":     "GMT",
+			"GMT-0":     "GMT",
+			"GMT0":      "GMT",
+			"Greenwich": "GMT",
+			"UCT":       "UTC",
+			"Universal": "UTC",
+			"Zulu":      "UTC",
+
+			// Mexico
+			"Mexico/BajaNorte": "America/Tijuana",
+			"Mexico/BajaSur":   "America/Mazatlan",
+			"Mexico/General":   "America/Mexico_City",
+
+			// US zones
+			"Navajo":            "America/Denver",
+			"US/Alaska":         "America/Anchorage",
+			"US/Aleutian":       "America/Adak",
+			"US/Arizona":        "America/Phoenix",
+			"US/Central":        "America/Chicago",
+			"US/Eastern":        "America/New_York",
+			"US/East-Indiana":   "America/Indiana/Indianapolis",
+			"US/Hawaii":         "Pacific/Honolulu",
+			"US/Indiana-Starke": "America/Indiana/Knox",
+			"US/Michigan":       "America/Detroit",
+			"US/Mountain":       "America/Denver",
+			"US/Pacific":        "America/Los_Angeles",
+			"US/Samoa":          "Pacific/Pago_Pago",
+
+			// Pacific
+			"Kwajalein":         "Pacific/Kwajalein",
+			"NZ":                "Pacific/Auckland",
+			"NZ-CHAT":           "Pacific/Chatham",
+			"Pacific/Enderbury": "Pacific/Kanton",
+			"Pacific/Ponape":    "Pacific/Pohnpei",
+			"Pacific/Truk":      "Pacific/Chuuk",
+
+			// Special cases
+			"Factory": "UTC", // Factory is used for unconfigured systems
+			"W-SU":    "Europe/Moscow",
+		}
+
+		// Loop through each user and correct the timezone
+		rows, err := tx.Query(`SELECT id, timezone FROM users`)
+		if err != nil {
+			return err
+		}
+
+		userTimezoneMap := make(map[int64]string)
+		for rows.Next() {
+			var userID int64
+			var userTimezone string
+			if err := rows.Scan(&userID, &userTimezone); err != nil {
+				return err
+			}
+			userTimezoneMap[userID] = userTimezone
+		}
+		rows.Close()
+
+		for userID, userTimezone := range userTimezoneMap {
+			if newTimezone, found := deprecatedTimeZoneMap[userTimezone]; found {
+				if _, err := tx.Exec(`UPDATE users SET timezone = $1 WHERE id = $2`, newTimezone, userID); err != nil {
+					return err
+				}
+			}
+		}
+
+		return nil
+	},
 }

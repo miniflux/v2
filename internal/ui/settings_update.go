@@ -11,6 +11,7 @@ import (
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/timezone"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
@@ -19,12 +20,6 @@ import (
 
 func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
-	if err != nil {
-		html.ServerError(w, r, err)
-		return
-	}
-
-	timezones, err := h.store.Timezones()
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -49,7 +44,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	})
 	view.Set("themes", model.Themes())
 	view.Set("languages", locale.AvailableLanguages)
-	view.Set("timezones", timezones)
+	view.Set("timezones", timezone.AvailableTimezones())
 	view.Set("menu", "settings")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
