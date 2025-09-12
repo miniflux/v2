@@ -474,6 +474,7 @@
     "page.feeds.next_check": "Next check:",
     "page.feeds.read_counter": "Number of read entries",
     "page.feeds.title": "Feeds",
+    "page.footer.elevator": "Back to top",
     "page.history.title": "History",
     "page.import.title": "Import",
     "page.integration.bookmarklet": "Bookmarklet",

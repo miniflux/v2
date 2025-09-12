@@ -1327,3 +1327,18 @@ audio, video {
 .hidden {
     display: none;
 }
+
+footer {
+    margin: 1em auto;
+}
+
+footer .elevator {
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.pagination-top .elevator,
+.pagination-entry-top .elevator {
+    display: none;
+}

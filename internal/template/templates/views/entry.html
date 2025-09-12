@@ -10,6 +10,8 @@
         {{ end }}
     </div>
 
+    <a href="#" class="elevator">{{ icon "up" }}{{ t "page.footer.elevator" }}</a>
+
     <div class="pagination-next {{ if not .nextEntry }}disabled{{end}}">
         {{ if .nextEntry }}
             <a href="{{ .nextEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .nextEntry.Title }}" data-page="next" rel="next">{{ t "pagination.next" }}</a>
