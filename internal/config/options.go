@@ -90,6 +90,7 @@ const (
 	defaultWatchdog                           = true
 	defaultInvidiousInstance                  = "yewtu.be"
 	defaultWebAuthn                           = false
+	defaultDisableAPI                         = false
 )
 
 var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
@@ -184,6 +185,7 @@ type options struct {
 	invidiousInstance                  string
 	mediaProxyPrivateKey               []byte
 	webAuthn                           bool
+	API                                bool
 }
 
 // NewOptions returns Options with default values.
@@ -264,6 +266,7 @@ func NewOptions() *options {
 		invidiousInstance:                  defaultInvidiousInstance,
 		mediaProxyPrivateKey:               crypto.GenerateRandomBytes(16),
 		webAuthn:                           defaultWebAuthn,
+		API:                                !defaultDisableAPI,
 	}
 }
 
@@ -675,6 +678,11 @@ func (o *options) InvidiousInstance() string {
 // WebAuthn returns true if WebAuthn logins are supported
 func (o *options) WebAuthn() bool {
 	return o.webAuthn
+}
+
+// EnableAPI returns true if API is enabled
+func (o *options) EnableAPI() bool {
+	return o.API
 }
 
 // FilterEntryMaxAgeDays returns the number of days after which entries should be retained.

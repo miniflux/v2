@@ -45,5 +45,6 @@ func New(tpl *template.Engine, r *http.Request, sess *session.Session) *view {
 		"app_js_checksum":   static.JavascriptBundles["app"].Checksum,
 		"sw_js_checksum":    static.JavascriptBundles["service-worker"].Checksum,
 		"webAuthnEnabled":   config.Opts.WebAuthn(),
+		"apiEnabled":        config.Opts.EnableAPI(),
 	}}
 }
