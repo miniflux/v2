@@ -11,6 +11,7 @@ import (
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
+	"miniflux.app/v2/internal/timezone"
 )
 
 // ValidateUserCreationWithPassword validates user creation with a password.
@@ -63,7 +64,7 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 	}
 
 	if changes.Timezone != nil {
-		if err := validateTimezone(store, *changes.Timezone); err != nil {
+		if err := validateTimezone(*changes.Timezone); err != nil {
 			return err
 		}
 	}
@@ -200,13 +201,8 @@ func validateLanguage(language string) *locale.LocalizedError {
 	return nil
 }
 
-func validateTimezone(store *storage.Storage, timezone string) *locale.LocalizedError {
-	timezones, err := store.Timezones()
-	if err != nil {
-		return locale.NewLocalizedError(err.Error())
-	}
-
-	if _, found := timezones[timezone]; !found {
+func validateTimezone(timezoneValue string) *locale.LocalizedError {
+	if _, found := timezone.AvailableTimezones()[timezoneValue]; !found {
 		return locale.NewLocalizedError("error.invalid_timezone")
 	}
 	return nil

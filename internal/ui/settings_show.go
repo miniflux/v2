@@ -10,6 +10,7 @@ import (
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/timezone"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
@@ -50,12 +51,6 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		OpenExternalLinksInNewTab: user.OpenExternalLinksInNewTab,
 	}
 
-	timezones, err := h.store.Timezones()
-	if err != nil {
-		html.ServerError(w, r, err)
-		return
-	}
-
 	creds, err := h.store.WebAuthnCredentialsByUserID(user.ID)
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -73,7 +68,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	})
 	view.Set("themes", model.Themes())
 	view.Set("languages", locale.AvailableLanguages)
-	view.Set("timezones", timezones)
+	view.Set("timezones", timezone.AvailableTimezones())
 	view.Set("menu", "settings")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
