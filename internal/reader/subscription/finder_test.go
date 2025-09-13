@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestFindYoutubePlaylistFeed(t *testing.T) {
+func TestFindYoutubeFeed(t *testing.T) {
 	type testResult struct {
 		websiteURL     string
 		feedURL        string
@@ -56,6 +56,11 @@ func TestFindYoutubePlaylistFeed(t *testing.T) {
 			websiteURL: "https://www.youtube.com/watch?v=6IutBmRJNLk&list=PLOOwEPgFWm_NHcQd9aCi5JXWASHO_n5uR&index=4",
 			feedURL:    "https://www.youtube.com/feeds/videos.xml?playlist_id=PLOOwEPgFWm_NHcQd9aCi5JXWASHO_n5uR",
 		},
+		// Empty playlist ID parameter
+		{
+			websiteURL: "https://www.youtube.com/playlist?list=",
+			feedURL:    "",
+		},
 		// Non-Youtube URL
 		{
 			websiteURL: "https://www.example.com/channel/UC-Qj80avWItNRjkZ41rzHyw",
@@ -79,11 +84,11 @@ func TestFindYoutubePlaylistFeed(t *testing.T) {
 
 		if scenario.feedURL == "" {
 			if len(subscriptions) > 0 {
-				t.Fatalf(`Parsing a non-playlist URL should not return any subscription: %q`, scenario.websiteURL)
+				t.Fatalf(`Parsing an invalid URL should not return any subscription: %q -> %v`, scenario.websiteURL, subscriptions)
 			}
 		} else {
 			if localizedError != nil {
-				t.Fatalf(`Parsing a correctly formatted YouTube playlist page should not return any error: %v`, localizedError)
+				t.Fatalf(`Parsing a correctly formatted YouTube playlist or channel page should not return any error: %v`, localizedError)
 			}
 
 			if len(subscriptions) != 1 {
@@ -91,7 +96,7 @@ func TestFindYoutubePlaylistFeed(t *testing.T) {
 			}
 
 			if subscriptions[0].URL != scenario.feedURL {
-				t.Errorf(`Unexpected Feed, got %s, instead of %s`, subscriptions[0].URL, scenario.feedURL)
+				t.Errorf(`Unexpected feed, got %s, instead of %s`, subscriptions[0].URL, scenario.feedURL)
 			}
 		}
 	}

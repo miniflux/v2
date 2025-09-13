@@ -74,7 +74,7 @@ func (f *subscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string, 
 	if subscriptions, localizedError := f.findSubscriptionsFromYouTube(websiteURL); localizedError != nil {
 		return nil, localizedError
 	} else if len(subscriptions) > 0 {
-		slog.Debug("Subscriptions found from YouTube channel page", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
+		slog.Debug("Subscriptions found from YouTube page", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
 		return subscriptions, nil
 	}
 
@@ -275,23 +275,25 @@ func (f *subscriptionFinder) findSubscriptionsFromRSSBridge(websiteURL, rssBridg
 }
 
 func (f *subscriptionFinder) findSubscriptionsFromYouTube(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
-	u, err := url.Parse(websiteURL)
+	decodedURL, err := url.Parse(websiteURL)
 	if err != nil {
 		return nil, locale.NewLocalizedErrorWrapper(err, "error.invalid_site_url", err)
 	}
 
-	if !strings.HasSuffix(u.Host, "youtube.com") {
+	if !strings.HasSuffix(decodedURL.Host, "youtube.com") {
 		slog.Debug("This website isn't on the youtube domain.", slog.String("website_url", websiteURL))
 		return nil, nil
 	}
-	if _, channelID, found := strings.Cut(u.Path, "channel/"); found {
+	if _, channelID, found := strings.Cut(decodedURL.Path, "channel/"); found {
 		feedURL := "https://www.youtube.com/feeds/videos.xml?channel_id=" + channelID
-		return Subscriptions{NewSubscription(u.String(), feedURL, parser.FormatAtom)}, nil
+		return Subscriptions{NewSubscription(decodedURL.String(), feedURL, parser.FormatAtom)}, nil
 	}
-	if (strings.HasPrefix(u.Path, "/watch") && u.Query().Has("list")) || strings.HasPrefix(u.Path, "/playlist") {
-		playlistID := u.Query().Get("list")
-		feedURL := "https://www.youtube.com/feeds/videos.xml?playlist_id=" + playlistID
-		return Subscriptions{NewSubscription(u.String(), feedURL, parser.FormatAtom)}, nil
+
+	if strings.HasPrefix(decodedURL.Path, "/watch") || strings.HasPrefix(decodedURL.Path, "/playlist") {
+		if playlistID := decodedURL.Query().Get("list"); playlistID != "" {
+			feedURL := "https://www.youtube.com/feeds/videos.xml?playlist_id=" + playlistID
+			return Subscriptions{NewSubscription(decodedURL.String(), feedURL, parser.FormatAtom)}, nil
+		}
 	}
 
 	return nil, nil
