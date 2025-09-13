@@ -281,7 +281,7 @@ func (f *subscriptionFinder) findSubscriptionsFromYouTube(websiteURL string) (Su
 	}
 
 	if !strings.HasSuffix(decodedURL.Host, "youtube.com") {
-		slog.Debug("This website isn't on the youtube domain.", slog.String("website_url", websiteURL))
+		slog.Debug("YouTube feed discovery skipped: not a YouTube domain", slog.String("website_url", websiteURL))
 		return nil, nil
 	}
 	if _, channelID, found := strings.Cut(decodedURL.Path, "channel/"); found {
