@@ -20,7 +20,7 @@ func middleware(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, request.ClientIPContextKey, clientIP)
 
 		if r.Header.Get("X-Forwarded-Proto") == "https" {
-			config.Opts.HTTPS = true
+			config.Opts.SetHTTPSValue(true)
 		}
 
 		t1 := time.Now()
@@ -36,7 +36,7 @@ func middleware(next http.Handler) http.Handler {
 			)
 		}()
 
-		if config.Opts.HTTPS && config.Opts.HasHSTS() {
+		if config.Opts.HTTPS() && config.Opts.HasHSTS() {
 			w.Header().Set("Strict-Transport-Security", "max-age=31536000")
 		}
 

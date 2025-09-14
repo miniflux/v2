@@ -331,7 +331,7 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie.New(
 		cookie.CookieUserSessionID,
 		sessionToken,
-		config.Opts.HTTPS,
+		config.Opts.HTTPS(),
 		config.Opts.BasePath(),
 	))
 

@@ -392,7 +392,7 @@ func TestInvalidNestedTag(t *testing.T) {
 }
 
 func TestInvalidIFrame(t *testing.T) {
-	config.Opts = config.NewOptions()
+	config.Opts = config.NewConfigOptions()
 
 	input := `<iframe src="http://example.org/"></iframe>`
 	expected := ``
@@ -404,7 +404,7 @@ func TestInvalidIFrame(t *testing.T) {
 }
 
 func TestSameDomainIFrame(t *testing.T) {
-	config.Opts = config.NewOptions()
+	config.Opts = config.NewConfigOptions()
 
 	input := `<iframe src="http://example.com/test"></iframe>`
 	expected := ``
@@ -416,7 +416,7 @@ func TestSameDomainIFrame(t *testing.T) {
 }
 
 func TestInvidiousIFrame(t *testing.T) {
-	config.Opts = config.NewOptions()
+	config.Opts = config.NewConfigOptions()
 
 	input := `<iframe src="https://yewtu.be/watch?v=video_id"></iframe>`
 	expected := `<iframe src="https://yewtu.be/watch?v=video_id" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
@@ -432,7 +432,7 @@ func TestCustomYoutubeEmbedURL(t *testing.T) {
 
 	defer os.Clearenv()
 	var err error
-	if config.Opts, err = config.NewParser().ParseEnvironmentVariables(); err != nil {
+	if config.Opts, err = config.NewConfigParser().ParseEnvironmentVariables(); err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
@@ -446,7 +446,7 @@ func TestCustomYoutubeEmbedURL(t *testing.T) {
 }
 
 func TestIFrameWithChildElements(t *testing.T) {
-	config.Opts = config.NewOptions()
+	config.Opts = config.NewConfigOptions()
 
 	input := `<iframe src="https://www.youtube.com/"><p>test</p></iframe>`
 	expected := `<iframe src="https://www.youtube.com/" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
@@ -850,7 +850,7 @@ func TestReplaceYoutubeURLWithCustomURL(t *testing.T) {
 	os.Setenv("YOUTUBE_EMBED_URL_OVERRIDE", "https://invidious.custom/embed/")
 
 	var err error
-	config.Opts, err = config.NewParser().ParseEnvironmentVariables()
+	config.Opts, err = config.NewConfigParser().ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}

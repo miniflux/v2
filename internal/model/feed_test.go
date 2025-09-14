@@ -80,7 +80,7 @@ func TestFeedScheduleNextCheckRoundRobinDefault(t *testing.T) {
 	os.Clearenv()
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -102,7 +102,7 @@ func TestFeedScheduleNextCheckRoundRobinWithRefreshDelayAboveMinInterval(t *test
 	os.Clearenv()
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -125,7 +125,7 @@ func TestFeedScheduleNextCheckRoundRobinWithRefreshDelayBelowMinInterval(t *test
 	os.Clearenv()
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -148,7 +148,7 @@ func TestFeedScheduleNextCheckRoundRobinWithRefreshDelayAboveMaxInterval(t *test
 	os.Clearenv()
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -174,7 +174,7 @@ func TestFeedScheduleNextCheckRoundRobinMinInterval(t *testing.T) {
 	os.Setenv("SCHEDULER_ROUND_ROBIN_MIN_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -201,7 +201,7 @@ func TestFeedScheduleNextCheckEntryFrequencyMaxInterval(t *testing.T) {
 	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -230,7 +230,7 @@ func TestFeedScheduleNextCheckEntryFrequencyMaxIntervalZeroWeeklyCount(t *testin
 	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -259,7 +259,7 @@ func TestFeedScheduleNextCheckEntryFrequencyMinInterval(t *testing.T) {
 	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -286,7 +286,7 @@ func TestFeedScheduleNextCheckEntryFrequencyFactor(t *testing.T) {
 	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_FACTOR", strconv.Itoa(factor))
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -315,7 +315,7 @@ func TestFeedScheduleNextCheckEntryFrequencySmallNewTTL(t *testing.T) {
 	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -351,7 +351,7 @@ func TestFeedScheduleNextCheckEntryFrequencyLargeNewTTL(t *testing.T) {
 	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)

@@ -19,7 +19,7 @@ func TestProxyFilterWithHttpDefault(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -43,7 +43,7 @@ func TestProxyFilterWithHttpsDefault(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -66,7 +66,7 @@ func TestProxyFilterWithHttpNever(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_MODE", "none")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -89,7 +89,7 @@ func TestProxyFilterWithHttpsNever(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_MODE", "none")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -114,7 +114,7 @@ func TestProxyFilterWithHttpAlways(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -139,7 +139,7 @@ func TestProxyFilterWithHttpsAlways(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -164,7 +164,7 @@ func TestAbsoluteProxyFilterWithHttpsAlways(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -188,7 +188,7 @@ func TestAbsoluteProxyFilterWithCustomPortAndSubfolderInBaseURL(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -226,7 +226,7 @@ func TestAbsoluteProxyFilterWithHttpsAlwaysAndAudioTag(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -251,7 +251,7 @@ func TestProxyFilterWithHttpsAlwaysAndCustomProxyServer(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_CUSTOM_URL", "https://proxy-example/proxy")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -276,7 +276,7 @@ func TestProxyFilterWithHttpsAlwaysAndIncorrectCustomProxyServer(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_CUSTOM_URL", "http://:8080example.com")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err == nil {
 		t.Fatalf(`Incorrect proxy URL silently accepted (MEDIA_PROXY_CUSTOM_URL=%q): %q`, os.Getenv("MEDIA_PROXY_CUSTOM_URL"), config.Opts.MediaCustomProxyURL())
@@ -290,7 +290,7 @@ func TestAbsoluteProxyFilterWithHttpsAlwaysAndCustomProxyServer(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_CUSTOM_URL", "https://proxy-example/proxy")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -313,46 +313,8 @@ func TestProxyFilterWithHttpInvalid(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_MODE", "invalid")
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
-	var err error
-	parser := config.NewParser()
-	config.Opts, err = parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
-	input := `<p><img src="http://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
-	expected := `<p><img src="/proxy/okK5PsdNY8F082UMQEAbLPeUFfbe2WnNfInNmR9T4WA=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlLnBuZw==" alt="Test"/></p>`
-
-	if expected != output {
-		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
-	}
-}
-
-func TestProxyFilterWithHttpsInvalid(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("MEDIA_PROXY_MODE", "invalid")
-	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
-
-	var err error
-	parser := config.NewParser()
-	config.Opts, err = parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
-	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
-	expected := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
-
-	if expected != output {
-		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	if _, err := config.NewConfigParser().ParseEnvironmentVariables(); err == nil {
+		t.Fatalf(`Parsing should have failed (MEDIA_PROXY_MODE=%q): %q`, os.Getenv("MEDIA_PROXY_MODE"), config.Opts.MediaProxyMode())
 	}
 }
 
@@ -363,7 +325,7 @@ func TestProxyFilterWithSrcset(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -388,7 +350,7 @@ func TestProxyFilterWithEmptySrcset(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -413,7 +375,7 @@ func TestProxyFilterWithPictureSource(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -433,12 +395,12 @@ func TestProxyFilterWithPictureSource(t *testing.T) {
 
 func TestProxyFilterOnlyNonHTTPWithPictureSource(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("MEDIA_PROXY_MODE", "https")
+	os.Setenv("MEDIA_PROXY_MODE", "http-only")
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -462,7 +424,7 @@ func TestProxyWithImageDataURL(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -486,7 +448,7 @@ func TestProxyWithImageSourceDataURL(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -511,7 +473,7 @@ func TestProxyFilterWithVideo(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -536,7 +498,7 @@ func TestProxyFilterVideoPoster(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
@@ -561,7 +523,7 @@ func TestProxyFilterVideoPosterOnce(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)

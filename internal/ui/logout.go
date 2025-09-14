@@ -32,7 +32,7 @@ func (h *handler) logout(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, cookie.Expired(
 		cookie.CookieUserSessionID,
-		config.Opts.HTTPS,
+		config.Opts.HTTPS(),
 		config.Opts.BasePath(),
 	))
 

@@ -67,7 +67,7 @@ func TestRewriteWithNoMatchingRule(t *testing.T) {
 }
 
 func TestRewriteYoutubeVideoLink(t *testing.T) {
-	config.Opts = config.NewOptions()
+	config.Opts = config.NewConfigOptions()
 
 	controlEntry := &model.Entry{
 		URL:     "https://www.youtube.com/watch?v=1234",
@@ -87,7 +87,7 @@ func TestRewriteYoutubeVideoLink(t *testing.T) {
 }
 
 func TestRewriteYoutubeShortLink(t *testing.T) {
-	config.Opts = config.NewOptions()
+	config.Opts = config.NewConfigOptions()
 
 	controlEntry := &model.Entry{
 		URL:     "https://www.youtube.com/shorts/1LUWKWZkPjo",
@@ -107,7 +107,7 @@ func TestRewriteYoutubeShortLink(t *testing.T) {
 }
 
 func TestRewriteIncorrectYoutubeLink(t *testing.T) {
-	config.Opts = config.NewOptions()
+	config.Opts = config.NewConfigOptions()
 
 	controlEntry := &model.Entry{
 		URL:     "https://www.youtube.com/some-page",
@@ -131,7 +131,7 @@ func TestRewriteYoutubeLinkAndCustomEmbedURL(t *testing.T) {
 	os.Setenv("YOUTUBE_EMBED_URL_OVERRIDE", "https://invidious.custom/embed/")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 
 	if err != nil {
@@ -156,7 +156,7 @@ func TestRewriteYoutubeLinkAndCustomEmbedURL(t *testing.T) {
 }
 
 func TestRewriteYoutubeVideoLinkUsingInvidious(t *testing.T) {
-	config.Opts = config.NewOptions()
+	config.Opts = config.NewConfigOptions()
 	controlEntry := &model.Entry{
 		URL:     "https://www.youtube.com/watch?v=1234",
 		Title:   `A title`,
@@ -176,7 +176,7 @@ func TestRewriteYoutubeVideoLinkUsingInvidious(t *testing.T) {
 }
 
 func TestRewriteYoutubeShortLinkUsingInvidious(t *testing.T) {
-	config.Opts = config.NewOptions()
+	config.Opts = config.NewConfigOptions()
 	controlEntry := &model.Entry{
 		URL:     "https://www.youtube.com/shorts/1LUWKWZkPjo",
 		Title:   `A title`,
@@ -196,7 +196,7 @@ func TestRewriteYoutubeShortLinkUsingInvidious(t *testing.T) {
 }
 
 func TestAddYoutubeVideoFromId(t *testing.T) {
-	config.Opts = config.NewOptions()
+	config.Opts = config.NewConfigOptions()
 
 	scenarios := map[string]string{
 		// Test with single YouTube ID
@@ -239,7 +239,7 @@ func TestAddYoutubeVideoFromIdWithCustomEmbedURL(t *testing.T) {
 	os.Setenv("YOUTUBE_EMBED_URL_OVERRIDE", "https://invidious.custom/embed/")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 
 	if err != nil {
