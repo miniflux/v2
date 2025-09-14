@@ -5,12 +5,14 @@ package storage // import "miniflux.app/v2/internal/storage"
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
 	"time"
 
 	"miniflux.app/v2/internal/crypto"
+	"miniflux.app/v2/internal/database"
 	"miniflux.app/v2/internal/model"
 
 	"github.com/lib/pq"
@@ -70,17 +72,24 @@ func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 // UpdateEntryTitleAndContent updates entry title and content.
 func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
-	query := `
+	vectorPart := ""
+	if s.kind != database.DBKindSqlite {
+		vectorPart = ", document_vectors = setweight(to_tsvector($4), 'A') || setweight(to_tsvector($5), 'B')"
+		if s.kind == database.DBKindCockroach {
+			vectorPart = ", document_vectors = to_tsvector(substring($4 || ' ' || $4 || ' ' || coalesce($5, '') for 1000000))"
+		}
+	}
+	query := fmt.Sprintf(`
 		UPDATE
 			entries
 		SET
 			title=$1,
 			content=$2,
-			reading_time=$3,
-			document_vectors = setweight(to_tsvector($4), 'A') || setweight(to_tsvector($5), 'B')
+			reading_time=$3
+			%s
 		WHERE
 			id=$6 AND user_id=$7
-	`
+	`, vectorPart)
 
 	if _, err := s.db.Exec(
 		query,
@@ -100,7 +109,14 @@ func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 // createEntry add a new entry.
 func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
-	query := `
+	vectorParts := [2]string{"", ""}
+	if s.kind != database.DBKindSqlite {
+		vectorParts = [2]string{",document_vectors", ",setweight(to_tsvector($11), 'A') || setweight(to_tsvector($12), 'B')"}
+		if s.kind == database.DBKindCockroach {
+			vectorParts[1] = ",to_tsvector(substring($11 || ' ' || $11 || ' ' || coalesce($12, '') for 1000000))"
+		}
+	}
+	query := fmt.Sprintf(`
 		INSERT INTO entries
 			(
 				title,
@@ -114,8 +130,8 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				feed_id,
 				reading_time,
 				changed_at,
-				document_vectors,
 				tags
+				%s
 			)
 		VALUES
 			(
@@ -130,12 +146,24 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				$9,
 				$10,
 				now(),
-				setweight(to_tsvector($11), 'A') || setweight(to_tsvector($12), 'B'),
 				$13
+				%s
 			)
 		RETURNING
 			id, status, created_at, changed_at
-	`
+	`, vectorParts[0], vectorParts[1])
+
+	var tagsParam any
+	if s.kind == database.DBKindSqlite {
+		sqliteTagsParam, err := encodeTagsJSON(entry.Tags)
+		if err != nil {
+			return fmt.Errorf("encode tags: %w", err)
+		}
+		tagsParam = sqliteTagsParam
+	} else {
+		tagsParam = pq.Array(entry.Tags)
+	}
+
 	err := tx.QueryRow(
 		query,
 		entry.Title,
@@ -150,7 +178,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.ReadingTime,
 		truncatedTitle,
 		truncatedContent,
-		pq.Array(entry.Tags),
+		tagsParam,
 	).Scan(
 		&entry.ID,
 		&entry.Status,
@@ -178,7 +206,14 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 // it default to time.Now() which could change the order of items on the history page.
 func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
-	query := `
+	vectorPart := ""
+	if s.kind != database.DBKindSqlite {
+		vectorPart = ",document_vectors = setweight(to_tsvector($7), 'A') || setweight(to_tsvector($8), 'B')"
+		if s.kind == database.DBKindCockroach {
+			vectorPart = ",document_vectors = to_tsvector(substring($7 || ' ' || $7 || ' ' || coalesce($8, '') for 1000000))"
+		}
+	}
+	query := fmt.Sprintf(`
 		UPDATE
 			entries
 		SET
@@ -188,13 +223,25 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 			content=$4,
 			author=$5,
 			reading_time=$6,
-			document_vectors = setweight(to_tsvector($7), 'A') || setweight(to_tsvector($8), 'B'),
 			tags=$12
+			%s
 		WHERE
 			user_id=$9 AND feed_id=$10 AND hash=$11
 		RETURNING
 			id
-	`
+	`, vectorPart)
+
+	var tagsParam any
+	if s.kind == database.DBKindSqlite {
+		sqliteTagsParam, err := encodeTagsJSON(entry.Tags)
+		if err != nil {
+			return fmt.Errorf("encode tags: %w", err)
+		}
+		tagsParam = sqliteTagsParam
+	} else {
+		tagsParam = pq.Array(entry.Tags)
+	}
+
 	err := tx.QueryRow(
 		query,
 		entry.Title,
@@ -208,7 +255,7 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.UserID,
 		entry.FeedID,
 		entry.Hash,
-		pq.Array(entry.Tags),
+		tagsParam,
 	).Scan(&entry.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to update entry %q: %v`, entry.URL, err)
@@ -301,7 +348,12 @@ func (s *Storage) DeleteRemovedEntriesEnclosures() (int64, error) {
 
 // ClearRemovedEntriesContent clears the content fields of entries marked as "removed", keeping only their metadata.
 func (s *Storage) ClearRemovedEntriesContent(limit int) (int64, error) {
-	query := `
+	vectorPart := ""
+	if s.kind != database.DBKindSqlite {
+		vectorPart = ",document_vectors=NULL"
+	}
+
+	query := fmt.Sprintf(`
 		UPDATE
 			entries
 		SET
@@ -309,8 +361,8 @@ func (s *Storage) ClearRemovedEntriesContent(limit int) (int64, error) {
 			content=NULL,
 			url='',
 			author=NULL,
-			comments_url=NULL,
-			document_vectors=NULL
+			comments_url=NULL
+			%s
 		WHERE id IN (
 			SELECT id
 			FROM entries
@@ -318,7 +370,7 @@ func (s *Storage) ClearRemovedEntriesContent(limit int) (int64, error) {
 			ORDER BY id ASC
 			LIMIT $2
 		)
-	`
+	`, vectorPart)
 
 	result, err := s.db.Exec(query, model.EntryStatusRemoved, limit)
 	if err != nil {
@@ -736,4 +788,20 @@ func truncateStringForTSVectorField(s string, maxSize int) string {
 
 	// Fallback: return empty string if we can't find a valid UTF-8 boundary
 	return ""
+}
+
+func encodeTagsJSON(tags []string) (string, error) {
+	b, err := json.Marshal(tags)
+	return string(b), err
+}
+
+func decodeTagsJSON(s string) ([]string, error) {
+	if s == "" {
+		return nil, nil
+	}
+	var tags []string
+	if err := json.Unmarshal([]byte(s), &tags); err != nil {
+		return nil, err
+	}
+	return tags, nil
 }

@@ -9,24 +9,34 @@ import (
 	"strconv"
 	"strings"
 
+	"miniflux.app/v2/internal/database"
 	"miniflux.app/v2/internal/model"
 )
 
 // EntryPaginationBuilder is a builder for entry prev/next queries.
 type EntryPaginationBuilder struct {
-	store      *Storage
-	conditions []string
-	args       []any
-	entryID    int64
-	order      string
-	direction  string
+	store        *Storage
+	conditions   []string
+	args         []any
+	entryID      int64
+	order        string
+	direction    string
+	useSqliteFts bool
 }
 
 // WithSearchQuery adds full-text search query to the condition.
 func (e *EntryPaginationBuilder) WithSearchQuery(query string) {
 	if query != "" {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", len(e.args)+1))
-		e.args = append(e.args, query)
+		nArgs := len(e.args) + 1
+		if e.store.kind == database.DBKindSqlite {
+			query = toSqliteFtsQuery(query)
+			e.useSqliteFts = true
+			e.conditions = append(e.conditions, fmt.Sprintf("fts MATCH $%d", nArgs))
+			e.args = append(e.args, query)
+		} else {
+			e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", nArgs))
+			e.args = append(e.args, query)
+		}
 	}
 }
 
@@ -61,9 +71,24 @@ func (e *EntryPaginationBuilder) WithStatus(status string) {
 
 func (e *EntryPaginationBuilder) WithTags(tags []string) {
 	if len(tags) > 0 {
-		for _, tag := range tags {
-			e.conditions = append(e.conditions, fmt.Sprintf("LOWER($%d) = ANY(LOWER(e.tags::text)::text[])", len(e.args)+1))
-			e.args = append(e.args, tag)
+		if e.store.kind == database.DBKindSqlite {
+			for _, tag := range tags {
+				n := len(e.args) + 1
+				cond := fmt.Sprintf(`
+					EXISTS (
+						SELECT 1
+						FROM json_each(COALESCE(e.tags, '[]')) AS jt
+						WHERE lower(jt.value) = lower($%d)
+					)
+				`, n)
+				e.conditions = append(e.conditions, cond)
+				e.args = append(e.args, tag)
+			}
+		} else {
+			for _, tag := range tags {
+				e.conditions = append(e.conditions, fmt.Sprintf("LOWER($%d) = ANY(LOWER(e.tags::text)::text[])", len(e.args)+1))
+				e.args = append(e.args, tag)
+			}
 		}
 	}
 }

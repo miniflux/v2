@@ -12,6 +12,7 @@ import (
 
 	"github.com/lib/pq"
 
+	"miniflux.app/v2/internal/database"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/timezone"
 )
@@ -25,6 +26,7 @@ type EntryQueryBuilder struct {
 	limit           int
 	offset          int
 	fetchEnclosures bool
+	useSqliteFts    bool
 }
 
 // WithEnclosures fetches enclosures for each entry.
@@ -37,14 +39,23 @@ func (e *EntryQueryBuilder) WithEnclosures() *EntryQueryBuilder {
 func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 	if query != "" {
 		nArgs := len(e.args) + 1
-		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", nArgs))
-		e.args = append(e.args, query)
+		if e.store.kind == database.DBKindSqlite {
+			query = toSqliteFtsQuery(query)
+			e.useSqliteFts = true
+			e.conditions = append(e.conditions, fmt.Sprintf("fts MATCH $%d", nArgs))
+			e.args = append(e.args, query)
 
-		// 0.0000001 = 0.1 / (seconds_in_a_day)
-		e.WithSorting(
-			fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001", nArgs),
-			"DESC",
-		)
+			e.WithSorting("bm25(fts)", "DESC")
+		} else {
+			e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", nArgs))
+			e.args = append(e.args, query)
+
+			// 0.0000001 = 0.1 / (seconds_in_a_day)
+			e.WithSorting(
+				fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001", nArgs),
+				"DESC",
+			)
+		}
 	}
 	return e
 }
@@ -160,9 +171,24 @@ func (e *EntryQueryBuilder) WithStatuses(statuses []string) *EntryQueryBuilder {
 // WithTags filter by a list of entry tags.
 func (e *EntryQueryBuilder) WithTags(tags []string) *EntryQueryBuilder {
 	if len(tags) > 0 {
-		for _, cat := range tags {
-			e.conditions = append(e.conditions, fmt.Sprintf("LOWER($%d) = ANY(LOWER(e.tags::text)::text[])", len(e.args)+1))
-			e.args = append(e.args, cat)
+		if e.store.kind == database.DBKindSqlite {
+			for _, tag := range tags {
+				n := len(e.args) + 1
+				cond := fmt.Sprintf(`
+					EXISTS (
+						SELECT 1
+						FROM json_each(COALESCE(e.tags, '[]')) AS jt
+						WHERE lower(jt.value) = lower($%d)
+					)
+				`, n)
+				e.conditions = append(e.conditions, cond)
+				e.args = append(e.args, tag)
+			}
+		} else {
+			for _, cat := range tags {
+				e.conditions = append(e.conditions, fmt.Sprintf("LOWER($%d) = ANY(LOWER(e.tags::text)::text[])", len(e.args)+1))
+				e.args = append(e.args, cat)
+			}
 		}
 	}
 	return e
@@ -307,7 +333,16 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			icons i ON i.id=fi.icon_id
 		LEFT JOIN
 			users u ON u.id=e.user_id
-		WHERE ` + e.buildCondition() + " " + e.buildSorting()
+	`
+
+	if e.useSqliteFts {
+		query += `
+			LEFT JOIN
+			  entries_fts fts ON fts.rowid = e.id
+  		`
+	}
+
+	query += " WHERE " + e.buildCondition() + " " + e.buildSorting()
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
@@ -364,7 +399,6 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&externalIconID,
 			&tz,
 		)
-
 		if err != nil {
 			return nil, fmt.Errorf("store: unable to fetch entry row: %v", err)
 		}
@@ -479,4 +513,17 @@ func NewAnonymousQueryBuilder(store *Storage) *EntryQueryBuilder {
 	return &EntryQueryBuilder{
 		store: store,
 	}
+}
+
+func toSqliteFtsQuery(q string) string {
+	q = strings.TrimSpace(q)
+	if q == "" {
+		return ""
+	}
+	terms := strings.Fields(q)
+	for i, t := range terms {
+		t = strings.ReplaceAll(t, `"`, `""`)
+		terms[i] = `"` + t + `"`
+	}
+	return strings.Join(terms, " AND ")
 }

@@ -348,7 +348,7 @@ func TestDatabaseMinConnsOptionParsing(t *testing.T) {
 func TestDatabaseURLOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
 
-	if configParser.options.DatabaseURL() != "user=postgres password=postgres dbname=miniflux2 sslmode=disable" {
+	if configParser.options.DatabaseURL() != "postgres://postgres:postgres/postgres?sslmode=disable" {
 		t.Fatal("Expected DATABASE_URL to have default value")
 	}
 

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strings"
 
+	"miniflux.app/v2/internal/database"
 	"miniflux.app/v2/internal/model"
 
 	"github.com/lib/pq"
@@ -49,7 +50,6 @@ func (s *Storage) GetEnclosures(entryID int64) (model.EnclosureList, error) {
 			&enclosure.MimeType,
 			&enclosure.MediaProgression,
 		)
-
 		if err != nil {
 			return nil, fmt.Errorf(`store: unable to fetch enclosure row: %v`, err)
 		}
@@ -150,15 +150,20 @@ func (s *Storage) createEnclosure(tx *sql.Tx, enclosure *model.Enclosure) error 
 		return nil
 	}
 
-	query := `
+	urlPart := "md5(url)"
+	if s.kind == database.DBKindCockroach {
+		urlPart = "url"
+	}
+
+	query := fmt.Sprintf(`
 		INSERT INTO enclosures
 			(url, size, mime_type, entry_id, user_id, media_progression)
 		VALUES
 			($1, $2, $3, $4, $5, $6)
-		ON CONFLICT (user_id, entry_id, md5(url)) DO NOTHING
+		ON CONFLICT (user_id, entry_id, %s) DO NOTHING
 		RETURNING
 			id
-	`
+	`, urlPart)
 	if err := tx.QueryRow(
 		query,
 		enclosureURL,
@@ -226,7 +231,6 @@ func (s *Storage) UpdateEnclosure(enclosure *model.Enclosure) error {
 		enclosure.MediaProgression,
 		enclosure.ID,
 	)
-
 	if err != nil {
 		return fmt.Errorf(`store: unable to update enclosure #%d : %v`, enclosure.ID, err)
 	}
