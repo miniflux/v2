@@ -41,7 +41,7 @@ func (f *funcMap) Map() template.FuncMap {
 		"baseURL":          config.Opts.BaseURL,
 		"rootURL":          config.Opts.RootURL,
 		"disableLocalAuth": config.Opts.DisableLocalAuth,
-		"oidcProviderName": config.Opts.OIDCProviderName,
+		"oidcProviderName": config.Opts.OAuth2OIDCProviderName,
 		"hasOAuth2Provider": func(provider string) bool {
 			return config.Opts.OAuth2Provider() == provider
 		},

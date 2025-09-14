@@ -414,7 +414,7 @@ func TestKeeplistRulesBehavior(t *testing.T) {
 // Tests for isBlockedGlobally function
 func TestIsBlockedGlobally(t *testing.T) {
 	var err error
-	config.Opts, err = config.NewParser().ParseEnvironmentVariables()
+	config.Opts, err = config.NewConfigParser().ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
@@ -429,7 +429,7 @@ func TestIsBlockedGlobally(t *testing.T) {
 	os.Setenv("FILTER_ENTRY_MAX_AGE_DAYS", "30")
 	defer os.Clearenv()
 
-	config.Opts, err = config.NewParser().ParseEnvironmentVariables()
+	config.Opts, err = config.NewConfigParser().ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}

@@ -7,7 +7,6 @@ import (
 	"bufio"
 	"bytes"
 	"crypto/rand"
-	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -17,301 +16,205 @@ import (
 	"time"
 )
 
-// parser handles configuration parsing.
-type parser struct {
-	opts *options
+type configParser struct {
+	options *configOptions
 }
 
-// NewParser returns a new Parser.
-func NewParser() *parser {
-	return &parser{
-		opts: NewOptions(),
+func NewConfigParser() *configParser {
+	return &configParser{
+		options: NewConfigOptions(),
 	}
 }
 
-// ParseEnvironmentVariables loads configuration values from environment variables.
-func (p *parser) ParseEnvironmentVariables() (*options, error) {
-	err := p.parseLines(os.Environ())
-	if err != nil {
+func (cp *configParser) ParseEnvironmentVariables() (*configOptions, error) {
+	if err := cp.parseLines(os.Environ()); err != nil {
 		return nil, err
 	}
-	return p.opts, nil
+
+	return cp.options, nil
 }
 
-// ParseFile loads configuration values from a local file.
-func (p *parser) ParseFile(filename string) (*options, error) {
+func (cp *configParser) ParseFile(filename string) (*configOptions, error) {
 	fp, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
 	defer fp.Close()
 
-	err = p.parseLines(p.parseFileContent(fp))
-	if err != nil {
+	if err := cp.parseLines(parseFileContent(fp)); err != nil {
 		return nil, err
 	}
-	return p.opts, nil
+
+	return cp.options, nil
 }
 
-func (p *parser) parseFileContent(r io.Reader) (lines []string) {
-	scanner := bufio.NewScanner(r)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if !strings.HasPrefix(line, "#") && strings.Index(line, "=") > 0 {
-			lines = append(lines, line)
-		}
-	}
-	return lines
-}
+func (cp *configParser) postParsing() error {
+	// Parse basePath and rootURL based on BASE_URL
+	baseURL := cp.options.options["BASE_URL"].ParsedStringValue
+	baseURL = strings.TrimSuffix(baseURL, "/")
 
-func (p *parser) parseLines(lines []string) (err error) {
-	var port string
-
-	for lineNum, line := range lines {
-		key, value, ok := strings.Cut(line, "=")
-		if !ok {
-			return fmt.Errorf("config: unable to parse configuration, invalid format on line %d", lineNum)
-		}
-		key, value = strings.TrimSpace(key), strings.TrimSpace(value)
-
-		switch key {
-		case "LOG_FILE":
-			p.opts.logFile = parseString(value, defaultLogFile)
-		case "LOG_DATE_TIME":
-			p.opts.logDateTime = parseBool(value, defaultLogDateTime)
-		case "LOG_LEVEL":
-			parsedValue := parseString(value, defaultLogLevel)
-			if parsedValue == "debug" || parsedValue == "info" || parsedValue == "warning" || parsedValue == "error" {
-				p.opts.logLevel = parsedValue
-			}
-		case "LOG_FORMAT":
-			parsedValue := parseString(value, defaultLogFormat)
-			if parsedValue == "json" || parsedValue == "text" {
-				p.opts.logFormat = parsedValue
-			}
-		case "BASE_URL":
-			p.opts.baseURL, p.opts.rootURL, p.opts.basePath, err = parseBaseURL(value)
-			if err != nil {
-				return err
-			}
-		case "PORT":
-			port = value
-		case "LISTEN_ADDR":
-			p.opts.listenAddr = parseStringList(value, []string{defaultListenAddr})
-		case "DATABASE_URL":
-			p.opts.databaseURL = parseString(value, defaultDatabaseURL)
-		case "DATABASE_URL_FILE":
-			p.opts.databaseURL = readSecretFile(value, defaultDatabaseURL)
-		case "DATABASE_MAX_CONNS":
-			p.opts.databaseMaxConns = parseInt(value, defaultDatabaseMaxConns)
-		case "DATABASE_MIN_CONNS":
-			p.opts.databaseMinConns = parseInt(value, defaultDatabaseMinConns)
-		case "DATABASE_CONNECTION_LIFETIME":
-			p.opts.databaseConnectionLifetime = parseInt(value, defaultDatabaseConnectionLifetime)
-		case "FILTER_ENTRY_MAX_AGE_DAYS":
-			p.opts.filterEntryMaxAgeDays = parseInt(value, defaultFilterEntryMaxAgeDays)
-		case "RUN_MIGRATIONS":
-			p.opts.runMigrations = parseBool(value, defaultRunMigrations)
-		case "DISABLE_HSTS":
-			p.opts.hsts = !parseBool(value, defaultHSTS)
-		case "HTTPS":
-			p.opts.HTTPS = parseBool(value, defaultHTTPS)
-		case "DISABLE_SCHEDULER_SERVICE":
-			p.opts.schedulerService = !parseBool(value, defaultSchedulerService)
-		case "DISABLE_HTTP_SERVICE":
-			p.opts.httpService = !parseBool(value, defaultHTTPService)
-		case "CERT_FILE":
-			p.opts.certFile = parseString(value, defaultCertFile)
-		case "KEY_FILE":
-			p.opts.certKeyFile = parseString(value, defaultKeyFile)
-		case "CERT_DOMAIN":
-			p.opts.certDomain = parseString(value, defaultCertDomain)
-		case "CLEANUP_FREQUENCY_HOURS":
-			p.opts.cleanupFrequencyInterval = parseInterval(value, time.Hour, defaultCleanupFrequency)
-		case "CLEANUP_ARCHIVE_READ_DAYS":
-			p.opts.cleanupArchiveReadInterval = parseInterval(value, 24*time.Hour, defaultCleanupArchiveReadInterval)
-		case "CLEANUP_ARCHIVE_UNREAD_DAYS":
-			p.opts.cleanupArchiveUnreadInterval = parseInterval(value, 24*time.Hour, defaultCleanupArchiveUnreadInterval)
-		case "CLEANUP_ARCHIVE_BATCH_SIZE":
-			p.opts.cleanupArchiveBatchSize = parseInt(value, defaultCleanupArchiveBatchSize)
-		case "CLEANUP_REMOVE_SESSIONS_DAYS":
-			p.opts.cleanupRemoveSessionsInterval = parseInterval(value, 24*time.Hour, defaultCleanupRemoveSessionsInterval)
-		case "WORKER_POOL_SIZE":
-			p.opts.workerPoolSize = parseInt(value, defaultWorkerPoolSize)
-		case "FORCE_REFRESH_INTERVAL":
-			p.opts.forceRefreshInterval = parseInterval(value, time.Minute, defaultForceRefreshInterval)
-		case "BATCH_SIZE":
-			p.opts.batchSize = parseInt(value, defaultBatchSize)
-		case "POLLING_FREQUENCY":
-			p.opts.pollingFrequency = parseInterval(value, time.Minute, defaultPollingFrequency)
-		case "POLLING_LIMIT_PER_HOST":
-			p.opts.pollingLimitPerHost = parseInt(value, 0)
-		case "POLLING_PARSING_ERROR_LIMIT":
-			p.opts.pollingParsingErrorLimit = parseInt(value, defaultPollingParsingErrorLimit)
-		case "POLLING_SCHEDULER":
-			p.opts.pollingScheduler = strings.ToLower(parseString(value, defaultPollingScheduler))
-		case "SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL":
-			p.opts.schedulerEntryFrequencyMaxInterval = parseInterval(value, time.Minute, defaultSchedulerEntryFrequencyMaxInterval)
-		case "SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL":
-			p.opts.schedulerEntryFrequencyMinInterval = parseInterval(value, time.Minute, defaultSchedulerEntryFrequencyMinInterval)
-		case "SCHEDULER_ENTRY_FREQUENCY_FACTOR":
-			p.opts.schedulerEntryFrequencyFactor = parseInt(value, defaultSchedulerEntryFrequencyFactor)
-		case "SCHEDULER_ROUND_ROBIN_MIN_INTERVAL":
-			p.opts.schedulerRoundRobinMinInterval = parseInterval(value, time.Minute, defaultSchedulerRoundRobinMinInterval)
-		case "SCHEDULER_ROUND_ROBIN_MAX_INTERVAL":
-			p.opts.schedulerRoundRobinMaxInterval = parseInterval(value, time.Minute, defaultSchedulerRoundRobinMaxInterval)
-		case "MEDIA_PROXY_HTTP_CLIENT_TIMEOUT":
-			p.opts.mediaProxyHTTPClientTimeout = parseInterval(value, time.Second, defaultMediaProxyHTTPClientTimeout)
-		case "MEDIA_PROXY_MODE":
-			p.opts.mediaProxyMode = parseString(value, defaultMediaProxyMode)
-		case "MEDIA_PROXY_RESOURCE_TYPES":
-			p.opts.mediaProxyResourceTypes = parseStringList(value, []string{defaultMediaResourceTypes})
-		case "MEDIA_PROXY_PRIVATE_KEY":
-			randomKey := make([]byte, 16)
-			rand.Read(randomKey)
-			p.opts.mediaProxyPrivateKey = parseBytes(value, randomKey)
-		case "MEDIA_PROXY_CUSTOM_URL":
-			p.opts.mediaProxyCustomURL, err = url.Parse(parseString(value, defaultMediaProxyURL))
-			if err != nil {
-				return fmt.Errorf("config: invalid MEDIA_PROXY_CUSTOM_URL value: %w", err)
-			}
-		case "CREATE_ADMIN":
-			p.opts.createAdmin = parseBool(value, defaultCreateAdmin)
-		case "ADMIN_USERNAME":
-			p.opts.adminUsername = parseString(value, defaultAdminUsername)
-		case "ADMIN_USERNAME_FILE":
-			p.opts.adminUsername = readSecretFile(value, defaultAdminUsername)
-		case "ADMIN_PASSWORD":
-			p.opts.adminPassword = parseString(value, defaultAdminPassword)
-		case "ADMIN_PASSWORD_FILE":
-			p.opts.adminPassword = readSecretFile(value, defaultAdminPassword)
-		case "OAUTH2_USER_CREATION":
-			p.opts.oauth2UserCreationAllowed = parseBool(value, defaultOAuth2UserCreation)
-		case "OAUTH2_CLIENT_ID":
-			p.opts.oauth2ClientID = parseString(value, defaultOAuth2ClientID)
-		case "OAUTH2_CLIENT_ID_FILE":
-			p.opts.oauth2ClientID = readSecretFile(value, defaultOAuth2ClientID)
-		case "OAUTH2_CLIENT_SECRET":
-			p.opts.oauth2ClientSecret = parseString(value, defaultOAuth2ClientSecret)
-		case "OAUTH2_CLIENT_SECRET_FILE":
-			p.opts.oauth2ClientSecret = readSecretFile(value, defaultOAuth2ClientSecret)
-		case "OAUTH2_REDIRECT_URL":
-			p.opts.oauth2RedirectURL = parseString(value, defaultOAuth2RedirectURL)
-		case "OAUTH2_OIDC_DISCOVERY_ENDPOINT":
-			p.opts.oidcDiscoveryEndpoint = parseString(value, defaultOAuth2OidcDiscoveryEndpoint)
-		case "OAUTH2_OIDC_PROVIDER_NAME":
-			p.opts.oidcProviderName = parseString(value, defaultOauth2OidcProviderName)
-		case "OAUTH2_PROVIDER":
-			p.opts.oauth2Provider = parseString(value, defaultOAuth2Provider)
-		case "DISABLE_LOCAL_AUTH":
-			p.opts.disableLocalAuth = parseBool(value, defaultDisableLocalAuth)
-		case "HTTP_CLIENT_TIMEOUT":
-			p.opts.httpClientTimeout = parseInterval(value, time.Second, defaultHTTPClientTimeout)
-		case "HTTP_CLIENT_MAX_BODY_SIZE":
-			p.opts.httpClientMaxBodySize = int64(parseInt(value, defaultHTTPClientMaxBodySize) * 1024 * 1024)
-		case "HTTP_CLIENT_PROXY":
-			p.opts.httpClientProxyURL, err = url.Parse(parseString(value, defaultHTTPClientProxy))
-			if err != nil {
-				return fmt.Errorf("config: invalid HTTP_CLIENT_PROXY value: %w", err)
-			}
-		case "HTTP_CLIENT_PROXIES":
-			p.opts.httpClientProxies = parseStringList(value, []string{})
-		case "HTTP_CLIENT_USER_AGENT":
-			p.opts.httpClientUserAgent = parseString(value, defaultHTTPClientUserAgent)
-		case "HTTP_SERVER_TIMEOUT":
-			p.opts.httpServerTimeout = parseInterval(value, time.Second, defaultHTTPServerTimeout)
-		case "AUTH_PROXY_HEADER":
-			p.opts.authProxyHeader = parseString(value, defaultAuthProxyHeader)
-		case "AUTH_PROXY_USER_CREATION":
-			p.opts.authProxyUserCreation = parseBool(value, defaultAuthProxyUserCreation)
-		case "MAINTENANCE_MODE":
-			p.opts.maintenanceMode = parseBool(value, defaultMaintenanceMode)
-		case "MAINTENANCE_MESSAGE":
-			p.opts.maintenanceMessage = parseString(value, defaultMaintenanceMessage)
-		case "METRICS_COLLECTOR":
-			p.opts.metricsCollector = parseBool(value, defaultMetricsCollector)
-		case "METRICS_REFRESH_INTERVAL":
-			p.opts.metricsRefreshInterval = parseInterval(value, time.Second, defaultMetricsRefreshInterval)
-		case "METRICS_ALLOWED_NETWORKS":
-			p.opts.metricsAllowedNetworks = parseStringList(value, []string{defaultMetricsAllowedNetworks})
-		case "METRICS_USERNAME":
-			p.opts.metricsUsername = parseString(value, defaultMetricsUsername)
-		case "METRICS_USERNAME_FILE":
-			p.opts.metricsUsername = readSecretFile(value, defaultMetricsUsername)
-		case "METRICS_PASSWORD":
-			p.opts.metricsPassword = parseString(value, defaultMetricsPassword)
-		case "METRICS_PASSWORD_FILE":
-			p.opts.metricsPassword = readSecretFile(value, defaultMetricsPassword)
-		case "FETCH_BILIBILI_WATCH_TIME":
-			p.opts.fetchBilibiliWatchTime = parseBool(value, defaultFetchBilibiliWatchTime)
-		case "FETCH_NEBULA_WATCH_TIME":
-			p.opts.fetchNebulaWatchTime = parseBool(value, defaultFetchNebulaWatchTime)
-		case "FETCH_ODYSEE_WATCH_TIME":
-			p.opts.fetchOdyseeWatchTime = parseBool(value, defaultFetchOdyseeWatchTime)
-		case "FETCH_YOUTUBE_WATCH_TIME":
-			p.opts.fetchYouTubeWatchTime = parseBool(value, defaultFetchYouTubeWatchTime)
-		case "YOUTUBE_API_KEY":
-			p.opts.youTubeApiKey = parseString(value, defaultYouTubeApiKey)
-		case "YOUTUBE_EMBED_URL_OVERRIDE":
-			p.opts.youTubeEmbedUrlOverride = parseString(value, defaultYouTubeEmbedUrlOverride)
-		case "WATCHDOG":
-			p.opts.watchdog = parseBool(value, defaultWatchdog)
-		case "INVIDIOUS_INSTANCE":
-			p.opts.invidiousInstance = parseString(value, defaultInvidiousInstance)
-		case "WEBAUTHN":
-			p.opts.webAuthn = parseBool(value, defaultWebAuthn)
-		}
-	}
-
-	if port != "" {
-		p.opts.listenAddr = []string{":" + port}
-	}
-
-	youtubeEmbedURL, err := url.Parse(p.opts.youTubeEmbedUrlOverride)
+	parsedURL, err := url.Parse(baseURL)
 	if err != nil {
-		return fmt.Errorf("config: invalid YOUTUBE_EMBED_URL_OVERRIDE value: %w", err)
-	}
-	p.opts.youTubeEmbedDomain = youtubeEmbedURL.Hostname()
-
-	return nil
-}
-
-func parseBaseURL(value string) (string, string, string, error) {
-	if value == "" {
-		return defaultBaseURL, defaultRootURL, "", nil
-	}
-
-	value = strings.TrimSuffix(value, "/")
-
-	parsedURL, err := url.Parse(value)
-	if err != nil {
-		return "", "", "", fmt.Errorf("config: invalid BASE_URL: %w", err)
+		return fmt.Errorf("invalid BASE_URL: %v", err)
 	}
 
 	scheme := strings.ToLower(parsedURL.Scheme)
 	if scheme != "https" && scheme != "http" {
-		return "", "", "", errors.New("config: invalid BASE_URL: scheme must be http or https")
+		return fmt.Errorf("BASE_URL scheme must be http or https")
 	}
 
-	basePath := parsedURL.Path
+	cp.options.options["BASE_URL"].ParsedStringValue = baseURL
+	cp.options.basePath = parsedURL.Path
+
 	parsedURL.Path = ""
-	return value, parsedURL.String(), basePath, nil
+	cp.options.rootURL = parsedURL.String()
+
+	// Parse YouTube embed domain based on YOUTUBE_EMBED_URL_OVERRIDE
+	youTubeEmbedURLOverride := cp.options.options["YOUTUBE_EMBED_URL_OVERRIDE"].ParsedStringValue
+	if youTubeEmbedURLOverride != "" {
+		parsedYouTubeEmbedURL, err := url.Parse(youTubeEmbedURLOverride)
+		if err != nil {
+			return fmt.Errorf("invalid YOUTUBE_EMBED_URL_OVERRIDE: %v", err)
+		}
+		cp.options.youTubeEmbedDomain = parsedYouTubeEmbedURL.Hostname()
+	}
+
+	// Generate a media proxy private key if not set
+	if len(cp.options.options["MEDIA_PROXY_PRIVATE_KEY"].ParsedBytesValue) == 0 {
+		randomKey := make([]byte, 16)
+		rand.Read(randomKey)
+		cp.options.options["MEDIA_PROXY_PRIVATE_KEY"].ParsedBytesValue = randomKey
+	}
+
+	// Override LISTEN_ADDR with PORT if set (for compatibility reasons)
+	if cp.options.Port() != "" {
+		cp.options.options["LISTEN_ADDR"].ParsedStringList = []string{":" + cp.options.Port()}
+		cp.options.options["LISTEN_ADDR"].RawValue = ":" + cp.options.Port()
+	}
+
+	return nil
 }
 
-func parseBool(value string, fallback bool) bool {
+func (cp *configParser) parseLines(lines []string) error {
+	for lineNum, line := range lines {
+		key, value, ok := strings.Cut(line, "=")
+		if !ok {
+			return fmt.Errorf("unable to parse configuration, invalid format on line %d", lineNum)
+		}
+
+		key, value = strings.TrimSpace(key), strings.TrimSpace(value)
+		if err := cp.parseLine(key, value); err != nil {
+			return err
+		}
+	}
+
+	if err := cp.postParsing(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cp *configParser) parseLine(key, value string) error {
+	field, exists := cp.options.options[key]
+	if !exists {
+		// Ignore unknown configuration keys to avoid parsing unrelated environment variables.
+		return nil
+	}
+
+	// Validate the option if a validator is provided
+	if field.Validator != nil {
+		if err := field.Validator(value); err != nil {
+			return fmt.Errorf("invalid value for key %s: %v", key, err)
+		}
+	}
+
+	// Convert the raw value based on its type
+	switch field.ValueType {
+	case stringType:
+		field.ParsedStringValue = parseStringValue(value, field.ParsedStringValue)
+		field.RawValue = value
+	case stringListType:
+		field.ParsedStringList = parseStringListValue(value, field.ParsedStringList)
+		field.RawValue = value
+	case boolType:
+		parsedValue, err := parseBoolValue(value, field.ParsedBoolValue)
+		if err != nil {
+			return fmt.Errorf("invalid boolean value for key %s: %v", key, err)
+		}
+		field.ParsedBoolValue = parsedValue
+		field.RawValue = value
+	case intType:
+		field.ParsedIntValue = parseIntValue(value, field.ParsedIntValue)
+		field.RawValue = value
+	case int64Type:
+		field.ParsedInt64Value = ParsedInt64Value(value, field.ParsedInt64Value)
+		field.RawValue = value
+	case secondType:
+		field.ParsedDuration = parseDurationValue(value, time.Second, field.ParsedDuration)
+		field.RawValue = value
+	case minuteType:
+		field.ParsedDuration = parseDurationValue(value, time.Minute, field.ParsedDuration)
+		field.RawValue = value
+	case hourType:
+		field.ParsedDuration = parseDurationValue(value, time.Hour, field.ParsedDuration)
+		field.RawValue = value
+	case dayType:
+		field.ParsedDuration = parseDurationValue(value, time.Hour*24, field.ParsedDuration)
+		field.RawValue = value
+	case urlType:
+		parsedURL, err := parseURLValue(value, field.ParsedURLValue)
+		if err != nil {
+			return fmt.Errorf("invalid URL for key %s: %v", key, err)
+		}
+		field.ParsedURLValue = parsedURL
+		field.RawValue = value
+	case secretFileType:
+		secretValue, err := readSecretFileValue(value)
+		if err != nil {
+			return fmt.Errorf("error reading secret file for key %s: %v", key, err)
+		}
+		if field.TargetKey != "" {
+			if targetField, ok := cp.options.options[field.TargetKey]; ok {
+				targetField.ParsedStringValue = secretValue
+				targetField.RawValue = secretValue
+			}
+		}
+		field.RawValue = value
+	case bytesType:
+		if value != "" {
+			field.ParsedBytesValue = []byte(value)
+			field.RawValue = value
+		}
+	}
+
+	return nil
+}
+
+func parseStringValue(value string, fallback string) string {
 	if value == "" {
 		return fallback
+	}
+	return value
+}
+
+func parseBoolValue(value string, fallback bool) (bool, error) {
+	if value == "" {
+		return fallback, nil
 	}
 
 	value = strings.ToLower(value)
 	if value == "1" || value == "yes" || value == "true" || value == "on" {
-		return true
+		return true, nil
+	}
+	if value == "0" || value == "no" || value == "false" || value == "off" {
+		return false, nil
 	}
 
-	return false
+	return false, fmt.Errorf("invalid boolean value: %q", value)
 }
 
-func parseInt(value string, fallback int) int {
+func parseIntValue(value string, fallback int) int {
 	if value == "" {
 		return fallback
 	}
@@ -324,14 +227,20 @@ func parseInt(value string, fallback int) int {
 	return v
 }
 
-func parseString(value string, fallback string) string {
+func ParsedInt64Value(value string, fallback int64) int64 {
 	if value == "" {
 		return fallback
 	}
-	return value
+
+	v, err := strconv.ParseInt(value, 10, 64)
+	if err != nil {
+		return fallback
+	}
+
+	return v
 }
 
-func parseStringList(value string, fallback []string) []string {
+func parseStringListValue(value string, fallback []string) []string {
 	if value == "" {
 		return fallback
 	}
@@ -351,16 +260,7 @@ func parseStringList(value string, fallback []string) []string {
 	return strList
 }
 
-func parseBytes(value string, fallback []byte) []byte {
-	if value == "" {
-		return fallback
-	}
-
-	return []byte(value)
-}
-
-// parseInterval converts an integer "value" to [time.Duration] using "unit" as multiplier.
-func parseInterval(value string, unit time.Duration, fallback time.Duration) time.Duration {
+func parseDurationValue(value string, unit time.Duration, fallback time.Duration) time.Duration {
 	if value == "" {
 		return fallback
 	}
@@ -373,16 +273,40 @@ func parseInterval(value string, unit time.Duration, fallback time.Duration) tim
 	return time.Duration(v) * unit
 }
 
-func readSecretFile(filename, fallback string) string {
+func parseURLValue(value string, fallback *url.URL) (*url.URL, error) {
+	if value == "" {
+		return fallback, nil
+	}
+
+	parsedURL, err := url.Parse(value)
+	if err != nil {
+		return fallback, err
+	}
+
+	return parsedURL, nil
+}
+
+func readSecretFileValue(filename string) (string, error) {
 	data, err := os.ReadFile(filename)
 	if err != nil {
-		return fallback
+		return "", err
 	}
 
 	value := string(bytes.TrimSpace(data))
 	if value == "" {
-		return fallback
+		return "", fmt.Errorf("secret file is empty")
 	}
 
-	return value
+	return value, nil
+}
+
+func parseFileContent(r io.Reader) (lines []string) {
+	scanner := bufio.NewScanner(r)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if !strings.HasPrefix(line, "#") && strings.Index(line, "=") > 0 {
+			lines = append(lines, line)
+		}
+	}
+	return lines
 }

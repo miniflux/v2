@@ -290,7 +290,7 @@ func TestEnclosure_ProxifyEnclosureURL(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test-private-key")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Config parsing failure: %v`, err)
@@ -420,7 +420,7 @@ func TestEnclosureList_ProxifyEnclosureURL(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test-private-key")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Config parsing failure: %v`, err)
@@ -535,7 +535,7 @@ func TestEnclosure_ProxifyEnclosureURL_EdgeCases(t *testing.T) {
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test-private-key")
 
 	var err error
-	parser := config.NewParser()
+	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Config parsing failure: %v`, err)

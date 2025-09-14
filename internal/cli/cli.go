@@ -78,7 +78,7 @@ func Parse() {
 	flag.StringVar(&flagExportUserFeeds, "export-user-feeds", "", flagExportUserFeedsHelp)
 	flag.Parse()
 
-	cfg := config.NewParser()
+	cfg := config.NewConfigParser()
 
 	if flagConfigFile != "" {
 		config.Opts, err = cfg.ParseFile(flagConfigFile)
