@@ -7,16 +7,19 @@ import (
 	"context"
 	"database/sql"
 	"time"
+
+	"miniflux.app/v2/internal/database"
 )
 
 // Storage handles all operations related to the database.
 type Storage struct {
-	db *sql.DB
+	kind database.DBKind
+	db   *sql.DB
 }
 
 // NewStorage returns a new Storage.
-func NewStorage(db *sql.DB) *Storage {
-	return &Storage{db}
+func NewStorage(kind database.DBKind, db *sql.DB) *Storage {
+	return &Storage{kind, db}
 }
 
 // DatabaseVersion returns the version of the database which is in use.

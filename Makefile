@@ -3,7 +3,6 @@ DOCKER_IMAGE    := miniflux/miniflux
 VERSION         := $(shell git describe --tags --exact-match 2>/dev/null)
 LD_FLAGS        := "-s -w -X 'miniflux.app/v2/internal/version.Version=$(VERSION)'"
 PKG_LIST        := $(shell go list ./... | grep -v /vendor/)
-DB_URL          := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 DOCKER_PLATFORM := amd64
 
 export PGPASSWORD := postgres
@@ -28,8 +27,12 @@ export PGPASSWORD := postgres
 	add-string \
 	test \
 	lint \
-	integration-test \
-	clean-integration-test \
+	integration-test-postgresql \
+	clean-integration-test-postgresql \
+	integration-test-cockroachdb \
+	clean-integration-test-cockroachdb \
+	integration-test-sqlite \
+	clean-integration-test-sqlite \
 	docker-image \
 	docker-image-distroless \
 	docker-images \
@@ -103,17 +106,18 @@ lint:
 	staticcheck ./...
 	golangci-lint run --disable errcheck --enable sqlclosecheck --enable misspell --enable gofmt --enable goimports --enable whitespace
 
-integration-test:
-	psql -U postgres -c 'drop database if exists miniflux_test;'
-	psql -U postgres -c 'create database miniflux_test;'
+integration-test-postgresql:
+	psql -U postgres -p 5432 -d postgres -c 'drop database if exists miniflux2;'
+	psql -U postgres -p 5432 -d postgres -c 'create database miniflux2;'
 
-	DATABASE_URL=$(DB_URL) \
+	go build -o miniflux-test main.go
+	DATABASE_URL='postgres://postgres:postgres@localhost:5432/miniflux2?sslmode=disable' \
 	ADMIN_USERNAME=admin \
 	ADMIN_PASSWORD=test123 \
 	CREATE_ADMIN=1 \
 	RUN_MIGRATIONS=1 \
 	LOG_LEVEL=debug \
-	go run main.go >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
+	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 
 	while ! nc -z localhost 8080; do sleep 1; done
 
@@ -122,10 +126,57 @@ integration-test:
 	TEST_MINIFLUX_ADMIN_PASSWORD=test123 \
 	go test -v -count=1 ./internal/api
 
-clean-integration-test:
+clean-integration-test-postgresql:
 	@ kill -9 `cat /tmp/miniflux.pid`
 	@ rm -f /tmp/miniflux.pid /tmp/miniflux.log
-	@ psql -U postgres -c 'drop database if exists miniflux_test;'
+	@ psql -U postgres -d postgres -c 'drop database if exists miniflux2;'
+
+integration-test-cockroachdb:
+	psql -U postgres -d postgres -p 26257 -c 'drop database if exists miniflux2;'
+	psql -U postgres -d postgres -p 26257 -c 'create database miniflux2;'
+
+	go build -o miniflux-test main.go
+	DATABASE_URL='cockroach://postgres:postgres@localhost:26257/miniflux2?sslmode=disable' \
+	ADMIN_USERNAME=admin \
+	ADMIN_PASSWORD=test123 \
+	CREATE_ADMIN=1 \
+	RUN_MIGRATIONS=1 \
+	LOG_LEVEL=debug \
+	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
+
+	while ! nc -z localhost 8080; do sleep 1; done
+
+	TEST_MINIFLUX_BASE_URL=http://127.0.0.1:8080 \
+	TEST_MINIFLUX_ADMIN_USERNAME=admin \
+	TEST_MINIFLUX_ADMIN_PASSWORD=test123 \
+	go test -v -count=1 ./internal/api
+
+clean-integration-test-cockroachdb:
+	@ kill -9 `cat /tmp/miniflux.pid`
+	@ rm -f /tmp/miniflux.pid /tmp/miniflux.log
+	@ psql -U postgres -d postgres -c 'drop database if exists miniflux2;'
+
+integration-test-sqlite:
+	go build -o miniflux-test main.go
+	DATABASE_URL='file::memory:?cache=shared&_pragma=foreign_keys(ON)' \
+	ADMIN_USERNAME=admin \
+	ADMIN_PASSWORD=test123 \
+	CREATE_ADMIN=1 \
+	RUN_MIGRATIONS=1 \
+	DEBUG=1 \
+	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
+
+	while ! nc -z localhost 8080; do sleep 1; done
+
+	TEST_MINIFLUX_BASE_URL=http://127.0.0.1:8080 \
+	TEST_MINIFLUX_ADMIN_USERNAME=admin \
+	TEST_MINIFLUX_ADMIN_PASSWORD=test123 \
+	go test -v -count=1 ./internal/api
+
+clean-integration-test-sqlite:
+	@ kill -9 `cat /tmp/miniflux.pid`
+	@ rm -f /tmp/miniflux.pid /tmp/miniflux.log
+	@ rm miniflux-test
 
 docker-image:
 	docker build --pull -t $(DOCKER_IMAGE):$(VERSION) -f packaging/docker/alpine/Dockerfile .

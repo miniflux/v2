@@ -1,0 +1,37 @@
+services:
+  postgresql:
+    image: postgres:17.6
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: miniflux2
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD", "pg_isready -d miniflux2 -U postgres"]
+      timeout: 30s
+      interval: 5s
+
+  cockroachdb:
+    image: cockroachdb/cockroach:v23.2.28
+    command: start-single-node --insecure
+    volumes:
+      - cockroach-data:/cockroach/cockroach-data
+    environment:
+      COCKROACH_DATABASE: miniflux2
+      COCKROACH_USER: postgres
+    ports:
+      - "26257:26257"
+      - "26258:8080"
+    healthcheck:
+      test: ["CMD", "cockroach", "sql", "--insecure", "--host=localhost:26257", "-e", "select 1"]
+      timeout: 30s
+      interval: 5s
+
+volumes:
+  postgres-data:
+    driver: local
+  cockroach-data:
+    driver: local

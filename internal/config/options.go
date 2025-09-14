@@ -183,8 +183,8 @@ func NewConfigOptions() *configOptions {
 				},
 			},
 			"DATABASE_URL": {
-				ParsedStringValue: "user=postgres password=postgres dbname=miniflux2 sslmode=disable",
-				RawValue:          "user=postgres password=postgres dbname=miniflux2 sslmode=disable",
+				ParsedStringValue: "postgres://postgres:postgres/postgres?sslmode=disable",
+				RawValue:          "postgres://postgres:postgres/postgres?sslmode=disable",
 				ValueType:         stringType,
 				Secret:            true,
 			},
@@ -779,7 +779,7 @@ func (c *configOptions) IsAuthProxyUserCreationAllowed() bool {
 }
 
 func (c *configOptions) IsDefaultDatabaseURL() bool {
-	return c.options["DATABASE_URL"].RawValue == "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
+	return c.options["DATABASE_URL"].RawValue == "postgres://postgres:postgres/postgres?sslmode=disable"
 }
 
 func (c *configOptions) IsOAuth2UserCreationAllowed() bool {

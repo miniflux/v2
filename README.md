@@ -1,13 +1,11 @@
-Miniflux 2
-==========
+# Miniflux 2
 
 Miniflux is a minimalist and opinionated feed reader.
 It's simple, fast, lightweight and super easy to install.
 
 Official website: <https://miniflux.app>
 
-Features
---------
+## Features
 
 ### Feed Reader
 
@@ -19,7 +17,7 @@ Features
 - Share individual articles publicly.
 - Fetches website icons (favicons).
 - Saves articles to third-party services.
-- Provides full-text search (powered by Postgres).
+- Provides full-text search.
 - Available in 20 languages: Portuguese (Brazilian), Chinese (Simplified and Traditional), Dutch, English (US), Finnish, French, German, Greek, Hindi, Indonesian, Italian, Japanese, Polish, Romanian, Russian, Taiwanese POJ, Ukrainian, Spanish, and Turkish.
 
 ### Privacy and Security
@@ -34,7 +32,7 @@ Features
 - Supports alternative YouTube video players such as [Invidious](https://invidio.us).
 - Blocks external JavaScript to prevent tracking and enhance security.
 - Sanitizes external content before rendering it.
-- Enforces a [Content Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) and a [Trusted Types Policy](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API) to only application JavaScript and blocks inline scripts and styles. 
+- Enforces a [Content Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) and a [Trusted Types Policy](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API) to only application JavaScript and blocks inline scripts and styles.
 
 ### Bot Protection Bypass Mechanisms
 
@@ -63,12 +61,12 @@ Features
 - Optional touch gesture support for navigation on mobile devices.
 - Custom stylesheets and JavaScript to personalize the user interface to your preferences.
 - Themes:
-    - Light (Sans-Serif)
-    - Light (Serif)
-    - Dark (Sans-Serif)
-    - Dark (Serif)
-    - System (Sans-Serif) – Automatically switches between Dark and Light themes based on system preferences.
-    - System (Serif)
+  - Light (Sans-Serif)
+  - Light (Serif)
+  - Dark (Sans-Serif)
+  - Dark (Serif)
+  - System (Sans-Serif) – Automatically switches between Dark and Light themes based on system preferences.
+  - System (Serif)
 
 ### Integrations
 
@@ -90,7 +88,7 @@ Features
 
 - Written in [Go (Golang)](https://golang.org/).
 - Single binary compiled statically without dependency.
-- Works only with [PostgreSQL](https://www.postgresql.org/).
+- Works with [PostgreSQL](https://www.postgresql.org/), [CockroachDB](https://www.cockroachlabs.com/) and [SQLite](https://sqlite.org/).
 - Does not use any ORM or any complicated frameworks.
 - Uses modern vanilla JavaScript only when necessary.
 - All static files are bundled into the application binary using the Go `embed` package.
@@ -109,8 +107,7 @@ Features
 - Only uses a couple of MB of memory and a negligible amount of CPU, even with several hundreds of feeds.
 - Respects/sends Last-Modified, If-Modified-Since, If-None-Match, Cache-Control, Expires and ETags headers, and has a default polling interval of 1h.
 
-Documentation
--------------
+## Documentation
 
 The Miniflux documentation is available here: <https://miniflux.app/docs/> ([Man page](https://miniflux.app/miniflux.1.html))
 
@@ -130,8 +127,7 @@ The Miniflux documentation is available here: <https://miniflux.app/docs/> ([Man
 - [Internationalization](https://miniflux.app/docs/i18n.html)
 - [Frequently Asked Questions](https://miniflux.app/faq.html)
 
-Screenshots
------------
+## Screenshots
 
 Default theme:
 
@@ -141,8 +137,7 @@ Dark theme when using keyboard navigation:
 
 ![Dark theme](https://miniflux.app/images/item-selection-black-theme.png)
 
-Credits
--------
+## Credits
 
 - Authors: Frédéric Guillot - [List of contributors](https://github.com/miniflux/v2/graphs/contributors)
 - Distributed under Apache 2.0 License

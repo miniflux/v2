@@ -168,7 +168,13 @@ func Parse() {
 		printErrorAndExit(fmt.Errorf("unable to generate javascript bundle: %v", err))
 	}
 
+	kind, err := database.DetectKind(config.Opts.DatabaseURL())
+	if err != nil {
+		printErrorAndExit(fmt.Errorf("unable to parse database kind: %v", err))
+	}
+
 	db, err := database.NewConnectionPool(
+		kind,
 		config.Opts.DatabaseURL(),
 		config.Opts.DatabaseMinConns(),
 		config.Opts.DatabaseMaxConns(),
@@ -179,14 +185,14 @@ func Parse() {
 	}
 	defer db.Close()
 
-	store := storage.NewStorage(db)
+	store := storage.NewStorage(kind, db)
 
 	if err := store.Ping(); err != nil {
 		printErrorAndExit(err)
 	}
 
 	if flagMigrate {
-		if err := database.Migrate(db); err != nil {
+		if err := database.Migrate(kind, db); err != nil {
 			printErrorAndExit(err)
 		}
 		return
@@ -228,12 +234,12 @@ func Parse() {
 
 	// Run migrations and start the daemon.
 	if config.Opts.RunMigrations() {
-		if err := database.Migrate(db); err != nil {
+		if err := database.Migrate(kind, db); err != nil {
 			printErrorAndExit(err)
 		}
 	}
 
-	if err := database.IsSchemaUpToDate(db); err != nil {
+	if err := database.IsSchemaUpToDate(kind, db); err != nil {
 		printErrorAndExit(err)
 	}
 
