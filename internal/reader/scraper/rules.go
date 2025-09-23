@@ -10,7 +10,7 @@ var predefinedRules = map[string]string{
 	"bbc.co.uk":            "div.vxp-column--single, div.story-body__inner, ul.gallery-images__list",
 	"blog.cloudflare.com":  "div.post-content",
 	"cbc.ca":               ".story-content",
-	"darkreading.com":      "#article-main:not(header)",
+	"darkreading.com":      "div.ArticleBase-Body",
 	"developpez.com":       "div[itemprop=articleBody]",
 	"dilbert.com":          "span.comic-title-name, img.img-comic",
 	"explosm.net":          "div#comic",
