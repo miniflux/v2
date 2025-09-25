@@ -14,6 +14,7 @@ var predefinedRules = map[string]string{
 	"cowbirdsinlove.com":     "add_image_title",
 	"drawingboardcomic.com":  "add_image_title",
 	"exocomics.com":          "add_image_title",
+	"explainxkcd.com":        "add_image_title",
 	"framatube.org":          "nl2br,convert_text_link",
 	"happletea.com":          "add_image_title",
 	"ilpost.it":              `remove(".art_tag, #audioPlayerArticle, .author-container, .caption, .ilpostShare, .lastRecents, #mc_embed_signup, .outbrain_inread, p:has(.leggi-anche), .youtube-overlay")`,
