@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/crypto"
+	"miniflux.app/v2/internal/database"
 	"miniflux.app/v2/internal/model"
 
 	"github.com/lib/pq"
@@ -70,17 +71,21 @@ func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 // UpdateEntryTitleAndContent updates entry title and content.
 func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
-	query := `
+	setweightPart := "setweight(to_tsvector($4), 'A') || setweight(to_tsvector($5), 'B')"
+	if s.kind == database.DBKindCockroach {
+		setweightPart = "to_tsvector(substring($4 || ' ' || $4 || ' ' || coalesce($5, '') for 1000000))"
+	}
+	query := fmt.Sprintf(`
 		UPDATE
 			entries
 		SET
 			title=$1,
 			content=$2,
 			reading_time=$3,
-			document_vectors = setweight(to_tsvector($4), 'A') || setweight(to_tsvector($5), 'B')
+			document_vectors = %s
 		WHERE
 			id=$6 AND user_id=$7
-	`
+	`, setweightPart)
 
 	if _, err := s.db.Exec(
 		query,
@@ -100,7 +105,11 @@ func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 // createEntry add a new entry.
 func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
-	query := `
+	setweightPart := "setweight(to_tsvector($11), 'A') || setweight(to_tsvector($12), 'B')"
+	if s.kind == database.DBKindCockroach {
+		setweightPart = "to_tsvector(substring($11 || ' ' || $11 || ' ' || coalesce($12, '') for 1000000))"
+	}
+	query := fmt.Sprintf(`
 		INSERT INTO entries
 			(
 				title,
@@ -130,12 +139,12 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				$9,
 				$10,
 				now(),
-				setweight(to_tsvector($11), 'A') || setweight(to_tsvector($12), 'B'),
+				%s,
 				$13
 			)
 		RETURNING
 			id, status, created_at, changed_at
-	`
+	`, setweightPart)
 	err := tx.QueryRow(
 		query,
 		entry.Title,
@@ -178,7 +187,11 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 // it default to time.Now() which could change the order of items on the history page.
 func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
-	query := `
+	setweightPart := "setweight(to_tsvector($7), 'A') || setweight(to_tsvector($8), 'B')"
+	if s.kind == database.DBKindCockroach {
+		setweightPart = "to_tsvector(substring($7 || ' ' || $7 || ' ' || coalesce($8, '') for 1000000))"
+	}
+	query := fmt.Sprintf(`
 		UPDATE
 			entries
 		SET
@@ -188,13 +201,13 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 			content=$4,
 			author=$5,
 			reading_time=$6,
-			document_vectors = setweight(to_tsvector($7), 'A') || setweight(to_tsvector($8), 'B'),
+			document_vectors = %s,
 			tags=$12
 		WHERE
 			user_id=$9 AND feed_id=$10 AND hash=$11
 		RETURNING
 			id
-	`
+	`, setweightPart)
 	err := tx.QueryRow(
 		query,
 		entry.Title,

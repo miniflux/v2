@@ -37,17 +37,21 @@ When reporting bugs:
 - **Git**
 - **Go >= 1.24**
 - **PostgreSQL**
+- **CockroachDB**
+- **SQLite**
 
 ### Getting Started
 
 1. **Fork the repository** on GitHub
 2. **Clone your fork locally:**
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/miniflux.git
    cd miniflux
    ```
 
 3. **Build the application binary:**
+
    ```bash
    make miniflux
    ```
@@ -59,15 +63,11 @@ When reporting bugs:
 
 ### Database Setup
 
-For development and testing, you can run a local PostgreSQL database with Docker:
+For development and testing, you can run PostgreSQL and CockroachDB via docker compose:
 
 ```bash
-# Start PostgreSQL container
-docker run --rm --name miniflux2-db -p 5432:5432 \
-  -e POSTGRES_DB=miniflux2 \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  postgres
+# Start PostgreSQL and CockroachDB containers
+docker compose -d
 ```
 
 You can also use an existing PostgreSQL instance. Make sure to set the `DATABASE_URL` environment variable accordingly.
@@ -77,20 +77,27 @@ You can also use an existing PostgreSQL instance. Make sure to set the `DATABASE
 ### Code Quality
 
 1. **Run the linter:**
+
    ```bash
    make lint
    ```
+
    Requires `staticcheck` and `golangci-lint` to be installed.
 
 2. **Run unit tests:**
+
    ```bash
    make test
    ```
 
 3. **Run integration tests:**
    ```bash
-   make integration-test
-   make clean-integration-test
+   make integration-test-postgresql
+   make clean-integration-test-postgresql
+   make integration-test-cockroachdb
+   make clean-integration-test-cockroachdb
+   make integration-test-sqlite
+   make clean-integration-test-sqlite
    ```
 
 ### Building
@@ -103,6 +110,7 @@ You can also use an existing PostgreSQL instance. Make sure to set the `DATABASE
 ### Cross-Platform Support
 
 Miniflux supports multiple architectures. When making changes, ensure compatibility across:
+
 - Linux (amd64, arm64, armv7, armv6, armv5)
 - macOS (amd64, arm64)
 - FreeBSD, OpenBSD, Windows (amd64)
@@ -155,11 +163,13 @@ When creating a pull request, please include:
 ## Testing
 
 ### Unit Tests
+
 - Write unit tests for new functions and methods
 - Ensure tests are fast and don't require external dependencies
 - Aim for good test coverage
 
 ### Integration Tests
+
 - Add integration tests for new API endpoints
 - Tests run against a real PostgreSQL database
 - Ensure tests clean up after themselves

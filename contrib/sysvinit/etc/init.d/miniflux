@@ -4,8 +4,8 @@
 # Provides:          miniflux
 # Required-Start:    $syslog $network
 # Required-Stop:     $syslog
-# Should-Start:      postgresql
-# Should-Stop:       postgresql
+# Should-Start:      postgresql cockroachdb
+# Should-Stop:       postgresql cockroachdb
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: A rss reader
