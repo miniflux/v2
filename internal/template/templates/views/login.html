@@ -8,6 +8,7 @@
     {{ if not disableLocalAuth }}
     <form action="{{ route "checkLogin" }}" method="post">
         <input type="hidden" name="csrf" value="{{ .csrf }}">
+        <input type="hidden" name="redirect_url" value="{{ .redirectURL }}">
 
         {{ if .errorMessage }}
             <div role="alert" class="alert alert-error">{{ .errorMessage }}</div>
