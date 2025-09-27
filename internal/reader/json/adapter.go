@@ -68,11 +68,16 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 	for _, item := range j.jsonFeed.Items {
 		entry := model.NewEntry()
 		entry.Title = strings.TrimSpace(item.Title)
-		entry.URL = strings.TrimSpace(item.URL)
 
-		// Make sure the entry URL is absolute.
-		if entryURL, err := urllib.AbsoluteURL(feed.SiteURL, entry.URL); err == nil {
-			entry.URL = entryURL
+		for _, itemURL := range []string{item.URL, item.ExternalURL} {
+			itemURL = strings.TrimSpace(itemURL)
+			if itemURL != "" {
+				// Make sure the entry URL is absolute.
+				if entryURL, err := urllib.AbsoluteURL(feed.SiteURL, itemURL); err == nil {
+					entry.URL = entryURL
+				}
+				break
+			}
 		}
 
 		// The entry title is optional, so we need to find a fallback.
