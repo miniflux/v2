@@ -8,6 +8,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"net/url"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
@@ -42,7 +43,11 @@ func (m *middleware) handleUserSession(next http.Handler) http.Handler {
 				slog.Debug("Redirecting to login page because no user session has been found",
 					slog.String("url", r.RequestURI),
 				)
-				html.Redirect(w, r, route.Path(m.router, "login"))
+				loginURL, _ := url.Parse(route.Path(m.router, "login"))
+				values := loginURL.Query()
+				values.Set("redirect_url", r.RequestURI)
+				loginURL.RawQuery = values.Encode()
+				html.Redirect(w, r, loginURL.String())
 			}
 		} else {
 			slog.Debug("User session found",
