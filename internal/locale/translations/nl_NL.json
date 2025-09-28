@@ -241,6 +241,7 @@
     "form.integration.karakeep_activate": "Artikelen opslaan in Karakeep",
     "form.integration.karakeep_api_key": "Karakeep API-sleutel",
     "form.integration.karakeep_url": "Karakeep URL",
+    "form.integration.karakeep_tags": "Karakeep tags",
     "form.integration.linkace_activate": "Artikelen opslaan in LinkAce",
     "form.integration.linkace_api_key": "LinkAce API-sleutel",
     "form.integration.linkace_check_disabled": "Koppelingcontrole uitschakelen",

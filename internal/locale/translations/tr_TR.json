@@ -241,6 +241,7 @@
     "form.integration.karakeep_activate": "Makaleleri Karakeep'a kaydet",
     "form.integration.karakeep_api_key": "Karakeep API anahtarı",
     "form.integration.karakeep_url": "Karakeep API Uç Noktası",
+    "form.integration.karakeep_tags": "Karakeep Tags",
     "form.integration.linkace_activate": "Makaleleri LinkAce'e kaydet",
     "form.integration.linkace_api_key": "LinkAce API anahtarı",
     "form.integration.linkace_check_disabled": "Link kontrolünü devre dışı bırak",

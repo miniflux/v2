@@ -103,6 +103,7 @@ type IntegrationForm struct {
 	KarakeepEnabled                  bool
 	KarakeepAPIKey                   string
 	KarakeepURL                      string
+	KarakeepTags                     string
 	RaindropEnabled                  bool
 	RaindropToken                    string
 	RaindropCollectionID             string
@@ -222,6 +223,7 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.KarakeepEnabled = i.KarakeepEnabled
 	integration.KarakeepAPIKey = i.KarakeepAPIKey
 	integration.KarakeepURL = i.KarakeepURL
+	integration.KarakeepTags = i.KarakeepTags
 	integration.RaindropEnabled = i.RaindropEnabled
 	integration.RaindropToken = i.RaindropToken
 	integration.RaindropCollectionID = i.RaindropCollectionID
@@ -344,6 +346,7 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		KarakeepEnabled:                  r.FormValue("karakeep_enabled") == "1",
 		KarakeepAPIKey:                   r.FormValue("karakeep_api_key"),
 		KarakeepURL:                      r.FormValue("karakeep_url"),
+		KarakeepTags:                     r.FormValue("karakeep_tags"),
 		RaindropEnabled:                  r.FormValue("raindrop_enabled") == "1",
 		RaindropToken:                    r.FormValue("raindrop_token"),
 		RaindropCollectionID:             r.FormValue("raindrop_collection_id"),

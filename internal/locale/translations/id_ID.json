@@ -238,6 +238,7 @@
     "form.integration.karakeep_activate": "Simpan artikel ke Karakeep",
     "form.integration.karakeep_api_key": "Kunci API Karakeep",
     "form.integration.karakeep_url": "Titik URL API Karakeep",
+    "form.integration.karakeep_tags": "Tanda di Karakeep",
     "form.integration.linkace_activate": "Simpan artikel ke LinkAce",
     "form.integration.linkace_api_key": "Kunci API LinkAce",
     "form.integration.linkace_check_disabled": "Matikan pemeriksaan tautan",

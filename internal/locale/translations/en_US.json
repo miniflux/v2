@@ -241,6 +241,7 @@
     "form.integration.karakeep_activate": "Save entries to Karakeep",
     "form.integration.karakeep_api_key": "Karakeep API key",
     "form.integration.karakeep_url": "Karakeep API Endpoint",
+    "form.integration.karakeep_tags": "Karakeep Tags",
     "form.integration.linkace_activate": "Save entries to LinkAce",
     "form.integration.linkace_api_key": "LinkAce API key",
     "form.integration.linkace_check_disabled": "Disable link check",

@@ -238,6 +238,7 @@
     "form.integration.karakeep_activate": "保存条目到 Karakeep",
     "form.integration.karakeep_api_key": "Karakeep API 密钥",
     "form.integration.karakeep_url": "Karakeep API 端点",
+    "form.integration.karakeep_tags": "Karakeep 标签",
     "form.integration.linkace_activate": "保存条目到 LinkAce",
     "form.integration.linkace_api_key": "LinkAce API 密钥",
     "form.integration.linkace_check_disabled": "禁用链接检查",

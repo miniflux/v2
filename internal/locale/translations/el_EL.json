@@ -241,6 +241,7 @@
     "form.integration.karakeep_activate": "Αποθήκευση άρθρων στο Karakeep",
     "form.integration.karakeep_api_key": "Κλειδί API Karakeep",
     "form.integration.karakeep_url": "Τελικό σημείο Karakeep API",
+    "form.integration.karakeep_tags": "Ετικέτες Karakeep",
     "form.integration.linkace_activate": "Αποθήκευση καταχωρήσεων στο LinkAce",
     "form.integration.linkace_api_key": "Κλειδί API LinkAce",
     "form.integration.linkace_check_disabled": "Απενεργοποίηση ελέγχου συνδέσμου",

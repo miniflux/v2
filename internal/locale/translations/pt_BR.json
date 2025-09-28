@@ -241,6 +241,7 @@
     "form.integration.karakeep_activate": "Salvar itens no Karakeep",
     "form.integration.karakeep_api_key": "Chave de API do Karakeep",
     "form.integration.karakeep_url": "Endpoint de API do Karakeep",
+    "form.integration.karakeep_tags": "Karakeep Tags",
     "form.integration.linkace_activate": "Salvar itens no LinkAce",
     "form.integration.linkace_api_key": "Chave de API do LinkAce",
     "form.integration.linkace_check_disabled": "Desativar verificação de link",

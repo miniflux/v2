@@ -116,6 +116,7 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		KarakeepEnabled:                  integration.KarakeepEnabled,
 		KarakeepAPIKey:                   integration.KarakeepAPIKey,
 		KarakeepURL:                      integration.KarakeepURL,
+		KarakeepTags:                     integration.KarakeepTags,
 		RaindropEnabled:                  integration.RaindropEnabled,
 		RaindropToken:                    integration.RaindropToken,
 		RaindropCollectionID:             integration.RaindropCollectionID,

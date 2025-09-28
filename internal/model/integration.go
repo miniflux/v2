@@ -100,6 +100,7 @@ type Integration struct {
 	KarakeepEnabled                  bool
 	KarakeepAPIKey                   string
 	KarakeepURL                      string
+	KarakeepTags                     string
 	RaindropEnabled                  bool
 	RaindropToken                    string
 	RaindropCollectionID             string
