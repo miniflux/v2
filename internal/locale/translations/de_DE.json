@@ -241,6 +241,7 @@
     "form.integration.karakeep_activate": "Artikel in Karakeep speichern",
     "form.integration.karakeep_api_key": "Karakeep-API-Schlüssel",
     "form.integration.karakeep_url": "Karakeep-API-Endpunkt",
+    "form.integration.karakeep_tags": "Karakeep-Tags",
     "form.integration.linkace_activate": "Artikel in LinkAce speichern",
     "form.integration.linkace_api_key": "LinkAce-API-Schlüssel",
     "form.integration.linkace_check_disabled": "Linkprüfung deaktivieren",

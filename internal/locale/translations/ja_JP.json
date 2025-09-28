@@ -238,6 +238,7 @@
     "form.integration.karakeep_activate": "Karakeep に記事を保存する",
     "form.integration.karakeep_api_key": "Karakeep の API key",
     "form.integration.karakeep_url": "Karakeep の API Endpoint",
+    "form.integration.karakeep_tags": "Karakeep の Tags",
     "form.integration.linkace_activate": "Save entries to LinkAce",
     "form.integration.linkace_api_key": "LinkAce API key",
     "form.integration.linkace_check_disabled": "Disable link check",

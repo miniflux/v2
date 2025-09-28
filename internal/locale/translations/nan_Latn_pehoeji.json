@@ -238,6 +238,7 @@
     "form.integration.karakeep_activate": "Pó-chûn siau-sit kàu Karakeep",
     "form.integration.karakeep_api_key": "Karakeep API só-sî",
     "form.integration.karakeep_url": "Karakeep API thâu",
+    "form.integration.karakeep_tags": "Karakeep khan-á",
     "form.integration.linkace_activate": "Pó-chûn siau-sit kàu LinkAce",
     "form.integration.linkace_api_key": "LinkAce API só-sî",
     "form.integration.linkace_check_disabled": "Thêng iōng liân-kiat kiám-cha",

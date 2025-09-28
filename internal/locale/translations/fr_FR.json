@@ -241,6 +241,7 @@
     "form.integration.karakeep_activate": "Sauvegarder les articles vers Karakeep",
     "form.integration.karakeep_api_key": "Clé d'API de Karakeep",
     "form.integration.karakeep_url": "URL de l'API de Karakeep",
+    "form.integration.karakeep_tags": "Libellés Karakeep",
     "form.integration.linkace_activate": "Enregistrer les entrées vers LinkAce",
     "form.integration.linkace_api_key": "Clé d'API LinkAce",
     "form.integration.linkace_check_disabled": "Désactiver la vérification des liens",

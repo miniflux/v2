@@ -244,6 +244,7 @@
     "form.integration.karakeep_activate": "Сохранять статьи в Karakeep",
     "form.integration.karakeep_api_key": "API-ключ Karakeep",
     "form.integration.karakeep_url": "Конечная точка Karakeep API",
+    "form.integration.karakeep_tags": "Karakeep Tags",
     "form.integration.linkace_activate": "Сохранять статьи в LinkAce",
     "form.integration.linkace_api_key": "API-ключ LinkAce",
     "form.integration.linkace_check_disabled": "Отключить проверку ссылок",

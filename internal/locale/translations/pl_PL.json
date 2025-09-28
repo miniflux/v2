@@ -244,6 +244,7 @@
     "form.integration.karakeep_activate": "Zapisuj wpisy w Karakeep",
     "form.integration.karakeep_api_key": "Klucz API do Karakeep",
     "form.integration.karakeep_url": "Punkt końcowy API Karakeep",
+    "form.integration.karakeep_tags": "Znaczniki Karakeep",
     "form.integration.linkace_activate": "Zapisuj wpisy w LinkAce",
     "form.integration.linkace_api_key": "Klucz API do LinkAce",
     "form.integration.linkace_check_disabled": "Wyłącz sprawdzanie łączy",

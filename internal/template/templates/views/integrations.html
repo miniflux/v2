@@ -420,6 +420,9 @@
             <label for="form-karakeep-url">{{ t "form.integration.karakeep_url" }}</label>
             <input type="url" name="karakeep_url" id="form-karakeep-url" value="{{ .form.KarakeepURL }}" placeholder="https://try.karakeep.app/api/v1/bookmarks" spellcheck="false">
 
+            <label for="form-karakeep-tags">{{ t "form.integration.karakeep_tags" }}</label>
+            <input type="text" name="karakeep_tags" id="form-karakeep-tags" value="{{ .form.KarakeepTags }}" placeholder="miniflux, new" spellcheck="false">
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>
