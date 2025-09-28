@@ -20,7 +20,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 			);
 
 			CREATE TABLE users (
-				id serial not null,
+				id SERIAL,
 				username text not null unique,
 				password text,
 				is_admin bool default 'f',
@@ -32,7 +32,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 			);
 
 			CREATE TABLE sessions (
-				id serial not null,
+				id SERIAL,
 				user_id int not null,
 				token text not null unique,
 				created_at timestamp with time zone default now(),
@@ -44,7 +44,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 			);
 
 			CREATE TABLE categories (
-				id serial not null,
+				id SERIAL,
 				user_id int not null,
 				title text not null,
 				primary key (id),
@@ -53,7 +53,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 			);
 
 			CREATE TABLE feeds (
-				id bigserial not null,
+				id BIGSERIAL,
 				user_id int not null,
 				category_id int not null,
 				title text not null,
@@ -73,7 +73,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 			CREATE TYPE entry_status as enum('unread', 'read', 'removed');
 
 			CREATE TABLE entries (
-				id bigserial not null,
+				id BIGSERIAL,
 				user_id int not null,
 				feed_id bigint not null,
 				hash text not null,
@@ -92,7 +92,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 			CREATE INDEX entries_feed_idx on entries using btree(feed_id);
 
 			CREATE TABLE enclosures (
-				id bigserial not null,
+				id BIGSERIAL,
 				user_id int not null,
 				entry_id bigint not null,
 				url text not null,
@@ -104,7 +104,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 			);
 
 			CREATE TABLE icons (
-				id bigserial not null,
+				id BIGSERIAL,
 				hash text not null unique,
 				mime_type text not null,
 				content bytea not null,
@@ -334,7 +334,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 	func(tx *sql.Tx) (err error) {
 		sql := `
 			CREATE TABLE api_keys (
-				id serial not null,
+				id SERIAL,
 				user_id int not null references users(id) on delete cascade,
 				token text not null unique,
 				description text not null,
