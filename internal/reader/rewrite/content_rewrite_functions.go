@@ -10,6 +10,7 @@ import (
 	"log/slog"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 	"unicode"
 
@@ -546,4 +547,51 @@ func fixGhostCards(entryContent string) string {
 
 	output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 	return strings.TrimSpace(output)
+}
+
+func stripImageQueryParams(entryContent string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	changed := false
+
+	doc.Find("img").Each(func(i int, img *goquery.Selection) {
+		srcAttr, exists := img.Attr("src")
+		if !exists {
+			return
+		}
+
+		parsedURL, err := url.Parse(srcAttr)
+		if err != nil {
+			return
+		}
+
+		// Only strip query parameters if this is a blurry placeholder image
+		if parsedURL.RawQuery != "" {
+			queryParams, err := url.ParseQuery(parsedURL.RawQuery)
+			if err != nil {
+				return
+			}
+
+			// Check if there's a blur parameter with a non-zero value
+			blurValues, hasBlur := queryParams["blur"]
+			if hasBlur && len(blurValues) > 0 {
+				blurValue, err := strconv.Atoi(blurValues[0])
+				if err == nil && blurValue > 0 {
+					parsedURL.RawQuery = ""
+					img.SetAttr("src", parsedURL.String())
+					changed = true
+				}
+			}
+		}
+	})
+
+	if changed {
+		output, _ := doc.FindMatcher(goquery.Single("body")).Html()
+		return output
+	}
+
+	return entryContent
 }
