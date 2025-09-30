@@ -489,8 +489,8 @@ func NewConfigOptions() *configOptions {
 				},
 			},
 			"POLLING_PARSING_ERROR_LIMIT": {
-				ParsedIntValue: 3,
-				RawValue:       "3",
+				ParsedIntValue: 0,
+				RawValue:       "0",
 				ValueType:      intType,
 				Validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 0)

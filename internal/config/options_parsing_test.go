@@ -1058,8 +1058,8 @@ func TestPollingLimitPerHostOptionParsing(t *testing.T) {
 func TestPollingParsingErrorLimitOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
 
-	if configParser.options.PollingParsingErrorLimit() != 3 {
-		t.Fatalf("Expected POLLING_PARSING_ERROR_LIMIT to be 3 by default")
+	if configParser.options.PollingParsingErrorLimit() != 0 {
+		t.Fatalf("Expected POLLING_PARSING_ERROR_LIMIT to be 0 by default")
 	}
 
 	if err := configParser.parseLines([]string{"POLLING_PARSING_ERROR_LIMIT=5"}); err != nil {

@@ -6,6 +6,7 @@ package model // import "miniflux.app/v2/internal/model"
 import (
 	"fmt"
 	"io"
+	"math"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -134,6 +135,16 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelay time.Duration) ti
 
 	// Use the RSS TTL field, Retry-After, Cache-Control or Expires HTTP headers if defined.
 	interval = max(interval, refreshDelay)
+
+	// Use a binary exponential backoff for feeds with parsing errors.
+	// https://en.wikipedia.org/wiki/Exponential_backoff
+	if f.ParsingErrorCount > 0 {
+		backoff := time.Duration(math.Pow(2, float64(f.ParsingErrorCount))) * time.Hour
+		// Set a hard limit at one week
+		if backoff.Hours() < time.Hour.Hours()*24*7 {
+			interval += backoff
+		}
+	}
 
 	// Limit the max interval value for misconfigured feeds.
 	switch config.Opts.PollingScheduler() {
