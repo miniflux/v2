@@ -570,16 +570,10 @@ func stripImageQueryParams(entryContent string) string {
 
 		// Only strip query parameters if this is a blurry placeholder image
 		if parsedURL.RawQuery != "" {
-			queryParams, err := url.ParseQuery(parsedURL.RawQuery)
-			if err != nil {
-				return
-			}
-
 			// Check if there's a blur parameter with a non-zero value
-			blurValues, hasBlur := queryParams["blur"]
-			if hasBlur && len(blurValues) > 0 {
-				blurValue, err := strconv.Atoi(blurValues[0])
-				if err == nil && blurValue > 0 {
+			blurValue := parsedURL.Query().Get("blur")
+			if blurValue != "" {
+				if blurInt, err := strconv.Atoi(blurValue); err == nil && blurInt > 0 {
 					parsedURL.RawQuery = ""
 					img.SetAttr("src", parsedURL.String())
 					changed = true
