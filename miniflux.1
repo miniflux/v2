@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "August 19, 2025" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "September 29, 2025" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -486,7 +486,9 @@ Set to 1 to authorize OAuth2 user creation\&.
 Disabled by default\&.
 .TP
 .B POLLING_FREQUENCY
-Refresh interval in minutes for feeds\&.
+Interval for the background job scheduler.
+.br
+Determines how often a batch of feeds is selected for refresh, based on their last refresh time\&.
 .br
 Default is 60 minutes\&.
 .TP
