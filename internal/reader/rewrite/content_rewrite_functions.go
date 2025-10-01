@@ -549,7 +549,7 @@ func fixGhostCards(entryContent string) string {
 	return strings.TrimSpace(output)
 }
 
-func stripImageQueryParams(entryContent string) string {
+func removeImgBlurParams(entryContent string) string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
 	if err != nil {
 		return entryContent

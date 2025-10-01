@@ -94,8 +94,8 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 		entry.Title = titlelize(entry.Title)
 	case "fix_ghost_cards":
 		entry.Content = fixGhostCards(entry.Content)
-	case "strip_url_params_for_blurred_images":
-		entry.Content = stripImageQueryParams(entry.Content)
+	case "remove_img_blur_params":
+		entry.Content = removeImgBlurParams(entry.Content)
 	}
 }
 
@@ -132,7 +132,7 @@ func parseRules(rulesText string) (rules []rule) {
 				rules[l].args = append(rules[l].args, text)
 			}
 		case scanner.EOF:
-			return
+			return rules
 		}
 	}
 }
