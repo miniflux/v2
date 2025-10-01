@@ -133,7 +133,6 @@ func TestRewriteYoutubeLinkAndCustomEmbedURL(t *testing.T) {
 	var err error
 	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
-
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
@@ -241,7 +240,6 @@ func TestAddYoutubeVideoFromIdWithCustomEmbedURL(t *testing.T) {
 	var err error
 	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
-
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
@@ -797,6 +795,7 @@ func TestRewriteRemoveCustom(t *testing.T) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
+
 func TestRewriteRemoveQuotedSelector(t *testing.T) {
 	controlEntry := &model.Entry{
 		URL:     "https://example.org/article",
@@ -1292,7 +1291,7 @@ func TestStripImageQueryParams(t *testing.T) {
 			<img src="https://example.org/normal1.jpg?width=600&amp;quality=high" alt="Normal 2"/>
 		</article>`,
 	}
-	ApplyContentRewriteRules(testEntry, `strip_image_query_params`)
+	ApplyContentRewriteRules(testEntry, `strip_url_params_for_blurred_images`)
 
 	if !reflect.DeepEqual(testEntry, controlEntry) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
@@ -1315,7 +1314,7 @@ func TestStripImageQueryParamsNoChanges(t *testing.T) {
 		<div>Just some text content</div>
 		<a href="https://example.org">A link</a>`,
 	}
-	ApplyContentRewriteRules(testEntry, `strip_image_query_params`)
+	ApplyContentRewriteRules(testEntry, `strip_url_params_for_blurred_images`)
 
 	if !reflect.DeepEqual(testEntry, controlEntry) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
@@ -1363,7 +1362,7 @@ func TestStripImageQueryParamsEdgeCases(t *testing.T) {
 		<img src="https://example.org/clean.jpg" alt="Clean image"/>
 		`,
 	}
-	ApplyContentRewriteRules(testEntry, `strip_image_query_params`)
+	ApplyContentRewriteRules(testEntry, `strip_url_params_for_blurred_images`)
 
 	if !reflect.DeepEqual(testEntry, controlEntry) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
@@ -1397,7 +1396,7 @@ func TestStripImageQueryParamsSimple(t *testing.T) {
 		<img src="https://example.org/test4.jpg" alt="No params at all"/>
 		`,
 	}
-	ApplyContentRewriteRules(testEntry, `strip_image_query_params`)
+	ApplyContentRewriteRules(testEntry, `strip_url_params_for_blurred_images`)
 
 	if !reflect.DeepEqual(testEntry, controlEntry) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
