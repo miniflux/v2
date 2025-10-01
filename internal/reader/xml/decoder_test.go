@@ -6,10 +6,77 @@ package xml // import "miniflux.app/v2/internal/reader/xml"
 import (
 	"encoding/xml"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 	"unicode/utf8"
 )
+
+func TestXMLDocumentWithISO88591Encoding(t *testing.T) {
+	fp, err := os.Open("testdata/iso88591.xml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer fp.Close()
+
+	type myXMLDocument struct {
+		XMLName xml.Name `xml:"note"`
+		To      string   `xml:"to"`
+		From    string   `xml:"from"`
+	}
+
+	var doc myXMLDocument
+
+	decoder := NewXMLDecoder(fp)
+	err = decoder.Decode(&doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expectedTo := "Anaïs"
+	expectedFrom := "Jürgen"
+
+	if doc.To != expectedTo {
+		t.Errorf(`Incorrect "to" field, expected: %q, got: %q`, expectedTo, doc.To)
+	}
+	if doc.From != expectedFrom {
+		t.Errorf(`Incorrect "from" field, expected: %q, got: %q`, expectedFrom, doc.From)
+	}
+}
+
+func TestXMLDocumentWithISO88591FileEncodingButUTF8Prolog(t *testing.T) {
+	fp, err := os.Open("testdata/iso88591_utf8_mismatch.xml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer fp.Close()
+
+	type myXMLDocument struct {
+		XMLName xml.Name `xml:"note"`
+		To      string   `xml:"to"`
+		From    string   `xml:"from"`
+	}
+
+	var doc myXMLDocument
+
+	decoder := NewXMLDecoder(fp)
+	err = decoder.Decode(&doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// TODO: detect actual encoding from bytes if not UTF-8 and convert to UTF-8 if needed.
+	// For now we just expect the invalid characters to be stripped out.
+	expectedTo := "Anas"
+	expectedFrom := "Jrgen"
+
+	if doc.To != expectedTo {
+		t.Errorf(`Incorrect "to" field, expected: %q, got: %q`, expectedTo, doc.To)
+	}
+	if doc.From != expectedFrom {
+		t.Errorf(`Incorrect "from" field, expected: %q, got: %q`, expectedFrom, doc.From)
+	}
+}
 
 func TestXMLDocumentWithIllegalUnicodeCharacters(t *testing.T) {
 	type myxml struct {

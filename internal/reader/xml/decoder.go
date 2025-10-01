@@ -21,18 +21,23 @@ func NewXMLDecoder(data io.ReadSeeker) *xml.Decoder {
 	buffer := &bytes.Buffer{}
 	io.Copy(buffer, data)
 
-	enc := getEncoding(buffer.Bytes())
-	if enc == nil || bytes.EqualFold(enc, []byte("utf-8")) {
-		// filter invalid chars now, since decoder.CharsetReader isn't called for utf-8 content
+	if hasUTF8XMLDeclaration(buffer.Bytes()) {
+		// TODO: detect actual encoding from bytes if not UTF-8 and convert to UTF-8 if needed.
+		// For now we just expect the invalid characters to be stripped out.
+
+		// Filter invalid chars now, since decoder.CharsetReader isn't called for utf-8 content
 		filteredBytes := filterValidXMLChars(buffer.Bytes())
+
 		decoder = xml.NewDecoder(bytes.NewReader(filteredBytes))
 	} else {
 		data.Seek(0, io.SeekStart)
-		// invalid characters will be filtered later via decoder.CharsetReader
 		decoder = xml.NewDecoder(data)
+
+		// The XML document will be converted to UTF-8 by encoding.CharsetReader
+		// Invalid characters will be filtered later via decoder.CharsetReader
+		decoder.CharsetReader = charsetReaderFilterInvalidUtf8
 	}
 
-	decoder.CharsetReader = charsetReaderFilterInvalidUtf8
 	decoder.Entity = xml.HTMLEntity
 	decoder.Strict = false
 
@@ -46,7 +51,7 @@ func charsetReaderFilterInvalidUtf8(charset string, input io.Reader) (io.Reader,
 	}
 	rawData, err := io.ReadAll(utf8Reader)
 	if err != nil {
-		return nil, fmt.Errorf("encoding: unable to read data: %w", err)
+		return nil, fmt.Errorf("xml: unable to read data: %w", err)
 	}
 	filteredBytes := filterValidXMLChars(rawData)
 	return bytes.NewReader(filteredBytes), nil
@@ -109,4 +114,9 @@ func getEncoding(b []byte) []byte {
 		return nil
 	}
 	return v[1 : idx+1]
+}
+
+func hasUTF8XMLDeclaration(data []byte) bool {
+	enc := getEncoding(data)
+	return enc == nil || bytes.EqualFold(enc, []byte("utf-8"))
 }
