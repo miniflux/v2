@@ -557,7 +557,7 @@ func removeImgBlurParams(entryContent string) string {
 
 	changed := false
 
-	doc.Find("img").Each(func(i int, img *goquery.Selection) {
+	doc.Find("img[src]").Each(func(i int, img *goquery.Selection) {
 		srcAttr, exists := img.Attr("src")
 		if !exists {
 			return
