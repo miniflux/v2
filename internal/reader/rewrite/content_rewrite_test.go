@@ -133,7 +133,6 @@ func TestRewriteYoutubeLinkAndCustomEmbedURL(t *testing.T) {
 	var err error
 	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
-
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
@@ -241,7 +240,6 @@ func TestAddYoutubeVideoFromIdWithCustomEmbedURL(t *testing.T) {
 	var err error
 	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
-
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
@@ -797,6 +795,7 @@ func TestRewriteRemoveCustom(t *testing.T) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
+
 func TestRewriteRemoveQuotedSelector(t *testing.T) {
 	controlEntry := &model.Entry{
 		URL:     "https://example.org/article",
@@ -1243,6 +1242,161 @@ func TestFixGhostCardMultipleSplit(t *testing.T) {
 		<a href="https://example.org/article2">Example Article 2 - Example</a>`,
 	}
 	ApplyContentRewriteRules(testEntry, `fix_ghost_cards`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestStripImageQueryParams(t *testing.T) {
+	testEntry := &model.Entry{
+		URL:   "https://example.org/article",
+		Title: `News Article Title`,
+		Content: `
+		<article>
+			<p>Article content with images having query parameters:</p>
+			<img src="https://example.org/images/image1.jpg?width=200&height=113&q=80&blur=90" alt="Image with params">
+			<img src="https://example.org/images/image2.jpg?width=800&height=600&q=85" alt="Another image with params">
+			
+			<p>More images with various query parameters:</p>
+			<img src="https://example.org/image123.jpg?blur=50&size=small&format=webp" alt="Complex query params">
+			<img src="https://example.org/image123.jpg?size=large&quality=95&cache=123" alt="Different params">
+			
+			<p>Image without query parameters:</p>
+			<img src="https://example.org/single-image.jpg" alt="Clean image">
+			
+			<p>Images with various other params:</p>
+			<img src="https://example.org/normal1.jpg?width=300&format=jpg" alt="Normal 1">
+			<img src="https://example.org/normal1.jpg?width=600&quality=high" alt="Normal 2">
+		</article>`,
+	}
+
+	controlEntry := &model.Entry{
+		URL:   "https://example.org/article",
+		Title: `News Article Title`,
+		Content: `<article>
+			<p>Article content with images having query parameters:</p>
+			<img src="https://example.org/images/image1.jpg" alt="Image with params"/>
+			<img src="https://example.org/images/image2.jpg?width=800&amp;height=600&amp;q=85" alt="Another image with params"/>
+			
+			<p>More images with various query parameters:</p>
+			<img src="https://example.org/image123.jpg" alt="Complex query params"/>
+			<img src="https://example.org/image123.jpg?size=large&amp;quality=95&amp;cache=123" alt="Different params"/>
+			
+			<p>Image without query parameters:</p>
+			<img src="https://example.org/single-image.jpg" alt="Clean image"/>
+			
+			<p>Images with various other params:</p>
+			<img src="https://example.org/normal1.jpg?width=300&amp;format=jpg" alt="Normal 1"/>
+			<img src="https://example.org/normal1.jpg?width=600&amp;quality=high" alt="Normal 2"/>
+		</article>`,
+	}
+	ApplyContentRewriteRules(testEntry, `remove_img_blur_params`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestStripImageQueryParamsNoChanges(t *testing.T) {
+	testEntry := &model.Entry{
+		URL:   "https://example.org/article",
+		Title: `Article Without Images`,
+		Content: `<p>No images here:</p>
+		<div>Just some text content</div>
+		<a href="https://example.org">A link</a>`,
+	}
+
+	controlEntry := &model.Entry{
+		URL:   "https://example.org/article",
+		Title: `Article Without Images`,
+		Content: `<p>No images here:</p>
+		<div>Just some text content</div>
+		<a href="https://example.org">A link</a>`,
+	}
+	ApplyContentRewriteRules(testEntry, `remove_img_blur_params`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestStripImageQueryParamsEdgeCases(t *testing.T) {
+	testEntry := &model.Entry{
+		URL:   "https://example.org/article",
+		Title: `Edge Cases`,
+		Content: `
+		<p>Edge cases for image query parameter stripping:</p>
+		
+		<!-- Various query parameters -->
+		<img src="https://example.org/image1.jpg?blur=80&width=300" alt="Multiple params">
+		
+		<!-- Complex query parameters -->
+		<img src="https://example.org/image2.jpg?BLUR=60&format=webp&cache=123" alt="Complex params">
+		<img src="https://example.org/image3.jpg?quality=high&version=2" alt="Other params">
+		
+		<!-- Query params in middle of string -->
+		<img src="https://example.org/image4.jpg?size=large&blur=30&format=webp&quality=90" alt="Middle params">
+		
+		<!-- Image without query params -->
+		<img src="https://example.org/clean.jpg" alt="Clean image">
+		`,
+	}
+
+	controlEntry := &model.Entry{
+		URL:   "https://example.org/article",
+		Title: `Edge Cases`,
+		Content: `<p>Edge cases for image query parameter stripping:</p>
+		
+		<!-- Various query parameters -->
+		<img src="https://example.org/image1.jpg" alt="Multiple params"/>
+		
+		<!-- Complex query parameters -->
+		<img src="https://example.org/image2.jpg?BLUR=60&amp;format=webp&amp;cache=123" alt="Complex params"/>
+		<img src="https://example.org/image3.jpg?quality=high&amp;version=2" alt="Other params"/>
+		
+		<!-- Query params in middle of string -->
+		<img src="https://example.org/image4.jpg" alt="Middle params"/>
+		
+		<!-- Image without query params -->
+		<img src="https://example.org/clean.jpg" alt="Clean image"/>
+		`,
+	}
+	ApplyContentRewriteRules(testEntry, `remove_img_blur_params`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestStripImageQueryParamsSimple(t *testing.T) {
+	testEntry := &model.Entry{
+		URL:   "https://example.org/article",
+		Title: `Simple Test`,
+		Content: `
+		<p>Testing query parameter stripping:</p>
+		
+		<!-- Images with various query parameters -->
+		<img src="https://example.org/test1.jpg?blur=0&width=300" alt="With blur zero">
+		<img src="https://example.org/test2.jpg?blur=50&width=300&format=webp" alt="With blur fifty">
+		<img src="https://example.org/test3.jpg?width=800&quality=high" alt="No blur param">
+		<img src="https://example.org/test4.jpg" alt="No params at all">
+		`,
+	}
+
+	controlEntry := &model.Entry{
+		URL:   "https://example.org/article",
+		Title: `Simple Test`,
+		Content: `<p>Testing query parameter stripping:</p>
+		
+		<!-- Images with various query parameters -->
+		<img src="https://example.org/test1.jpg?blur=0&amp;width=300" alt="With blur zero"/>
+		<img src="https://example.org/test2.jpg" alt="With blur fifty"/>
+		<img src="https://example.org/test3.jpg?width=800&amp;quality=high" alt="No blur param"/>
+		<img src="https://example.org/test4.jpg" alt="No params at all"/>
+		`,
+	}
+	ApplyContentRewriteRules(testEntry, `remove_img_blur_params`)
 
 	if !reflect.DeepEqual(testEntry, controlEntry) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
