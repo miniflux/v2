@@ -4,10 +4,12 @@
 package template // import "miniflux.app/v2/internal/template"
 
 import (
+	"strings"
 	"testing"
 	"time"
 
 	"miniflux.app/v2/internal/locale"
+	"miniflux.app/v2/internal/model"
 )
 
 func TestDict(t *testing.T) {
@@ -156,6 +158,95 @@ func TestFormatFileSize(t *testing.T) {
 		result := formatFileSize(scenario.input)
 		if result != scenario.expected {
 			t.Errorf(`Unexpected result, got %q instead of %q for %d`, result, scenario.expected, scenario.input)
+		}
+	}
+}
+
+func TestCSPExternalFont(t *testing.T) {
+	want := []string{
+		`default-src 'none';`,
+		`img-src * data:;`,
+		`media-src *;`,
+		`frame-src *;`,
+		`style-src 'nonce-1234';`,
+		`script-src 'nonce-1234'`,
+		`'strict-dynamic';`,
+		`font-src test.com;`,
+		`require-trusted-types-for 'script';`,
+		`trusted-types html url;`,
+		`manifest-src 'self';`,
+	}
+	got := csp(&model.User{ExternalFontHosts: "test.com"}, "1234")
+
+	for _, value := range want {
+		if !strings.Contains(got, value) {
+			t.Errorf(`Unexpected result, didn't find %q in %q`, value, got)
+		}
+	}
+}
+
+func TestCSPNoUser(t *testing.T) {
+	want := []string{
+		`default-src 'none';`,
+		`img-src * data:;`,
+		`media-src *;`,
+		`frame-src *;`,
+		`style-src 'nonce-1234';`,
+		`script-src 'nonce-1234'`,
+		`'strict-dynamic';`,
+		`require-trusted-types-for 'script';`,
+		`trusted-types html url;`,
+		`manifest-src 'self';`,
+	}
+	got := csp(nil, "1234")
+
+	for _, value := range want {
+		if !strings.Contains(got, value) {
+			t.Errorf(`Unexpected result, didn't find %q in %q`, value, got)
+		}
+	}
+}
+
+func TestCSPCustomJSExternalFont(t *testing.T) {
+	want := []string{
+		`default-src 'none';`,
+		`img-src * data:;`,
+		`media-src *;`,
+		`frame-src *;`,
+		`style-src 'nonce-1234';`,
+		`script-src 'nonce-1234'`,
+		`'strict-dynamic';`,
+		`require-trusted-types-for 'script';`,
+		`trusted-types html url;`,
+		`manifest-src 'self';`,
+	}
+	got := csp(&model.User{ExternalFontHosts: "test.com", CustomJS: "alert(1)"}, "1234")
+
+	for _, value := range want {
+		if !strings.Contains(got, value) {
+			t.Errorf(`Unexpected result, didn't find %q in %q`, value, got)
+		}
+	}
+}
+
+func TestCSPExternalFontStylesheet(t *testing.T) {
+	want := []string{
+		`default-src 'none';`,
+		`img-src * data:;`,
+		`media-src *;`,
+		`frame-src *;`,
+		`style-src 'nonce-1234' test.com;`,
+		`script-src 'nonce-1234'`,
+		`'strict-dynamic';`,
+		`require-trusted-types-for 'script';`,
+		`trusted-types html url;`,
+		`manifest-src 'self';`,
+	}
+	got := csp(&model.User{ExternalFontHosts: "test.com", Stylesheet: "a {color: red;}"}, "1234")
+
+	for _, value := range want {
+		if !strings.Contains(got, value) {
+			t.Errorf(`Unexpected result, didn't find %q in %q`, value, got)
 		}
 	}
 }
