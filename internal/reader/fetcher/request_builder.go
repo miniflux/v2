@@ -14,6 +14,7 @@ import (
 	"slices"
 	"time"
 
+	"miniflux.app/v2/internal/botauth"
 	"miniflux.app/v2/internal/proxyrotator"
 )
 
@@ -212,6 +213,10 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	// Note that for the media proxy requests, we need to forward the browser Accept header.
 	if req.Header.Get("Accept") == "" {
 		req.Header.Set("Accept", defaultAcceptHeader)
+	}
+
+	if botauth.GlobalInstance != nil {
+		botauth.GlobalInstance.SignRequest(req)
 	}
 
 	req.Header.Set("Connection", "close")

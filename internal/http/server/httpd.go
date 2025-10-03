@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"miniflux.app/v2/internal/api"
+	"miniflux.app/v2/internal/botauth"
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/fever"
 	"miniflux.app/v2/internal/googlereader"
@@ -223,6 +224,10 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 	router.HandleFunc("/healthz", livenessProbe).Name("healthz")
 	router.HandleFunc("/readiness", readinessProbe).Name("readiness")
 	router.HandleFunc("/readyz", readinessProbe).Name("readyz")
+
+	if botauth.GlobalInstance != nil {
+		router.HandleFunc("/.well-known/http-message-signatures-directory", botauth.GlobalInstance.ServeKeyDirectory).Name("botauth_key_directory")
+	}
 
 	var subrouter *mux.Router
 	if config.Opts.BasePath() != "" {

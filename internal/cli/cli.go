@@ -11,6 +11,7 @@ import (
 	"log/slog"
 	"os"
 
+	"miniflux.app/v2/internal/botauth"
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/database"
 	"miniflux.app/v2/internal/proxyrotator"
@@ -20,21 +21,22 @@ import (
 )
 
 const (
-	flagInfoHelp             = "Show build information"
-	flagVersionHelp          = "Show application version"
-	flagMigrateHelp          = "Run SQL migrations"
-	flagFlushSessionsHelp    = "Flush all sessions (disconnect users)"
-	flagCreateAdminHelp      = "Create an admin user from an interactive terminal"
-	flagResetPasswordHelp    = "Reset user password"
-	flagResetFeedErrorsHelp  = "Clear all feed errors for all users"
-	flagDebugModeHelp        = "Show debug logs"
-	flagConfigFileHelp       = "Load configuration file"
-	flagConfigDumpHelp       = "Print parsed configuration values"
-	flagHealthCheckHelp      = `Perform a health check on the given endpoint (the value "auto" try to guess the health check endpoint).`
-	flagRefreshFeedsHelp     = "Refresh a batch of feeds and exit"
-	flagRunCleanupTasksHelp  = "Run cleanup tasks (delete old sessions and archives old entries)"
-	flagExportUserFeedsHelp  = "Export user feeds (provide the username as argument)"
-	flagResetNextCheckAtHelp = "Reset the next check time for all feeds"
+	flagInfoHelp               = "Show build information"
+	flagVersionHelp            = "Show application version"
+	flagMigrateHelp            = "Run SQL migrations"
+	flagFlushSessionsHelp      = "Flush all sessions (disconnect users)"
+	flagCreateAdminHelp        = "Create an admin user from an interactive terminal"
+	flagResetPasswordHelp      = "Reset user password"
+	flagResetFeedErrorsHelp    = "Clear all feed errors for all users"
+	flagDebugModeHelp          = "Show debug logs"
+	flagConfigFileHelp         = "Load configuration file"
+	flagConfigDumpHelp         = "Print parsed configuration values"
+	flagHealthCheckHelp        = `Perform a health check on the given endpoint (the value "auto" try to guess the health check endpoint).`
+	flagRefreshFeedsHelp       = "Refresh a batch of feeds and exit"
+	flagRunCleanupTasksHelp    = "Run cleanup tasks (delete old sessions and archives old entries)"
+	flagExportUserFeedsHelp    = "Export user feeds (provide the username as argument)"
+	flagResetNextCheckAtHelp   = "Reset the next check time for all feeds"
+	flagGenerateNewBotKeysHelp = "Generate a new Ed25519 key pair for web bot authentication and exit"
 )
 
 // Parse parses command line arguments.
@@ -56,6 +58,7 @@ func Parse() {
 		flagRefreshFeeds         bool
 		flagRunCleanupTasks      bool
 		flagExportUserFeeds      string
+		flagGenerateNewBotKeys   bool
 	)
 
 	flag.BoolVar(&flagInfo, "info", false, flagInfoHelp)
@@ -76,6 +79,7 @@ func Parse() {
 	flag.BoolVar(&flagRefreshFeeds, "refresh-feeds", false, flagRefreshFeedsHelp)
 	flag.BoolVar(&flagRunCleanupTasks, "run-cleanup-tasks", false, flagRunCleanupTasksHelp)
 	flag.StringVar(&flagExportUserFeeds, "export-user-feeds", "", flagExportUserFeedsHelp)
+	flag.BoolVar(&flagGenerateNewBotKeys, "generate-new-bot-keys", false, flagGenerateNewBotKeysHelp)
 	flag.Parse()
 
 	cfg := config.NewConfigParser()
@@ -226,6 +230,15 @@ func Parse() {
 		return
 	}
 
+	if flagGenerateNewBotKeys {
+		slog.Info("Generating a new Ed25519 key pair for web bot authentication")
+		if err := store.CreateWebAuthBothKeys(); err != nil {
+			printErrorAndExit(fmt.Errorf("unable to create web bot auth keys: %v", err))
+		}
+		slog.Info("A new Ed25519 key pair has been generated for web bot authentication")
+		return
+	}
+
 	// Run migrations and start the daemon.
 	if config.Opts.RunMigrations() {
 		if err := database.Migrate(db); err != nil {
@@ -247,6 +260,37 @@ func Parse() {
 		if err != nil {
 			printErrorAndExit(fmt.Errorf("unable to initialize proxy rotator: %v", err))
 		}
+	}
+
+	if config.Opts.WebBotAuth() {
+		hasKeys, err := store.HasWebAuthBothKeys()
+		if err != nil {
+			printErrorAndExit(fmt.Errorf("unable to check for existing web bot auth keys: %v", err))
+		}
+
+		if !hasKeys {
+			slog.Info("Web bot authentication is enabled but no keys are present in the database, generating a new key pair")
+			if err := store.CreateWebAuthBothKeys(); err != nil {
+				printErrorAndExit(fmt.Errorf("unable to create web bot auth keys: %v", err))
+			}
+
+			slog.Info("A new Ed25519 key pair has been generated for web bot authentication")
+		}
+
+		keys, err := store.WebAuthBothKeys()
+		if err != nil {
+			printErrorAndExit(fmt.Errorf("unable to fetch web bot auth keys: %v", err))
+		}
+
+		botauth.GlobalInstance, err = botauth.NewBothAuth(
+			config.Opts.BaseURL(),
+			keys,
+		)
+		if err != nil {
+			printErrorAndExit(fmt.Errorf("unable to initialize web bot auth: %v", err))
+		}
+
+		slog.Info("Web bot authentication is enabled", slog.String("directory_url", botauth.GlobalInstance.DirectoryURL()))
 	}
 
 	if flagRefreshFeeds {

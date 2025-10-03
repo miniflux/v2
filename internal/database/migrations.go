@@ -435,7 +435,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 
 		hasExtra := false
 		if err := tx.QueryRow(`
-			SELECT true 
+			SELECT true
 			FROM information_schema.columns
 			WHERE
 				table_name='users' AND
@@ -1363,6 +1363,11 @@ var migrations = [...]func(tx *sql.Tx) error{
 	},
 	func(tx *sql.Tx) (err error) {
 		sql := `DROP EXTENSION IF EXISTS hstore;`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `CREATE TABLE web_bot_auth (private_key bytea, public_key bytea, created_at timestamp with time zone default now());`
 		_, err = tx.Exec(sql)
 		return err
 	},
