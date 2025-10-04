@@ -4,6 +4,7 @@
 package template // import "miniflux.app/v2/internal/template"
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"math"
@@ -153,13 +154,13 @@ func csp(user *model.User, nonce string) string {
 
 func dict(values ...any) (map[string]any, error) {
 	if len(values)%2 != 0 {
-		return nil, fmt.Errorf("dict expects an even number of arguments")
+		return nil, errors.New("dict expects an even number of arguments")
 	}
 	dict := make(map[string]any, len(values)/2)
 	for i := 0; i < len(values); i += 2 {
 		key, ok := values[i].(string)
 		if !ok {
-			return nil, fmt.Errorf("dict keys must be strings")
+			return nil, errors.New("dict keys must be strings")
 		}
 		dict[key] = values[i+1]
 	}

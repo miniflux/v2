@@ -4,6 +4,7 @@
 package instapaper // import "miniflux.app/v2/internal/integration/instapaper"
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -25,7 +26,7 @@ func NewClient(username, password string) *Client {
 
 func (c *Client) AddURL(entryURL, entryTitle string) error {
 	if c.username == "" || c.password == "" {
-		return fmt.Errorf("instapaper: missing username or password")
+		return errors.New("instapaper: missing username or password")
 	}
 
 	values := url.Values{}

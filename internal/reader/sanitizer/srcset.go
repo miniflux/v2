@@ -4,7 +4,7 @@
 package sanitizer
 
 import (
-	"fmt"
+	"errors"
 	"strconv"
 	"strings"
 )
@@ -54,11 +54,11 @@ func parseImageCandidate(input string) (*imageCandidate, error) {
 		return &imageCandidate{ImageURL: parts[0]}, nil
 	case 2:
 		if !isValidWidthOrDensityDescriptor(parts[1]) {
-			return nil, fmt.Errorf(`srcset: invalid descriptor`)
+			return nil, errors.New(`srcset: invalid descriptor`)
 		}
 		return &imageCandidate{ImageURL: parts[0], Descriptor: parts[1]}, nil
 	default:
-		return nil, fmt.Errorf(`srcset: invalid number of descriptors`)
+		return nil, errors.New(`srcset: invalid number of descriptors`)
 	}
 }
 

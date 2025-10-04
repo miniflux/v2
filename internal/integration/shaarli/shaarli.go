@@ -9,6 +9,7 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -30,7 +31,7 @@ func NewClient(baseURL, apiSecret string) *Client {
 
 func (c *Client) CreateLink(entryURL, entryTitle string) error {
 	if c.baseURL == "" || c.apiSecret == "" {
-		return fmt.Errorf("shaarli: missing base URL or API secret")
+		return errors.New("shaarli: missing base URL or API secret")
 	}
 
 	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/v1/links")

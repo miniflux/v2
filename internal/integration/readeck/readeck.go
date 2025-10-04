@@ -6,6 +6,7 @@ package readeck // import "miniflux.app/v2/internal/integration/readeck"
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"mime/multipart"
 	"net/http"
@@ -31,7 +32,7 @@ func NewClient(baseURL, apiKey, labels string, onlyURL bool) *Client {
 
 func (c *Client) CreateBookmark(entryURL, entryTitle string, entryContent string) error {
 	if c.baseURL == "" || c.apiKey == "" {
-		return fmt.Errorf("readeck: missing base URL or API key")
+		return errors.New("readeck: missing base URL or API key")
 	}
 
 	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/bookmarks/")

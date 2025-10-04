@@ -125,7 +125,7 @@ func (c *Client) UserByID(userID int64) (*User, error) {
 
 // UserByUsername returns a single user.
 func (c *Client) UserByUsername(username string) (*User, error) {
-	body, err := c.request.Get(fmt.Sprintf("/v1/users/%s", username))
+	body, err := c.request.Get("/v1/users/" + username)
 	if err != nil {
 		return nil, err
 	}

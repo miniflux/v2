@@ -6,6 +6,7 @@ package linkding // import "miniflux.app/v2/internal/integration/linkding"
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -30,7 +31,7 @@ func NewClient(baseURL, apiKey, tags string, unread bool) *Client {
 
 func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 	if c.baseURL == "" || c.apiKey == "" {
-		return fmt.Errorf("linkding: missing base URL or API key")
+		return errors.New("linkding: missing base URL or API key")
 	}
 
 	tagsSplitFn := func(c rune) bool {

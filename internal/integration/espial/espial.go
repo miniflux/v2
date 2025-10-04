@@ -6,6 +6,7 @@ package espial // import "miniflux.app/v2/internal/integration/espial"
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -27,7 +28,7 @@ func NewClient(baseURL, apiKey string) *Client {
 
 func (c *Client) CreateLink(entryURL, entryTitle, espialTags string) error {
 	if c.baseURL == "" || c.apiKey == "" {
-		return fmt.Errorf("espial: missing base URL or API key")
+		return errors.New("espial: missing base URL or API key")
 	}
 
 	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/add")

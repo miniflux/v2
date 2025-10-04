@@ -6,6 +6,7 @@ package storage // import "miniflux.app/v2/internal/storage"
 import (
 	"crypto/rand"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
@@ -138,7 +139,7 @@ func (s *Storage) RemoveUserSessionByToken(userID int64, token string) error {
 	}
 
 	if count != 1 {
-		return fmt.Errorf(`store: nothing has been removed`)
+		return errors.New(`store: nothing has been removed`)
 	}
 
 	return nil
@@ -158,7 +159,7 @@ func (s *Storage) RemoveUserSessionByID(userID, sessionID int64) error {
 	}
 
 	if count != 1 {
-		return fmt.Errorf(`store: nothing has been removed`)
+		return errors.New(`store: nothing has been removed`)
 	}
 
 	return nil

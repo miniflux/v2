@@ -4,6 +4,7 @@
 package googlereader // import "miniflux.app/v2/internal/googlereader"
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -58,7 +59,7 @@ func parseItemID(itemIDValue string) (int64, error) {
 func parseItemIDsFromRequest(r *http.Request) ([]int64, error) {
 	items := r.Form[paramItemIDs]
 	if len(items) == 0 {
-		return nil, fmt.Errorf("googlereader: no items requested")
+		return nil, errors.New("googlereader: no items requested")
 	}
 
 	itemIDs := make([]int64, len(items))

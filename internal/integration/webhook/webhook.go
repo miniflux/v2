@@ -6,6 +6,7 @@ package webhook // import "miniflux.app/v2/internal/integration/webhook"
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -113,7 +114,7 @@ func (c *Client) SendNewEntriesWebhookEvent(feed *model.Feed, entries model.Entr
 
 func (c *Client) makeRequest(eventType string, payload any) error {
 	if c.webhookURL == "" {
-		return fmt.Errorf(`webhook: missing webhook URL`)
+		return errors.New(`webhook: missing webhook URL`)
 	}
 
 	requestBody, err := json.Marshal(payload)

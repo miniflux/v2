@@ -6,6 +6,7 @@ package raindrop // import "miniflux.app/v2/internal/integration/raindrop"
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -29,7 +30,7 @@ func NewClient(token, collectionID, tags string) *Client {
 // https://developer.raindrop.io/v1/raindrops/single#create-raindrop
 func (c *Client) CreateRaindrop(entryURL, entryTitle string) error {
 	if c.token == "" {
-		return fmt.Errorf("raindrop: missing token")
+		return errors.New("raindrop: missing token")
 	}
 
 	var request *http.Request

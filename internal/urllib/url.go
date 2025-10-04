@@ -4,6 +4,7 @@
 package urllib // import "miniflux.app/v2/internal/urllib"
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"strings"
@@ -103,11 +104,11 @@ func DomainWithoutWWW(websiteURL string) string {
 // JoinBaseURLAndPath returns a URL string with the provided path elements joined together.
 func JoinBaseURLAndPath(baseURL, path string) (string, error) {
 	if baseURL == "" {
-		return "", fmt.Errorf("empty base URL")
+		return "", errors.New("empty base URL")
 	}
 
 	if path == "" {
-		return "", fmt.Errorf("empty path")
+		return "", errors.New("empty path")
 	}
 
 	_, err := url.Parse(baseURL)

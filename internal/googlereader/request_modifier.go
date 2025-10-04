@@ -49,8 +49,8 @@ func (r RequestModifiers) String() string {
 
 	results = append(results, fmt.Sprintf("Count: %d", r.Count))
 	results = append(results, fmt.Sprintf("Offset: %d", r.Offset))
-	results = append(results, fmt.Sprintf("Sort Direction: %s", r.SortDirection))
-	results = append(results, fmt.Sprintf("Continuation Token: %s", r.ContinuationToken))
+	results = append(results, "Sort Direction: "+r.SortDirection)
+	results = append(results, "Continuation Token: "+r.ContinuationToken)
 	results = append(results, fmt.Sprintf("Start Time: %d", r.StartTime))
 	results = append(results, fmt.Sprintf("Stop Time: %d", r.StopTime))
 

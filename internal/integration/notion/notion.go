@@ -6,6 +6,7 @@ package notion
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -26,7 +27,7 @@ func NewClient(apiToken, pageID string) *Client {
 
 func (c *Client) UpdateDocument(entryURL string, entryTitle string) error {
 	if c.apiToken == "" || c.pageID == "" {
-		return fmt.Errorf("notion: missing API token or page ID")
+		return errors.New("notion: missing API token or page ID")
 	}
 
 	apiEndpoint := "https://api.notion.com/v1/blocks/" + c.pageID + "/children"

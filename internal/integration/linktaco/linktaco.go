@@ -6,6 +6,7 @@ package linktaco // import "miniflux.app/v2/internal/integration/linktaco"
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -44,7 +45,7 @@ func NewClient(apiToken, orgSlug, tags, visibility string) *Client {
 
 func (c *Client) CreateBookmark(entryURL, entryTitle, entryContent string) error {
 	if c.apiToken == "" || c.orgSlug == "" {
-		return fmt.Errorf("linktaco: missing API token or organization slug")
+		return errors.New("linktaco: missing API token or organization slug")
 	}
 
 	description := entryContent

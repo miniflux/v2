@@ -7,6 +7,7 @@ import (
 	"bufio"
 	"bytes"
 	"crypto/rand"
+	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -60,7 +61,7 @@ func (cp *configParser) postParsing() error {
 
 	scheme := strings.ToLower(parsedURL.Scheme)
 	if scheme != "https" && scheme != "http" {
-		return fmt.Errorf("BASE_URL scheme must be http or https")
+		return errors.New("BASE_URL scheme must be http or https")
 	}
 
 	cp.options.options["BASE_URL"].ParsedStringValue = baseURL
@@ -294,7 +295,7 @@ func readSecretFileValue(filename string) (string, error) {
 
 	value := string(bytes.TrimSpace(data))
 	if value == "" {
-		return "", fmt.Errorf("secret file is empty")
+		return "", errors.New("secret file is empty")
 	}
 
 	return value, nil

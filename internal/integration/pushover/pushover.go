@@ -5,6 +5,7 @@ package pushover // import "miniflux.app/v2/internal/integration/pushover"
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -72,7 +73,7 @@ func New(user, token string, priority int, device, urlPrefix string) *Client {
 
 func (c *Client) SendMessages(feed *model.Feed, entries model.Entries) error {
 	if c.token == "" || c.user == "" {
-		return fmt.Errorf("pushover token and user are required")
+		return errors.New("pushover token and user are required")
 	}
 	for _, entry := range entries {
 		msg := &Message{

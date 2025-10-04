@@ -6,6 +6,7 @@ package shiori // import "miniflux.app/v2/internal/integration/shiori"
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -28,7 +29,7 @@ func NewClient(baseURL, username, password string) *Client {
 
 func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 	if c.baseURL == "" || c.username == "" || c.password == "" {
-		return fmt.Errorf("shiori: missing base URL, username or password")
+		return errors.New("shiori: missing base URL, username or password")
 	}
 
 	token, err := c.authenticate()
