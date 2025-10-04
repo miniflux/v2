@@ -5,6 +5,7 @@ package processor // import "miniflux.app/v2/internal/reader/processor"
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"regexp"
@@ -75,12 +76,12 @@ func fetchBilibiliWatchTime(websiteURL string) (int, error) {
 
 	data, ok := result["data"].(map[string]any)
 	if !ok {
-		return 0, fmt.Errorf("data field not found or not an object")
+		return 0, errors.New("data field not found or not an object")
 	}
 
 	duration, ok := data["duration"].(float64)
 	if !ok {
-		return 0, fmt.Errorf("duration not found or not a number")
+		return 0, errors.New("duration not found or not a number")
 	}
 	intDuration := int(duration)
 	durationMin := intDuration / 60

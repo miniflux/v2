@@ -6,6 +6,7 @@ package linkwarden // import "miniflux.app/v2/internal/integration/linkwarden"
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -27,7 +28,7 @@ func NewClient(baseURL, apiKey string) *Client {
 
 func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 	if c.baseURL == "" || c.apiKey == "" {
-		return fmt.Errorf("linkwarden: missing base URL or API key")
+		return errors.New("linkwarden: missing base URL or API key")
 	}
 
 	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/v1/links")

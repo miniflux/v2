@@ -4,6 +4,7 @@
 package systemd // import "miniflux.app/v2/internal/systemd"
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"os"
@@ -40,7 +41,7 @@ func WatchdogInterval() (time.Duration, error) {
 	}
 
 	if s <= 0 {
-		return 0, fmt.Errorf(`systemd: error WATCHDOG_USEC must be a positive number`)
+		return 0, errors.New(`systemd: error WATCHDOG_USEC must be a positive number`)
 	}
 
 	return time.Duration(s) * time.Microsecond, nil

@@ -4,6 +4,7 @@
 package cli // import "miniflux.app/v2/internal/cli"
 
 import (
+	"errors"
 	"fmt"
 
 	"miniflux.app/v2/internal/model"
@@ -19,7 +20,7 @@ func resetPassword(store *storage.Storage) {
 	}
 
 	if user == nil {
-		printErrorAndExit(fmt.Errorf("user not found"))
+		printErrorAndExit(errors.New("user not found"))
 	}
 
 	userModificationRequest := &model.UserModificationRequest{

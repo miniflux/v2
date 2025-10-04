@@ -4,7 +4,7 @@
 package urlcleaner // import "miniflux.app/v2/internal/reader/urlcleaner"
 
 import (
-	"fmt"
+	"errors"
 	"net/url"
 	"strings"
 )
@@ -97,7 +97,7 @@ var trackingParamsOutbound = map[string]bool{
 
 func RemoveTrackingParameters(parsedFeedURL, parsedSiteURL, parsedInputUrl *url.URL) (string, error) {
 	if parsedFeedURL == nil || parsedSiteURL == nil || parsedInputUrl == nil {
-		return "", fmt.Errorf("urlcleaner: one of the URLs is nil")
+		return "", errors.New("urlcleaner: one of the URLs is nil")
 	}
 
 	queryParams := parsedInputUrl.Query()

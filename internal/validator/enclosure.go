@@ -4,14 +4,14 @@
 package validator
 
 import (
-	"fmt"
+	"errors"
 
 	"miniflux.app/v2/internal/model"
 )
 
 func ValidateEnclosureUpdateRequest(request *model.EnclosureUpdateRequest) error {
 	if request.MediaProgression < 0 {
-		return fmt.Errorf(`media progression must an positive integer`)
+		return errors.New(`media progression must an positive integer`)
 	}
 
 	return nil

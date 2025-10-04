@@ -6,6 +6,7 @@ package apprise
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -29,7 +30,7 @@ func NewClient(serviceURL, baseURL string) *Client {
 
 func (c *Client) SendNotification(feed *model.Feed, entries model.Entries) error {
 	if c.baseURL == "" || c.servicesURL == "" {
-		return fmt.Errorf("apprise: missing base URL or services URL")
+		return errors.New("apprise: missing base URL or services URL")
 	}
 
 	for _, entry := range entries {

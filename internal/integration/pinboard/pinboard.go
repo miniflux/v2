@@ -14,8 +14,8 @@ import (
 	"miniflux.app/v2/internal/version"
 )
 
-var errPostNotFound = fmt.Errorf("pinboard: post not found")
-var errMissingCredentials = fmt.Errorf("pinboard: missing auth token")
+var errPostNotFound = errors.New("pinboard: post not found")
+var errMissingCredentials = errors.New("pinboard: missing auth token")
 
 const defaultClientTimeout = 10 * time.Second
 

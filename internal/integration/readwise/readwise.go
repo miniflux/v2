@@ -8,6 +8,7 @@ package readwise // import "miniflux.app/v2/internal/integration/readwise"
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -30,7 +31,7 @@ func NewClient(apiKey string) *Client {
 
 func (c *Client) CreateDocument(entryURL string) error {
 	if c.apiKey == "" {
-		return fmt.Errorf("readwise: missing API key")
+		return errors.New("readwise: missing API key")
 	}
 
 	requestBody, err := json.Marshal(&readwiseDocument{

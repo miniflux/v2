@@ -5,6 +5,7 @@ package readability // import "miniflux.app/v2/internal/reader/readability"
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -2301,5 +2302,5 @@ func TestExtractContentWithBrokenReader(t *testing.T) {
 type brokenReader struct{}
 
 func (br *brokenReader) Read(p []byte) (n int, err error) {
-	return 0, fmt.Errorf("simulated read error")
+	return 0, errors.New("simulated read error")
 }

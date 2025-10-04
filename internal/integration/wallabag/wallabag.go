@@ -6,6 +6,7 @@ package wallabag // import "miniflux.app/v2/internal/integration/wallabag"
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -34,7 +35,7 @@ func NewClient(baseURL, clientID, clientSecret, username, password, tags string,
 
 func (c *Client) CreateEntry(entryURL, entryTitle, entryContent string) error {
 	if c.baseURL == "" || c.clientID == "" || c.clientSecret == "" || c.username == "" || c.password == "" {
-		return fmt.Errorf("wallabag: missing base URL, client ID, client secret, username or password")
+		return errors.New("wallabag: missing base URL, client ID, client secret, username or password")
 	}
 
 	accessToken, err := c.getAccessToken()

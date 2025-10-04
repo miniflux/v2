@@ -126,8 +126,7 @@ func checkOutputFormat(r *http.Request) error {
 		output = request.QueryStringParam(r, "output", "")
 	}
 	if output != "json" {
-		err := fmt.Errorf("googlereader: only json output is supported")
-		return err
+		return errors.New("googlereader: only json output is supported")
 	}
 	return nil
 }
@@ -280,7 +279,7 @@ func (h *handler) editTagHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(addTags) == 0 && len(removeTags) == 0 {
-		err = fmt.Errorf("googlreader: add or/and remove tags should be supplied")
+		err = errors.New("googlreader: add or/and remove tags should be supplied")
 		json.ServerError(w, r, err)
 		return
 	}
@@ -1014,7 +1013,7 @@ func (h *handler) userInfoHandler(w http.ResponseWriter, r *http.Request) {
 		json.ServerError(w, r, err)
 		return
 	}
-	userInfo := userInfoResponse{UserID: fmt.Sprint(user.ID), UserName: user.Username, UserProfileID: fmt.Sprint(user.ID), UserEmail: user.Username}
+	userInfo := userInfoResponse{UserID: strconv.FormatInt(user.ID, 10), UserName: user.Username, UserProfileID: strconv.FormatInt(user.ID, 10), UserEmail: user.Username}
 	json.OK(w, r, userInfo)
 }
 
@@ -1048,7 +1047,7 @@ func (h *handler) streamItemIDsHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if len(rm.Streams) != 1 {
-		json.ServerError(w, r, fmt.Errorf("googlereader: only one stream type expected"))
+		json.ServerError(w, r, errors.New("googlereader: only one stream type expected"))
 		return
 	}
 	switch rm.Streams[0].Type {
