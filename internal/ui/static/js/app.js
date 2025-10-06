@@ -569,8 +569,7 @@ function initializeFormHandlers() {
  * Show the keyboard shortcuts modal.
  */
 function showKeyboardShortcutsAction() {
-    const template = document.getElementById("keyboard-shortcuts");
-    KeyboardModalHandler.open(template.content, "dialog-title");
+    document.getElementById("keyboard-shortcuts-modal").showModal();
 }
 
 /**
@@ -1215,7 +1214,6 @@ function initializeKeyboardShortcuts() {
 
     // UI actions
     keyboardHandler.on("?", showKeyboardShortcutsAction);
-    keyboardHandler.on("Escape", () => KeyboardModalHandler.close());
     keyboardHandler.on("a", () => {
         const enclosureElement = document.querySelector('.entry-enclosures');
         if (enclosureElement) {

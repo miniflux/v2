@@ -126,62 +126,62 @@
     <main id="main">
         {{template "content" .}}
     </main>
-    <template id="keyboard-shortcuts">
-        <div id="modal-left">
-            <button class="btn-close-modal" aria-label="Close">x</button>
-            <h3 tabindex="-1" id="dialog-title">{{ t "page.keyboard_shortcuts.title" }}</h3>
+    <dialog id="keyboard-shortcuts-modal" closedby="any">
+        <form method="dialog">
+            <button class="btn-close-modal" aria-label="Close" autofocus>x</button>
+        </form>
+        <h3 tabindex="-1" id="dialog-title">{{ t "page.keyboard_shortcuts.title" }}</h3>
 
-            <div class="keyboard-shortcuts">
-                <p>{{ t "page.keyboard_shortcuts.subtitle.sections" }}</p>
-                <ul>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_unread" }} = <strong>g + u</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_starred" }} = <strong>g + b</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_history" }} = <strong>g + h</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_feeds" }} = <strong>g + f</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_categories" }} = <strong>g + c</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_settings" }} = <strong>g + s</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.show_keyboard_shortcuts" }} = <strong>?</strong></li>
-                    <li>{{ t "menu.add_feed" }} = <strong>+</strong></li>
-                </ul>
+        <div class="keyboard-shortcuts">
+            <p>{{ t "page.keyboard_shortcuts.subtitle.sections" }}</p>
+            <ul>
+                <li>{{ t "page.keyboard_shortcuts.go_to_unread" }} = <strong>g + u</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.go_to_starred" }} = <strong>g + b</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.go_to_history" }} = <strong>g + h</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.go_to_feeds" }} = <strong>g + f</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.go_to_categories" }} = <strong>g + c</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.go_to_settings" }} = <strong>g + s</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.show_keyboard_shortcuts" }} = <strong>?</strong></li>
+                <li>{{ t "menu.add_feed" }} = <strong>+</strong></li>
+            </ul>
 
-                <p>{{ t "page.keyboard_shortcuts.subtitle.items" }}</p>
-                <ul>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>k</strong>, <strong>&#x23F4;</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>j</strong>, <strong>&#x23F5;</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_feed" }} = <strong>F</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_top_item" }} = <strong>g + g</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_bottom_item" }} = <strong>G</strong></li>
-                </ul>
+            <p>{{ t "page.keyboard_shortcuts.subtitle.items" }}</p>
+            <ul>
+                <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>k</strong>, <strong>&#x23F4;</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>j</strong>, <strong>&#x23F5;</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.go_to_feed" }} = <strong>F</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.go_to_top_item" }} = <strong>g + g</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.go_to_bottom_item" }} = <strong>G</strong></li>
+            </ul>
 
-                <p>{{ t "page.keyboard_shortcuts.subtitle.pages" }}</p>
-                <ul>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_previous_page" }} = <strong>h</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_next_page" }} = <strong>l</strong></li>
-                </ul>
+            <p>{{ t "page.keyboard_shortcuts.subtitle.pages" }}</p>
+            <ul>
+                <li>{{ t "page.keyboard_shortcuts.go_to_previous_page" }} = <strong>h</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.go_to_next_page" }} = <strong>l</strong></li>
+            </ul>
 
-                <p>{{ t "page.keyboard_shortcuts.subtitle.actions" }}</p>
-                <ul>
-                    <li>{{ t "page.keyboard_shortcuts.open_item" }} = <strong>o</strong>, <strong>Enter</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.open_original" }} = <strong>v</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.open_original_same_window" }} = <strong>V</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.open_comments" }} = <strong>c</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.open_comments_same_window" }} = <strong>C</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.toggle_read_status_next" }} = <strong>m</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.toggle_read_status_prev" }} = <strong>M</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.mark_page_as_read" }} = <strong>A</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.download_content" }} = <strong>d</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.toggle_star_status" }} = <strong>f</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.save_article" }} = <strong>s</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.toggle_entry_attachments" }} = <strong>a</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.scroll_item_to_top" }} = <strong>z + t</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.refresh_all_feeds" }} = <strong>R</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.remove_feed" }} = <strong>#</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_search" }} = <strong>/</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.close_modal" }} = <strong>Esc</strong></li>
-                </ul>
-            </div>
+            <p>{{ t "page.keyboard_shortcuts.subtitle.actions" }}</p>
+            <ul>
+                <li>{{ t "page.keyboard_shortcuts.open_item" }} = <strong>o</strong>, <strong>Enter</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.open_original" }} = <strong>v</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.open_original_same_window" }} = <strong>V</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.open_comments" }} = <strong>c</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.open_comments_same_window" }} = <strong>C</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.toggle_read_status_next" }} = <strong>m</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.toggle_read_status_prev" }} = <strong>M</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.mark_page_as_read" }} = <strong>A</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.download_content" }} = <strong>d</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.toggle_star_status" }} = <strong>f</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.save_article" }} = <strong>s</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.toggle_entry_attachments" }} = <strong>a</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.scroll_item_to_top" }} = <strong>z + t</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.refresh_all_feeds" }} = <strong>R</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.remove_feed" }} = <strong>#</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.go_to_search" }} = <strong>/</strong></li>
+                <li>{{ t "page.keyboard_shortcuts.close_modal" }} = <strong>Esc</strong></li>
+            </ul>
         </div>
-    </template>
+    </dialog>
 
     <template id="icon-read">{{ icon "read" }}</template>
     <template id="icon-unread">{{ icon "unread" }}</template>
