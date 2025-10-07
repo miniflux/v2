@@ -1,0 +1,22 @@
+version: "2"
+linters:
+  default: standard
+  disable:
+    - errcheck
+  enable:
+    - errname
+    - gocritic
+    - goheader
+    - loggercheck
+    - misspell
+    - perfsprint
+    - sqlclosecheck
+    - staticcheck
+    - whitespace
+  settings:
+    loggercheck:
+      slog: true
+    goheader:
+      template: |-
+        SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+        SPDX-License-Identifier: Apache-2.0

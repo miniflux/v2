@@ -1,4 +1,7 @@
-package betula
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+package betula // import "miniflux.app/v2/internal/integration/betula"
 
 import (
 	"fmt"
