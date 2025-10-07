@@ -100,8 +100,8 @@ test:
 
 lint:
 	go vet ./...
-	staticcheck ./...
-	golangci-lint run --disable errcheck --enable sqlclosecheck --enable misspell --enable gofmt --enable goimports --enable whitespace
+	gofmt -d -e .
+	golangci-lint run
 
 integration-test:
 	psql -U postgres -c 'drop database if exists miniflux_test;'
