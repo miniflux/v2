@@ -30,11 +30,6 @@ jobs:
         with:
           go-version: stable
       - uses: golangci/golangci-lint-action@v8
-        with:
-          args: >
-            --timeout 10m
-            --disable errcheck
-            --enable sqlclosecheck,misspell,whitespace,gocritic
       - name: Run gofmt linter
         run: gofmt -d -e .
 

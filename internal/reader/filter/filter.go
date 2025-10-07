@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
-//
+
 // Package filter provides functions to filter entries based on user-defined rules.
 //
 // There are two types of rules:
