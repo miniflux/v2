@@ -68,12 +68,15 @@ func TestFeedCheckedNow(t *testing.T) {
 }
 
 func checkTargetInterval(t *testing.T, feed *Feed, targetInterval time.Duration, timeBefore time.Time, message string) {
-	if feed.NextCheckAt.Before(timeBefore.Add(targetInterval)) {
-		t.Errorf(`The next_check_at should be after timeBefore + %s`, message)
-	}
-	if feed.NextCheckAt.After(time.Now().Add(targetInterval)) {
-		t.Errorf(`The next_check_at should be before now + %s`, message)
-	}
+    // Allow a positive jitter up to 10 minutes added by the scheduler.
+    jitterMax := 10 * time.Minute
+
+    if feed.NextCheckAt.Before(timeBefore.Add(targetInterval)) {
+        t.Errorf(`The next_check_at should be after timeBefore + %s`, message)
+    }
+    if feed.NextCheckAt.After(time.Now().Add(targetInterval + jitterMax)) {
+        t.Errorf(`The next_check_at should be before now + %s (with jitter)`, message)
+    }
 }
 
 func TestFeedScheduleNextCheckRoundRobinDefault(t *testing.T) {
