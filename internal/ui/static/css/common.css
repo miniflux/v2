@@ -175,8 +175,8 @@ a:hover {
     white-space: nowrap;
 }
 
-#header-menu .icon,
-.page-header ul a .icon {
+#header-menu a>svg,
+.page-header ul a>svg {
     margin-bottom: 2px;
 }
 
@@ -929,14 +929,16 @@ article.category-has-unread {
 }
 
 /* Icons */
-.icon,
+a>svg,
+button>svg,
 .icon-label {
     vertical-align: text-bottom;
     display: inline-block;
     margin-right: 2px;
 }
 
-.icon {
+a>svg,
+button>svg {
     width: 16px;
     height: 16px;
 }
