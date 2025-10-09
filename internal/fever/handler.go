@@ -143,7 +143,7 @@ func (h *handler) handleFeeds(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var result feedsResponse
-	result.Feeds = make([]feed, 0)
+	result.Feeds = make([]feed, 0, len(feeds))
 	for _, f := range feeds {
 		subscription := feed{
 			ID:          f.ID,
@@ -307,7 +307,7 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result.Items = make([]item, 0)
+	result.Items = make([]item, 0, len(entries))
 	for _, entry := range entries {
 		isRead := 0
 		if entry.Status == model.EntryStatusRead {
@@ -358,7 +358,7 @@ func (h *handler) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var itemIDs []string
+	itemIDs := make([]string, 0, len(rawEntryIDs))
 	for _, entryID := range rawEntryIDs {
 		itemIDs = append(itemIDs, strconv.FormatInt(entryID, 10))
 	}
@@ -392,7 +392,7 @@ func (h *handler) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var itemsIDs []string
+	itemsIDs := make([]string, 0, len(entryIDs))
 	for _, entryID := range entryIDs {
 		itemsIDs = append(itemsIDs, strconv.FormatInt(entryID, 10))
 	}
@@ -568,12 +568,12 @@ A feeds_group object has the following members:
 	feed_ids (string/comma-separated list of positive integers)
 */
 func (h *handler) buildFeedGroups(feeds model.Feeds) []feedsGroups {
-	feedsGroupedByCategory := make(map[int64][]string)
+	feedsGroupedByCategory := make(map[int64][]string, len(feeds))
 	for _, feed := range feeds {
 		feedsGroupedByCategory[feed.Category.ID] = append(feedsGroupedByCategory[feed.Category.ID], strconv.FormatInt(feed.ID, 10))
 	}
 
-	result := make([]feedsGroups, 0)
+	result := make([]feedsGroups, 0, len(feedsGroupedByCategory))
 	for categoryID, feedIDs := range feedsGroupedByCategory {
 		result = append(result, feedsGroups{
 			GroupID: categoryID,
