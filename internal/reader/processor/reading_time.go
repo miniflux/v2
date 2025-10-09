@@ -49,11 +49,11 @@ func fetchWatchTime(websiteURL, query string, isoDate bool) (int, error) {
 		}
 		ret = int(parsedDuration.Minutes())
 	} else {
-		parsedDuration, err := strconv.ParseInt(duration, 10, 64)
+		parsedDuration, err := strconv.Atoi(duration)
 		if err != nil {
 			return 0, fmt.Errorf("unable to parse duration %s: %v", duration, err)
 		}
-		ret = int(parsedDuration / 60)
+		ret = parsedDuration / 60
 	}
 	return ret, nil
 }

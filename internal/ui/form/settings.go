@@ -166,15 +166,15 @@ func (s *SettingsForm) Validate() *locale.LocalizedError {
 
 // NewSettingsForm returns a new SettingsForm.
 func NewSettingsForm(r *http.Request) *SettingsForm {
-	entriesPerPage, err := strconv.ParseInt(r.FormValue("entries_per_page"), 10, 0)
+	entriesPerPage, err := strconv.Atoi(r.FormValue("entries_per_page"))
 	if err != nil {
 		entriesPerPage = 0
 	}
-	defaultReadingSpeed, err := strconv.ParseInt(r.FormValue("default_reading_speed"), 10, 0)
+	defaultReadingSpeed, err := strconv.Atoi(r.FormValue("default_reading_speed"))
 	if err != nil {
 		defaultReadingSpeed = 0
 	}
-	cjkReadingSpeed, err := strconv.ParseInt(r.FormValue("cjk_reading_speed"), 10, 0)
+	cjkReadingSpeed, err := strconv.Atoi(r.FormValue("cjk_reading_speed"))
 	if err != nil {
 		cjkReadingSpeed = 0
 	}
