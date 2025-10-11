@@ -202,6 +202,16 @@ type SanitizerOptions struct {
 	OpenLinksInNewTab bool
 }
 
+// lastIndex returns the index of the last matching element e present in s.
+func lastIndex[T comparable](s []T, e T) int {
+	for i := len(s) - 1; i >= 0; i-- {
+		if s[i] == e {
+			return i
+		}
+	}
+	return -1
+}
+
 func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) string {
 	var tagStack []string
 	var parentTag string
@@ -278,8 +288,13 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 			}
 		case html.EndTagToken:
 			if len(blockedStack) == 0 {
-				if isValidTag(tagName) && slices.Contains(tagStack, tagName) {
-					buffer.WriteString("</" + tagName + ">")
+				if isValidTag(tagName) {
+					// We can't use a strict push/pop queue, as we might have things like <video><source></video>
+					// that are valid HTML.
+					if idx := lastIndex(tagStack, tagName); idx != -1 {
+						tagStack = tagStack[:idx]
+						buffer.WriteString("</" + tagName + ">")
+					}
 				}
 			} else {
 				if blockedStack[len(blockedStack)-1] == tagName {
