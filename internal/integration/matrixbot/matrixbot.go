@@ -23,8 +23,8 @@ func PushEntries(feed *model.Feed, entries model.Entries, matrixBaseURL, matrixU
 		return err
 	}
 
-	var textMessages []string
-	var formattedTextMessages []string
+	textMessages := make([]string, 0, len(entries))
+	formattedTextMessages := make([]string, 0, len(entries))
 
 	for _, entry := range entries {
 		textMessages = append(textMessages, fmt.Sprintf(`[%s] %s - %s`, feed.Title, entry.Title, entry.URL))

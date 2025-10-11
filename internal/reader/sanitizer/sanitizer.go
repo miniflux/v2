@@ -305,7 +305,8 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 }
 
 func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []html.Attribute, sanitizerOptions *SanitizerOptions) ([]string, string) {
-	var htmlAttrs, attrNames []string
+	htmlAttrs := make([]string, 0, len(attributes))
+	attrNames := make([]string, 0, len(attributes))
 	var err error
 	var isAnchorLink bool
 
