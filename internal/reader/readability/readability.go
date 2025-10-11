@@ -62,11 +62,10 @@ func (c *candidate) String() string {
 type candidateList map[*html.Node]*candidate
 
 func (c candidateList) String() string {
-	var output []string
+	output := make([]string, 0, len(c))
 	for _, candidate := range c {
 		output = append(output, candidate.String())
 	}
-
 	return strings.Join(output, ", ")
 }
 

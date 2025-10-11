@@ -43,8 +43,8 @@ func fetchYouTubeWatchTimeForSingleEntry(websiteURL string) (int, error) {
 }
 
 func fetchYouTubeWatchTimeInBulk(entries []*model.Entry) {
-	var videosEntriesMapping = make(map[string]*model.Entry, len(entries))
-	var videoIDs []string
+	videosEntriesMapping := make(map[string]*model.Entry, len(entries))
+	videoIDs := make([]string, 0, len(entries))
 
 	for _, entry := range entries {
 		if !isYouTubeVideoURL(entry.URL) {

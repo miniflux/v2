@@ -23,7 +23,7 @@ type ItunesChannelElement struct {
 }
 
 func (i *ItunesChannelElement) GetItunesCategories() []string {
-	var categories []string
+	categories := make([]string, 0, len(i.ItunesCategories))
 	for _, category := range i.ItunesCategories {
 		categories = append(categories, category.Text)
 		if category.SubCategory != nil {

@@ -73,7 +73,7 @@ func (c *Client) SendNewEntriesWebhookEvent(feed *model.Feed, entries model.Entr
 		return nil
 	}
 
-	var webhookEntries []*WebhookEntry
+	webhookEntries := make([]*WebhookEntry, 0, len(entries))
 	for _, entry := range entries {
 		webhookEntries = append(webhookEntries, &WebhookEntry{
 			ID:          entry.ID,
