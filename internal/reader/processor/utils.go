@@ -25,31 +25,31 @@ func parseISO8601Duration(duration string) (time.Duration, error) {
 	num := ""
 
 	for _, char := range after {
-		var val float64
+		var val int
 		var err error
 
 		switch char {
 		case 'Y', 'W', 'D':
 			return 0, fmt.Errorf("the '%c' specifier isn't supported", char)
 		case 'H':
-			if val, err = strconv.ParseFloat(num, 64); err != nil {
+			if val, err = strconv.Atoi(num); err != nil {
 				return 0, err
 			}
 			d += time.Duration(val) * time.Hour
 			num = ""
 		case 'M':
-			if val, err = strconv.ParseFloat(num, 64); err != nil {
+			if val, err = strconv.Atoi(num); err != nil {
 				return 0, err
 			}
 			d += time.Duration(val) * time.Minute
 			num = ""
 		case 'S':
-			if val, err = strconv.ParseFloat(num, 64); err != nil {
+			if val, err = strconv.Atoi(num); err != nil {
 				return 0, err
 			}
 			d += time.Duration(val) * time.Second
 			num = ""
-		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.':
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
 			num += string(char)
 			continue
 		default:

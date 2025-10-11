@@ -70,10 +70,10 @@ func TestISO8601DurationParsingErrors(t *testing.T) {
 		{"PT1a2H", "invalid character in the period"},
 		{"PT3b4M", "invalid character in the period"},
 		{"PT5c6S", "invalid character in the period"},
-		// Test cases for actual ParseFloat errors (empty number before specifier)
-		{"PTH", "strconv.ParseFloat: parsing \"\": invalid syntax"},
-		{"PTM", "strconv.ParseFloat: parsing \"\": invalid syntax"},
-		{"PTS", "strconv.ParseFloat: parsing \"\": invalid syntax"},
+		// Test cases for actual Atoi errors (empty number before specifier)
+		{"PTH", "strconv.Atoi: parsing \"\": invalid syntax"},
+		{"PTM", "strconv.Atoi: parsing \"\": invalid syntax"},
+		{"PTS", "strconv.Atoi: parsing \"\": invalid syntax"},
 		// Invalid character
 		{"PT1X", "invalid character in the period"},
 		// Invalid character mixed
