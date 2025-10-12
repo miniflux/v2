@@ -467,7 +467,12 @@ func hasRequiredAttributes(tagName string, attributes []string) bool {
 	case "iframe":
 		return slices.Contains(attributes, "src")
 	case "source", "img":
-		return slices.Contains(attributes, "src") || slices.Contains(attributes, "srcset")
+		for _, attribute := range attributes {
+			if attribute == "src" || attribute == "srcset" {
+				return true
+			}
+		}
+		return false
 	default:
 		return true
 	}
