@@ -4,6 +4,7 @@
 package crypto // import "miniflux.app/v2/internal/crypto"
 
 import (
+	"crypto/ed25519"
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
@@ -58,4 +59,12 @@ func GenerateUUID() string {
 
 func ConstantTimeCmp(a, b string) bool {
 	return subtle.ConstantTimeCompare([]byte(a), []byte(b)) == 1
+}
+
+func GenerateEd25519Keys() (privateKey, publicKey []byte, err error) {
+	publicKey, privateKey, err = ed25519.GenerateKey(nil)
+	if err != nil {
+		return nil, nil, err
+	}
+	return privateKey, publicKey, nil
 }

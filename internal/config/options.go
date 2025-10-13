@@ -564,6 +564,11 @@ func NewConfigOptions() *configOptions {
 				RawValue:        "0",
 				ValueType:       boolType,
 			},
+			"WEB_BOT_AUTH": {
+				ParsedBoolValue: false,
+				RawValue:        "0",
+				ValueType:       boolType,
+			},
 			"WORKER_POOL_SIZE": {
 				ParsedIntValue: 16,
 				RawValue:       "16",
@@ -950,6 +955,10 @@ func (c *configOptions) Watchdog() bool {
 
 func (c *configOptions) WebAuthn() bool {
 	return c.options["WEBAUTHN"].ParsedBoolValue
+}
+
+func (c *configOptions) WebBotAuth() bool {
+	return c.options["WEB_BOT_AUTH"].ParsedBoolValue
 }
 
 func (c *configOptions) WorkerPoolSize() int {
