@@ -504,6 +504,14 @@ func NewConfigOptions() *configOptions {
 					return validateChoices(rawValue, []string{"round_robin", "entry_frequency"})
 				},
 			},
+			"POLLING_JITTER": {
+				ParsedDuration: 10 * time.Minute,
+				RawValue:       "10",
+				ValueType:      minuteType,
+				Validator: func(rawValue string) error {
+					return validateGreaterOrEqualThan(rawValue, 1)
+				},
+			},
 			"PORT": {
 				ParsedStringValue: "",
 				RawValue:          "",
@@ -900,6 +908,10 @@ func (c *configOptions) PollingParsingErrorLimit() int {
 
 func (c *configOptions) PollingScheduler() string {
 	return c.options["POLLING_SCHEDULER"].ParsedStringValue
+}
+
+func (c *configOptions) PollingJitter() time.Duration {
+	return c.options["POLLING_JITTER"].ParsedDuration
 }
 
 func (c *configOptions) Port() string {

@@ -4,12 +4,12 @@
 package model // import "miniflux.app/v2/internal/model"
 
 import (
-    "fmt"
-    "io"
-    "math/rand"
-    "time"
+	"fmt"
+	"io"
+	"math/rand"
+	"time"
 
-    "miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/config"
 )
 
 // List of supported schedulers.
@@ -136,7 +136,7 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelay time.Duration) ti
 	// Use the RSS TTL field, Retry-After, Cache-Control or Expires HTTP headers if defined.
 	interval = max(interval, refreshDelay)
 
-    // Limit the max interval value for misconfigured feeds.
+	// Limit the max interval value for misconfigured feeds.
 	switch config.Opts.PollingScheduler() {
 	case SchedulerRoundRobin:
 		interval = min(interval, config.Opts.SchedulerRoundRobinMaxInterval())
@@ -144,21 +144,19 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelay time.Duration) ti
 		interval = min(interval, config.Opts.SchedulerEntryFrequencyMaxInterval())
 	}
 
-    // Apply a small random jitter to spread next checks and reduce thundering herds.
-    // Jitter range: [0, 10 minutes].
-    jitterMax := 10 * time.Minute
-    if jitterMax > 0 {
-        jitter := time.Duration(rand.Int63n(int64(jitterMax + 1)))
-        interval += jitter
+	// Apply a small random jitter to spread next checks and reduce thundering herds.
+	jitterMax := config.Opts.PollingJitter()
 
-        // Re-apply max clamping after jitter to avoid exceeding configured caps.
-        switch config.Opts.PollingScheduler() {
-        case SchedulerRoundRobin:
-            interval = min(interval, config.Opts.SchedulerRoundRobinMaxInterval())
-        case SchedulerEntryFrequency:
-            interval = min(interval, config.Opts.SchedulerEntryFrequencyMaxInterval())
-        }
-    }
+	randomJitter := time.Duration(rand.Int63n(int64(jitterMax + 1)))
+	interval += randomJitter
+
+	// Re-apply max clamping after randomJitter to avoid exceeding configured caps.
+	switch config.Opts.PollingScheduler() {
+	case SchedulerRoundRobin:
+		interval = min(interval, config.Opts.SchedulerRoundRobinMaxInterval())
+	case SchedulerEntryFrequency:
+		interval = min(interval, config.Opts.SchedulerEntryFrequencyMaxInterval())
+	}
 
 	f.NextCheckAt = time.Now().Add(interval)
 	return interval
