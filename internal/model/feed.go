@@ -12,6 +12,11 @@ import (
 	"miniflux.app/v2/internal/config"
 )
 
+func init() {
+	// Seed global math/rand to avoid predictable jitter values in scheduling.
+	rand.Seed(time.Now().UnixNano())
+}
+
 // List of supported schedulers.
 const (
 	SchedulerRoundRobin     = "round_robin"
