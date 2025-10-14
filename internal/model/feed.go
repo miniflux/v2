@@ -130,8 +130,6 @@ func getMaxInterval() time.Duration {
         return config.Opts.SchedulerRoundRobinMaxInterval()
     case SchedulerEntryFrequency:
         return config.Opts.SchedulerEntryFrequencyMaxInterval()
-    default:
-        return config.Opts.SchedulerRoundRobinMaxInterval()
     }
 }
 
@@ -153,16 +151,14 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelay time.Duration) ti
 	// Use the RSS TTL field, Retry-After, Cache-Control or Expires HTTP headers if defined.
 	interval = max(interval, refreshDelay)
 
-    // Compute scheduler cap once. Final clamping is applied after jitter.
-    maxInterval := getMaxInterval()
-
 	// Apply a small random jitter to spread next checks and reduce thundering herds.
 	jitterMax := config.Opts.PollingJitter()
 
 	randomJitter := time.Duration(rand.Int63n(int64(jitterMax + 1)))
 	interval += randomJitter
 
-	// Re-apply max clamping after randomJitter to avoid exceeding configured caps.
+	// Apply max clamping after randomJitter to avoid exceeding configured caps.
+    maxInterval := getMaxInterval()
     interval = min(interval, maxInterval)
 
 	f.NextCheckAt = time.Now().Add(interval)
