@@ -125,12 +125,14 @@ func (f *Feed) CheckedNow() {
 
 // getMaxInterval returns the maximum allowed interval based on the configured polling scheduler.
 func getMaxInterval() time.Duration {
-    switch config.Opts.PollingScheduler() {
-    case SchedulerRoundRobin:
-        return config.Opts.SchedulerRoundRobinMaxInterval()
-    case SchedulerEntryFrequency:
-        return config.Opts.SchedulerEntryFrequencyMaxInterval()
-    }
+	switch config.Opts.PollingScheduler() {
+	case SchedulerRoundRobin:
+		return config.Opts.SchedulerRoundRobinMaxInterval()
+	case SchedulerEntryFrequency:
+		return config.Opts.SchedulerEntryFrequencyMaxInterval()
+	default:
+		return config.Opts.SchedulerRoundRobinMaxInterval()
+	}
 }
 
 // ScheduleNextCheck set "next_check_at" of a feed based on the scheduler selected from the configuration.
