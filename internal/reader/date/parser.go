@@ -228,14 +228,14 @@ var dateFormats = [...]string{
 	"02.01.06",
 }
 
-var invalidTimezoneReplacer = strings.NewReplacer(
+var replacer = strings.NewReplacer(
+	// Timezones
 	"Europe/Brussels", "CET",
 	"America/Los_Angeles", "PDT",
 	"GMT+0000 (Coordinated Universal Time)", "GMT",
 	"GMT-", "GMT -",
-)
 
-var invalidLocalizedDateReplacer = strings.NewReplacer(
+	// Localized dates
 	"Mo,", "Mon,",
 	"Di,", "Tue,",
 	"Mi,", "Wed,",
@@ -325,8 +325,7 @@ func Parse(rawInput string) (t time.Time, err error) {
 		return time.Unix(timestamp, 0), nil
 	}
 
-	processedInput := invalidLocalizedDateReplacer.Replace(rawInput)
-	processedInput = invalidTimezoneReplacer.Replace(processedInput)
+	processedInput := replacer.Replace(rawInput)
 
 	for _, layout := range dateFormatsLocalTimesOnly {
 		if t, err = parseLocalTimeDates(layout, processedInput); err == nil {
@@ -366,7 +365,7 @@ func parseLocalTimeDates(layout, ds string) (t time.Time, err error) {
 // Avoid "pq: time zone displacement out of range" errors
 func checkTimezoneRange(t time.Time) time.Time {
 	_, offset := t.Zone()
-	if float64(offset) > 14*60*60 || float64(offset) < -12*60*60 {
+	if offset > 14*60*60 || offset < -12*60*60 {
 		t = t.UTC()
 	}
 	return t
