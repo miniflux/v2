@@ -5,6 +5,7 @@ package client // import "miniflux.app/v2/client"
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -17,7 +18,7 @@ import (
 
 const (
 	userAgent      = "Miniflux Client Library"
-	defaultTimeout = 80
+	defaultTimeout = 80 * time.Second
 )
 
 // List of exposed errors.
@@ -39,30 +40,36 @@ type request struct {
 	username string
 	password string
 	apiKey   string
+	client   *http.Client
 }
 
-func (r *request) Get(path string) (io.ReadCloser, error) {
-	return r.execute(http.MethodGet, path, nil)
+func (r *request) Get(ctx context.Context, path string) (io.ReadCloser, error) {
+	return r.execute(ctx, http.MethodGet, path, nil)
 }
 
-func (r *request) Post(path string, data any) (io.ReadCloser, error) {
-	return r.execute(http.MethodPost, path, data)
+func (r *request) Post(ctx context.Context, path string, data any) (io.ReadCloser, error) {
+	return r.execute(ctx, http.MethodPost, path, data)
 }
 
-func (r *request) PostFile(path string, f io.ReadCloser) (io.ReadCloser, error) {
-	return r.execute(http.MethodPost, path, f)
+func (r *request) PostFile(ctx context.Context, path string, f io.ReadCloser) (io.ReadCloser, error) {
+	return r.execute(ctx, http.MethodPost, path, f)
 }
 
-func (r *request) Put(path string, data any) (io.ReadCloser, error) {
-	return r.execute(http.MethodPut, path, data)
+func (r *request) Put(ctx context.Context, path string, data any) (io.ReadCloser, error) {
+	return r.execute(ctx, http.MethodPut, path, data)
 }
 
-func (r *request) Delete(path string) error {
-	_, err := r.execute(http.MethodDelete, path, nil)
+func (r *request) Delete(ctx context.Context, path string) error {
+	_, err := r.execute(ctx, http.MethodDelete, path, nil)
 	return err
 }
 
-func (r *request) execute(method, path string, data any) (io.ReadCloser, error) {
+func (r *request) execute(
+	ctx context.Context,
+	method string,
+	path string,
+	data any,
+) (io.ReadCloser, error) {
 	if r.endpoint == "" {
 		return nil, ErrEmptyEndpoint
 	}
@@ -75,11 +82,12 @@ func (r *request) execute(method, path string, data any) (io.ReadCloser, error) 
 		return nil, err
 	}
 
-	request := &http.Request{
-		URL:    u,
-		Method: method,
-		Header: r.buildHeaders(),
+	request, err := http.NewRequestWithContext(ctx, method, u.String(), nil)
+	if err != nil {
+		return nil, err
 	}
+
+	request.Header = r.buildHeaders()
 
 	if r.username != "" && r.password != "" {
 		request.SetBasicAuth(r.username, r.password)
@@ -94,7 +102,7 @@ func (r *request) execute(method, path string, data any) (io.ReadCloser, error) 
 		}
 	}
 
-	client := r.buildClient()
+	client := r.client
 	response, err := client.Do(request)
 	if err != nil {
 		return nil, err
@@ -141,12 +149,6 @@ func (r *request) execute(method, path string, data any) (io.ReadCloser, error) 
 	}
 
 	return response.Body, nil
-}
-
-func (r *request) buildClient() http.Client {
-	return http.Client{
-		Timeout: defaultTimeout * time.Second,
-	}
 }
 
 func (r *request) buildHeaders() http.Header {
