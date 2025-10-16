@@ -12,10 +12,6 @@ import (
 	"miniflux.app/v2/internal/config"
 )
 
-func init() {
-	// Seed global math/rand to avoid predictable jitter values in scheduling.
-	rand.Seed(time.Now().UnixNano())
-}
 
 // List of supported schedulers.
 const (
@@ -156,6 +152,7 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelay time.Duration) ti
 	// Apply a small random jitter to spread next checks and reduce thundering herds.
 	jitterMax := config.Opts.PollingJitter()
 
+	// No explicit global seeding for math/rand is required since Go 1.20.
 	randomJitter := time.Duration(rand.Int63n(int64(jitterMax + 1)))
 	interval += randomJitter
 
