@@ -49,6 +49,7 @@ func Serve(router *mux.Router, store *storage.Storage) {
 	sr := router.PathPrefix("/reader/api/0").Subrouter()
 	sr.Use(middleware.handleCORS)
 	sr.Use(middleware.apiKeyAuth)
+	sr.Use(middleware.maybeUnauthorizedGoogleReader)
 	sr.Methods(http.MethodOptions)
 	sr.HandleFunc("/token", handler.tokenHandler).Methods(http.MethodGet).Name("Token")
 	sr.HandleFunc("/edit-tag", handler.editTagHandler).Methods(http.MethodPost).Name("EditTag")
