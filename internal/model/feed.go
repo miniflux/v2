@@ -6,10 +6,12 @@ package model // import "miniflux.app/v2/internal/model"
 import (
 	"fmt"
 	"io"
+	"math/rand"
 	"time"
 
 	"miniflux.app/v2/internal/config"
 )
+
 
 // List of supported schedulers.
 const (
@@ -117,6 +119,18 @@ func (f *Feed) CheckedNow() {
 	}
 }
 
+// getMaxInterval returns the maximum allowed interval based on the configured polling scheduler.
+func getMaxInterval() time.Duration {
+	switch config.Opts.PollingScheduler() {
+	case SchedulerRoundRobin:
+		return config.Opts.SchedulerRoundRobinMaxInterval()
+	case SchedulerEntryFrequency:
+		return config.Opts.SchedulerEntryFrequencyMaxInterval()
+	default:
+		return config.Opts.SchedulerRoundRobinMaxInterval()
+	}
+}
+
 // ScheduleNextCheck set "next_check_at" of a feed based on the scheduler selected from the configuration.
 func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelay time.Duration) time.Duration {
 	// Default to the global config Polling Frequency.
@@ -135,13 +149,16 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelay time.Duration) ti
 	// Use the RSS TTL field, Retry-After, Cache-Control or Expires HTTP headers if defined.
 	interval = max(interval, refreshDelay)
 
-	// Limit the max interval value for misconfigured feeds.
-	switch config.Opts.PollingScheduler() {
-	case SchedulerRoundRobin:
-		interval = min(interval, config.Opts.SchedulerRoundRobinMaxInterval())
-	case SchedulerEntryFrequency:
-		interval = min(interval, config.Opts.SchedulerEntryFrequencyMaxInterval())
-	}
+	// Apply a small random jitter to spread next checks and reduce thundering herds.
+	jitterMax := config.Opts.PollingJitter()
+
+	// No explicit global seeding for math/rand is required since Go 1.20.
+	randomJitter := time.Duration(rand.Int63n(int64(jitterMax + 1)))
+	interval += randomJitter
+
+	// Apply max clamping after randomJitter to avoid exceeding configured caps.
+    maxInterval := getMaxInterval()
+    interval = min(interval, maxInterval)
 
 	f.NextCheckAt = time.Now().Add(interval)
 	return interval
