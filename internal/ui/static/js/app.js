@@ -897,7 +897,7 @@ function updateUnreadCounterValue(delta) {
     if (window.location.href.endsWith('/unread')) {
         const oldValue = parseInt(document.title.split('(')[1], 10);
         const newValue = oldValue + delta;
-        document.title = document.title.replace(/(.*?)\(\d+\)(.*?)/, `$1(${newValue})$2`);
+        document.title = document.title.replace(/\(\d+\)/, `(${newValue})`);
     }
 }
 
