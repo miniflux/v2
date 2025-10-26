@@ -45,7 +45,7 @@ var (
 		"h5":         {"id"},
 		"h6":         {"id"},
 		"hr":         {},
-		"iframe":     {"width", "height", "frameborder", "src", "allowfullscreen"},
+		"iframe":     {"width", "height", "frameborder", "src", "allowfullscreen", "referrerpolicy"},
 		"img":        {"alt", "title", "src", "srcset", "sizes", "width", "height", "fetchpriority", "decoding"},
 		"ins":        {},
 		"kbd":        {},
