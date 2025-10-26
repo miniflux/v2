@@ -10,6 +10,21 @@ import (
 	"strings"
 )
 
+// IsRelativePath returns true if the link is a relative path.
+func IsRelativePath(link string) bool {
+	if link == "" {
+		return false
+	}
+	if parsedURL, err := url.Parse(link); err == nil {
+		// Only allow relative paths (not scheme-relative URLs like //example.org)
+		// and ensure the URL doesn't have a host component
+		if !parsedURL.IsAbs() && parsedURL.Host == "" && parsedURL.Scheme == "" {
+			return true
+		}
+	}
+	return false
+}
+
 // IsAbsoluteURL returns true if the link is absolute.
 func IsAbsoluteURL(link string) bool {
 	u, err := url.Parse(link)

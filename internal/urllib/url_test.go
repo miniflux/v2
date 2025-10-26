@@ -5,6 +5,40 @@ package urllib // import "miniflux.app/v2/internal/urllib"
 
 import "testing"
 
+func TestIsRelativePath(t *testing.T) {
+	scenarios := map[string]bool{
+		// Valid relative paths
+		"path/to/file.ext":    true,
+		"./path/to/file.ext":  true,
+		"../path/to/file.ext": true,
+		"file.ext":            true,
+		"./file.ext":          true,
+		"../file.ext":         true,
+		"/absolute/path":      true,
+		"path?query=value":    true,
+		"path#fragment":       true,
+		"path?query#fragment": true,
+
+		// Not relative paths
+		"https://example.org/file.ext": false,
+		"http://example.org/file.ext":  false,
+		"//example.org/file.ext":       false,
+		"//example.org":                false,
+		"ftp://example.org/file.ext":   false,
+		"mailto:user@example.org":      false,
+		"magnet:?xt=urn:btih:example":  false,
+		"":                             false,
+		"magnet:?xt.1=urn:sha1:YNCKHTQCWBTRNJIV4WNAE52SJUQCZO5C": false,
+	}
+
+	for input, expected := range scenarios {
+		actual := IsRelativePath(input)
+		if actual != expected {
+			t.Errorf(`Unexpected result for IsRelativePath, got %v instead of %v for %q`, actual, expected, input)
+		}
+	}
+}
+
 func TestIsAbsoluteURL(t *testing.T) {
 	scenarios := map[string]bool{
 		"https://example.org/file.pdf": true,
