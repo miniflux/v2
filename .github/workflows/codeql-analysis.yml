@@ -9,6 +9,7 @@ on:
       - '**.js'
       - '**.go'
       - '!**_test.go'
+      - '.github/workflows/codeql-analysis.yml'
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ main ]
@@ -16,12 +17,14 @@ on:
       - '**.js'
       - '**.go'
       - '!**_test.go'
+      - '.github/workflows/codeql-analysis.yml'
   schedule:
     - cron: '45 22 * * 3'
+  workflow_dispatch:
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -30,20 +33,27 @@ jobs:
 
     strategy:
       fail-fast: false
+      matrix:
+        language: [ 'go', 'javascript' ]
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v5
 
     - uses: actions/setup-go@v6
+      if: matrix.language == 'go'
       with:
         go-version: stable
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4
+      with:
+        languages: ${{ matrix.language }}
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v4
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
+      with:
+        category: "/language:${{ matrix.language }}"
