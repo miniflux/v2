@@ -457,6 +457,18 @@ func TestIFrameWithChildElements(t *testing.T) {
 	}
 }
 
+func TestIFrameWithReferrerPolicy(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	input := `<iframe src="https://www.youtube.com/embed/test123" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
+	output := sanitizeHTMLWithDefaultOptions("http://example.com/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: %q != %q`, expected, output)
+	}
+}
+
 func TestLinkWithTarget(t *testing.T) {
 	input := `<p>This link is <a href="http://example.org/index.html">an anchor</a></p>`
 	expected := `<p>This link is <a href="http://example.org/index.html" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">an anchor</a></p>`
