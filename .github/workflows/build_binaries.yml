@@ -1,4 +1,6 @@
 name: Build Binaries
+permissions:
+  contents: read
 on:
   workflow_dispatch:
   push:
