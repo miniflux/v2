@@ -648,10 +648,7 @@ function toggleEntryStatus(element, toasting) {
             showToastNotification(newStatus, currentStatus === "read" ? buttonElement.dataset.toastUnread : buttonElement.dataset.toastRead);
         }
 
-        if (element.classList.contains("item-status-" + currentStatus)) {
-            element.classList.remove("item-status-" + currentStatus);
-            element.classList.add("item-status-" + newStatus);
-        }
+        element.classList.replace("item-status-" + currentStatus, "item-status-" + newStatus);
 
         if (isListView() && getVisibleEntries().length === 0) {
             window.location.reload();
@@ -821,10 +818,7 @@ function openOriginalLinkFromListView() {
     goToListItem(1);
 
     // Mark as read if currently unread
-    if (currentItem.classList.contains("item-status-unread")) {
-        currentItem.classList.remove("item-status-unread");
-        currentItem.classList.add("item-status-read");
-
+    if (currentItem.classList.replace("item-status-unread", "item-status-read")) {
         const entryID = parseInt(currentItem.dataset.id, 10);
         updateEntriesStatus([entryID], "read");
     }
