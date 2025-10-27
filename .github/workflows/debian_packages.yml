@@ -53,7 +53,7 @@ jobs:
     - name: Build Debian Packages
       run: make debian-packages
     - name: Upload package
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: packages
         path: "*.deb"
