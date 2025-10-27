@@ -36,7 +36,7 @@ jobs:
     - name: Build RPM Package
       run: make rpm
     - name: Upload package
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: packages
         path: "*.rpm"
