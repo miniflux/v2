@@ -6,6 +6,7 @@ package model // import "miniflux.app/v2/internal/model"
 import (
 	"fmt"
 	"io"
+	"math"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -19,6 +20,9 @@ const (
 	DefaultFeedSorting          = "parsing_error_count"
 	DefaultFeedSortingDirection = "desc"
 )
+
+// A feed with parsing errors will be checked at least every week.
+var backoffMax = time.Duration(time.Hour * 24 * 7)
 
 // Feed represents a feed in the application.
 type Feed struct {
@@ -143,8 +147,22 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelay time.Duration) ti
 		interval = min(interval, config.Opts.SchedulerEntryFrequencyMaxInterval())
 	}
 
+	interval += backoff(f.ParsingErrorCount)
+
 	f.NextCheckAt = time.Now().Add(interval)
 	return interval
+}
+
+func backoff(count int) time.Duration {
+	if count == 0 {
+		return 0
+	}
+	// https://en.wikipedia.org/wiki/Exponential_backoff
+	backoff := time.Duration(math.Pow(2, float64(count))) * time.Hour
+	if backoff > backoffMax {
+		return backoffMax
+	}
+	return backoff
 }
 
 // FeedCreationRequest represents the request to create a feed.

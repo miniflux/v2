@@ -376,3 +376,47 @@ func TestFeedScheduleNextCheckEntryFrequencyLargeNewTTL(t *testing.T) {
 		t.Error(`The next_check_at should be after timeBefore + entry frequency min interval`)
 	}
 }
+
+func TestFeedScheduleNextCheckParsingErrorsBackoff(t *testing.T) {
+	for count := range 10 {
+		f1 := &Feed{ParsingErrorCount: 0}
+		f2 := &Feed{ParsingErrorCount: count}
+		newTTL := time.Duration(1) * time.Minute * 2
+		f1.ScheduleNextCheck(0, newTTL)
+		f2.ScheduleNextCheck(0, newTTL)
+
+		if f1.NextCheckAt.IsZero() {
+			t.Error(`The next_check_at for f1 must be set`)
+		}
+		if f2.NextCheckAt.IsZero() {
+			t.Error(`The next_check_at for f2 must be set`)
+		}
+
+		if f1.NextCheckAt.Add(backoff(count)).Sub(f2.NextCheckAt).Minutes() > 10 {
+			t.Error("The next_check_at should have been using the exponential backoff.")
+		}
+	}
+}
+
+func TestFeedScheduleNextCheckParsingErrorsBackoffMax(t *testing.T) {
+	f1 := &Feed{ParsingErrorCount: 0}
+	newTTL := time.Duration(1) * time.Minute * 2
+	f1.ScheduleNextCheck(0, newTTL)
+	if f1.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at for f1 must be set`)
+	}
+
+	for count := range 128 {
+		f2 := &Feed{ParsingErrorCount: count}
+		f2.ScheduleNextCheck(0, newTTL)
+
+		if f2.NextCheckAt.IsZero() {
+			t.Error(`The next_check_at for f1 must be set`)
+		}
+
+		offset := f2.NextCheckAt.Sub(f1.NextCheckAt)
+		if offset > backoffMax+time.Minute*1 {
+			t.Errorf("The next_check_at's offset for errors (%q) for %d errors should never be bigger than %q.", offset, count, backoffMax)
+		}
+	}
+}
