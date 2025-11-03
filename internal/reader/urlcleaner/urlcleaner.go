@@ -25,6 +25,16 @@ var trackingParams = map[string]bool{
 	"fb_source":       true,
 	"fb_comment_id":   true,
 
+	// Humble Bundles
+	"hmb_campaign": true,
+	"hmb_medium":   true,
+	"hmb_source":   true,
+
+	// Likely Google as well
+	"itm_campaign": true,
+	"itm_medium":   true,
+	"itm_source":   true,
+
 	// Google Click Identifiers
 	"gclid":  true,
 	"dclid":  true,
@@ -40,6 +50,9 @@ var trackingParams = map[string]bool{
 	"campaign_term":    true,
 	"campaign_content": true,
 
+	// Google
+	"srsltid": true,
+
 	// Yandex Click Identifiers
 	"yclid":  true,
 	"ysclid": true,
@@ -53,6 +66,7 @@ var trackingParams = map[string]bool{
 	// Mailchimp Click Identifiers
 	"mc_cid": true,
 	"mc_eid": true,
+	"mc_tc":  true,
 
 	// Wicked Reports click tracking
 	"wickedid": true,
@@ -87,12 +101,29 @@ var trackingParams = map[string]bool{
 	// Branch.io
 	"_branch_match_id": true,
 	"_branch_referrer": true,
+
+	// Readwise
+	"__readwiseLocation": true,
 }
 
 // Outbound tracking parameters are appending the website's url to outbound links.
 var trackingParamsOutbound = map[string]bool{
 	// Ghost
 	"ref": true,
+}
+
+var trackParamsPrefixes = []string{
+	"utm_", // https://en.wikipedia.org/wiki/UTM_parameters
+	"mtm_", //https://matomo.org/faq/reports/common-campaign-tracking-use-cases-and-examples/
+}
+
+func isTrackingParam(param string) bool {
+	for _, prefix := range trackParamsPrefixes {
+		if strings.HasPrefix(param, prefix) {
+			return true
+		}
+	}
+	return trackingParams[param]
 }
 
 func RemoveTrackingParameters(parsedFeedURL, parsedSiteURL, parsedInputUrl *url.URL) (string, error) {
@@ -106,7 +137,7 @@ func RemoveTrackingParameters(parsedFeedURL, parsedSiteURL, parsedInputUrl *url.
 	// Remove tracking parameters
 	for param := range queryParams {
 		lowerParam := strings.ToLower(param)
-		if trackingParams[lowerParam] || strings.HasPrefix(lowerParam, "utm_") {
+		if isTrackingParam(lowerParam) {
 			queryParams.Del(param)
 			hasTrackers = true
 		}
