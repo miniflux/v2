@@ -315,13 +315,14 @@ func addYoutubeVideoFromId(entryContent string) string {
 	if matches == nil {
 		return entryContent
 	}
-	videoPlayerHTML := ""
+	var videoPlayerHTML strings.Builder
 	for _, match := range matches {
 		if len(match) == 2 {
-			videoPlayerHTML += buildVideoPlayerIframe(config.Opts.YouTubeEmbedUrlOverride()+match[1]) + "<br>"
+			videoPlayerHTML.WriteString(buildVideoPlayerIframe(config.Opts.YouTubeEmbedUrlOverride() + match[1]))
+			videoPlayerHTML.WriteString("<br>")
 		}
 	}
-	return videoPlayerHTML + entryContent
+	return videoPlayerHTML.String() + entryContent
 }
 
 func addInvidiousVideo(entryURL, entryContent string) string {
