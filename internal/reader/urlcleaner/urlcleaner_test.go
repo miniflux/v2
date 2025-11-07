@@ -14,8 +14,8 @@ func TestRemoveTrackingParams(t *testing.T) {
 		name             string
 		input            string
 		expected         string
-		baseUrl          string
-		feedUrl          string
+		baseURL          string
+		feedURL          string
 		strictComparison bool
 	}{
 		{
@@ -67,62 +67,69 @@ func TestRemoveTrackingParams(t *testing.T) {
 		{
 			name:     "ref parameter for another url",
 			input:    "https://example.com/page?ref=test.com",
-			baseUrl:  "https://example.com/page",
+			baseURL:  "https://example.com/page",
 			expected: "https://example.com/page?ref=test.com",
 		},
 		{
 			name:     "ref parameter for feed url",
 			input:    "https://example.com/page?ref=feed.com",
-			baseUrl:  "https://example.com/page",
+			baseURL:  "https://example.com/page",
 			expected: "https://example.com/page",
-			feedUrl:  "http://feed.com",
+			feedURL:  "http://feed.com",
 		},
 		{
 			name:     "ref parameter for site url",
 			input:    "https://example.com/page?ref=example.com",
-			baseUrl:  "https://example.com/page",
+			baseURL:  "https://example.com/page",
 			expected: "https://example.com/page",
 		},
 		{
 			name:     "ref parameter for base url",
 			input:    "https://example.com/page?ref=example.com",
 			expected: "https://example.com/page",
-			baseUrl:  "https://example.com",
-			feedUrl:  "https://feedburned.com/example",
+			baseURL:  "https://example.com",
+			feedURL:  "https://feedburned.com/example",
 		},
 		{
 			name:     "ref parameter for base url on subdomain",
 			input:    "https://blog.exploits.club/some-path?ref=blog.exploits.club",
 			expected: "https://blog.exploits.club/some-path",
-			baseUrl:  "https://blog.exploits.club/some-path",
-			feedUrl:  "https://feedburned.com/exploit.club",
+			baseURL:  "https://blog.exploits.club/some-path",
+			feedURL:  "https://feedburned.com/exploit.club",
 		},
 		{
 			name:             "Non-standard URL parameter with no tracker",
 			input:            "https://example.com/foo.jpg?crop/1420x708/format/webp",
 			expected:         "https://example.com/foo.jpg?crop/1420x708/format/webp",
-			baseUrl:          "https://example.com/page",
+			baseURL:          "https://example.com/page",
 			strictComparison: true,
 		},
 		{
 			name:     "Invalid URL",
 			input:    "https://example|org/",
-			baseUrl:  "https://example.com/page",
+			baseURL:  "https://example.com/page",
 			expected: "",
 		},
 		{
 			name:             "Non-HTTP URL",
 			input:            "mailto:user@example.org",
 			expected:         "mailto:user@example.org",
-			baseUrl:          "https://example.com/page",
+			baseURL:          "https://example.com/page",
+			strictComparison: true,
+		},
+		{
+			name:             "Matomo tracking URL",
+			input:            "https://example.com/?mtm_campaign=2020_august_promo&mtm_source=newsletter&mtm_medium=email&mtm_content=primary-cta",
+			expected:         "https://example.com/",
+			baseURL:          "https://example.com",
 			strictComparison: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			parsedBaseUrl, _ := url.Parse(tt.baseUrl)
-			parsedFeedUrl, _ := url.Parse(tt.feedUrl)
+			parsedBaseUrl, _ := url.Parse(tt.baseURL)
+			parsedFeedUrl, _ := url.Parse(tt.feedURL)
 			parsedInputUrl, _ := url.Parse(tt.input)
 			result, err := RemoveTrackingParameters(parsedBaseUrl, parsedFeedUrl, parsedInputUrl)
 			if tt.expected == "" {
