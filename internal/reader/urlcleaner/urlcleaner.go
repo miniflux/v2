@@ -112,13 +112,13 @@ var trackingParamsOutbound = map[string]bool{
 	"ref": true,
 }
 
-var trackParamsPrefixes = []string{
+var trackingParamsPrefixes = []string{
 	"utm_", // https://en.wikipedia.org/wiki/UTM_parameters
-	"mtm_", //https://matomo.org/faq/reports/common-campaign-tracking-use-cases-and-examples/
+	"mtm_", // https://matomo.org/faq/reports/common-campaign-tracking-use-cases-and-examples/
 }
 
 func isTrackingParam(param string) bool {
-	for _, prefix := range trackParamsPrefixes {
+	for _, prefix := range trackingParamsPrefixes {
 		if strings.HasPrefix(param, prefix) {
 			return true
 		}
