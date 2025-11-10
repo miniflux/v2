@@ -10,7 +10,7 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/lib/pq v1.10.9
 	github.com/prometheus/client_golang v1.23.2
-	github.com/tdewolff/minify/v2 v2.24.6
+	github.com/tdewolff/minify/v2 v2.24.7
 	golang.org/x/crypto v0.43.0
 	golang.org/x/image v0.32.0
 	golang.org/x/net v0.46.0
