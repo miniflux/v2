@@ -343,7 +343,7 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	json.OK(w, r, map[string]string{"content": mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entry.Content), "reading_time": entry.ReadingTime})
+	json.OK(w, r, map[string]any{"content": mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entry.Content), "reading_time": entry.ReadingTime})
 }
 
 func (h *handler) flushHistory(w http.ResponseWriter, r *http.Request) {
