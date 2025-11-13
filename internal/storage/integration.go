@@ -164,6 +164,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			linkwarden_enabled,
 			linkwarden_url,
 			linkwarden_api_key,
+			linkwarden_collection_id,
 			matrix_bot_enabled,
 			matrix_bot_user,
 			matrix_bot_password,
@@ -291,6 +292,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.LinkwardenEnabled,
 		&integration.LinkwardenURL,
 		&integration.LinkwardenAPIKey,
+		&integration.LinkwardenCollectionId,
 		&integration.MatrixBotEnabled,
 		&integration.MatrixBotUser,
 		&integration.MatrixBotPassword,
@@ -491,9 +493,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			linktaco_org_slug=$116,
 			linktaco_tags=$117,
 			linktaco_visibility=$118,
-			archiveorg_enabled=$119
+			archiveorg_enabled=$119,
+			linkwarden_collection_id=$120
 		WHERE
-			user_id=$120
+			user_id=$121
 	`
 	_, err := s.db.Exec(
 		query,
@@ -616,6 +619,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.LinktacoTags,
 		integration.LinktacoVisibility,
 		integration.ArchiveorgEnabled,
+		integration.LinkwardenCollectionId,
 		integration.UserID,
 	)
 

@@ -84,6 +84,7 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		LinkwardenEnabled:                integration.LinkwardenEnabled,
 		LinkwardenURL:                    integration.LinkwardenURL,
 		LinkwardenAPIKey:                 integration.LinkwardenAPIKey,
+		LinkwardenCollectionId:           integration.LinkwardenCollectionId,
 		MatrixBotEnabled:                 integration.MatrixBotEnabled,
 		MatrixBotUser:                    integration.MatrixBotUser,
 		MatrixBotPassword:                integration.MatrixBotPassword,

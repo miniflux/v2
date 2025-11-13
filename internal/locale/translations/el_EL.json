@@ -266,6 +266,7 @@
     "form.integration.linkwarden_activate": "Αποθήκευση άρθρων στο Linkwarden",
     "form.integration.linkwarden_api_key": "Κλειδί API Linkwarden",
     "form.integration.linkwarden_endpoint": "URL βάσης Linkwarden",
+    "form.integration.linkwarden_collection_id": "Linkwarden Collection ID",
     "form.integration.matrix_bot_activate": "Μεταφορά νέων άρθρων στο Matrix",
     "form.integration.matrix_bot_chat_id": "Αναγνωριστικό της αίθουσας Matrix",
     "form.integration.matrix_bot_password": "Κωδικός πρόσβασης για τον χρήστη Matrix",

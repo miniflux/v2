@@ -275,17 +275,20 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 			slog.Int64("user_id", userIntegrations.UserID),
 			slog.Int64("entry_id", entry.ID),
 			slog.String("entry_url", entry.URL),
+			slog.Any("collection_id", userIntegrations.LinkwardenCollectionId),
 		)
 
 		client := linkwarden.NewClient(
 			userIntegrations.LinkwardenURL,
 			userIntegrations.LinkwardenAPIKey,
+			userIntegrations.LinkwardenCollectionId,
 		)
 		if err := client.CreateBookmark(entry.URL, entry.Title); err != nil {
 			slog.Error("Unable to send entry to Linkwarden",
 				slog.Int64("user_id", userIntegrations.UserID),
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),
+				slog.Any("collection_id", userIntegrations.LinkwardenCollectionId),
 				slog.Any("error", err),
 			)
 		}
