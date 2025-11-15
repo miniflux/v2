@@ -29,9 +29,9 @@ type linkwardenCollection struct {
 }
 
 type linkwardenRequest struct {
-	URL        string               `json:"url"`
-	Name       string               `json:"name"`
-	Collection linkwardenCollection `json:"collection,omitempty"`
+	URL        string                `json:"url"`
+	Name       string                `json:"name"`
+	Collection *linkwardenCollection `json:"collection,omitempty"`
 }
 
 func NewClient(baseURL, apiKey string, collectionId *int64) *Client {
@@ -54,7 +54,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 	}
 
 	if c.collectionId != nil {
-		payload.Collection = linkwardenCollection{Id: c.collectionId}
+		payload.Collection = &linkwardenCollection{Id: c.collectionId}
 	}
 
 	requestBody, err := json.Marshal(payload)
