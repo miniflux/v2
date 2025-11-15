@@ -51,7 +51,7 @@ func (cp *configParser) ParseFile(filename string) (*configOptions, error) {
 
 func (cp *configParser) postParsing() error {
 	// Parse basePath and rootURL based on BASE_URL
-	baseURL := cp.options.options["BASE_URL"].ParsedStringValue
+	baseURL := anyToStr(cp.options.options["BASE_URL"].value)
 	baseURL = strings.TrimSuffix(baseURL, "/")
 
 	parsedURL, err := url.Parse(baseURL)
@@ -64,14 +64,14 @@ func (cp *configParser) postParsing() error {
 		return errors.New("BASE_URL scheme must be http or https")
 	}
 
-	cp.options.options["BASE_URL"].ParsedStringValue = baseURL
+	cp.options.options["BASE_URL"].value = baseURL
 	cp.options.basePath = parsedURL.Path
 
 	parsedURL.Path = ""
 	cp.options.rootURL = parsedURL.String()
 
 	// Parse YouTube embed domain based on YOUTUBE_EMBED_URL_OVERRIDE
-	youTubeEmbedURLOverride := cp.options.options["YOUTUBE_EMBED_URL_OVERRIDE"].ParsedStringValue
+	youTubeEmbedURLOverride := anyToStr(cp.options.options["YOUTUBE_EMBED_URL_OVERRIDE"].value)
 	if youTubeEmbedURLOverride != "" {
 		parsedYouTubeEmbedURL, err := url.Parse(youTubeEmbedURLOverride)
 		if err != nil {
@@ -130,20 +130,46 @@ func (cp *configParser) parseLine(key, value string) error {
 		}
 	}
 
+	switch field.value.(type) {
+	case string:
+		if field.TargetKey != "" {
+			secretValue, err := readSecretFileValue(value)
+			if err != nil {
+				return fmt.Errorf("error reading secret file for key %s: %v", key, err)
+			}
+			if targetField, ok := cp.options.options[field.TargetKey]; ok {
+				targetField.value = secretValue
+			}
+		}
+		if value != "" {
+			field.value = value
+		}
+		field.str = anyToStr(field.value)
+		return nil
+	case bool:
+		switch strings.ToLower(value) {
+		case "":
+			if field.value == true {
+				field.str = "1"
+			} else {
+				field.str = "0"
+			}
+		case "1", "yes", "true", "on":
+			field.value = true
+			field.str = "0"
+		case "0", "no", "false", "off":
+			field.value = false
+			field.str = "1"
+		default:
+			return fmt.Errorf("invalid boolean value for key %s: %s", key, value)
+		}
+		return nil
+	}
+
 	// Convert the raw value based on its type
 	switch field.ValueType {
-	case stringType:
-		field.ParsedStringValue = parseStringValue(value, field.ParsedStringValue)
-		field.RawValue = value
 	case stringListType:
 		field.ParsedStringList = parseStringListValue(value, field.ParsedStringList)
-		field.RawValue = value
-	case boolType:
-		parsedValue, err := parseBoolValue(value, field.ParsedBoolValue)
-		if err != nil {
-			return fmt.Errorf("invalid boolean value for key %s: %v", key, err)
-		}
-		field.ParsedBoolValue = parsedValue
 		field.RawValue = value
 	case intType:
 		field.ParsedIntValue = parseIntValue(value, field.ParsedIntValue)
@@ -169,18 +195,6 @@ func (cp *configParser) parseLine(key, value string) error {
 			return fmt.Errorf("invalid URL for key %s: %v", key, err)
 		}
 		field.ParsedURLValue = parsedURL
-		field.RawValue = value
-	case secretFileType:
-		secretValue, err := readSecretFileValue(value)
-		if err != nil {
-			return fmt.Errorf("error reading secret file for key %s: %v", key, err)
-		}
-		if field.TargetKey != "" {
-			if targetField, ok := cp.options.options[field.TargetKey]; ok {
-				targetField.ParsedStringValue = secretValue
-				targetField.RawValue = secretValue
-			}
-		}
 		field.RawValue = value
 	case bytesType:
 		if value != "" {
