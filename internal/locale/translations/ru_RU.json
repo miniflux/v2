@@ -269,6 +269,7 @@
     "form.integration.linkwarden_activate": "Сохранять статьи в Linkwarden",
     "form.integration.linkwarden_api_key": "API-ключ Linkwarden",
     "form.integration.linkwarden_endpoint": "Базовый URL-адрес Linkwarden",
+    "form.integration.linkwarden_collection_id": "Linkwarden Collection ID",
     "form.integration.matrix_bot_activate": "Отправлять статьи в Matrix",
     "form.integration.matrix_bot_chat_id": "ID комнаты Matrix",
     "form.integration.matrix_bot_password": "Пароль пользователя Matrix",

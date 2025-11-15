@@ -266,6 +266,7 @@
     "form.integration.linkwarden_activate": "Enviar artículos a Linkwarden",
     "form.integration.linkwarden_api_key": "Clave de API de Linkwarden",
     "form.integration.linkwarden_endpoint": "URL base de Linkwarden",
+    "form.integration.linkwarden_collection_id": "Linkwarden Collection ID",
     "form.integration.matrix_bot_activate": "Transferir nuevos artículos a Matrix",
     "form.integration.matrix_bot_chat_id": "ID de la sala de Matrix",
     "form.integration.matrix_bot_password": "Contraseña para el usuario de Matrix",

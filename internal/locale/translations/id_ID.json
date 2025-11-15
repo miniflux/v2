@@ -263,6 +263,7 @@
     "form.integration.linkwarden_activate": "Simpan artikel ke Linkwarden",
     "form.integration.linkwarden_api_key": "Kunci API Linkwarden",
     "form.integration.linkwarden_endpoint": "URL Dasar Linkwarden",
+    "form.integration.linkwarden_collection_id": "Linkwarden Collection ID",
     "form.integration.matrix_bot_activate": "Kirim entri baru ke Matrix",
     "form.integration.matrix_bot_chat_id": "ID Ruang Matrix",
     "form.integration.matrix_bot_password": "Kata Sandi Matrix",
