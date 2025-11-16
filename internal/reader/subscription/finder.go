@@ -71,7 +71,8 @@ func (f *subscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string, 
 
 	// Step 2) Check if the website URL is a YouTube channel.
 	slog.Debug("Try to detect feeds for a YouTube page", slog.String("website_url", websiteURL))
-	if subscriptions, localizedError := f.findSubscriptionsFromYouTube(websiteURL); localizedError != nil {
+	youtubeURL := f.findCanonicalURL(websiteURL, responseHandler.ContentType(), bytes.NewReader(responseBody))
+	if subscriptions, localizedError := f.findSubscriptionsFromYouTube(youtubeURL); localizedError != nil {
 		return nil, localizedError
 	} else if len(subscriptions) > 0 {
 		slog.Debug("Subscriptions found from YouTube page", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
@@ -274,6 +275,24 @@ func (f *subscriptionFinder) findSubscriptionsFromRSSBridge(websiteURL, rssBridg
 }
 
 func (f *subscriptionFinder) findSubscriptionsFromYouTube(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
+	playlistPrefixes := []struct {
+		prefix string
+		title  string
+	}{
+		{"UULF", "Videos"},
+		{"UUSH", "Short videos"},
+		{"UULV", "Live streams"},
+
+		{"UULP", "Popular videos"},
+		{"UUPS", "Popular short videos"},
+		{"UUPV", "Popular live streams"},
+		
+		{"UUMO", "Members-only contents (videos, short videos and live streams)"},
+		{"UUMF", "Members-only videos"},
+		{"UUMS", "Members-only short videos"},
+		{"UUMV", "Members-only live streams"},
+	}
+
 	decodedURL, err := url.Parse(websiteURL)
 	if err != nil {
 		return nil, locale.NewLocalizedErrorWrapper(err, "error.invalid_site_url", err)
@@ -283,9 +302,19 @@ func (f *subscriptionFinder) findSubscriptionsFromYouTube(websiteURL string) (Su
 		slog.Debug("YouTube feed discovery skipped: not a YouTube domain", slog.String("website_url", websiteURL))
 		return nil, nil
 	}
-	if _, channelID, found := strings.Cut(decodedURL.Path, "channel/"); found {
-		feedURL := "https://www.youtube.com/feeds/videos.xml?channel_id=" + channelID
-		return Subscriptions{NewSubscription(decodedURL.String(), feedURL, parser.FormatAtom)}, nil
+
+	if _, baseID, found := strings.Cut(decodedURL.Path, "channel/UC"); found {
+		var subscriptions Subscriptions
+		
+		channelFeedURL := "https://www.youtube.com/feeds/videos.xml?channel_id=UC" + baseID
+		subscriptions = append(subscriptions, NewSubscription("Channel", channelFeedURL, parser.FormatAtom))
+			
+		for _, playlist := range playlistPrefixes {
+			playlistFeedURL := "https://www.youtube.com/feeds/videos.xml?playlist_id=" + playlist.prefix + baseID
+			subscriptions = append(subscriptions, NewSubscription(playlist.title, playlistFeedURL, parser.FormatAtom))
+		}
+		
+		return subscriptions, nil
 	}
 
 	if strings.HasPrefix(decodedURL.Path, "/watch") || strings.HasPrefix(decodedURL.Path, "/playlist") {
@@ -296,4 +325,38 @@ func (f *subscriptionFinder) findSubscriptionsFromYouTube(websiteURL string) (Su
 	}
 
 	return nil, nil
+}
+
+// findCanonicalURL extracts the canonical URL from the HTML <link rel="canonical"> tag.
+// Returns the canonical URL if found, otherwise returns the effective URL.
+func (f *subscriptionFinder) findCanonicalURL(effectiveURL, contentType string, body io.Reader) string {
+	htmlDocumentReader, err := encoding.NewCharsetReader(body, contentType)
+	if err != nil {
+		return effectiveURL
+	}
+
+	doc, err := goquery.NewDocumentFromReader(htmlDocumentReader)
+	if err != nil {
+		return effectiveURL
+	}
+
+	baseURL := effectiveURL
+	if hrefValue, exists := doc.FindMatcher(goquery.Single("head base")).Attr("href"); exists {
+		hrefValue = strings.TrimSpace(hrefValue)
+		if urllib.IsAbsoluteURL(hrefValue) {
+			baseURL = hrefValue
+		}
+	}
+
+	canonicalHref, exists := doc.Find("link[rel='canonical' i]").First().Attr("href")
+	if !exists || strings.TrimSpace(canonicalHref) == "" {
+		return effectiveURL
+	}
+
+	canonicalURL, err := urllib.AbsoluteURL(baseURL, strings.TrimSpace(canonicalHref))
+	if err != nil {
+		return effectiveURL
+	}
+
+	return canonicalURL
 }
