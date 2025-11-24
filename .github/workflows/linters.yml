@@ -12,7 +12,7 @@ jobs:
     name: Javascript Linter
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Install linters
       run: |
         sudo npm install -g jshint@2.13.6 eslint@8.57.0
@@ -25,7 +25,7 @@ jobs:
     name: Golang Linters
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
         with:
           go-version: stable
@@ -38,7 +38,7 @@ jobs:
     name: Commit Linter
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Set up Python

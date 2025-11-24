@@ -18,7 +18,7 @@ jobs:
     name: Test Packages
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
           fetch-depth: 0
     - name: Build RPM Package
@@ -30,7 +30,7 @@ jobs:
     name: Build Packages Manually
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
           fetch-depth: 0
     - name: Build RPM Package
@@ -47,7 +47,7 @@ jobs:
     name: Publish Packages
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
           fetch-depth: 0
     - name: Build RPM Package
