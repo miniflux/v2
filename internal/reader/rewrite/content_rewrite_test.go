@@ -72,7 +72,7 @@ func TestRewriteYoutubeVideoLink(t *testing.T) {
 	controlEntry := &model.Entry{
 		URL:     "https://www.youtube.com/watch?v=1234",
 		Title:   `A title`,
-		Content: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/1234" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Video Description`,
+		Content: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/1234" allowfullscreen></iframe><br>Video Description`,
 	}
 	testEntry := &model.Entry{
 		URL:     "https://www.youtube.com/watch?v=1234",
@@ -92,7 +92,7 @@ func TestRewriteYoutubeShortLink(t *testing.T) {
 	controlEntry := &model.Entry{
 		URL:     "https://www.youtube.com/shorts/1LUWKWZkPjo",
 		Title:   `A title`,
-		Content: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/1LUWKWZkPjo" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Video Description`,
+		Content: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/1LUWKWZkPjo" allowfullscreen></iframe><br>Video Description`,
 	}
 	testEntry := &model.Entry{
 		URL:     "https://www.youtube.com/shorts/1LUWKWZkPjo",
@@ -140,7 +140,7 @@ func TestRewriteYoutubeLinkAndCustomEmbedURL(t *testing.T) {
 	controlEntry := &model.Entry{
 		URL:     "https://www.youtube.com/watch?v=1234",
 		Title:   `A title`,
-		Content: `<iframe width="650" height="350" frameborder="0" src="https://invidious.custom/embed/1234" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Video Description`,
+		Content: `<iframe width="650" height="350" frameborder="0" src="https://invidious.custom/embed/1234" allowfullscreen></iframe><br>Video Description`,
 	}
 	testEntry := &model.Entry{
 		URL:     "https://www.youtube.com/watch?v=1234",
@@ -159,7 +159,7 @@ func TestRewriteYoutubeVideoLinkUsingInvidious(t *testing.T) {
 	controlEntry := &model.Entry{
 		URL:     "https://www.youtube.com/watch?v=1234",
 		Title:   `A title`,
-		Content: `<iframe width="650" height="350" frameborder="0" src="https://yewtu.be/embed/1234" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Video Description`,
+		Content: `<iframe width="650" height="350" frameborder="0" src="https://yewtu.be/embed/1234" allowfullscreen></iframe><br>Video Description`,
 	}
 	testEntry := &model.Entry{
 		URL:     "https://www.youtube.com/watch?v=1234",
@@ -179,7 +179,7 @@ func TestRewriteYoutubeShortLinkUsingInvidious(t *testing.T) {
 	controlEntry := &model.Entry{
 		URL:     "https://www.youtube.com/shorts/1LUWKWZkPjo",
 		Title:   `A title`,
-		Content: `<iframe width="650" height="350" frameborder="0" src="https://yewtu.be/embed/1LUWKWZkPjo" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Video Description`,
+		Content: `<iframe width="650" height="350" frameborder="0" src="https://yewtu.be/embed/1LUWKWZkPjo" allowfullscreen></iframe><br>Video Description`,
 	}
 	testEntry := &model.Entry{
 		URL:     "https://www.youtube.com/shorts/1LUWKWZkPjo",
@@ -199,16 +199,16 @@ func TestAddYoutubeVideoFromId(t *testing.T) {
 
 	scenarios := map[string]string{
 		// Test with single YouTube ID
-		`Some content with youtube ID <script type="text/javascript" data-reactid="6">window.__APOLLO_STATE__ = {youtube_id: "9uASADiYe_8"}</script>`: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/9uASADiYe_8" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Some content with youtube ID <script type="text/javascript" data-reactid="6">window.__APOLLO_STATE__ = {youtube_id: "9uASADiYe_8"}</script>`,
+		`Some content with youtube ID <script type="text/javascript" data-reactid="6">window.__APOLLO_STATE__ = {youtube_id: "9uASADiYe_8"}</script>`: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/9uASADiYe_8" allowfullscreen></iframe><br>Some content with youtube ID <script type="text/javascript" data-reactid="6">window.__APOLLO_STATE__ = {youtube_id: "9uASADiYe_8"}</script>`,
 
 		// Test with multiple YouTube IDs
-		`Content with youtube_id: "dQw4w9WgXcQ" and youtube_id: "jNQXAC9IVRw"`: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br><iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/jNQXAC9IVRw" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Content with youtube_id: "dQw4w9WgXcQ" and youtube_id: "jNQXAC9IVRw"`,
+		`Content with youtube_id: "dQw4w9WgXcQ" and youtube_id: "jNQXAC9IVRw"`: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br><iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/jNQXAC9IVRw" allowfullscreen></iframe><br>Content with youtube_id: "dQw4w9WgXcQ" and youtube_id: "jNQXAC9IVRw"`,
 
 		// Test with YouTube ID using equals sign
-		`Some content with youtube_id = "dQw4w9WgXcQ"`: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Some content with youtube_id = "dQw4w9WgXcQ"`,
+		`Some content with youtube_id = "dQw4w9WgXcQ"`: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>Some content with youtube_id = "dQw4w9WgXcQ"`,
 
 		// Test with spaces around delimiters
-		`Some content with youtube_id : "dQw4w9WgXcQ"`: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Some content with youtube_id : "dQw4w9WgXcQ"`,
+		`Some content with youtube_id : "dQw4w9WgXcQ"`: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>Some content with youtube_id : "dQw4w9WgXcQ"`,
 
 		// Test with YouTube ID without quotes (regex requires quotes)
 		`Some content with youtube_id: dQw4w9WgXcQ and more`: `Some content with youtube_id: dQw4w9WgXcQ and more`,
@@ -245,7 +245,7 @@ func TestAddYoutubeVideoFromIdWithCustomEmbedURL(t *testing.T) {
 	}
 
 	input := `Some content with youtube_id: "dQw4w9WgXcQ"`
-	expected := `<iframe width="650" height="350" frameborder="0" src="https://invidious.custom/embed/dQw4w9WgXcQ" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Some content with youtube_id: "dQw4w9WgXcQ"`
+	expected := `<iframe width="650" height="350" frameborder="0" src="https://invidious.custom/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>Some content with youtube_id: "dQw4w9WgXcQ"`
 
 	actual := addYoutubeVideoFromId(input)
 	if actual != expected {
@@ -260,35 +260,35 @@ func TestAddInvidiousVideo(t *testing.T) {
 		// Test with various Invidious instances
 		"https://invidious.io/watch?v=dQw4w9WgXcQ": {
 			"Some video content",
-			`<iframe width="650" height="350" frameborder="0" src="https://invidious.io/embed/dQw4w9WgXcQ" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Some video content`,
+			`<iframe width="650" height="350" frameborder="0" src="https://invidious.io/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>Some video content`,
 		},
 		"https://yewtu.be/watch?v=jNQXAC9IVRw": {
 			"Another video description",
-			`<iframe width="650" height="350" frameborder="0" src="https://yewtu.be/embed/jNQXAC9IVRw" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Another video description`,
+			`<iframe width="650" height="350" frameborder="0" src="https://yewtu.be/embed/jNQXAC9IVRw" allowfullscreen></iframe><br>Another video description`,
 		},
 		"http://invidious.snopyta.org/watch?v=dQw4w9WgXcQ": {
 			"HTTP instance test",
-			`<iframe width="650" height="350" frameborder="0" src="https://invidious.snopyta.org/embed/dQw4w9WgXcQ" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>HTTP instance test`,
+			`<iframe width="650" height="350" frameborder="0" src="https://invidious.snopyta.org/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>HTTP instance test`,
 		},
 		"https://youtube.com/watch?v=dQw4w9WgXcQ": {
 			"YouTube URL (also matches regex)",
-			`<iframe width="650" height="350" frameborder="0" src="https://youtube.com/embed/dQw4w9WgXcQ" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>YouTube URL (also matches regex)`,
+			`<iframe width="650" height="350" frameborder="0" src="https://youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>YouTube URL (also matches regex)`,
 		},
 		"https://example.org/watch?v=dQw4w9WgXcQ": {
 			"Any domain with watch pattern",
-			`<iframe width="650" height="350" frameborder="0" src="https://example.org/embed/dQw4w9WgXcQ" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Any domain with watch pattern`,
+			`<iframe width="650" height="350" frameborder="0" src="https://example.org/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>Any domain with watch pattern`,
 		},
 
 		// Test with query parameters
 		"https://invidious.io/watch?v=dQw4w9WgXcQ&t=30s": {
 			"Video with timestamp",
-			`<iframe width="650" height="350" frameborder="0" src="https://invidious.io/embed/dQw4w9WgXcQ?t=30s" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Video with timestamp`,
+			`<iframe width="650" height="350" frameborder="0" src="https://invidious.io/embed/dQw4w9WgXcQ?t=30s" allowfullscreen></iframe><br>Video with timestamp`,
 		},
 
 		// Test with more complex query parameters
 		"https://invidious.io/watch?v=dQw4w9WgXcQ&t=30s&autoplay=1": {
 			"Video with multiple parameters",
-			`<iframe width="650" height="350" frameborder="0" src="https://invidious.io/embed/dQw4w9WgXcQ?autoplay=1&t=30s" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>Video with multiple parameters`,
+			`<iframe width="650" height="350" frameborder="0" src="https://invidious.io/embed/dQw4w9WgXcQ?autoplay=1&t=30s" allowfullscreen></iframe><br>Video with multiple parameters`,
 		},
 
 		// Test with non-matching URLs (should return content unchanged)
@@ -308,7 +308,7 @@ func TestAddInvidiousVideo(t *testing.T) {
 		// Test with empty content
 		"https://empty.invidious.io/watch?v=dQw4w9WgXcQ": {
 			"",
-			`<iframe width="650" height="350" frameborder="0" src="https://empty.invidious.io/embed/dQw4w9WgXcQ" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><br>`,
+			`<iframe width="650" height="350" frameborder="0" src="https://empty.invidious.io/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>`,
 		},
 	}
 
