@@ -286,9 +286,7 @@ func getYoutubVideoIDFromURL(entryURL string) string {
 }
 
 func buildVideoPlayerIframe(absoluteVideoURL string) string {
-	// Note: the referrerpolicy seems to be required to avoid YouTube error 153 video player configuration error
-	// See https://developers.google.com/youtube/terms/required-minimum-functionality#embedded-player-api-client-identity
-	return `<iframe width="650" height="350" frameborder="0" src="` + absoluteVideoURL + `" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`
+	return `<iframe width="650" height="350" frameborder="0" src="` + absoluteVideoURL + `" allowfullscreen></iframe>`
 }
 
 func addVideoPlayerIframe(absoluteVideoURL, entryContent string) string {
