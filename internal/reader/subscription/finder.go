@@ -68,7 +68,7 @@ func (f *subscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string, 
 		f.feedDownloaded = true
 		return Subscriptions{NewSubscription(responseHandler.EffectiveURL(), responseHandler.EffectiveURL(), feedFormat)}, nil
 	}
-	
+
 	// Step 2) Find the canonical URL of the website.
 	slog.Debug("Try to find the canonical URL of the website", slog.String("website_url", websiteURL))
 	websiteURL = f.findCanonicalURL(websiteURL, responseHandler.ContentType(), bytes.NewReader(responseBody))
@@ -285,15 +285,6 @@ func (f *subscriptionFinder) findSubscriptionsFromYouTube(websiteURL string) (Su
 		{"UULF", "Videos"},
 		{"UUSH", "Short videos"},
 		{"UULV", "Live streams"},
-
-		{"UULP", "Popular videos"},
-		{"UUPS", "Popular short videos"},
-		{"UUPV", "Popular live streams"},
-		
-		{"UUMO", "Members-only contents (videos, short videos and live streams)"},
-		{"UUMF", "Members-only videos"},
-		{"UUMS", "Members-only short videos"},
-		{"UUMV", "Members-only live streams"},
 	}
 
 	decodedURL, err := url.Parse(websiteURL)
@@ -308,15 +299,15 @@ func (f *subscriptionFinder) findSubscriptionsFromYouTube(websiteURL string) (Su
 
 	if _, baseID, found := strings.Cut(decodedURL.Path, "channel/UC"); found {
 		var subscriptions Subscriptions
-		
+
 		channelFeedURL := "https://www.youtube.com/feeds/videos.xml?channel_id=UC" + baseID
 		subscriptions = append(subscriptions, NewSubscription("Channel", channelFeedURL, parser.FormatAtom))
-			
+
 		for _, playlist := range playlistPrefixes {
 			playlistFeedURL := "https://www.youtube.com/feeds/videos.xml?playlist_id=" + playlist.prefix + baseID
 			subscriptions = append(subscriptions, NewSubscription(playlist.title, playlistFeedURL, parser.FormatAtom))
 		}
-		
+
 		return subscriptions, nil
 	}
 
