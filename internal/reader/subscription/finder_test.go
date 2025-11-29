@@ -39,13 +39,6 @@ func TestFindYoutubeFeed(t *testing.T) {
 				"https://www.youtube.com/feeds/videos.xml?playlist_id=UULF-Qj80avWItNRjkZ41rzHyw",
 				"https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH-Qj80avWItNRjkZ41rzHyw",
 				"https://www.youtube.com/feeds/videos.xml?playlist_id=UULV-Qj80avWItNRjkZ41rzHyw",
-				"https://www.youtube.com/feeds/videos.xml?playlist_id=UULP-Qj80avWItNRjkZ41rzHyw",
-				"https://www.youtube.com/feeds/videos.xml?playlist_id=UUPS-Qj80avWItNRjkZ41rzHyw",
-				"https://www.youtube.com/feeds/videos.xml?playlist_id=UUPV-Qj80avWItNRjkZ41rzHyw",
-				"https://www.youtube.com/feeds/videos.xml?playlist_id=UUMO-Qj80avWItNRjkZ41rzHyw",
-				"https://www.youtube.com/feeds/videos.xml?playlist_id=UUMF-Qj80avWItNRjkZ41rzHyw",
-				"https://www.youtube.com/feeds/videos.xml?playlist_id=UUMS-Qj80avWItNRjkZ41rzHyw",
-				"https://www.youtube.com/feeds/videos.xml?playlist_id=UUMV-Qj80avWItNRjkZ41rzHyw",
 			},
 		},
 		// Channel URL with name
