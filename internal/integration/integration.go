@@ -271,12 +271,17 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 	}
 
 	if userIntegrations.LinkwardenEnabled {
-		slog.Debug("Sending entry to linkwarden",
+		attrs := []any{
 			slog.Int64("user_id", userIntegrations.UserID),
 			slog.Int64("entry_id", entry.ID),
 			slog.String("entry_url", entry.URL),
-			slog.Any("collection_id", userIntegrations.LinkwardenCollectionId),
-		)
+		}
+
+		if userIntegrations.LinkwardenCollectionId != nil {
+			attrs = append(attrs, slog.Int64("collection_id", *userIntegrations.LinkwardenCollectionId))
+		}
+
+		slog.Debug("Sending entry to linkwarden", attrs...)
 
 		client := linkwarden.NewClient(
 			userIntegrations.LinkwardenURL,
@@ -284,13 +289,8 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 			userIntegrations.LinkwardenCollectionId,
 		)
 		if err := client.CreateBookmark(entry.URL, entry.Title); err != nil {
-			slog.Error("Unable to send entry to Linkwarden",
-				slog.Int64("user_id", userIntegrations.UserID),
-				slog.Int64("entry_id", entry.ID),
-				slog.String("entry_url", entry.URL),
-				slog.Any("collection_id", userIntegrations.LinkwardenCollectionId),
-				slog.Any("error", err),
-			)
+			attrs = append(attrs, slog.Any("error", err))
+			slog.Error("Unable to send entry to Linkwarden", attrs...)
 		}
 	}
 
