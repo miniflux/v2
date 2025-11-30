@@ -45,7 +45,7 @@ var (
 		"h5":         {"id"},
 		"h6":         {"id"},
 		"hr":         {},
-		"iframe":     {"width", "height", "frameborder", "src", "allowfullscreen", "referrerpolicy"},
+		"iframe":     {"width", "height", "frameborder", "src", "allowfullscreen"},
 		"img":        {"alt", "title", "src", "srcset", "sizes", "width", "height", "fetchpriority", "decoding"},
 		"ins":        {},
 		"kbd":        {},
@@ -309,6 +309,7 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 	attrNames := make([]string, 0, len(attributes))
 	var err error
 	var isAnchorLink bool
+	var isYouTubeEmbed bool
 
 	for _, attribute := range attributes {
 		if !isValidAttribute(tagName, attribute.Key) {
@@ -355,10 +356,16 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 		if isExternalResourceAttribute(attribute.Key) {
 			switch {
 			case tagName == "iframe":
-				if !isValidIframeSource(attribute.Val) {
+				iframeSourceDomain, trustedIframeDomain := findAllowedIframeSourceDomain(attribute.Val)
+				if !trustedIframeDomain {
 					continue
 				}
+
 				value = rewriteIframeURL(attribute.Val)
+
+				if iframeSourceDomain == "youtube.com" || iframeSourceDomain == "youtube-nocookie.com" {
+					isYouTubeEmbed = true
+				}
 			case tagName == "img" && attribute.Key == "src" && isValidDataAttribute(attribute.Val):
 				value = attribute.Val
 			case tagName == "a" && attribute.Key == "href" && strings.HasPrefix(attribute.Val, "#"):
@@ -387,7 +394,7 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 	}
 
 	if !isAnchorLink {
-		extraAttrNames, extraHTMLAttributes := getExtraAttributes(tagName, sanitizerOptions)
+		extraAttrNames, extraHTMLAttributes := getExtraAttributes(tagName, isYouTubeEmbed, sanitizerOptions)
 		if len(extraAttrNames) > 0 {
 			attrNames = append(attrNames, extraAttrNames...)
 			htmlAttrs = append(htmlAttrs, extraHTMLAttributes...)
@@ -397,7 +404,7 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 	return attrNames, strings.Join(htmlAttrs, " ")
 }
 
-func getExtraAttributes(tagName string, sanitizerOptions *SanitizerOptions) ([]string, []string) {
+func getExtraAttributes(tagName string, isYouTubeEmbed bool, sanitizerOptions *SanitizerOptions) ([]string, []string) {
 	switch tagName {
 	case "a":
 		attributeNames := []string{"rel", "referrerpolicy"}
@@ -410,7 +417,20 @@ func getExtraAttributes(tagName string, sanitizerOptions *SanitizerOptions) ([]s
 	case "video", "audio":
 		return []string{"controls"}, []string{"controls"}
 	case "iframe":
-		return []string{"sandbox", "loading"}, []string{`sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"`, `loading="lazy"`}
+		extraAttrNames := []string{}
+		extraHTMLAttributes := []string{}
+
+		// Note: the referrerpolicy seems to be required to avoid YouTube error 153 video player configuration error
+		// See https://developers.google.com/youtube/terms/required-minimum-functionality#embedded-player-api-client-identity
+		if isYouTubeEmbed {
+			extraAttrNames = append(extraAttrNames, "referrerpolicy")
+			extraHTMLAttributes = append(extraHTMLAttributes, `referrerpolicy="strict-origin-when-cross-origin"`)
+		}
+
+		extraAttrNames = append(extraAttrNames, "sandbox", "loading")
+		extraHTMLAttributes = append(extraHTMLAttributes, `sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"`, `loading="lazy"`)
+
+		return extraAttrNames, extraHTMLAttributes
 	case "img":
 		return []string{"loading"}, []string{`loading="lazy"`}
 	default:
@@ -496,22 +516,22 @@ func isBlockedResource(absoluteURL string) bool {
 	return false
 }
 
-func isValidIframeSource(iframeSourceURL string) bool {
+func findAllowedIframeSourceDomain(iframeSourceURL string) (string, bool) {
 	iframeSourceDomain := urllib.DomainWithoutWWW(iframeSourceURL)
 
 	if _, ok := iframeAllowList[iframeSourceDomain]; ok {
-		return true
+		return iframeSourceDomain, true
 	}
 
 	if ytDomain := config.Opts.YouTubeEmbedDomain(); ytDomain != "" && iframeSourceDomain == strings.TrimPrefix(ytDomain, "www.") {
-		return true
+		return iframeSourceDomain, true
 	}
 
 	if invidiousInstance := config.Opts.InvidiousInstance(); invidiousInstance != "" && iframeSourceDomain == strings.TrimPrefix(invidiousInstance, "www.") {
-		return true
+		return iframeSourceDomain, true
 	}
 
-	return false
+	return "", false
 }
 
 func rewriteIframeURL(link string) string {
