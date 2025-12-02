@@ -292,7 +292,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.LinkwardenEnabled,
 		&integration.LinkwardenURL,
 		&integration.LinkwardenAPIKey,
-		&integration.LinkwardenCollectionId,
+		&integration.LinkwardenCollectionID,
 		&integration.MatrixBotEnabled,
 		&integration.MatrixBotUser,
 		&integration.MatrixBotPassword,
@@ -619,7 +619,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.LinktacoTags,
 		integration.LinktacoVisibility,
 		integration.ArchiveorgEnabled,
-		integration.LinkwardenCollectionId,
+		integration.LinkwardenCollectionID,
 		integration.UserID,
 	)
 

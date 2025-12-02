@@ -285,7 +285,7 @@
             <input type="text" name="linkwarden_api_key" id="form-linkwarden-api-key" value="{{ .form.LinkwardenAPIKey }}" spellcheck="false">
 
             <label for="form-linkwarden-collection-id">{{ t "form.integration.linkwarden_collection_id" }}</label>
-            <input type="number" name="linkwarden_collection_id" id="form-linkwarden-collection-id" value="{{ .form.LinkwardenCollectionId }}" spellcheck="false">
+            <input type="number" name="linkwarden_collection_id" id="form-linkwarden-collection-id" {{ if .form.LinkwardenCollectionID }}value="{{ .form.LinkwardenCollectionID }}"{{ end }} spellcheck="false">
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

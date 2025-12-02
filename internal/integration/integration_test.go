@@ -25,7 +25,7 @@ func TestSendEntryLogsLinkwardenCollectionID(t *testing.T) {
 	userIntegrations := &model.Integration{
 		UserID:                 1,
 		LinkwardenEnabled:      true,
-		LinkwardenCollectionId: &coll,
+		LinkwardenCollectionID: &coll,
 		LinkwardenURL:          "",
 		LinkwardenAPIKey:       "",
 	}

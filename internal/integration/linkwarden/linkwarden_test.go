@@ -8,7 +8,10 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
+
+	"miniflux.app/v2/internal/model"
 )
 
 func TestCreateBookmark(t *testing.T) {
@@ -16,10 +19,10 @@ func TestCreateBookmark(t *testing.T) {
 		name           string
 		baseURL        string
 		apiKey         string
-		collectionId   *int64
+		collectionID   *int64
 		entryURL       string
 		entryTitle     string
-		serverResponse func(w http.ResponseWriter, r *http.Request, t *testing.T, collectionId *int64)
+		serverResponse func(w http.ResponseWriter, r *http.Request, t *testing.T, collectionID *int64)
 		wantErr        bool
 		errContains    string
 	}{
@@ -27,7 +30,7 @@ func TestCreateBookmark(t *testing.T) {
 			name:         "successful bookmark creation without collection",
 			baseURL:      "",
 			apiKey:       "test-api-key",
-			collectionId: nil,
+			collectionID: nil,
 			entryURL:     "https://example.com",
 			entryTitle:   "Test Article",
 			serverResponse: func(w http.ResponseWriter, r *http.Request, t *testing.T, collectionId *int64) {
@@ -45,7 +48,7 @@ func TestCreateBookmark(t *testing.T) {
 
 				// Parse and verify request
 				body, _ := io.ReadAll(r.Body)
-				var req map[string]interface{}
+				var req map[string]any
 				if err := json.Unmarshal(body, &req); err != nil {
 					t.Errorf("Failed to parse request body: %v", err)
 				}
@@ -67,7 +70,7 @@ func TestCreateBookmark(t *testing.T) {
 
 				// Return success response
 				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(map[string]interface{}{
+				json.NewEncoder(w).Encode(map[string]any{
 					"id":   "123",
 					"url":  "https://example.com",
 					"name": "Test Article",
@@ -79,10 +82,10 @@ func TestCreateBookmark(t *testing.T) {
 			name:         "successful bookmark creation with collection",
 			baseURL:      "",
 			apiKey:       "test-api-key",
-			collectionId: int64Ptr(42),
+			collectionID: model.OptionalNumber(int64(42)),
 			entryURL:     "https://example.com/article",
 			entryTitle:   "Test Article With Collection",
-			serverResponse: func(w http.ResponseWriter, r *http.Request, t *testing.T, collectionId *int64) {
+			serverResponse: func(w http.ResponseWriter, r *http.Request, t *testing.T, collectionID *int64) {
 				// Verify authorization header
 				auth := r.Header.Get("Authorization")
 				if auth != "Bearer test-api-key" {
@@ -91,7 +94,7 @@ func TestCreateBookmark(t *testing.T) {
 
 				// Parse and verify request
 				body, _ := io.ReadAll(r.Body)
-				var req map[string]interface{}
+				var req map[string]any
 				if err := json.Unmarshal(body, &req); err != nil {
 					t.Errorf("Failed to parse request body: %v", err)
 				}
@@ -108,7 +111,7 @@ func TestCreateBookmark(t *testing.T) {
 
 				// Verify collection is present and correct
 				if collection, ok := req["collection"]; ok {
-					collectionMap, ok := collection.(map[string]interface{})
+					collectionMap, ok := collection.(map[string]any)
 					if !ok {
 						t.Error("Expected collection to be a map")
 					}
@@ -126,7 +129,7 @@ func TestCreateBookmark(t *testing.T) {
 
 				// Return success response
 				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(map[string]interface{}{
+				json.NewEncoder(w).Encode(map[string]any{
 					"id":   "124",
 					"url":  "https://example.com/article",
 					"name": "Test Article With Collection",
@@ -138,7 +141,7 @@ func TestCreateBookmark(t *testing.T) {
 			name:         "missing API key",
 			baseURL:      "",
 			apiKey:       "",
-			collectionId: nil,
+			collectionID: nil,
 			entryURL:     "https://example.com",
 			entryTitle:   "Test",
 			serverResponse: func(w http.ResponseWriter, r *http.Request, t *testing.T, collectionId *int64) {
@@ -152,7 +155,7 @@ func TestCreateBookmark(t *testing.T) {
 			name:         "server error",
 			baseURL:      "",
 			apiKey:       "test-api-key",
-			collectionId: nil,
+			collectionID: nil,
 			entryURL:     "https://example.com",
 			entryTitle:   "Test",
 			serverResponse: func(w http.ResponseWriter, r *http.Request, t *testing.T, collectionId *int64) {
@@ -166,7 +169,7 @@ func TestCreateBookmark(t *testing.T) {
 			name:         "bad request with null collection id error",
 			baseURL:      "",
 			apiKey:       "test-api-key",
-			collectionId: nil,
+			collectionID: nil,
 			entryURL:     "https://example.com",
 			entryTitle:   "Test",
 			serverResponse: func(w http.ResponseWriter, r *http.Request, t *testing.T, collectionId *int64) {
@@ -180,7 +183,7 @@ func TestCreateBookmark(t *testing.T) {
 			name:         "unauthorized",
 			baseURL:      "",
 			apiKey:       "invalid-key",
-			collectionId: nil,
+			collectionID: nil,
 			entryURL:     "https://example.com",
 			entryTitle:   "Test",
 			serverResponse: func(w http.ResponseWriter, r *http.Request, t *testing.T, collectionId *int64) {
@@ -194,7 +197,7 @@ func TestCreateBookmark(t *testing.T) {
 			name:         "invalid base URL",
 			baseURL:      ":",
 			apiKey:       "test-api-key",
-			collectionId: nil,
+			collectionID: nil,
 			entryURL:     "https://example.com",
 			entryTitle:   "Test",
 			serverResponse: func(w http.ResponseWriter, r *http.Request, t *testing.T, collectionId *int64) {
@@ -208,7 +211,7 @@ func TestCreateBookmark(t *testing.T) {
 			name:         "missing base URL",
 			baseURL:      "",
 			apiKey:       "",
-			collectionId: nil,
+			collectionID: nil,
 			entryURL:     "https://example.com",
 			entryTitle:   "Test",
 			serverResponse: func(w http.ResponseWriter, r *http.Request, t *testing.T, collectionId *int64) {
@@ -222,7 +225,7 @@ func TestCreateBookmark(t *testing.T) {
 			name:         "network connection error",
 			baseURL:      "http://localhost:1", // Invalid port that should fail to connect
 			apiKey:       "test-api-key",
-			collectionId: nil,
+			collectionID: nil,
 			entryURL:     "https://example.com",
 			entryTitle:   "Test",
 			serverResponse: func(w http.ResponseWriter, r *http.Request, t *testing.T, collectionId *int64) {
@@ -240,7 +243,7 @@ func TestCreateBookmark(t *testing.T) {
 			var server *httptest.Server
 			if tt.apiKey != "" && tt.baseURL != ":" && tt.baseURL != "http://localhost:1" {
 				server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					tt.serverResponse(w, r, t, tt.collectionId)
+					tt.serverResponse(w, r, t, tt.collectionID)
 				}))
 				defer server.Close()
 			}
@@ -252,7 +255,7 @@ func TestCreateBookmark(t *testing.T) {
 			}
 
 			// Create client
-			client := NewClient(baseURL, tt.apiKey, tt.collectionId)
+			client := NewClient(baseURL, tt.apiKey, tt.collectionID)
 
 			// Call CreateBookmark
 			err := client.CreateBookmark(tt.entryURL, tt.entryTitle)
@@ -261,7 +264,7 @@ func TestCreateBookmark(t *testing.T) {
 			if tt.wantErr {
 				if err == nil {
 					t.Error("Expected error, got nil")
-				} else if tt.errContains != "" && !contains(err.Error(), tt.errContains) {
+				} else if tt.errContains != "" && !strings.Contains(err.Error(), tt.errContains) {
 					t.Errorf("Expected error to contain '%s', got '%s'", tt.errContains, err.Error())
 				}
 			} else {
@@ -278,25 +281,25 @@ func TestNewClient(t *testing.T) {
 		name         string
 		baseURL      string
 		apiKey       string
-		collectionId *int64
+		collectionID *int64
 	}{
 		{
 			name:         "client without collection",
 			baseURL:      "https://linkwarden.example.com",
 			apiKey:       "test-key",
-			collectionId: nil,
+			collectionID: nil,
 		},
 		{
 			name:         "client with collection",
 			baseURL:      "https://linkwarden.example.com",
 			apiKey:       "test-key",
-			collectionId: int64Ptr(123),
+			collectionID: model.OptionalNumber(int64(123)),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			client := NewClient(tt.baseURL, tt.apiKey, tt.collectionId)
+			client := NewClient(tt.baseURL, tt.apiKey, tt.collectionID)
 
 			if client.baseURL != tt.baseURL {
 				t.Errorf("Expected baseURL %s, got %s", tt.baseURL, client.baseURL)
@@ -306,36 +309,17 @@ func TestNewClient(t *testing.T) {
 				t.Errorf("Expected apiKey %s, got %s", tt.apiKey, client.apiKey)
 			}
 
-			if tt.collectionId == nil {
-				if client.collectionId != nil {
-					t.Errorf("Expected collectionId to be nil, got %v", *client.collectionId)
+			if tt.collectionID == nil {
+				if client.collectionID != nil {
+					t.Errorf("Expected collectionId to be nil, got %v", *client.collectionID)
 				}
 			} else {
-				if client.collectionId == nil {
+				if client.collectionID == nil {
 					t.Error("Expected collectionId to be set, got nil")
-				} else if *client.collectionId != *tt.collectionId {
-					t.Errorf("Expected collectionId %d, got %d", *tt.collectionId, *client.collectionId)
+				} else if *client.collectionID != *tt.collectionID {
+					t.Errorf("Expected collectionId %d, got %d", *tt.collectionID, *client.collectionID)
 				}
 			}
 		})
 	}
-}
-
-// Helper function to create int64 pointer
-func int64Ptr(i int64) *int64 {
-	return &i
-}
-
-// Helper function to check if string contains substring
-func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(s) > len(substr) && containsSubstring(s, substr))
-}
-
-func containsSubstring(s, substr string) bool {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return true
-		}
-	}
-	return false
 }
