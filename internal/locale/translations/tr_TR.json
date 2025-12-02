@@ -266,6 +266,7 @@
     "form.integration.linkwarden_activate": "Makaleleri Linkwarden'e kaydet",
     "form.integration.linkwarden_api_key": "Linkwarden API Anahtarı",
     "form.integration.linkwarden_endpoint": "Linkwarden Temel URL'si",
+    "form.integration.linkwarden_collection_id": "Linkwarden Collection ID",
     "form.integration.matrix_bot_activate": "Yeni makaleleri Matrix'e aktarın",
     "form.integration.matrix_bot_chat_id": "Matrix odasının kimliği",
     "form.integration.matrix_bot_password": "Matrix kullanıcısı için parola",

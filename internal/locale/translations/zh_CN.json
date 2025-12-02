@@ -263,6 +263,7 @@
     "form.integration.linkwarden_activate": "保存条目到 Linkwarden",
     "form.integration.linkwarden_api_key": "Linkwarden API 密钥",
     "form.integration.linkwarden_endpoint": "Linkwarden 基本 URL",
+    "form.integration.linkwarden_collection_id": "Linkwarden Collection ID",
     "form.integration.matrix_bot_activate": "推送新条目到 Matrix",
     "form.integration.matrix_bot_chat_id": "Matrix 房间 ID",
     "form.integration.matrix_bot_password": "Matrix 用户密码",

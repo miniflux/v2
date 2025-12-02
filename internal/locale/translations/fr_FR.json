@@ -266,6 +266,7 @@
     "form.integration.linkwarden_activate": "Sauvegarder les articles vers Linkwarden",
     "form.integration.linkwarden_api_key": "Clé d'API de Linkwarden",
     "form.integration.linkwarden_endpoint": "URL de base de Linkwarden",
+    "form.integration.linkwarden_collection_id": "Linkwarden Collection ID",
     "form.integration.matrix_bot_activate": "Envoyer les nouveaux articles vers Matrix",
     "form.integration.matrix_bot_chat_id": "Identifiant de la salle Matrix",
     "form.integration.matrix_bot_password": "Mot de passe de l'utilisateur Matrix",

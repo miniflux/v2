@@ -269,6 +269,7 @@
     "form.integration.linkwarden_activate": "Zapisuj wpisy w Linkwarden",
     "form.integration.linkwarden_api_key": "Klucz API do Linkwarden",
     "form.integration.linkwarden_endpoint": "Podstawowy adres URL Linkwarden",
+    "form.integration.linkwarden_collection_id": "Linkwarden Collection ID",
     "form.integration.matrix_bot_activate": "Przesyłaj nowe wpisy do Matrix",
     "form.integration.matrix_bot_chat_id": "Identyfikator pokoju Matrix",
     "form.integration.matrix_bot_password": "Hasło do Matrix",

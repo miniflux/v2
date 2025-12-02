@@ -266,6 +266,7 @@
     "form.integration.linkwarden_activate": "Artikel in Linkwarden speichern",
     "form.integration.linkwarden_api_key": "Linkwarden-API-Schlüssel",
     "form.integration.linkwarden_endpoint": "Linkwarden-Base-URL",
+    "form.integration.linkwarden_collection_id": "Linkwarden Collection ID",
     "form.integration.matrix_bot_activate": "Neue Artikel in Matrix übertragen",
     "form.integration.matrix_bot_chat_id": "ID des Matrix-Raums",
     "form.integration.matrix_bot_password": "Passwort für Matrix-Benutzer",
