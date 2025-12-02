@@ -21,11 +21,11 @@ const defaultClientTimeout = 10 * time.Second
 type Client struct {
 	baseURL      string
 	apiKey       string
-	collectionId *int64
+	collectionID *int64
 }
 
 type linkwardenCollection struct {
-	Id *int64 `json:"id"`
+	ID *int64 `json:"id"`
 }
 
 type linkwardenRequest struct {
@@ -34,8 +34,8 @@ type linkwardenRequest struct {
 	Collection *linkwardenCollection `json:"collection,omitempty"`
 }
 
-func NewClient(baseURL, apiKey string, collectionId *int64) *Client {
-	return &Client{baseURL: baseURL, apiKey: apiKey, collectionId: collectionId}
+func NewClient(baseURL, apiKey string, collectionID *int64) *Client {
+	return &Client{baseURL: baseURL, apiKey: apiKey, collectionID: collectionID}
 }
 
 func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
@@ -53,8 +53,8 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 		Name: entryTitle,
 	}
 
-	if c.collectionId != nil {
-		payload.Collection = &linkwardenCollection{Id: c.collectionId}
+	if c.collectionID != nil {
+		payload.Collection = &linkwardenCollection{ID: c.collectionID}
 	}
 
 	requestBody, err := json.Marshal(payload)

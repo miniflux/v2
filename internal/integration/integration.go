@@ -277,8 +277,8 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 			slog.String("entry_url", entry.URL),
 		}
 
-		if userIntegrations.LinkwardenCollectionId != nil {
-			attrs = append(attrs, slog.Int64("collection_id", *userIntegrations.LinkwardenCollectionId))
+		if userIntegrations.LinkwardenCollectionID != nil {
+			attrs = append(attrs, slog.Int64("collection_id", *userIntegrations.LinkwardenCollectionID))
 		}
 
 		slog.Debug("Sending entry to linkwarden", attrs...)
@@ -286,7 +286,7 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 		client := linkwarden.NewClient(
 			userIntegrations.LinkwardenURL,
 			userIntegrations.LinkwardenAPIKey,
-			userIntegrations.LinkwardenCollectionId,
+			userIntegrations.LinkwardenCollectionID,
 		)
 		if err := client.CreateBookmark(entry.URL, entry.Title); err != nil {
 			attrs = append(attrs, slog.Any("error", err))
