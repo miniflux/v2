@@ -52,7 +52,7 @@ func (e *EntryPaginationBuilder) WithCategoryID(categoryID int64) {
 }
 
 // WithStatus adds status to the condition.
-func (e *EntryPaginationBuilder) WithStatus(status string) {
+func (e *EntryPaginationBuilder) WithStatus(status model.EntryStatus) {
 	if status != "" {
 		e.conditions = append(e.conditions, "e.status = $"+strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, status)

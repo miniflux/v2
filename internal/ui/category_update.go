@@ -47,8 +47,8 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 
 	categoryRequest := &model.CategoryModificationRequest{
-		Title:        model.SetOptionalField(categoryForm.Title),
-		HideGlobally: model.SetOptionalField(categoryForm.HideGlobally),
+		Title:        model.OptionalField(categoryForm.Title),
+		HideGlobally: model.OptionalField(categoryForm.HideGlobally),
 	}
 
 	if validationErr := validator.ValidateCategoryModification(h.store, user.ID, category.ID, categoryRequest); validationErr != nil {

@@ -264,6 +264,11 @@ func isValidFilterRules(filterEntryRules string, filterType string) *locale.Loca
 
 	rules := strings.Split(filterEntryRules, "\n")
 	for i, rule := range rules {
+		rule = strings.TrimSpace(rule)
+		if rule == "" {
+			continue
+		}
+
 		// Check if rule starts with a valid fieldName
 		idx := slices.IndexFunc(fieldNames, func(fieldName string) bool { return strings.HasPrefix(rule, fieldName) })
 		if idx == -1 {

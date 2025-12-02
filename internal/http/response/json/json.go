@@ -201,6 +201,21 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	builder.Write()
 }
 
+// Attachment forces the JSON document to be downloaded by the web browser.
+func Attachment(w http.ResponseWriter, r *http.Request, filename string, body any) {
+	responseBody, err := json.MarshalIndent(body, "", "\t")
+	if err != nil {
+		ServerError(w, r, err)
+		return
+	}
+
+	builder := response.New(w, r)
+	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithAttachment(filename)
+	builder.WithBody(responseBody)
+	builder.Write()
+}
+
 func generateJSONError(err error) ([]byte, error) {
 	type errorMsg struct {
 		ErrorMessage string `json:"error_message"`

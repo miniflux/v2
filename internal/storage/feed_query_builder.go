@@ -324,7 +324,7 @@ func (f *FeedQueryBuilder) fetchFeedCounter() (unreadCounters map[int64]int, rea
 	unreadCounters = make(map[int64]int)
 	for rows.Next() {
 		var feedID int64
-		var status string
+		var status model.EntryStatus
 		var count int
 		if err := rows.Scan(&feedID, &status, &count); err != nil {
 			return nil, nil, fmt.Errorf(`store: unable to fetch feed counter row: %w`, err)
