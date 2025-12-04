@@ -41,6 +41,7 @@ func (f *funcMap) Map() template.FuncMap {
 		"truncate":         truncate,
 		"isEmail":          isEmail,
 		"baseURL":          config.Opts.BaseURL,
+		"apiEnabled":       config.Opts.HasAPI,
 		"rootURL":          config.Opts.RootURL,
 		"disableLocalAuth": config.Opts.DisableLocalAuth,
 		"oidcProviderName": config.Opts.OAuth2OIDCProviderName,
