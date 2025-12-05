@@ -80,6 +80,7 @@ type IntegrationForm struct {
 	AppriseURL                       string
 	AppriseServicesURL               string
 	ReadeckEnabled                   bool
+	ReadeckPushEnabled               bool
 	ReadeckURL                       string
 	ReadeckAPIKey                    string
 	ReadeckLabels                    string
@@ -201,6 +202,7 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.AppriseServicesURL = i.AppriseServicesURL
 	integration.AppriseURL = i.AppriseURL
 	integration.ReadeckEnabled = i.ReadeckEnabled
+	integration.ReadeckPushEnabled = i.ReadeckPushEnabled
 	integration.ReadeckURL = i.ReadeckURL
 	integration.ReadeckAPIKey = i.ReadeckAPIKey
 	integration.ReadeckLabels = i.ReadeckLabels
@@ -324,6 +326,7 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		AppriseURL:                       r.FormValue("apprise_url"),
 		AppriseServicesURL:               r.FormValue("apprise_services_url"),
 		ReadeckEnabled:                   r.FormValue("readeck_enabled") == "1",
+		ReadeckPushEnabled:               r.FormValue("readeck_push_enabled") == "1",
 		ReadeckURL:                       r.FormValue("readeck_url"),
 		ReadeckAPIKey:                    r.FormValue("readeck_api_key"),
 		ReadeckLabels:                    r.FormValue("readeck_labels"),

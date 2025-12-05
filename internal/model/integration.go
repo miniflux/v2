@@ -77,6 +77,7 @@ type Integration struct {
 	AppriseURL                       string
 	AppriseServicesURL               string
 	ReadeckEnabled                   bool
+	ReadeckPushEnabled               bool
 	ReadeckURL                       string
 	ReadeckAPIKey                    string
 	ReadeckLabels                    string

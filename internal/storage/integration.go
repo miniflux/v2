@@ -177,6 +177,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			readeck_api_key,
 			readeck_labels,
 			readeck_only_url,
+			readeck_push_enabled,
 			shiori_enabled,
 			shiori_url,
 			shiori_username,
@@ -304,6 +305,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.ReadeckAPIKey,
 		&integration.ReadeckLabels,
 		&integration.ReadeckOnlyURL,
+		&integration.ReadeckPushEnabled,
 		&integration.ShioriEnabled,
 		&integration.ShioriURL,
 		&integration.ShioriUsername,
@@ -491,9 +493,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			linktaco_org_slug=$116,
 			linktaco_tags=$117,
 			linktaco_visibility=$118,
-			archiveorg_enabled=$119
+			archiveorg_enabled=$119,
+			readeck_push_enabled=$120
 		WHERE
-			user_id=$120
+			user_id=$121
 	`
 	_, err := s.db.Exec(
 		query,
@@ -616,6 +619,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.LinktacoTags,
 		integration.LinktacoVisibility,
 		integration.ArchiveorgEnabled,
+		integration.ReadeckPushEnabled,
 		integration.UserID,
 	)
 
