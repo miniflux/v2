@@ -194,6 +194,11 @@ func NewConfigOptions() *configOptions {
 				ValueType:         secretFileType,
 				TargetKey:         "DATABASE_URL",
 			},
+			"DISABLE_API": {
+				ParsedBoolValue: false,
+				RawValue:        "0",
+				ValueType:       boolType,
+			},
 			"DISABLE_HSTS": {
 				ParsedBoolValue: false,
 				RawValue:        "0",
@@ -709,6 +714,10 @@ func (c *configOptions) ForceRefreshInterval() time.Duration {
 
 func (c *configOptions) HasHTTPClientProxiesConfigured() bool {
 	return len(c.options["HTTP_CLIENT_PROXIES"].ParsedStringList) > 0
+}
+
+func (c *configOptions) HasAPI() bool {
+	return !c.options["DISABLE_API"].ParsedBoolValue
 }
 
 func (c *configOptions) HasHTTPService() bool {

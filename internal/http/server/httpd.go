@@ -243,7 +243,9 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 
 	fever.Serve(subrouter, store)
 	googlereader.Serve(subrouter, store)
-	api.Serve(subrouter, store, pool)
+	if config.Opts.HasAPI() {
+		api.Serve(subrouter, store, pool)
+	}
 	ui.Serve(subrouter, store, pool)
 
 	subrouter.HandleFunc("/healthcheck", readinessProbe).Name("healthcheck")
