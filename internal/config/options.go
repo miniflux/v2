@@ -672,9 +672,6 @@ func (c *configOptions) DatabaseURL() string {
 	return c.options["DATABASE_URL"].ParsedStringValue
 }
 
-func (c *configOptions) DisableAPI() bool {
-	return c.options["DISABLE_API"].ParsedBoolValue
-}
 func (c *configOptions) DisableHSTS() bool {
 	return c.options["DISABLE_HSTS"].ParsedBoolValue
 }
@@ -718,6 +715,7 @@ func (c *configOptions) ForceRefreshInterval() time.Duration {
 func (c *configOptions) HasHTTPClientProxiesConfigured() bool {
 	return len(c.options["HTTP_CLIENT_PROXIES"].ParsedStringList) > 0
 }
+
 func (c *configOptions) HasAPI() bool {
 	return !c.options["DISABLE_API"].ParsedBoolValue
 }
