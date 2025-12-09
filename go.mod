@@ -13,7 +13,7 @@ require (
 	github.com/tdewolff/minify/v2 v2.24.8
 	golang.org/x/crypto v0.46.0
 	golang.org/x/image v0.34.0
-	golang.org/x/net v0.47.0
+	golang.org/x/net v0.48.0
 	golang.org/x/oauth2 v0.34.0
 	golang.org/x/term v0.38.0
 )
