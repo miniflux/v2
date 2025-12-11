@@ -597,6 +597,30 @@ func TestFetchYouTubeWatchTimeOptionParsing(t *testing.T) {
 	}
 }
 
+func TestApplyFilterRulesOnProcessedEntryOptionParsing(t *testing.T) {
+	configParser := NewConfigParser()
+
+	if configParser.options.ApplyFilterRulesOnProcessedEntry() {
+		t.Fatalf("Expected APPLY_FILTER_RULES_ON_PROCESSED_ENTRY to be disabled by default")
+	}
+
+	if err := configParser.parseLines([]string{"APPLY_FILTER_RULES_ON_PROCESSED_ENTRY=1"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if !configParser.options.ApplyFilterRulesOnProcessedEntry() {
+		t.Fatalf("Expected APPLY_FILTER_RULES_ON_PROCESSED_ENTRY to be enabled")
+	}
+
+	if err := configParser.parseLines([]string{"APPLY_FILTER_RULES_ON_PROCESSED_ENTRY=0"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if configParser.options.ApplyFilterRulesOnProcessedEntry() {
+		t.Fatalf("Expected APPLY_FILTER_RULES_ON_PROCESSED_ENTRY to be disabled")
+	}
+}
+
 func TestHTTPClientMaxBodySizeOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
 
