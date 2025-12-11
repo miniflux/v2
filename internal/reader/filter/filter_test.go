@@ -188,11 +188,55 @@ func TestIsBlockedEntry(t *testing.T) {
 			expected:   false,
 		},
 		{
-			name:       "matching block rule",
+			name:       "matching block rule - EntryTitle",
 			blockRules: filterRules{{Type: "EntryTitle", Value: "Test"}},
 			allowRules: filterRules{},
 			setup:      func() {},
 			expected:   true,
+		},
+		{
+			name:       "matching block rule - EntryURL",
+			blockRules: filterRules{{Type: "EntryURL", Value: "test-entry"}},
+			allowRules: filterRules{},
+			setup:      func() {},
+			expected:   true,
+		},
+		{
+			name:       "matching block rule - EntryCommentsURL",
+			blockRules: filterRules{{Type: "EntryCommentsURL", Value: "test-entry/comments"}},
+			allowRules: filterRules{},
+			setup:      func() {},
+			expected:   true,
+		},
+		{
+			name:       "matching block rule - EntryContent",
+			blockRules: filterRules{{Type: "EntryContent", Value: "test entry content"}},
+			allowRules: filterRules{},
+			setup:      func() {},
+			expected:   true,
+		},
+		{
+			name:       "matching block rule - EntryAuthor",
+			blockRules: filterRules{{Type: "EntryAuthor", Value: "Test Author"}},
+			allowRules: filterRules{},
+			setup:      func() {},
+			expected:   true,
+		},
+		{
+			name:       "matching block rule - EntryTag",
+			blockRules: filterRules{{Type: "EntryTag", Value: "golang"}},
+			allowRules: filterRules{},
+			setup:      func() {},
+			expected:   true,
+		},
+		{
+			name:       "matching block rule - EntryDate",
+			blockRules: filterRules{{Type: "EntryDate", Value: "future"}},
+			allowRules: filterRules{},
+			setup: func() {
+				entry.Date = time.Now().Add(time.Hour)
+			},
+			expected: true,
 		},
 		{
 			name:       "block rule takes precedence over allow rule",
