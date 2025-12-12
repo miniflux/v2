@@ -97,6 +97,8 @@
                     <a
                         {{ if $.showOnlyUnreadEntries }}
                         href="{{ route "unreadCategoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}"
+                        {{ else if $.showOnlyStarredEntries }}
+                        href="{{ route "starredCategoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}"
                         {{ else }}
                         href="{{ route "categoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}"
                         {{ end }}
