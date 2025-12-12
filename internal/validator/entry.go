@@ -20,7 +20,7 @@ func ValidateEntriesStatusUpdateRequest(request *model.EntriesStatusUpdateReques
 }
 
 // ValidateEntryStatus makes sure the entry status is valid.
-func ValidateEntryStatus(status string) error {
+func ValidateEntryStatus(status model.EntryStatus) error {
 	switch status {
 	case model.EntryStatusRead, model.EntryStatusUnread, model.EntryStatusRemoved:
 		return nil

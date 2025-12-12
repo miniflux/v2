@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/locale"
-	"miniflux.app/v2/internal/model"
 )
 
 // UserForm represents the user form.
@@ -48,18 +47,6 @@ func (u UserForm) ValidateModification() *locale.LocalizedError {
 	}
 
 	return nil
-}
-
-// Merge updates the fields of the given user.
-func (u UserForm) Merge(user *model.User) *model.User {
-	user.Username = u.Username
-	user.IsAdmin = u.IsAdmin
-
-	if u.Password != "" {
-		user.Password = u.Password
-	}
-
-	return user
 }
 
 // NewUserForm returns a new UserForm.

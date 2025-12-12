@@ -30,7 +30,7 @@ func runCleanupTasks(store *storage.Storage) {
 		)
 
 		if config.Opts.HasMetricsCollector() {
-			metric.ArchiveEntriesDuration.WithLabelValues(model.EntryStatusRead).Observe(time.Since(startTime).Seconds())
+			metric.ArchiveEntriesDuration.WithLabelValues(string(model.EntryStatusRead)).Observe(time.Since(startTime).Seconds())
 		}
 	}
 
@@ -43,7 +43,7 @@ func runCleanupTasks(store *storage.Storage) {
 		)
 
 		if config.Opts.HasMetricsCollector() {
-			metric.ArchiveEntriesDuration.WithLabelValues(model.EntryStatusUnread).Observe(time.Since(startTime).Seconds())
+			metric.ArchiveEntriesDuration.WithLabelValues(string(model.EntryStatusUnread)).Observe(time.Since(startTime).Seconds())
 		}
 	}
 

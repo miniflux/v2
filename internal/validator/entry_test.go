@@ -35,7 +35,7 @@ func TestValidateEntriesStatusUpdateRequest(t *testing.T) {
 }
 
 func TestValidateEntryStatus(t *testing.T) {
-	for _, status := range []string{model.EntryStatusRead, model.EntryStatusUnread, model.EntryStatusRemoved} {
+	for _, status := range []model.EntryStatus{model.EntryStatusRead, model.EntryStatusUnread, model.EntryStatusRemoved} {
 		if err := ValidateEntryStatus(status); err != nil {
 			t.Error(`A valid status should not generate any error`)
 		}

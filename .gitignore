@@ -5,3 +5,4 @@
 *.deb
 *.rpm
 miniflux-*
+miniflux.app

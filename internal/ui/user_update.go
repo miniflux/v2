@@ -10,9 +10,11 @@ import (
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
+	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
+	"miniflux.app/v2/internal/validator"
 )
 
 func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +64,19 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userForm.Merge(selectedUser)
+	userModificationRequest := &model.UserModificationRequest{
+		Username: model.OptionalString(userForm.Username),
+		Password: model.OptionalString(userForm.Password),
+		IsAdmin:  model.OptionalField(userForm.IsAdmin),
+	}
+
+	if validationErr := validator.ValidateUserModification(h.store, selectedUser.ID, userModificationRequest); validationErr != nil {
+		view.Set("errorMessage", validationErr.Translate(selectedUser.Language))
+		html.OK(w, r, view.Render("settings"))
+		return
+	}
+
+	userModificationRequest.Patch(selectedUser)
 	if err := h.store.UpdateUser(selectedUser); err != nil {
 		html.ServerError(w, r, err)
 		return

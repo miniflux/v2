@@ -37,10 +37,10 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	view := view.New(h.tpl, r, sess)
 	view.Set("form", settingsForm)
 	view.Set("readBehaviors", map[string]any{
-		"NoAutoMarkAsRead":                           form.NoAutoMarkAsRead,
-		"MarkAsReadOnView":                           form.MarkAsReadOnView,
-		"MarkAsReadOnViewButWaitForPlayerCompletion": form.MarkAsReadOnViewButWaitForPlayerCompletion,
-		"MarkAsReadOnlyOnPlayerCompletion":           form.MarkAsReadOnlyOnPlayerCompletion,
+		"NoAutoMarkAsRead":                           model.NoAutoMarkAsRead,
+		"MarkAsReadOnView":                           model.MarkAsReadOnView,
+		"MarkAsReadOnViewButWaitForPlayerCompletion": model.MarkAsReadOnViewButWaitForPlayerCompletion,
+		"MarkAsReadOnlyOnPlayerCompletion":           model.MarkAsReadOnlyOnPlayerCompletion,
 	})
 	view.Set("themes", model.Themes())
 	view.Set("languages", locale.AvailableLanguages)
@@ -60,25 +60,28 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	MarkReadOnView, MarkReadOnMediaPlayerCompletion := model.ExtractMarkAsReadBehavior(settingsForm.MarkReadBehavior)
 	userModificationRequest := &model.UserModificationRequest{
-		Username:               model.OptionalString(settingsForm.Username),
-		Password:               model.OptionalString(settingsForm.Password),
-		Theme:                  model.OptionalString(settingsForm.Theme),
-		Language:               model.OptionalString(settingsForm.Language),
-		Timezone:               model.OptionalString(settingsForm.Timezone),
-		EntryDirection:         model.OptionalString(settingsForm.EntryDirection),
-		EntryOrder:             model.OptionalString(settingsForm.EntryOrder),
-		EntriesPerPage:         model.OptionalNumber(settingsForm.EntriesPerPage),
-		CategoriesSortingOrder: model.OptionalString(settingsForm.CategoriesSortingOrder),
-		DisplayMode:            model.OptionalString(settingsForm.DisplayMode),
-		GestureNav:             model.OptionalString(settingsForm.GestureNav),
-		DefaultReadingSpeed:    model.OptionalNumber(settingsForm.DefaultReadingSpeed),
-		CJKReadingSpeed:        model.OptionalNumber(settingsForm.CJKReadingSpeed),
-		DefaultHomePage:        model.OptionalString(settingsForm.DefaultHomePage),
-		MediaPlaybackRate:      model.OptionalNumber(settingsForm.MediaPlaybackRate),
-		BlockFilterEntryRules:  model.OptionalString(settingsForm.BlockFilterEntryRules),
-		KeepFilterEntryRules:   model.OptionalString(settingsForm.KeepFilterEntryRules),
-		ExternalFontHosts:      model.OptionalString(settingsForm.ExternalFontHosts),
+		Username:                        model.OptionalString(settingsForm.Username),
+		Password:                        model.OptionalString(settingsForm.Password),
+		Theme:                           model.OptionalString(settingsForm.Theme),
+		Language:                        model.OptionalString(settingsForm.Language),
+		Timezone:                        model.OptionalString(settingsForm.Timezone),
+		EntryDirection:                  model.OptionalString(settingsForm.EntryDirection),
+		EntryOrder:                      model.OptionalString(settingsForm.EntryOrder),
+		EntriesPerPage:                  model.OptionalNumber(settingsForm.EntriesPerPage),
+		CategoriesSortingOrder:          model.OptionalString(settingsForm.CategoriesSortingOrder),
+		DisplayMode:                     model.OptionalString(settingsForm.DisplayMode),
+		GestureNav:                      model.OptionalString(settingsForm.GestureNav),
+		DefaultReadingSpeed:             model.OptionalNumber(settingsForm.DefaultReadingSpeed),
+		CJKReadingSpeed:                 model.OptionalNumber(settingsForm.CJKReadingSpeed),
+		DefaultHomePage:                 model.OptionalString(settingsForm.DefaultHomePage),
+		MediaPlaybackRate:               model.OptionalNumber(settingsForm.MediaPlaybackRate),
+		BlockFilterEntryRules:           model.OptionalString(settingsForm.BlockFilterEntryRules),
+		KeepFilterEntryRules:            model.OptionalString(settingsForm.KeepFilterEntryRules),
+		ExternalFontHosts:               model.OptionalString(settingsForm.ExternalFontHosts),
+		MarkReadOnView:                  model.OptionalField(MarkReadOnView),
+		MarkReadOnMediaPlayerCompletion: model.OptionalField(MarkReadOnMediaPlayerCompletion),
 	}
 
 	if validationErr := validator.ValidateUserModification(h.store, user.ID, userModificationRequest); validationErr != nil {
@@ -87,7 +90,8 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.store.UpdateUser(settingsForm.Merge(user))
+	userModificationRequest.Patch(user)
+	err = h.store.UpdateUser(user)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
