@@ -366,6 +366,7 @@
     "form.prefs.label.media_playback_rate": "Im-sìn, sī-sìn pàng ê sok-tō͘",
     "form.prefs.label.open_external_links_in_new_tab": "Chhiau-chhē gōa-pō͘ liân-kiat sī tī sin ê ia̍h phah khui (kā liân-kiat chhē target=\"_blank\")",
     "form.prefs.label.show_reading_time": "Hián-sī siau-sit àn-sǹg ài gōa-kú lâi tha̍k",
+    "form.prefs.label.show_voting_buttons": "Show voting buttons (upvote/downvote) for entries",
     "form.prefs.label.theme": "Chú-tôe",
     "form.prefs.label.timezone": "Sî-khu",
     "form.prefs.select.alphabetical": "Chiàu lī-bú pâi",

@@ -374,6 +374,7 @@
     "form.prefs.label.media_playback_rate": "Viteza de rulare audio/video",
     "form.prefs.label.open_external_links_in_new_tab": "Deschide linkurile externe într-o filă nouă (adaugă target=\"_blank\" la linkuri)",
     "form.prefs.label.show_reading_time": "Afișare timp estimat de citire pentru înregistrări",
+    "form.prefs.label.show_voting_buttons": "Show voting buttons (upvote/downvote) for entries",
     "form.prefs.label.theme": "Temă",
     "form.prefs.label.timezone": "Fus orar",
     "form.prefs.select.alphabetical": "Alfabetic",

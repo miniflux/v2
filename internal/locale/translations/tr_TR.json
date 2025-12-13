@@ -371,6 +371,7 @@
     "form.prefs.label.media_playback_rate": "Ses/video oynatma hızı",
     "form.prefs.label.open_external_links_in_new_tab": "Harici bağlantıları yeni bir sekmede aç (bağlantılara target=\"_blank\" ekler)",
     "form.prefs.label.show_reading_time": "Makaleler için tahmini okuma süresini göster",
+    "form.prefs.label.show_voting_buttons": "Show voting buttons (upvote/downvote) for entries",
     "form.prefs.label.theme": "Tema",
     "form.prefs.label.timezone": "Saat Dilimi",
     "form.prefs.select.alphabetical": "Alfabetik",

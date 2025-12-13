@@ -374,6 +374,7 @@
     "form.prefs.label.media_playback_rate": "Szybkość odtwarzania audio i wideo",
     "form.prefs.label.open_external_links_in_new_tab": "Otwieraj łącza zewnętrzne w nowej karcie (dodaje target=\"_blank\" do łączy)",
     "form.prefs.label.show_reading_time": "Pokaż szacowany czas czytania wpisów",
+    "form.prefs.label.show_voting_buttons": "Show voting buttons (upvote/downvote) for entries",
     "form.prefs.label.theme": "Wygląd",
     "form.prefs.label.timezone": "Strefa czasowa",
     "form.prefs.select.alphabetical": "Alfabetycznie",

@@ -371,6 +371,7 @@
     "form.prefs.label.media_playback_rate": "Afspeelsnelheid van de audio/video",
     "form.prefs.label.open_external_links_in_new_tab": "Open externe links in een nieuw tabblad (voegt target=\"_blank\" toe aan links)",
     "form.prefs.label.show_reading_time": "Toon geschatte leestijd van artikelen",
+    "form.prefs.label.show_voting_buttons": "Show voting buttons (upvote/downvote) for entries",
     "form.prefs.label.theme": "Thema",
     "form.prefs.label.timezone": "Tijdzone",
     "form.prefs.select.alphabetical": "Alfabetisch",

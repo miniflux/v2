@@ -368,6 +368,7 @@
     "form.prefs.label.media_playback_rate": "音訊/視訊播放速度",
     "form.prefs.label.open_external_links_in_new_tab": "在新分頁中開啟外部連結（為連結加上 target=\"_blank\"）",
     "form.prefs.label.show_reading_time": "顯示文章的預計閱讀時間",
+    "form.prefs.label.show_voting_buttons": "Show voting buttons (upvote/downvote) for entries",
     "form.prefs.label.theme": "主題",
     "form.prefs.label.timezone": "時區",
     "form.prefs.select.alphabetical": "按字母順序",
