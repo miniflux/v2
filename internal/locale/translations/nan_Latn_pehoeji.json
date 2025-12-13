@@ -304,6 +304,7 @@
     "form.integration.readeck_endpoint": "Readeck API thâu",
     "form.integration.readeck_labels": "Readeck Labels",
     "form.integration.readeck_only_url": "Kan-na thoân bāng-chí (m̄ sī oân-chéng ê lōe-iông)",
+    "form.integration.readeck_push_activate": "Automatically push new entries to Readeck",
     "form.integration.readwise_activate": "Pó-chûn siau-sit kàu Readwise Reader",
     "form.integration.readwise_api_key": "Readwise Reader Acess Token",
     "form.integration.readwise_api_key_link": "Chhú-tek lí ê Readwise Acess Token",

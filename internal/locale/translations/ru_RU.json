@@ -310,6 +310,7 @@
     "form.integration.readeck_endpoint": "Конечная точка Readeck API",
     "form.integration.readeck_labels": "Теги Readeck",
     "form.integration.readeck_only_url": "Отправлять только ссылку (без содержимого)",
+    "form.integration.readeck_push_activate": "Automatically push new entries to Readeck",
     "form.integration.readwise_activate": "Сохранить статьи в Readwise",
     "form.integration.readwise_api_key": "Токен доступа в Readwise",
     "form.integration.readwise_api_key_link": "Получить токен доступа Readwise",

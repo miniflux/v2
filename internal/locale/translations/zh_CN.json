@@ -304,6 +304,7 @@
     "form.integration.readeck_endpoint": "Readeck API 端点",
     "form.integration.readeck_labels": "Readeck 标签",
     "form.integration.readeck_only_url": "仅发送 URL（而非完整内容）",
+    "form.integration.readeck_push_activate": "Automatically push new entries to Readeck",
     "form.integration.readwise_activate": "保存条目到 Readwise Reader",
     "form.integration.readwise_api_key": "Readwise Reader 访问令牌",
     "form.integration.readwise_api_key_link": "获取你的 Readwise 访问令牌",
