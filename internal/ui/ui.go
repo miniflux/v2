@@ -105,6 +105,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	uiRouter.HandleFunc("/entry/download/{entryID}", handler.fetchContent).Name("fetchContent").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", handler.mediaProxy).Name("proxy").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/entry/star/{entryID}", handler.toggleStarred).Name("toggleStarred").Methods(http.MethodPost)
+	uiRouter.HandleFunc("/entry/vote/{entryID}/{vote}", handler.updateEntryVote).Name("updateEntryVote").Methods(http.MethodPost)
 
 	// Share pages.
 	uiRouter.HandleFunc("/entry/share/{entryID}", handler.createSharedEntry).Name("shareEntry").Methods(http.MethodPost)
