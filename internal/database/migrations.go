@@ -1387,4 +1387,11 @@ var migrations = [...]func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE entries ADD COLUMN vote int DEFAULT 0 CHECK (vote IN (-1, 0, 1));
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }
