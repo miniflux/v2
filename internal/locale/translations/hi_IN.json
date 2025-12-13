@@ -50,6 +50,8 @@
     "entry.starred.toast.on": "तारांकित",
     "entry.starred.toggle.off": "सितारा हटा दो",
     "entry.starred.toggle.on": "सितारा दे",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "टिप्पणियाँ",
     "entry.comments.title": "टिप्पणियाँ देखे",
     "entry.estimated_reading_time": [

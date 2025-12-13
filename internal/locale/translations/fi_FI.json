@@ -50,6 +50,8 @@
     "entry.starred.toast.on": "Tähdellä merkityt",
     "entry.starred.toggle.off": "Poista suosikeista",
     "entry.starred.toggle.on": "Lisää suosikkeihin",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "Kommentit",
     "entry.comments.title": "Näytä kommentit",
     "entry.estimated_reading_time": [

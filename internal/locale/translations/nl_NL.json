@@ -50,6 +50,8 @@
     "entry.starred.toast.on": "Favoriet toegevoegd",
     "entry.starred.toggle.off": "Favoriet verwijderen",
     "entry.starred.toggle.on": "Favoriet",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "Reacties",
     "entry.comments.title": "Bekijk reacties",
     "entry.estimated_reading_time": [
