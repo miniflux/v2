@@ -1,9 +1,9 @@
-FROM docker.io/library/golang:bookworm AS build
+FROM docker.io/library/golang:trixie AS build
 ADD . /go/src/app
 WORKDIR /go/src/app
 RUN make miniflux
 
-FROM gcr.io/distroless/base-debian12:nonroot
+FROM gcr.io/distroless/base-debian13:nonroot
 
 LABEL org.opencontainers.image.title=Miniflux
 LABEL org.opencontainers.image.description="Miniflux is a minimalist and opinionated feed reader"
