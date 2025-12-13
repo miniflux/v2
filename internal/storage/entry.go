@@ -519,6 +519,26 @@ func (s *Storage) ToggleStarred(userID int64, entryID int64) error {
 	return nil
 }
 
+// UpdateEntryVote updates the vote value for an entry.
+func (s *Storage) UpdateEntryVote(userID int64, entryID int64, vote int) error {
+	query := `UPDATE entries SET vote=$1, changed_at=now() WHERE user_id=$2 AND id=$3`
+	result, err := s.db.Exec(query, vote, userID, entryID)
+	if err != nil {
+		return fmt.Errorf(`store: unable to update vote for entry #%d: %v`, entryID, err)
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf(`store: unable to update vote for entry #%d: %v`, entryID, err)
+	}
+
+	if count == 0 {
+		return errors.New(`store: nothing has been updated`)
+	}
+
+	return nil
+}
+
 // FlushHistory changes all entries with the status "read" to "removed".
 func (s *Storage) FlushHistory(userID int64) error {
 	query := `
