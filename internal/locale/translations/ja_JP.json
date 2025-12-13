@@ -49,6 +49,8 @@
     "entry.starred.toast.on": "星を付けました",
     "entry.starred.toggle.off": "星を外す",
     "entry.starred.toggle.on": "星を付ける",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "コメント",
     "entry.comments.title": "コメントを見る",
     "entry.estimated_reading_time": [

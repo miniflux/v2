@@ -50,6 +50,8 @@
     "entry.starred.toast.on": "Yıldızlı",
     "entry.starred.toggle.off": "Yıldızı kaldır",
     "entry.starred.toggle.on": "Yıldız ekle",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "Yorumlar",
     "entry.comments.title": "Yorumları Göster",
     "entry.estimated_reading_time": [

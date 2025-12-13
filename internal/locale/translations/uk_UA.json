@@ -51,6 +51,8 @@
     "entry.starred.toast.on": "З зірочкою",
     "entry.starred.toggle.off": "Прибрати зірочку",
     "entry.starred.toggle.on": "Поставити зірочку",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "Коментарі",
     "entry.comments.title": "Дивитися коментарі",
     "entry.estimated_reading_time": [

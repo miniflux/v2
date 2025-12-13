@@ -50,6 +50,8 @@
     "entry.starred.toast.on": "Markiert",
     "entry.starred.toggle.off": "Markierung entfernen",
     "entry.starred.toggle.on": "Markierung hinzufügen",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "Kommentare",
     "entry.comments.title": "Kommentare anzeigen",
     "entry.estimated_reading_time": [

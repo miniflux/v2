@@ -50,6 +50,8 @@
     "entry.starred.toast.on": "Αγαπημένα",
     "entry.starred.toggle.off": "Αναίρεση αγαπημένου",
     "entry.starred.toggle.on": "Αγαπημένο",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "Σχόλια",
     "entry.comments.title": "Δείτε Σχόλια",
     "entry.estimated_reading_time": [

@@ -51,6 +51,8 @@
     "entry.starred.toast.on": "Помеченные",
     "entry.starred.toggle.off": "Удалить из Избранного",
     "entry.starred.toggle.on": "Добавить в Избранное",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "Комментарии",
     "entry.comments.title": "Показать комментарии",
     "entry.estimated_reading_time": [
