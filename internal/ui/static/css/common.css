@@ -872,6 +872,30 @@ dialog {
     translate: 1px 1px;
 }
 
+.vote-button {
+    font-size: 1.2rem;
+    padding: 0 4px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.vote-button:hover {
+    opacity: 0.8;
+}
+
+.vote-button.vote-active {
+    opacity: 1;
+    font-weight: bold;
+}
+
+.vote-up.vote-active {
+    color: #ff8b60;
+}
+
+.vote-down.vote-active {
+    color: #9494ff;
+}
+
 .items {
     overflow-x: hidden;
     touch-action: pan-y;
