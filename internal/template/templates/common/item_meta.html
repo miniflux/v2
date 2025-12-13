@@ -14,6 +14,7 @@
         {{ end -}}
     </ul>
     <ul class="item-meta-icons">
+        {{ if .user.ShowVotingButtons }}
         <li class="item-meta-icons-vote">
             <button
                 aria-describedby="entry-title-{{ .entry.ID }}"
@@ -34,6 +35,7 @@
                 class="vote-button vote-down{{ if eq .entry.Vote -1 }} vote-active{{ end }}"
                 >▼</button>
         </li>
+        {{ end }}
         <li class="item-meta-icons-read">
             <button
                 aria-describedby="entry-title-{{ .entry.ID }}"
