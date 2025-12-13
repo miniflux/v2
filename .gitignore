@@ -5,3 +5,5 @@
 *.deb
 *.rpm
 miniflux-*
+
+*.envrc
