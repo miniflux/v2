@@ -1614,8 +1614,8 @@ func TestSetLogLevelFunction(t *testing.T) {
 	if configParser.options.LogLevel() != "debug" {
 		t.Fatalf("Expected LOG_LEVEL to be 'debug' after SetLogLevel('debug'), got '%s'", configParser.options.LogLevel())
 	}
-	if configParser.options.options["LOG_LEVEL"].RawValue != "debug" {
-		t.Fatalf("Expected LOG_LEVEL RawValue to be 'debug', got '%s'", configParser.options.options["LOG_LEVEL"].RawValue)
+	if configParser.options.options["LOG_LEVEL"].str != "debug" {
+		t.Fatalf("Expected LOG_LEVEL str to be 'debug', got '%s'", configParser.options.options["LOG_LEVEL"].str)
 	}
 
 	// Test setting log level to warning
@@ -1623,8 +1623,8 @@ func TestSetLogLevelFunction(t *testing.T) {
 	if configParser.options.LogLevel() != "warning" {
 		t.Fatalf("Expected LOG_LEVEL to be 'warning' after SetLogLevel('warning'), got '%s'", configParser.options.LogLevel())
 	}
-	if configParser.options.options["LOG_LEVEL"].RawValue != "warning" {
-		t.Fatalf("Expected LOG_LEVEL RawValue to be 'warning', got '%s'", configParser.options.options["LOG_LEVEL"].RawValue)
+	if configParser.options.options["LOG_LEVEL"].str != "warning" {
+		t.Fatalf("Expected LOG_LEVEL RawValue to be 'warning', got '%s'", configParser.options.options["LOG_LEVEL"].str)
 	}
 }
 
