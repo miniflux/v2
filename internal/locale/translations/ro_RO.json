@@ -310,6 +310,7 @@
     "form.integration.readeck_endpoint": "URL Readeck",
     "form.integration.readeck_labels": "Etichete Readeck",
     "form.integration.readeck_only_url": "Trimite numai URL (în loc de tot conținutul)",
+    "form.integration.readeck_push_activate": "Automatically push new entries to Readeck",
     "form.integration.readwise_activate": "Salvare înregistrări în Readwise Reader",
     "form.integration.readwise_api_key": "Token Acces Readwise Reader",
     "form.integration.readwise_api_key_link": "Obțineți Token-ul de Acess pe Readwise",

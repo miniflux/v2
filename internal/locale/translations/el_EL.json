@@ -307,6 +307,7 @@
     "form.integration.readeck_endpoint": "Τελικό σημείο Readeck API",
     "form.integration.readeck_labels": "Ετικέτες Readeck",
     "form.integration.readeck_only_url": "Αποστολή μόνο URL (αντί για πλήρες περιεχόμενο)",
+    "form.integration.readeck_push_activate": "Automatically push new entries to Readeck",
     "form.integration.readwise_activate": "Αποθήκευση καταχωρήσεων στο Readwise Reader",
     "form.integration.readwise_api_key": "Διακριτικό πρόσβασης Readwise Reader",
     "form.integration.readwise_api_key_link": "Λήψη του διακριτικού πρόσβασης Readwise",

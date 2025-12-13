@@ -310,6 +310,7 @@
     "form.integration.readeck_endpoint": "Readeck URL",
     "form.integration.readeck_labels": "Readeck Labels",
     "form.integration.readeck_only_url": "Надіслати лише URL (замість повного вмісту)",
+    "form.integration.readeck_push_activate": "Automatically push new entries to Readeck",
     "form.integration.readwise_activate": "Save entries to Readwise Reader",
     "form.integration.readwise_api_key": "Readwise Reader Access Token",
     "form.integration.readwise_api_key_link": "Get your Readwise Access Token",

@@ -510,6 +510,10 @@
             </label>
 
             <label>
+                <input type="checkbox" name="readeck_push_enabled" value="1" {{ if .form.ReadeckPushEnabled }}checked{{ end }}> {{ t "form.integration.readeck_push_activate" }}
+            </label>
+
+            <label>
                 <input type="checkbox" name="readeck_only_url" value="1" {{ if .form.ReadeckOnlyURL }}checked{{ end }}> {{ t "form.integration.readeck_only_url" }}
             </label>
 

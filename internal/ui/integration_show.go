@@ -94,6 +94,7 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		AppriseURL:                       integration.AppriseURL,
 		AppriseServicesURL:               integration.AppriseServicesURL,
 		ReadeckEnabled:                   integration.ReadeckEnabled,
+		ReadeckPushEnabled:               integration.ReadeckPushEnabled,
 		ReadeckURL:                       integration.ReadeckURL,
 		ReadeckAPIKey:                    integration.ReadeckAPIKey,
 		ReadeckLabels:                    integration.ReadeckLabels,

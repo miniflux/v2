@@ -307,6 +307,7 @@
     "form.integration.readeck_endpoint": "Readeck-URL",
     "form.integration.readeck_labels": "Readeck-Labels",
     "form.integration.readeck_only_url": "Nur URL senden (anstelle des vollständigen Inhalts)",
+    "form.integration.readeck_push_activate": "Neue Artikel automatisch in Readeck speichern",
     "form.integration.readwise_activate": "Artikel in Readwise Reader speichern",
     "form.integration.readwise_api_key": "Readwise-Reader-Zugangstoken",
     "form.integration.readwise_api_key_link": "Erhalten Sie Ihren Readwise-Zugangstoken",
