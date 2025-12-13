@@ -50,6 +50,7 @@
         {{ if .user }}
         <div class="entry-actions">
             <ul>
+                {{ if .user.ShowVotingButtons }}
                 <li>
                     <button
                         class="page-button vote-button vote-up{{ if eq .entry.Vote 1 }} vote-active{{ end }}"
@@ -70,6 +71,7 @@
                         data-vote-value="-1"
                         >▼<span class="icon-label">{{ t "entry.vote.downvote" }}</span></button>
                 </li>
+                {{ end }}
                 <li>
                     <button
                         class="page-button"
