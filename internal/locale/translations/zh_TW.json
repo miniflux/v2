@@ -49,6 +49,8 @@
     "entry.starred.toast.on": "已新增收藏",
     "entry.starred.toggle.off": "取消收藏",
     "entry.starred.toggle.on": "新增收藏",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "評論",
     "entry.comments.title": "檢視評論",
     "entry.estimated_reading_time": [

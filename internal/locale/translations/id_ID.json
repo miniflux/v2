@@ -49,6 +49,8 @@
     "entry.starred.toast.on": "Markahi",
     "entry.starred.toggle.off": "Batal Markahi",
     "entry.starred.toggle.on": "Markahi",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "Komentar",
     "entry.comments.title": "Lihat Komentar",
     "entry.estimated_reading_time": [

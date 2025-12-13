@@ -50,6 +50,8 @@
     "entry.starred.toast.on": "Preferito",
     "entry.starred.toggle.off": "Rimuovi dai preferiti",
     "entry.starred.toggle.on": "Aggiungi ai preferiti",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "Commenti",
     "entry.comments.title": "Mostra i commenti",
     "entry.estimated_reading_time": [

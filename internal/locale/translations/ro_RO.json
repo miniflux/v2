@@ -51,6 +51,8 @@
     "entry.starred.toast.on": "Cu stea",
     "entry.starred.toggle.off": "Fără stea",
     "entry.starred.toggle.on": "Stea",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "Comentarii",
     "entry.comments.title": "Vizualizare Comentarii",
     "entry.estimated_reading_time": [
