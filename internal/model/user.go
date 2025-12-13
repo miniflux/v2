@@ -43,6 +43,7 @@ type User struct {
 	KeepFilterEntryRules            string     `json:"keep_filter_entry_rules"`
 	AlwaysOpenExternalLinks         bool       `json:"always_open_external_links"`
 	OpenExternalLinksInNewTab       bool       `json:"open_external_links_in_new_tab"`
+	ShowVotingButtons               bool       `json:"show_voting_buttons"`
 }
 
 // UserCreationRequest represents the request to create a user.
@@ -86,6 +87,7 @@ type UserModificationRequest struct {
 	KeepFilterEntryRules            *string  `json:"keep_filter_entry_rules"`
 	AlwaysOpenExternalLinks         *bool    `json:"always_open_external_links"`
 	OpenExternalLinksInNewTab       *bool    `json:"open_external_links_in_new_tab"`
+	ShowVotingButtons               *bool    `json:"show_voting_buttons"`
 }
 
 // Patch updates the User object with the modification request.
@@ -208,6 +210,10 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.OpenExternalLinksInNewTab != nil {
 		user.OpenExternalLinksInNewTab = *u.OpenExternalLinksInNewTab
+	}
+
+	if u.ShowVotingButtons != nil {
+		user.ShowVotingButtons = *u.ShowVotingButtons
 	}
 }
 

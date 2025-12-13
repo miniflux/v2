@@ -118,6 +118,8 @@
 
         <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>
 
+        <label><input type="checkbox" name="show_voting_buttons" value="1" {{ if .form.ShowVotingButtons }}checked{{ end }}> {{ t "form.prefs.label.show_voting_buttons" }}</label>
+
         <label><input type="radio" name="mark_read_behavior" value="{{ .readBehaviors.NoAutoMarkAsRead }}"
                       {{ if eq .form.MarkReadBehavior .readBehaviors.NoAutoMarkAsRead }}checked{{end}}                          > {{ t "form.prefs.label.mark_read_manually" }}</label>
         <label><input type="radio" name="mark_read_behavior" value="{{ .readBehaviors.MarkAsReadOnView }}"

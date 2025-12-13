@@ -1390,6 +1390,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 	func(tx *sql.Tx) (err error) {
 		sql := `
 			ALTER TABLE entries ADD COLUMN vote int DEFAULT 0 CHECK (vote IN (-1, 0, 1));
+			ALTER TABLE users ADD COLUMN show_voting_buttons bool DEFAULT 'f';
 		`
 		_, err = tx.Exec(sql)
 		return err
