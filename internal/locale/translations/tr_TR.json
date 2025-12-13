@@ -307,6 +307,7 @@
     "form.integration.readeck_endpoint": "Readeck API Uç Noktası",
     "form.integration.readeck_labels": "Readeck Etiketleri",
     "form.integration.readeck_only_url": "Yalnızca URL gönder (tam makale yerine)",
+    "form.integration.readeck_push_activate": "Automatically push new entries to Readeck",
     "form.integration.readwise_activate": "Makaleleri Readwise Reader'a kaydet",
     "form.integration.readwise_api_key": "Readwise Reader Access Token",
     "form.integration.readwise_api_key_link": "Readwise Access Token'ınızı alın",

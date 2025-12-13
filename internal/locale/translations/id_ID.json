@@ -304,6 +304,7 @@
     "form.integration.readeck_endpoint": "Titik URL API Readeck",
     "form.integration.readeck_labels": "Tagar Readeck",
     "form.integration.readeck_only_url": "Kirim hanya URL (alih-alih konten penuh)",
+    "form.integration.readeck_push_activate": "Automatically push new entries to Readeck",
     "form.integration.readwise_activate": "Simpan artikel ke Readwise",
     "form.integration.readwise_api_key": "Token Akses Readwise",
     "form.integration.readwise_api_key_link": "Dapatkan Token Akses Readwise Anda",
