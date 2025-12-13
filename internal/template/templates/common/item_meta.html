@@ -14,6 +14,26 @@
         {{ end -}}
     </ul>
     <ul class="item-meta-icons">
+        <li class="item-meta-icons-vote">
+            <button
+                aria-describedby="entry-title-{{ .entry.ID }}"
+                title="{{ t "entry.vote.upvote" }}"
+                data-vote-entry="true"
+                data-vote-url="{{ route "updateEntryVote" "entryID" .entry.ID "vote" "1" }}"
+                data-current-vote="{{ .entry.Vote }}"
+                data-vote-value="1"
+                class="vote-button vote-up{{ if eq .entry.Vote 1 }} vote-active{{ end }}"
+                >▲</button>
+            <button
+                aria-describedby="entry-title-{{ .entry.ID }}"
+                title="{{ t "entry.vote.downvote" }}"
+                data-vote-entry="true"
+                data-vote-url="{{ route "updateEntryVote" "entryID" .entry.ID "vote" "-1" }}"
+                data-current-vote="{{ .entry.Vote }}"
+                data-vote-value="-1"
+                class="vote-button vote-down{{ if eq .entry.Vote -1 }} vote-active{{ end }}"
+                >▼</button>
+        </li>
         <li class="item-meta-icons-read">
             <button
                 aria-describedby="entry-title-{{ .entry.ID }}"

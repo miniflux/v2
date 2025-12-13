@@ -52,6 +52,26 @@
             <ul>
                 <li>
                     <button
+                        class="page-button vote-button vote-up{{ if eq .entry.Vote 1 }} vote-active{{ end }}"
+                        title="{{ t "entry.vote.upvote" }}"
+                        data-vote-entry="true"
+                        data-vote-url="{{ route "updateEntryVote" "entryID" .entry.ID "vote" "1" }}"
+                        data-current-vote="{{ .entry.Vote }}"
+                        data-vote-value="1"
+                        >▲<span class="icon-label">{{ t "entry.vote.upvote" }}</span></button>
+                </li>
+                <li>
+                    <button
+                        class="page-button vote-button vote-down{{ if eq .entry.Vote -1 }} vote-active{{ end }}"
+                        title="{{ t "entry.vote.downvote" }}"
+                        data-vote-entry="true"
+                        data-vote-url="{{ route "updateEntryVote" "entryID" .entry.ID "vote" "-1" }}"
+                        data-current-vote="{{ .entry.Vote }}"
+                        data-vote-value="-1"
+                        >▼<span class="icon-label">{{ t "entry.vote.downvote" }}</span></button>
+                </li>
+                <li>
+                    <button
                         class="page-button"
                         title="{{ t "entry.status.title" }}"
                         data-toggle-status="true"
