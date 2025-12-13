@@ -50,6 +50,8 @@
     "entry.starred.toast.on": "Sembrado de estrellas",
     "entry.starred.toggle.off": "Desmarcar",
     "entry.starred.toggle.on": "Marcar",
+    "entry.vote.upvote": "Voto positivo",
+    "entry.vote.downvote": "Voto negativo",
     "entry.comments.label": "Comentarios",
     "entry.comments.title": "Ver comentarios",
     "entry.estimated_reading_time": [

@@ -50,6 +50,8 @@
     "entry.starred.toast.on": "Starred",
     "entry.starred.toggle.off": "Unstar",
     "entry.starred.toggle.on": "Star",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "Comments",
     "entry.comments.title": "View Comments",
     "entry.estimated_reading_time": [
