@@ -236,6 +236,44 @@ func (s *Storage) entryExists(tx *sql.Tx, entry *model.Entry) (bool, error) {
 	return result, nil
 }
 
+// InsertEntryForFeed inserts a single entry into a feed, optionally updating if it already exists.
+// Returns true if a new entry was created, false if an existing one was reused.
+func (s *Storage) InsertEntryForFeed(userID, feedID int64, entry *model.Entry, updateExisting bool) (bool, error) {
+    entry.UserID = userID
+    entry.FeedID = feedID
+
+    tx, err := s.db.Begin()
+    if err != nil {
+        return false, fmt.Errorf("store: unable to start transaction: %v", err)
+    }
+
+    exists, err := s.entryExists(tx, entry)
+    if err != nil {
+        tx.Rollback()
+        return false, err
+    }
+
+    if exists {
+        if updateExisting {
+            if err := s.updateEntry(tx, entry); err != nil {
+                tx.Rollback()
+                return false, err
+            }
+        }
+    } else {
+        if err := s.createEntry(tx, entry); err != nil {
+            tx.Rollback()
+            return false, err
+        }
+    }
+
+    if err := tx.Commit(); err != nil {
+        return false, err
+    }
+
+    return !exists, nil
+}
+
 func (s *Storage) IsNewEntry(feedID int64, entryHash string) bool {
 	var result bool
 	s.db.QueryRow(`SELECT true FROM entries WHERE feed_id=$1 AND hash=$2 LIMIT 1`, feedID, entryHash).Scan(&result)
