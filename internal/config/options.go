@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"maps"
 	"net/url"
+	"reflect"
 	"slices"
 	"strings"
 	"time"
@@ -20,8 +21,7 @@ type optionPair struct {
 type configValueType int
 
 const (
-	stringType configValueType = iota
-	stringListType
+	stringListType configValueType = iota
 	boolType
 	intType
 	int64Type
@@ -30,13 +30,14 @@ const (
 	minuteType
 	hourType
 	dayType
-	secretFileType
 	bytesType
 )
 
 type configValue struct {
+	value any
+	str   string
+
 	ParsedStringValue string
-	ParsedBoolValue   bool
 	ParsedIntValue    int
 	ParsedInt64Value  int64
 	ParsedDuration    time.Duration
@@ -59,6 +60,25 @@ type configOptions struct {
 	options            map[string]*configValue
 }
 
+func anyToStr(a any) string {
+	if a == nil {
+		return ""
+	}
+	if ret, ok := a.(string); ok {
+		return ret
+	}
+	panic(fmt.Sprintf("expected string, got %q", reflect.TypeOf(a)))
+}
+func anyToBool(a any) bool {
+	if a == nil {
+		return false
+	}
+	if ret, ok := a.(bool); ok {
+		return ret
+	}
+	panic(fmt.Sprintf("expected bool, got %q", reflect.TypeOf(a)))
+}
+
 // NewConfigOptions creates a new instance of ConfigOptions with default values.
 func NewConfigOptions() *configOptions {
 	return &configOptions{
@@ -67,42 +87,28 @@ func NewConfigOptions() *configOptions {
 		youTubeEmbedDomain: "www.youtube-nocookie.com",
 		options: map[string]*configValue{
 			"ADMIN_PASSWORD": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
-				Secret:            true,
+				value:  "",
+				Secret: true,
 			},
 			"ADMIN_PASSWORD_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "ADMIN_PASSWORD",
+				value:     "",
+				TargetKey: "ADMIN_PASSWORD",
 			},
 			"ADMIN_USERNAME": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				value: "",
 			},
 			"ADMIN_USERNAME_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "ADMIN_USERNAME",
+				value:     "",
+				TargetKey: "ADMIN_USERNAME",
 			},
 			"AUTH_PROXY_HEADER": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				value: "",
 			},
 			"AUTH_PROXY_USER_CREATION": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"BASE_URL": {
-				ParsedStringValue: "http://localhost",
-				RawValue:          "http://localhost",
-				ValueType:         stringType,
+				value: "http://localhost",
 			},
 			"BATCH_SIZE": {
 				ParsedIntValue: 100,
@@ -113,14 +119,10 @@ func NewConfigOptions() *configOptions {
 				},
 			},
 			"CERT_DOMAIN": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				value: "",
 			},
 			"CERT_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				value: "",
 			},
 			"CLEANUP_ARCHIVE_BATCH_SIZE": {
 				ParsedIntValue: 10000,
@@ -154,9 +156,7 @@ func NewConfigOptions() *configOptions {
 				ValueType:      dayType,
 			},
 			"CREATE_ADMIN": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"DATABASE_CONNECTION_LIFETIME": {
 				ParsedDuration: time.Minute * 5,
@@ -183,16 +183,12 @@ func NewConfigOptions() *configOptions {
 				},
 			},
 			"DATABASE_URL": {
-				ParsedStringValue: "user=postgres password=postgres dbname=miniflux2 sslmode=disable",
-				RawValue:          "user=postgres password=postgres dbname=miniflux2 sslmode=disable",
-				ValueType:         stringType,
-				Secret:            true,
+				value:  "user=postgres password=postgres dbname=miniflux2 sslmode=disable",
+				Secret: true,
 			},
 			"DATABASE_URL_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "DATABASE_URL",
+				value:     "",
+				TargetKey: "DATABASE_URL",
 			},
 			"DISABLE_API": {
 				ParsedBoolValue: false,
@@ -200,44 +196,28 @@ func NewConfigOptions() *configOptions {
 				ValueType:       boolType,
 			},
 			"DISABLE_HSTS": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"DISABLE_HTTP_SERVICE": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"DISABLE_LOCAL_AUTH": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"DISABLE_SCHEDULER_SERVICE": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"FETCH_BILIBILI_WATCH_TIME": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"FETCH_NEBULA_WATCH_TIME": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"FETCH_ODYSEE_WATCH_TIME": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"FETCH_YOUTUBE_WATCH_TIME": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"FILTER_ENTRY_MAX_AGE_DAYS": {
 				ParsedIntValue: 0,
@@ -284,9 +264,7 @@ func NewConfigOptions() *configOptions {
 				},
 			},
 			"HTTP_CLIENT_USER_AGENT": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				value: "",
 			},
 			"HTTP_SERVER_TIMEOUT": {
 				ParsedDuration: 300 * time.Second,
@@ -297,19 +275,13 @@ func NewConfigOptions() *configOptions {
 				},
 			},
 			"HTTPS": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"INVIDIOUS_INSTANCE": {
-				ParsedStringValue: "yewtu.be",
-				RawValue:          "yewtu.be",
-				ValueType:         stringType,
+				value: "yewtu.be",
 			},
 			"KEY_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				value: "",
 			},
 			"LISTEN_ADDR": {
 				ParsedStringList: []string{"127.0.0.1:8080"},
@@ -317,40 +289,28 @@ func NewConfigOptions() *configOptions {
 				ValueType:        stringListType,
 			},
 			"LOG_DATE_TIME": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"LOG_FILE": {
-				ParsedStringValue: "stderr",
-				RawValue:          "stderr",
-				ValueType:         stringType,
+				value: "stderr",
 			},
 			"LOG_FORMAT": {
-				ParsedStringValue: "text",
-				RawValue:          "text",
-				ValueType:         stringType,
+				value: "text",
 				Validator: func(rawValue string) error {
 					return validateChoices(rawValue, []string{"text", "json"})
 				},
 			},
 			"LOG_LEVEL": {
-				ParsedStringValue: "info",
-				RawValue:          "info",
-				ValueType:         stringType,
+				value: "info",
 				Validator: func(rawValue string) error {
 					return validateChoices(rawValue, []string{"debug", "info", "warning", "error"})
 				},
 			},
 			"MAINTENANCE_MESSAGE": {
-				ParsedStringValue: "Miniflux is currently under maintenance",
-				RawValue:          "Miniflux is currently under maintenance",
-				ValueType:         stringType,
+				value: "Miniflux is currently under maintenance",
 			},
 			"MAINTENANCE_MODE": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"MEDIA_PROXY_CUSTOM_URL": {
 				RawValue:  "",
@@ -365,9 +325,7 @@ func NewConfigOptions() *configOptions {
 				},
 			},
 			"MEDIA_PROXY_MODE": {
-				ParsedStringValue: "http-only",
-				RawValue:          "http-only",
-				ValueType:         stringType,
+				value: "http-only",
 				Validator: func(rawValue string) error {
 					return validateChoices(rawValue, []string{"none", "http-only", "all"})
 				},
@@ -390,21 +348,15 @@ func NewConfigOptions() *configOptions {
 				ValueType:        stringListType,
 			},
 			"METRICS_COLLECTOR": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"METRICS_PASSWORD": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
-				Secret:            true,
+				value:  "",
+				Secret: true,
 			},
 			"METRICS_PASSWORD_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "METRICS_PASSWORD",
+				value:     "",
+				TargetKey: "METRICS_PASSWORD",
 			},
 			"METRICS_REFRESH_INTERVAL": {
 				ParsedDuration: 60 * time.Second,
@@ -415,67 +367,45 @@ func NewConfigOptions() *configOptions {
 				},
 			},
 			"METRICS_USERNAME": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				value: "",
 			},
 			"METRICS_USERNAME_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "METRICS_USERNAME",
+				value:     "",
+				TargetKey: "METRICS_USERNAME",
 			},
 			"OAUTH2_CLIENT_ID": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
-				Secret:            true,
+				value:  "",
+				Secret: true,
 			},
 			"OAUTH2_CLIENT_ID_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "OAUTH2_CLIENT_ID",
+				value:     "",
+				TargetKey: "OAUTH2_CLIENT_ID",
 			},
 			"OAUTH2_CLIENT_SECRET": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
-				Secret:            true,
+				value:  "",
+				Secret: true,
 			},
 			"OAUTH2_CLIENT_SECRET_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "OAUTH2_CLIENT_SECRET",
+				value:     "",
+				TargetKey: "OAUTH2_CLIENT_SECRET",
 			},
 			"OAUTH2_OIDC_DISCOVERY_ENDPOINT": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				value: "",
 			},
 			"OAUTH2_OIDC_PROVIDER_NAME": {
-				ParsedStringValue: "OpenID Connect",
-				RawValue:          "OpenID Connect",
-				ValueType:         stringType,
+				value: "OpenID Connect",
 			},
 			"OAUTH2_PROVIDER": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				value: "",
 				Validator: func(rawValue string) error {
 					return validateChoices(rawValue, []string{"oidc", "google"})
 				},
 			},
 			"OAUTH2_REDIRECT_URL": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				value: "",
 			},
 			"OAUTH2_USER_CREATION": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"POLLING_FREQUENCY": {
 				ParsedDuration: 60 * time.Minute,
@@ -502,25 +432,19 @@ func NewConfigOptions() *configOptions {
 				},
 			},
 			"POLLING_SCHEDULER": {
-				ParsedStringValue: "round_robin",
-				RawValue:          "round_robin",
-				ValueType:         stringType,
+				value: "round_robin",
 				Validator: func(rawValue string) error {
 					return validateChoices(rawValue, []string{"round_robin", "entry_frequency"})
 				},
 			},
 			"PORT": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				value: "",
 				Validator: func(rawValue string) error {
 					return validateRange(rawValue, 1, 65535)
 				},
 			},
 			"RUN_MIGRATIONS": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"SCHEDULER_ENTRY_FREQUENCY_FACTOR": {
 				ParsedIntValue: 1,
@@ -560,14 +484,10 @@ func NewConfigOptions() *configOptions {
 				},
 			},
 			"WATCHDOG": {
-				ParsedBoolValue: true,
-				RawValue:        "1",
-				ValueType:       boolType,
+				value: true,
 			},
 			"WEBAUTHN": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				value: false,
 			},
 			"WORKER_POOL_SIZE": {
 				ParsedIntValue: 16,
@@ -578,34 +498,30 @@ func NewConfigOptions() *configOptions {
 				},
 			},
 			"YOUTUBE_API_KEY": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
-				Secret:            true,
+				value:  "",
+				Secret: true,
 			},
 			"YOUTUBE_EMBED_URL_OVERRIDE": {
-				ParsedStringValue: "https://www.youtube-nocookie.com/embed/",
-				RawValue:          "https://www.youtube-nocookie.com/embed/",
-				ValueType:         stringType,
+				value: "https://www.youtube-nocookie.com/embed/",
 			},
 		},
 	}
 }
 
 func (c *configOptions) AdminPassword() string {
-	return c.options["ADMIN_PASSWORD"].ParsedStringValue
+	return anyToStr(c.options["ADMIN_PASSWORD"].value)
 }
 
 func (c *configOptions) AdminUsername() string {
-	return c.options["ADMIN_USERNAME"].ParsedStringValue
+	return anyToStr(c.options["ADMIN_USERNAME"].value)
 }
 
 func (c *configOptions) AuthProxyHeader() string {
-	return c.options["AUTH_PROXY_HEADER"].ParsedStringValue
+	return anyToStr(c.options["AUTH_PROXY_HEADER"].value)
 }
 
 func (c *configOptions) AuthProxyUserCreation() bool {
-	return c.options["AUTH_PROXY_USER_CREATION"].ParsedBoolValue
+	return anyToBool(c.options["AUTH_PROXY_USER_CREATION"].value)
 }
 
 func (c *configOptions) BasePath() string {
@@ -613,7 +529,7 @@ func (c *configOptions) BasePath() string {
 }
 
 func (c *configOptions) BaseURL() string {
-	return c.options["BASE_URL"].ParsedStringValue
+	return anyToStr(c.options["BASE_URL"].value)
 }
 
 func (c *configOptions) RootURL() string {
@@ -625,11 +541,11 @@ func (c *configOptions) BatchSize() int {
 }
 
 func (c *configOptions) CertDomain() string {
-	return c.options["CERT_DOMAIN"].ParsedStringValue
+	return anyToStr(c.options["CERT_DOMAIN"].value)
 }
 
 func (c *configOptions) CertFile() string {
-	return c.options["CERT_FILE"].ParsedStringValue
+	return anyToStr(c.options["CERT_FILE"].value)
 }
 
 func (c *configOptions) CleanupArchiveBatchSize() int {
@@ -653,7 +569,7 @@ func (c *configOptions) CleanupRemoveSessionsInterval() time.Duration {
 }
 
 func (c *configOptions) CreateAdmin() bool {
-	return c.options["CREATE_ADMIN"].ParsedBoolValue
+	return anyToBool(c.options["CREATE_ADMIN"].value)
 }
 
 func (c *configOptions) DatabaseConnectionLifetime() time.Duration {
@@ -669,39 +585,39 @@ func (c *configOptions) DatabaseMinConns() int {
 }
 
 func (c *configOptions) DatabaseURL() string {
-	return c.options["DATABASE_URL"].ParsedStringValue
+	return anyToStr(c.options["DATABASE_URL"].value)
 }
 
 func (c *configOptions) DisableHSTS() bool {
-	return c.options["DISABLE_HSTS"].ParsedBoolValue
+	return anyToBool(c.options["DISABLE_HSTS"].value)
 }
 
 func (c *configOptions) DisableHTTPService() bool {
-	return c.options["DISABLE_HTTP_SERVICE"].ParsedBoolValue
+	return anyToBool(c.options["DISABLE_HTTP_SERVICE"].value)
 }
 
 func (c *configOptions) DisableLocalAuth() bool {
-	return c.options["DISABLE_LOCAL_AUTH"].ParsedBoolValue
+	return anyToBool(c.options["DISABLE_LOCAL_AUTH"].value)
 }
 
 func (c *configOptions) DisableSchedulerService() bool {
-	return c.options["DISABLE_SCHEDULER_SERVICE"].ParsedBoolValue
+	return anyToBool(c.options["DISABLE_SCHEDULER_SERVICE"].value)
 }
 
 func (c *configOptions) FetchBilibiliWatchTime() bool {
-	return c.options["FETCH_BILIBILI_WATCH_TIME"].ParsedBoolValue
+	return anyToBool(c.options["FETCH_BILIBILI_WATCH_TIME"].value)
 }
 
 func (c *configOptions) FetchNebulaWatchTime() bool {
-	return c.options["FETCH_NEBULA_WATCH_TIME"].ParsedBoolValue
+	return anyToBool(c.options["FETCH_NEBULA_WATCH_TIME"].value)
 }
 
 func (c *configOptions) FetchOdyseeWatchTime() bool {
-	return c.options["FETCH_ODYSEE_WATCH_TIME"].ParsedBoolValue
+	return anyToBool(c.options["FETCH_ODYSEE_WATCH_TIME"].value)
 }
 
 func (c *configOptions) FetchYouTubeWatchTime() bool {
-	return c.options["FETCH_YOUTUBE_WATCH_TIME"].ParsedBoolValue
+	return anyToBool(c.options["FETCH_YOUTUBE_WATCH_TIME"].value)
 }
 
 func (c *configOptions) FilterEntryMaxAgeDays() int {
@@ -721,11 +637,11 @@ func (c *configOptions) HasAPI() bool {
 }
 
 func (c *configOptions) HasHTTPService() bool {
-	return !c.options["DISABLE_HTTP_SERVICE"].ParsedBoolValue
+	return !anyToBool(c.options["DISABLE_HTTP_SERVICE"].value)
 }
 
 func (c *configOptions) HasHSTS() bool {
-	return !c.options["DISABLE_HSTS"].ParsedBoolValue
+	return !anyToBool(c.options["DISABLE_HSTS"].value)
 }
 
 func (c *configOptions) HasHTTPClientProxyURLConfigured() bool {
@@ -733,19 +649,19 @@ func (c *configOptions) HasHTTPClientProxyURLConfigured() bool {
 }
 
 func (c *configOptions) HasMaintenanceMode() bool {
-	return c.options["MAINTENANCE_MODE"].ParsedBoolValue
+	return anyToBool(c.options["MAINTENANCE_MODE"].value)
 }
 
 func (c *configOptions) HasMetricsCollector() bool {
-	return c.options["METRICS_COLLECTOR"].ParsedBoolValue
+	return anyToBool(c.options["METRICS_COLLECTOR"].value)
 }
 
 func (c *configOptions) HasSchedulerService() bool {
-	return !c.options["DISABLE_SCHEDULER_SERVICE"].ParsedBoolValue
+	return !anyToBool(c.options["DISABLE_SCHEDULER_SERVICE"].value)
 }
 
 func (c *configOptions) HasWatchdog() bool {
-	return c.options["WATCHDOG"].ParsedBoolValue
+	return anyToBool(c.options["WATCHDOG"].value)
 }
 
 func (c *configOptions) HTTPClientMaxBodySize() int64 {
@@ -765,8 +681,9 @@ func (c *configOptions) HTTPClientTimeout() time.Duration {
 }
 
 func (c *configOptions) HTTPClientUserAgent() string {
-	if c.options["HTTP_CLIENT_USER_AGENT"].ParsedStringValue != "" {
-		return c.options["HTTP_CLIENT_USER_AGENT"].ParsedStringValue
+	s := anyToStr(c.options["HTTP_CLIENT_USER_AGENT"].value)
+	if s != "" {
+		return s
 	}
 	return defaultHTTPClientUserAgent
 }
@@ -776,27 +693,30 @@ func (c *configOptions) HTTPServerTimeout() time.Duration {
 }
 
 func (c *configOptions) HTTPS() bool {
-	return c.options["HTTPS"].ParsedBoolValue
+	return anyToBool(c.options["HTTPS"].value)
 }
 
 func (c *configOptions) InvidiousInstance() string {
-	return c.options["INVIDIOUS_INSTANCE"].ParsedStringValue
+	return anyToStr(c.options["INVIDIOUS_INSTANCE"].value)
 }
 
 func (c *configOptions) IsAuthProxyUserCreationAllowed() bool {
-	return c.options["AUTH_PROXY_USER_CREATION"].ParsedBoolValue
+	return anyToBool(c.options["AUTH_PROXY_USER_CREATION"].value)
 }
 
 func (c *configOptions) IsDefaultDatabaseURL() bool {
-	return c.options["DATABASE_URL"].RawValue == "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
+	if c.options["DATABASE_URL"].str != "" {
+		return c.options["DATABASE_URL"].str == "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
+	}
+	return anyToStr(c.options["DATABASE_URL"].value) == "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
 }
 
 func (c *configOptions) IsOAuth2UserCreationAllowed() bool {
-	return c.options["OAUTH2_USER_CREATION"].ParsedBoolValue
+	return anyToBool(c.options["OAUTH2_USER_CREATION"].value)
 }
 
 func (c *configOptions) CertKeyFile() string {
-	return c.options["KEY_FILE"].ParsedStringValue
+	return anyToStr(c.options["KEY_FILE"].value)
 }
 
 func (c *configOptions) ListenAddr() []string {
@@ -804,27 +724,27 @@ func (c *configOptions) ListenAddr() []string {
 }
 
 func (c *configOptions) LogFile() string {
-	return c.options["LOG_FILE"].ParsedStringValue
+	return anyToStr(c.options["LOG_FILE"].value)
 }
 
 func (c *configOptions) LogDateTime() bool {
-	return c.options["LOG_DATE_TIME"].ParsedBoolValue
+	return anyToBool(c.options["LOG_DATE_TIME"].value)
 }
 
 func (c *configOptions) LogFormat() string {
-	return c.options["LOG_FORMAT"].ParsedStringValue
+	return anyToStr(c.options["LOG_FORMAT"].value)
 }
 
 func (c *configOptions) LogLevel() string {
-	return c.options["LOG_LEVEL"].ParsedStringValue
+	return anyToStr(c.options["LOG_LEVEL"].value)
 }
 
 func (c *configOptions) MaintenanceMessage() string {
-	return c.options["MAINTENANCE_MESSAGE"].ParsedStringValue
+	return anyToStr(c.options["MAINTENANCE_MESSAGE"].value)
 }
 
 func (c *configOptions) MaintenanceMode() bool {
-	return c.options["MAINTENANCE_MODE"].ParsedBoolValue
+	return anyToBool(c.options["MAINTENANCE_MODE"].value)
 }
 
 func (c *configOptions) MediaCustomProxyURL() *url.URL {
@@ -836,7 +756,7 @@ func (c *configOptions) MediaProxyHTTPClientTimeout() time.Duration {
 }
 
 func (c *configOptions) MediaProxyMode() string {
-	return c.options["MEDIA_PROXY_MODE"].ParsedStringValue
+	return anyToStr(c.options["MEDIA_PROXY_MODE"].value)
 }
 
 func (c *configOptions) MediaProxyPrivateKey() []byte {
@@ -852,11 +772,11 @@ func (c *configOptions) MetricsAllowedNetworks() []string {
 }
 
 func (c *configOptions) MetricsCollector() bool {
-	return c.options["METRICS_COLLECTOR"].ParsedBoolValue
+	return anyToBool(c.options["METRICS_COLLECTOR"].value)
 }
 
 func (c *configOptions) MetricsPassword() string {
-	return c.options["METRICS_PASSWORD"].ParsedStringValue
+	return anyToStr(c.options["METRICS_PASSWORD"].value)
 }
 
 func (c *configOptions) MetricsRefreshInterval() time.Duration {
@@ -864,35 +784,35 @@ func (c *configOptions) MetricsRefreshInterval() time.Duration {
 }
 
 func (c *configOptions) MetricsUsername() string {
-	return c.options["METRICS_USERNAME"].ParsedStringValue
+	return anyToStr(c.options["METRICS_USERNAME"].value)
 }
 
 func (c *configOptions) OAuth2ClientID() string {
-	return c.options["OAUTH2_CLIENT_ID"].ParsedStringValue
+	return anyToStr(c.options["OAUTH2_CLIENT_ID"].value)
 }
 
 func (c *configOptions) OAuth2ClientSecret() string {
-	return c.options["OAUTH2_CLIENT_SECRET"].ParsedStringValue
+	return anyToStr(c.options["OAUTH2_CLIENT_SECRET"].value)
 }
 
 func (c *configOptions) OAuth2OIDCDiscoveryEndpoint() string {
-	return c.options["OAUTH2_OIDC_DISCOVERY_ENDPOINT"].ParsedStringValue
+	return anyToStr(c.options["OAUTH2_OIDC_DISCOVERY_ENDPOINT"].value)
 }
 
 func (c *configOptions) OAuth2OIDCProviderName() string {
-	return c.options["OAUTH2_OIDC_PROVIDER_NAME"].ParsedStringValue
+	return anyToStr(c.options["OAUTH2_OIDC_PROVIDER_NAME"].value)
 }
 
 func (c *configOptions) OAuth2Provider() string {
-	return c.options["OAUTH2_PROVIDER"].ParsedStringValue
+	return anyToStr(c.options["OAUTH2_PROVIDER"].value)
 }
 
 func (c *configOptions) OAuth2RedirectURL() string {
-	return c.options["OAUTH2_REDIRECT_URL"].ParsedStringValue
+	return anyToStr(c.options["OAUTH2_REDIRECT_URL"].value)
 }
 
 func (c *configOptions) OAuth2UserCreation() bool {
-	return c.options["OAUTH2_USER_CREATION"].ParsedBoolValue
+	return anyToBool(c.options["OAUTH2_USER_CREATION"].value)
 }
 
 func (c *configOptions) PollingFrequency() time.Duration {
@@ -908,29 +828,24 @@ func (c *configOptions) PollingParsingErrorLimit() int {
 }
 
 func (c *configOptions) PollingScheduler() string {
-	return c.options["POLLING_SCHEDULER"].ParsedStringValue
+	return anyToStr(c.options["POLLING_SCHEDULER"].value)
 }
 
 func (c *configOptions) Port() string {
-	return c.options["PORT"].ParsedStringValue
+	return anyToStr(c.options["PORT"].value)
 }
 
 func (c *configOptions) RunMigrations() bool {
-	return c.options["RUN_MIGRATIONS"].ParsedBoolValue
+	return anyToBool(c.options["RUN_MIGRATIONS"].value)
 }
 
 func (c *configOptions) SetLogLevel(level string) {
-	c.options["LOG_LEVEL"].ParsedStringValue = level
-	c.options["LOG_LEVEL"].RawValue = level
+	c.options["LOG_LEVEL"].value = level
+	c.options["LOG_LEVEL"].str = level
 }
 
 func (c *configOptions) SetHTTPSValue(value bool) {
-	c.options["HTTPS"].ParsedBoolValue = value
-	if value {
-		c.options["HTTPS"].RawValue = "1"
-	} else {
-		c.options["HTTPS"].RawValue = "0"
-	}
+	c.options["HTTPS"].value = value
 }
 
 func (c *configOptions) SchedulerEntryFrequencyFactor() int {
@@ -954,11 +869,11 @@ func (c *configOptions) SchedulerRoundRobinMinInterval() time.Duration {
 }
 
 func (c *configOptions) Watchdog() bool {
-	return c.options["WATCHDOG"].ParsedBoolValue
+	return anyToBool(c.options["WATCHDOG"].value)
 }
 
 func (c *configOptions) WebAuthn() bool {
-	return c.options["WEBAUTHN"].ParsedBoolValue
+	return anyToBool(c.options["WEBAUTHN"].value)
 }
 
 func (c *configOptions) WorkerPoolSize() int {
@@ -966,11 +881,11 @@ func (c *configOptions) WorkerPoolSize() int {
 }
 
 func (c *configOptions) YouTubeAPIKey() string {
-	return c.options["YOUTUBE_API_KEY"].ParsedStringValue
+	return anyToStr(c.options["YOUTUBE_API_KEY"].value)
 }
 
 func (c *configOptions) YouTubeEmbedUrlOverride() string {
-	return c.options["YOUTUBE_EMBED_URL_OVERRIDE"].ParsedStringValue
+	return anyToStr(c.options["YOUTUBE_EMBED_URL_OVERRIDE"].value)
 }
 
 func (c *configOptions) YouTubeEmbedDomain() string {
@@ -982,7 +897,10 @@ func (c *configOptions) ConfigMap(redactSecret bool) []*optionPair {
 	sortedOptions := make([]*optionPair, 0, len(sortedKeys))
 	for _, key := range sortedKeys {
 		value := c.options[key]
-		displayValue := value.RawValue
+		displayValue := value.str
+		if displayValue == "" {
+			displayValue = value.RawValue
+		}
 		if redactSecret && value.Secret && displayValue != "" {
 			displayValue = "<redacted>"
 		}
