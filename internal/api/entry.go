@@ -381,7 +381,7 @@ func (h *handler) importFeedEntry(w http.ResponseWriter, r *http.Request) {
     }
 
     if req.Starred {
-        if err := h.store.SetEntriesStarred(userID, []int64{entry.ID}, true); err != nil {
+        if err := h.store.SetEntriesStarredState(userID, []int64{entry.ID}, true); err != nil {
             json.ServerError(w, r, err)
             return
         }
