@@ -11,6 +11,7 @@
     "action.save": "Sauvegarder",
     "action.subscribe": "S'abonner",
     "action.update": "Mettre à jour",
+    "action.test": "Envoyer un test",
     "alert.account_linked": "Votre compte externe est maintenant associé !",
     "alert.account_unlinked": "Votre compte externe est maintenant dissocié !",
     "alert.background_feed_refresh": "Les abonnements sont en cours d'actualisation en arrière-plan. Vous pouvez continuer à naviguer dans l'application.",
@@ -33,6 +34,7 @@
         "Vous avez déclenché trop d'actualisations de flux. Veuillez attendre %d minutes avant de réessayer."
     ],
     "confirm.loading": "En cours...",
+    "form.submit.testing": "Test en cours...",
     "confirm.no": "non",
     "confirm.question": "Êtes-vous sûr ?",
     "confirm.question.refresh": "Voulez-vous forcer le rafraîchissement ?",

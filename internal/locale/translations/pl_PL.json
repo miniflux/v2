@@ -11,6 +11,7 @@
     "action.save": "Zapisz",
     "action.subscribe": "Subskrypcja",
     "action.update": "Zaktualizuj",
+    "action.test": "Wyślij test",
     "alert.account_linked": "Twoje konto zewnętrzne jest teraz połączone!",
     "alert.account_unlinked": "Twoje konto zewnętrzne jest teraz zdysocjowane!",
     "alert.background_feed_refresh": "Wszystkie kanały są odświeżane w tle. Możesz kontynuować korzystanie z Miniflux podczas trwania tego procesu.",
@@ -34,6 +35,7 @@
         "Wykonano zbyt wiele odświeżeń kanału. Poczekaj %d minut przed ponowną próbą."
     ],
     "confirm.loading": "W toku…",
+    "form.submit.testing": "Testowanie…",
     "confirm.no": "nie",
     "confirm.question": "Czy na pewno?",
     "confirm.question.refresh": "Czy na pewno chcesz wymusić odświeżenie?",

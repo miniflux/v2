@@ -11,6 +11,7 @@
     "action.save": "Salva",
     "action.subscribe": "Abbonati",
     "action.update": "Aggiorna",
+    "action.test": "Invia test",
     "alert.account_linked": "Il tuo account esterno ora è collegato!",
     "alert.account_unlinked": "Il tuo account esterno ora è scollegato!",
     "alert.background_feed_refresh": "Tutti i feed vengono aggiornati in background. Puoi continuare a usare Miniflux mentre questo processo è in esecuzione.",
@@ -33,6 +34,7 @@
         "Hai richiesto troppi aggiornamenti dei feed. Attendi %d minuti prima di riprovare."
     ],
     "confirm.loading": "In corso...",
+    "form.submit.testing": "Test in corso...",
     "confirm.no": "no",
     "confirm.question": "Sei sicuro?",
     "confirm.question.refresh": "Vuoi forzare l'aggiornamento?",

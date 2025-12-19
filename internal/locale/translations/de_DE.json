@@ -11,6 +11,7 @@
     "action.save": "Speichern",
     "action.subscribe": "Abonnieren",
     "action.update": "Aktualisieren",
+    "action.test": "Test senden",
     "alert.account_linked": "Ihr externes Konto wurde verknüpft!",
     "alert.account_unlinked": "Ihr externer Account ist jetzt getrennt!",
     "alert.background_feed_refresh": "Alle Abonnements werden derzeit im Hintergrund aktualisiert. Sie können Miniflux weiterhin benutzen, während dieser Prozess ausgeführt wird.",
@@ -33,6 +34,7 @@
         "Sie haben zu viele Aktualisierungen ausgelöst. Bitte warten Sie %d Minuten, bevor Sie es erneut versuchen."
     ],
     "confirm.loading": "In Arbeit...",
+    "form.submit.testing": "Teste...",
     "confirm.no": "nein",
     "confirm.question": "Sind Sie sicher?",
     "confirm.question.refresh": "Möchten Sie eine erzwungene Aktualisierung durchführen?",

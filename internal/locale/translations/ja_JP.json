@@ -11,6 +11,7 @@
     "action.save": "保存",
     "action.subscribe": "フィードを購読",
     "action.update": "更新",
+    "action.test": "テスト送信",
     "alert.account_linked": "外部アカウントとリンクされました!",
     "alert.account_unlinked": "外部アカウントとのリンクが解除されました!",
     "alert.background_feed_refresh": "すべてのフィードがバックグラウンドで更新されています。この処理中も Miniflux を使い続けることができます。",
@@ -32,6 +33,7 @@
         "フィードの更新を要求しすぎました。%d 分後に再度お試しください。"
     ],
     "confirm.loading": "実行中…",
+    "form.submit.testing": "テスト中…",
     "confirm.no": "いいえ",
     "confirm.question": "よろしいですか?",
     "confirm.question.refresh": "強制的に更新しますか？",

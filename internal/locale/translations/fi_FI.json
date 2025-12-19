@@ -11,6 +11,7 @@
     "action.save": "Tallenna",
     "action.subscribe": "Tilaa",
     "action.update": "Päivitä",
+    "action.test": "Lähetä testi",
     "alert.account_linked": "Ulkoinen tilisi on nyt linkitetty!",
     "alert.account_unlinked": "Ulkoinen tilisi on nyt irrotettu!",
     "alert.background_feed_refresh": "Kaikki syötteet päivitetään taustalla. Voit jatkaa Minifluxin käyttöä tämän prosessin aikana.",
@@ -33,6 +34,7 @@
         "Olet käynnistänyt liian monta syötteen päivitystä. Odota %d minuuttia ennen kuin yrität uudelleen."
     ],
     "confirm.loading": "Käynnissä...",
+    "form.submit.testing": "Testataan...",
     "confirm.no": "ei",
     "confirm.question": "Oletko varma?",
     "confirm.question.refresh": "Haluatko pakottaa päivityksen?",
