@@ -883,6 +883,14 @@ dialog {
     opacity: 0.8;
 }
 
+.vote-button:focus {
+    color: var(--link-color);
+}
+
+.page-button.vote-button:focus {
+    color: var(--link-color);
+}
+
 .vote-button.vote-active {
     opacity: 1;
     font-weight: bold;
@@ -892,7 +900,17 @@ dialog {
     color: #ff8b60;
 }
 
+.vote-up.vote-active:focus,
+.page-button.vote-up.vote-active:focus {
+    color: #ff8b60;
+}
+
 .vote-down.vote-active {
+    color: #9494ff;
+}
+
+.vote-down.vote-active:focus,
+.page-button.vote-down.vote-active:focus {
     color: #9494ff;
 }
 

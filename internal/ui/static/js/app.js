@@ -744,14 +744,18 @@ function handleVoteAction(element) {
     const currentEntry = findEntry(element);
     if (!currentEntry) return;
 
-    const voteValue = parseInt(element.dataset.voteValue);
-    const currentVote = parseInt(element.dataset.currentVote);
+    // Find the actual button element (in case we clicked on a child element like icon-label)
+    const buttonElement = element.closest(":is(a, button)[data-vote-entry]");
+    if (!buttonElement) return;
+
+    const voteValue = parseInt(buttonElement.dataset.voteValue);
+    const currentVote = parseInt(buttonElement.dataset.currentVote);
 
     // Calculate new vote: if clicking the same vote, toggle to 0, otherwise set to new vote
     const newVote = (currentVote === voteValue) ? 0 : voteValue;
 
     // Build the URL with the new vote value
-    const baseUrl = element.dataset.voteUrl.replace(/\/[-]?1$/, '/' + newVote);
+    const baseUrl = buttonElement.dataset.voteUrl.replace(/\/[-]?1$/, '/' + newVote);
 
     sendPOSTRequest(baseUrl).then(() => {
         // Update all vote buttons in this entry
