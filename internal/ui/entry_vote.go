@@ -5,6 +5,7 @@ package ui // import "miniflux.app/v2/internal/ui"
 
 import (
 	"net/http"
+	"strconv"
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
@@ -12,7 +13,14 @@ import (
 
 func (h *handler) updateEntryVote(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
-	voteValue64 := request.RouteInt64Param(r, "vote")
+
+	// Parse vote value manually to allow negative values
+	voteString := request.RouteStringParam(r, "vote")
+	voteValue64, err := strconv.ParseInt(voteString, 10, 64)
+	if err != nil {
+		json.BadRequest(w, r, nil)
+		return
+	}
 
 	// Validate vote value
 	if voteValue64 < -1 || voteValue64 > 1 {
