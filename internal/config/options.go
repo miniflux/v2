@@ -4,7 +4,6 @@
 package config // import "miniflux.app/v2/internal/config"
 
 import (
-	"fmt"
 	"maps"
 	"net/url"
 	"slices"
@@ -35,21 +34,21 @@ const (
 )
 
 type configValue struct {
-	ParsedStringValue string
-	ParsedBoolValue   bool
-	ParsedIntValue    int
-	ParsedInt64Value  int64
-	ParsedDuration    time.Duration
-	ParsedStringList  []string
-	ParsedURLValue    *url.URL
-	ParsedBytesValue  []byte
+	parsedStringValue string
+	parsedBoolValue   bool
+	parsedIntValue    int
+	parsedInt64Value  int64
+	parsedDuration    time.Duration
+	parsedStringList  []string
+	parsedURLValue    *url.URL
+	parsedBytesValue  []byte
 
-	RawValue  string
-	ValueType configValueType
-	Secret    bool
-	TargetKey string
+	rawValue  string
+	valueType configValueType
+	secret    bool
+	targetKey string
 
-	Validator func(string) error
+	validator func(string) error
 }
 
 type configOptions struct {
@@ -67,545 +66,545 @@ func NewConfigOptions() *configOptions {
 		youTubeEmbedDomain: "www.youtube-nocookie.com",
 		options: map[string]*configValue{
 			"ADMIN_PASSWORD": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
-				Secret:            true,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
+				secret:            true,
 			},
 			"ADMIN_PASSWORD_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "ADMIN_PASSWORD",
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         secretFileType,
+				targetKey:         "ADMIN_PASSWORD",
 			},
 			"ADMIN_USERNAME": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
 			},
 			"ADMIN_USERNAME_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "ADMIN_USERNAME",
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         secretFileType,
+				targetKey:         "ADMIN_USERNAME",
 			},
 			"AUTH_PROXY_HEADER": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
 			},
 			"AUTH_PROXY_USER_CREATION": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"BASE_URL": {
-				ParsedStringValue: "http://localhost",
-				RawValue:          "http://localhost",
-				ValueType:         stringType,
+				parsedStringValue: "http://localhost",
+				rawValue:          "http://localhost",
+				valueType:         stringType,
 			},
 			"BATCH_SIZE": {
-				ParsedIntValue: 100,
-				RawValue:       "100",
-				ValueType:      intType,
-				Validator: func(rawValue string) error {
+				parsedIntValue: 100,
+				rawValue:       "100",
+				valueType:      intType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"CERT_DOMAIN": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
 			},
 			"CERT_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
 			},
 			"CLEANUP_ARCHIVE_BATCH_SIZE": {
-				ParsedIntValue: 10000,
-				RawValue:       "10000",
-				ValueType:      intType,
-				Validator: func(rawValue string) error {
+				parsedIntValue: 10000,
+				rawValue:       "10000",
+				valueType:      intType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"CLEANUP_ARCHIVE_READ_DAYS": {
-				ParsedDuration: time.Hour * 24 * 60,
-				RawValue:       "60",
-				ValueType:      dayType,
+				parsedDuration: time.Hour * 24 * 60,
+				rawValue:       "60",
+				valueType:      dayType,
 			},
 			"CLEANUP_ARCHIVE_UNREAD_DAYS": {
-				ParsedDuration: time.Hour * 24 * 180,
-				RawValue:       "180",
-				ValueType:      dayType,
+				parsedDuration: time.Hour * 24 * 180,
+				rawValue:       "180",
+				valueType:      dayType,
 			},
 			"CLEANUP_FREQUENCY_HOURS": {
-				ParsedDuration: time.Hour * 24,
-				RawValue:       "24",
-				ValueType:      hourType,
-				Validator: func(rawValue string) error {
+				parsedDuration: time.Hour * 24,
+				rawValue:       "24",
+				valueType:      hourType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"CLEANUP_REMOVE_SESSIONS_DAYS": {
-				ParsedDuration: time.Hour * 24 * 30,
-				RawValue:       "30",
-				ValueType:      dayType,
+				parsedDuration: time.Hour * 24 * 30,
+				rawValue:       "30",
+				valueType:      dayType,
 			},
 			"CREATE_ADMIN": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"DATABASE_CONNECTION_LIFETIME": {
-				ParsedDuration: time.Minute * 5,
-				RawValue:       "5",
-				ValueType:      minuteType,
-				Validator: func(rawValue string) error {
+				parsedDuration: time.Minute * 5,
+				rawValue:       "5",
+				valueType:      minuteType,
+				validator: func(rawValue string) error {
 					return validateGreaterThan(rawValue, 0)
 				},
 			},
 			"DATABASE_MAX_CONNS": {
-				ParsedIntValue: 20,
-				RawValue:       "20",
-				ValueType:      intType,
-				Validator: func(rawValue string) error {
+				parsedIntValue: 20,
+				rawValue:       "20",
+				valueType:      intType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"DATABASE_MIN_CONNS": {
-				ParsedIntValue: 1,
-				RawValue:       "1",
-				ValueType:      intType,
-				Validator: func(rawValue string) error {
+				parsedIntValue: 1,
+				rawValue:       "1",
+				valueType:      intType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 0)
 				},
 			},
 			"DATABASE_URL": {
-				ParsedStringValue: "user=postgres password=postgres dbname=miniflux2 sslmode=disable",
-				RawValue:          "user=postgres password=postgres dbname=miniflux2 sslmode=disable",
-				ValueType:         stringType,
-				Secret:            true,
+				parsedStringValue: "user=postgres password=postgres dbname=miniflux2 sslmode=disable",
+				rawValue:          "user=postgres password=postgres dbname=miniflux2 sslmode=disable",
+				valueType:         stringType,
+				secret:            true,
 			},
 			"DATABASE_URL_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "DATABASE_URL",
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         secretFileType,
+				targetKey:         "DATABASE_URL",
 			},
 			"DISABLE_API": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"DISABLE_HSTS": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"DISABLE_HTTP_SERVICE": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"DISABLE_LOCAL_AUTH": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"DISABLE_SCHEDULER_SERVICE": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"FETCH_BILIBILI_WATCH_TIME": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"FETCH_NEBULA_WATCH_TIME": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"FETCH_ODYSEE_WATCH_TIME": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"FETCH_YOUTUBE_WATCH_TIME": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"FILTER_ENTRY_MAX_AGE_DAYS": {
-				ParsedIntValue: 0,
-				RawValue:       "0",
-				ValueType:      intType,
-				Validator: func(rawValue string) error {
+				parsedIntValue: 0,
+				rawValue:       "0",
+				valueType:      intType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 0)
 				},
 			},
 			"FORCE_REFRESH_INTERVAL": {
-				ParsedDuration: 30 * time.Minute,
-				RawValue:       "30",
-				ValueType:      minuteType,
-				Validator: func(rawValue string) error {
+				parsedDuration: 30 * time.Minute,
+				rawValue:       "30",
+				valueType:      minuteType,
+				validator: func(rawValue string) error {
 					return validateGreaterThan(rawValue, 0)
 				},
 			},
 			"HTTP_CLIENT_MAX_BODY_SIZE": {
-				ParsedInt64Value: 15,
-				RawValue:         "15",
-				ValueType:        int64Type,
-				Validator: func(rawValue string) error {
+				parsedInt64Value: 15,
+				rawValue:         "15",
+				valueType:        int64Type,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"HTTP_CLIENT_PROXIES": {
-				ParsedStringList: []string{},
-				RawValue:         "",
-				ValueType:        stringListType,
-				Secret:           true,
+				parsedStringList: []string{},
+				rawValue:         "",
+				valueType:        stringListType,
+				secret:           true,
 			},
 			"HTTP_CLIENT_PROXY": {
-				ParsedURLValue: nil,
-				RawValue:       "",
-				ValueType:      urlType,
-				Secret:         true,
+				parsedURLValue: nil,
+				rawValue:       "",
+				valueType:      urlType,
+				secret:         true,
 			},
 			"HTTP_CLIENT_TIMEOUT": {
-				ParsedDuration: 20 * time.Second,
-				RawValue:       "20",
-				ValueType:      secondType,
-				Validator: func(rawValue string) error {
+				parsedDuration: 20 * time.Second,
+				rawValue:       "20",
+				valueType:      secondType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"HTTP_CLIENT_USER_AGENT": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
 			},
 			"HTTP_SERVER_TIMEOUT": {
-				ParsedDuration: 300 * time.Second,
-				RawValue:       "300",
-				ValueType:      secondType,
-				Validator: func(rawValue string) error {
+				parsedDuration: 300 * time.Second,
+				rawValue:       "300",
+				valueType:      secondType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"HTTPS": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"INVIDIOUS_INSTANCE": {
-				ParsedStringValue: "yewtu.be",
-				RawValue:          "yewtu.be",
-				ValueType:         stringType,
+				parsedStringValue: "yewtu.be",
+				rawValue:          "yewtu.be",
+				valueType:         stringType,
 			},
 			"KEY_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
 			},
 			"LISTEN_ADDR": {
-				ParsedStringList: []string{"127.0.0.1:8080"},
-				RawValue:         "127.0.0.1:8080",
-				ValueType:        stringListType,
+				parsedStringList: []string{"127.0.0.1:8080"},
+				rawValue:         "127.0.0.1:8080",
+				valueType:        stringListType,
 			},
 			"LOG_DATE_TIME": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"LOG_FILE": {
-				ParsedStringValue: "stderr",
-				RawValue:          "stderr",
-				ValueType:         stringType,
+				parsedStringValue: "stderr",
+				rawValue:          "stderr",
+				valueType:         stringType,
 			},
 			"LOG_FORMAT": {
-				ParsedStringValue: "text",
-				RawValue:          "text",
-				ValueType:         stringType,
-				Validator: func(rawValue string) error {
+				parsedStringValue: "text",
+				rawValue:          "text",
+				valueType:         stringType,
+				validator: func(rawValue string) error {
 					return validateChoices(rawValue, []string{"text", "json"})
 				},
 			},
 			"LOG_LEVEL": {
-				ParsedStringValue: "info",
-				RawValue:          "info",
-				ValueType:         stringType,
-				Validator: func(rawValue string) error {
+				parsedStringValue: "info",
+				rawValue:          "info",
+				valueType:         stringType,
+				validator: func(rawValue string) error {
 					return validateChoices(rawValue, []string{"debug", "info", "warning", "error"})
 				},
 			},
 			"MAINTENANCE_MESSAGE": {
-				ParsedStringValue: "Miniflux is currently under maintenance",
-				RawValue:          "Miniflux is currently under maintenance",
-				ValueType:         stringType,
+				parsedStringValue: "Miniflux is currently under maintenance",
+				rawValue:          "Miniflux is currently under maintenance",
+				valueType:         stringType,
 			},
 			"MAINTENANCE_MODE": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"MEDIA_PROXY_CUSTOM_URL": {
-				RawValue:  "",
-				ValueType: urlType,
+				rawValue:  "",
+				valueType: urlType,
 			},
 			"MEDIA_PROXY_HTTP_CLIENT_TIMEOUT": {
-				ParsedDuration: 120 * time.Second,
-				RawValue:       "120",
-				ValueType:      secondType,
-				Validator: func(rawValue string) error {
+				parsedDuration: 120 * time.Second,
+				rawValue:       "120",
+				valueType:      secondType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"MEDIA_PROXY_MODE": {
-				ParsedStringValue: "http-only",
-				RawValue:          "http-only",
-				ValueType:         stringType,
-				Validator: func(rawValue string) error {
+				parsedStringValue: "http-only",
+				rawValue:          "http-only",
+				valueType:         stringType,
+				validator: func(rawValue string) error {
 					return validateChoices(rawValue, []string{"none", "http-only", "all"})
 				},
 			},
 			"MEDIA_PROXY_PRIVATE_KEY": {
-				ValueType: bytesType,
-				Secret:    true,
+				valueType: bytesType,
+				secret:    true,
 			},
 			"MEDIA_PROXY_RESOURCE_TYPES": {
-				ParsedStringList: []string{"image"},
-				RawValue:         "image",
-				ValueType:        stringListType,
-				Validator: func(rawValue string) error {
+				parsedStringList: []string{"image"},
+				rawValue:         "image",
+				valueType:        stringListType,
+				validator: func(rawValue string) error {
 					return validateListChoices(strings.Split(rawValue, ","), []string{"image", "video", "audio"})
 				},
 			},
 			"METRICS_ALLOWED_NETWORKS": {
-				ParsedStringList: []string{"127.0.0.1/8"},
-				RawValue:         "127.0.0.1/8",
-				ValueType:        stringListType,
+				parsedStringList: []string{"127.0.0.1/8"},
+				rawValue:         "127.0.0.1/8",
+				valueType:        stringListType,
 			},
 			"METRICS_COLLECTOR": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"METRICS_PASSWORD": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
-				Secret:            true,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
+				secret:            true,
 			},
 			"METRICS_PASSWORD_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "METRICS_PASSWORD",
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         secretFileType,
+				targetKey:         "METRICS_PASSWORD",
 			},
 			"METRICS_REFRESH_INTERVAL": {
-				ParsedDuration: 60 * time.Second,
-				RawValue:       "60",
-				ValueType:      secondType,
-				Validator: func(rawValue string) error {
+				parsedDuration: 60 * time.Second,
+				rawValue:       "60",
+				valueType:      secondType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"METRICS_USERNAME": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
 			},
 			"METRICS_USERNAME_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "METRICS_USERNAME",
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         secretFileType,
+				targetKey:         "METRICS_USERNAME",
 			},
 			"OAUTH2_CLIENT_ID": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
-				Secret:            true,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
+				secret:            true,
 			},
 			"OAUTH2_CLIENT_ID_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "OAUTH2_CLIENT_ID",
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         secretFileType,
+				targetKey:         "OAUTH2_CLIENT_ID",
 			},
 			"OAUTH2_CLIENT_SECRET": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
-				Secret:            true,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
+				secret:            true,
 			},
 			"OAUTH2_CLIENT_SECRET_FILE": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         secretFileType,
-				TargetKey:         "OAUTH2_CLIENT_SECRET",
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         secretFileType,
+				targetKey:         "OAUTH2_CLIENT_SECRET",
 			},
 			"OAUTH2_OIDC_DISCOVERY_ENDPOINT": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
 			},
 			"OAUTH2_OIDC_PROVIDER_NAME": {
-				ParsedStringValue: "OpenID Connect",
-				RawValue:          "OpenID Connect",
-				ValueType:         stringType,
+				parsedStringValue: "OpenID Connect",
+				rawValue:          "OpenID Connect",
+				valueType:         stringType,
 			},
 			"OAUTH2_PROVIDER": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
-				Validator: func(rawValue string) error {
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
+				validator: func(rawValue string) error {
 					return validateChoices(rawValue, []string{"oidc", "google"})
 				},
 			},
 			"OAUTH2_REDIRECT_URL": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
 			},
 			"OAUTH2_USER_CREATION": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"POLLING_FREQUENCY": {
-				ParsedDuration: 60 * time.Minute,
-				RawValue:       "60",
-				ValueType:      minuteType,
-				Validator: func(rawValue string) error {
+				parsedDuration: 60 * time.Minute,
+				rawValue:       "60",
+				valueType:      minuteType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"POLLING_LIMIT_PER_HOST": {
-				ParsedIntValue: 0,
-				RawValue:       "0",
-				ValueType:      intType,
-				Validator: func(rawValue string) error {
+				parsedIntValue: 0,
+				rawValue:       "0",
+				valueType:      intType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 0)
 				},
 			},
 			"POLLING_PARSING_ERROR_LIMIT": {
-				ParsedIntValue: 3,
-				RawValue:       "3",
-				ValueType:      intType,
-				Validator: func(rawValue string) error {
+				parsedIntValue: 3,
+				rawValue:       "3",
+				valueType:      intType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 0)
 				},
 			},
 			"POLLING_SCHEDULER": {
-				ParsedStringValue: "round_robin",
-				RawValue:          "round_robin",
-				ValueType:         stringType,
-				Validator: func(rawValue string) error {
+				parsedStringValue: "round_robin",
+				rawValue:          "round_robin",
+				valueType:         stringType,
+				validator: func(rawValue string) error {
 					return validateChoices(rawValue, []string{"round_robin", "entry_frequency"})
 				},
 			},
 			"PORT": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
-				Validator: func(rawValue string) error {
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
+				validator: func(rawValue string) error {
 					return validateRange(rawValue, 1, 65535)
 				},
 			},
 			"RUN_MIGRATIONS": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"SCHEDULER_ENTRY_FREQUENCY_FACTOR": {
-				ParsedIntValue: 1,
-				RawValue:       "1",
-				ValueType:      intType,
+				parsedIntValue: 1,
+				rawValue:       "1",
+				valueType:      intType,
 			},
 			"SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL": {
-				ParsedDuration: 24 * time.Hour,
-				RawValue:       "1440",
-				ValueType:      minuteType,
-				Validator: func(rawValue string) error {
+				parsedDuration: 24 * time.Hour,
+				rawValue:       "1440",
+				valueType:      minuteType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL": {
-				ParsedDuration: 5 * time.Minute,
-				RawValue:       "5",
-				ValueType:      minuteType,
-				Validator: func(rawValue string) error {
+				parsedDuration: 5 * time.Minute,
+				rawValue:       "5",
+				valueType:      minuteType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"SCHEDULER_ROUND_ROBIN_MAX_INTERVAL": {
-				ParsedDuration: 1440 * time.Minute,
-				RawValue:       "1440",
-				ValueType:      minuteType,
-				Validator: func(rawValue string) error {
+				parsedDuration: 1440 * time.Minute,
+				rawValue:       "1440",
+				valueType:      minuteType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"SCHEDULER_ROUND_ROBIN_MIN_INTERVAL": {
-				ParsedDuration: 60 * time.Minute,
-				RawValue:       "60",
-				ValueType:      minuteType,
-				Validator: func(rawValue string) error {
+				parsedDuration: 60 * time.Minute,
+				rawValue:       "60",
+				valueType:      minuteType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"WATCHDOG": {
-				ParsedBoolValue: true,
-				RawValue:        "1",
-				ValueType:       boolType,
+				parsedBoolValue: true,
+				rawValue:        "1",
+				valueType:       boolType,
 			},
 			"WEBAUTHN": {
-				ParsedBoolValue: false,
-				RawValue:        "0",
-				ValueType:       boolType,
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
 			},
 			"WORKER_POOL_SIZE": {
-				ParsedIntValue: 16,
-				RawValue:       "16",
-				ValueType:      intType,
-				Validator: func(rawValue string) error {
+				parsedIntValue: 16,
+				rawValue:       "16",
+				valueType:      intType,
+				validator: func(rawValue string) error {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
 			"YOUTUBE_API_KEY": {
-				ParsedStringValue: "",
-				RawValue:          "",
-				ValueType:         stringType,
-				Secret:            true,
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
+				secret:            true,
 			},
 			"YOUTUBE_EMBED_URL_OVERRIDE": {
-				ParsedStringValue: "https://www.youtube-nocookie.com/embed/",
-				RawValue:          "https://www.youtube-nocookie.com/embed/",
-				ValueType:         stringType,
+				parsedStringValue: "https://www.youtube-nocookie.com/embed/",
+				rawValue:          "https://www.youtube-nocookie.com/embed/",
+				valueType:         stringType,
 			},
 		},
 	}
 }
 
 func (c *configOptions) AdminPassword() string {
-	return c.options["ADMIN_PASSWORD"].ParsedStringValue
+	return c.options["ADMIN_PASSWORD"].parsedStringValue
 }
 
 func (c *configOptions) AdminUsername() string {
-	return c.options["ADMIN_USERNAME"].ParsedStringValue
+	return c.options["ADMIN_USERNAME"].parsedStringValue
 }
 
 func (c *configOptions) AuthProxyHeader() string {
-	return c.options["AUTH_PROXY_HEADER"].ParsedStringValue
+	return c.options["AUTH_PROXY_HEADER"].parsedStringValue
 }
 
 func (c *configOptions) AuthProxyUserCreation() bool {
-	return c.options["AUTH_PROXY_USER_CREATION"].ParsedBoolValue
+	return c.options["AUTH_PROXY_USER_CREATION"].parsedBoolValue
 }
 
 func (c *configOptions) BasePath() string {
@@ -613,7 +612,7 @@ func (c *configOptions) BasePath() string {
 }
 
 func (c *configOptions) BaseURL() string {
-	return c.options["BASE_URL"].ParsedStringValue
+	return c.options["BASE_URL"].parsedStringValue
 }
 
 func (c *configOptions) RootURL() string {
@@ -621,356 +620,356 @@ func (c *configOptions) RootURL() string {
 }
 
 func (c *configOptions) BatchSize() int {
-	return c.options["BATCH_SIZE"].ParsedIntValue
+	return c.options["BATCH_SIZE"].parsedIntValue
 }
 
 func (c *configOptions) CertDomain() string {
-	return c.options["CERT_DOMAIN"].ParsedStringValue
+	return c.options["CERT_DOMAIN"].parsedStringValue
 }
 
 func (c *configOptions) CertFile() string {
-	return c.options["CERT_FILE"].ParsedStringValue
+	return c.options["CERT_FILE"].parsedStringValue
 }
 
 func (c *configOptions) CleanupArchiveBatchSize() int {
-	return c.options["CLEANUP_ARCHIVE_BATCH_SIZE"].ParsedIntValue
+	return c.options["CLEANUP_ARCHIVE_BATCH_SIZE"].parsedIntValue
 }
 
 func (c *configOptions) CleanupArchiveReadInterval() time.Duration {
-	return c.options["CLEANUP_ARCHIVE_READ_DAYS"].ParsedDuration
+	return c.options["CLEANUP_ARCHIVE_READ_DAYS"].parsedDuration
 }
 
 func (c *configOptions) CleanupArchiveUnreadInterval() time.Duration {
-	return c.options["CLEANUP_ARCHIVE_UNREAD_DAYS"].ParsedDuration
+	return c.options["CLEANUP_ARCHIVE_UNREAD_DAYS"].parsedDuration
 }
 
 func (c *configOptions) CleanupFrequency() time.Duration {
-	return c.options["CLEANUP_FREQUENCY_HOURS"].ParsedDuration
+	return c.options["CLEANUP_FREQUENCY_HOURS"].parsedDuration
 }
 
 func (c *configOptions) CleanupRemoveSessionsInterval() time.Duration {
-	return c.options["CLEANUP_REMOVE_SESSIONS_DAYS"].ParsedDuration
+	return c.options["CLEANUP_REMOVE_SESSIONS_DAYS"].parsedDuration
 }
 
 func (c *configOptions) CreateAdmin() bool {
-	return c.options["CREATE_ADMIN"].ParsedBoolValue
+	return c.options["CREATE_ADMIN"].parsedBoolValue
 }
 
 func (c *configOptions) DatabaseConnectionLifetime() time.Duration {
-	return c.options["DATABASE_CONNECTION_LIFETIME"].ParsedDuration
+	return c.options["DATABASE_CONNECTION_LIFETIME"].parsedDuration
 }
 
 func (c *configOptions) DatabaseMaxConns() int {
-	return c.options["DATABASE_MAX_CONNS"].ParsedIntValue
+	return c.options["DATABASE_MAX_CONNS"].parsedIntValue
 }
 
 func (c *configOptions) DatabaseMinConns() int {
-	return c.options["DATABASE_MIN_CONNS"].ParsedIntValue
+	return c.options["DATABASE_MIN_CONNS"].parsedIntValue
 }
 
 func (c *configOptions) DatabaseURL() string {
-	return c.options["DATABASE_URL"].ParsedStringValue
+	return c.options["DATABASE_URL"].parsedStringValue
 }
 
 func (c *configOptions) DisableHSTS() bool {
-	return c.options["DISABLE_HSTS"].ParsedBoolValue
+	return c.options["DISABLE_HSTS"].parsedBoolValue
 }
 
 func (c *configOptions) DisableHTTPService() bool {
-	return c.options["DISABLE_HTTP_SERVICE"].ParsedBoolValue
+	return c.options["DISABLE_HTTP_SERVICE"].parsedBoolValue
 }
 
 func (c *configOptions) DisableLocalAuth() bool {
-	return c.options["DISABLE_LOCAL_AUTH"].ParsedBoolValue
+	return c.options["DISABLE_LOCAL_AUTH"].parsedBoolValue
 }
 
 func (c *configOptions) DisableSchedulerService() bool {
-	return c.options["DISABLE_SCHEDULER_SERVICE"].ParsedBoolValue
+	return c.options["DISABLE_SCHEDULER_SERVICE"].parsedBoolValue
 }
 
 func (c *configOptions) FetchBilibiliWatchTime() bool {
-	return c.options["FETCH_BILIBILI_WATCH_TIME"].ParsedBoolValue
+	return c.options["FETCH_BILIBILI_WATCH_TIME"].parsedBoolValue
 }
 
 func (c *configOptions) FetchNebulaWatchTime() bool {
-	return c.options["FETCH_NEBULA_WATCH_TIME"].ParsedBoolValue
+	return c.options["FETCH_NEBULA_WATCH_TIME"].parsedBoolValue
 }
 
 func (c *configOptions) FetchOdyseeWatchTime() bool {
-	return c.options["FETCH_ODYSEE_WATCH_TIME"].ParsedBoolValue
+	return c.options["FETCH_ODYSEE_WATCH_TIME"].parsedBoolValue
 }
 
 func (c *configOptions) FetchYouTubeWatchTime() bool {
-	return c.options["FETCH_YOUTUBE_WATCH_TIME"].ParsedBoolValue
+	return c.options["FETCH_YOUTUBE_WATCH_TIME"].parsedBoolValue
 }
 
 func (c *configOptions) FilterEntryMaxAgeDays() int {
-	return c.options["FILTER_ENTRY_MAX_AGE_DAYS"].ParsedIntValue
+	return c.options["FILTER_ENTRY_MAX_AGE_DAYS"].parsedIntValue
 }
 
 func (c *configOptions) ForceRefreshInterval() time.Duration {
-	return c.options["FORCE_REFRESH_INTERVAL"].ParsedDuration
+	return c.options["FORCE_REFRESH_INTERVAL"].parsedDuration
 }
 
 func (c *configOptions) HasHTTPClientProxiesConfigured() bool {
-	return len(c.options["HTTP_CLIENT_PROXIES"].ParsedStringList) > 0
+	return len(c.options["HTTP_CLIENT_PROXIES"].parsedStringList) > 0
 }
 
 func (c *configOptions) HasAPI() bool {
-	return !c.options["DISABLE_API"].ParsedBoolValue
+	return !c.options["DISABLE_API"].parsedBoolValue
 }
 
 func (c *configOptions) HasHTTPService() bool {
-	return !c.options["DISABLE_HTTP_SERVICE"].ParsedBoolValue
+	return !c.options["DISABLE_HTTP_SERVICE"].parsedBoolValue
 }
 
 func (c *configOptions) HasHSTS() bool {
-	return !c.options["DISABLE_HSTS"].ParsedBoolValue
+	return !c.options["DISABLE_HSTS"].parsedBoolValue
 }
 
 func (c *configOptions) HasHTTPClientProxyURLConfigured() bool {
-	return c.options["HTTP_CLIENT_PROXY"].ParsedURLValue != nil
+	return c.options["HTTP_CLIENT_PROXY"].parsedURLValue != nil
 }
 
 func (c *configOptions) HasMaintenanceMode() bool {
-	return c.options["MAINTENANCE_MODE"].ParsedBoolValue
+	return c.options["MAINTENANCE_MODE"].parsedBoolValue
 }
 
 func (c *configOptions) HasMetricsCollector() bool {
-	return c.options["METRICS_COLLECTOR"].ParsedBoolValue
+	return c.options["METRICS_COLLECTOR"].parsedBoolValue
 }
 
 func (c *configOptions) HasSchedulerService() bool {
-	return !c.options["DISABLE_SCHEDULER_SERVICE"].ParsedBoolValue
+	return !c.options["DISABLE_SCHEDULER_SERVICE"].parsedBoolValue
 }
 
 func (c *configOptions) HasWatchdog() bool {
-	return c.options["WATCHDOG"].ParsedBoolValue
+	return c.options["WATCHDOG"].parsedBoolValue
 }
 
 func (c *configOptions) HTTPClientMaxBodySize() int64 {
-	return c.options["HTTP_CLIENT_MAX_BODY_SIZE"].ParsedInt64Value * 1024 * 1024
+	return c.options["HTTP_CLIENT_MAX_BODY_SIZE"].parsedInt64Value * 1024 * 1024
 }
 
 func (c *configOptions) HTTPClientProxies() []string {
-	return c.options["HTTP_CLIENT_PROXIES"].ParsedStringList
+	return c.options["HTTP_CLIENT_PROXIES"].parsedStringList
 }
 
 func (c *configOptions) HTTPClientProxyURL() *url.URL {
-	return c.options["HTTP_CLIENT_PROXY"].ParsedURLValue
+	return c.options["HTTP_CLIENT_PROXY"].parsedURLValue
 }
 
 func (c *configOptions) HTTPClientTimeout() time.Duration {
-	return c.options["HTTP_CLIENT_TIMEOUT"].ParsedDuration
+	return c.options["HTTP_CLIENT_TIMEOUT"].parsedDuration
 }
 
 func (c *configOptions) HTTPClientUserAgent() string {
-	if c.options["HTTP_CLIENT_USER_AGENT"].ParsedStringValue != "" {
-		return c.options["HTTP_CLIENT_USER_AGENT"].ParsedStringValue
+	if c.options["HTTP_CLIENT_USER_AGENT"].parsedStringValue != "" {
+		return c.options["HTTP_CLIENT_USER_AGENT"].parsedStringValue
 	}
 	return defaultHTTPClientUserAgent
 }
 
 func (c *configOptions) HTTPServerTimeout() time.Duration {
-	return c.options["HTTP_SERVER_TIMEOUT"].ParsedDuration
+	return c.options["HTTP_SERVER_TIMEOUT"].parsedDuration
 }
 
 func (c *configOptions) HTTPS() bool {
-	return c.options["HTTPS"].ParsedBoolValue
+	return c.options["HTTPS"].parsedBoolValue
 }
 
 func (c *configOptions) InvidiousInstance() string {
-	return c.options["INVIDIOUS_INSTANCE"].ParsedStringValue
+	return c.options["INVIDIOUS_INSTANCE"].parsedStringValue
 }
 
 func (c *configOptions) IsAuthProxyUserCreationAllowed() bool {
-	return c.options["AUTH_PROXY_USER_CREATION"].ParsedBoolValue
+	return c.options["AUTH_PROXY_USER_CREATION"].parsedBoolValue
 }
 
 func (c *configOptions) IsDefaultDatabaseURL() bool {
-	return c.options["DATABASE_URL"].RawValue == "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
+	return c.options["DATABASE_URL"].rawValue == "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
 }
 
 func (c *configOptions) IsOAuth2UserCreationAllowed() bool {
-	return c.options["OAUTH2_USER_CREATION"].ParsedBoolValue
+	return c.options["OAUTH2_USER_CREATION"].parsedBoolValue
 }
 
 func (c *configOptions) CertKeyFile() string {
-	return c.options["KEY_FILE"].ParsedStringValue
+	return c.options["KEY_FILE"].parsedStringValue
 }
 
 func (c *configOptions) ListenAddr() []string {
-	return c.options["LISTEN_ADDR"].ParsedStringList
+	return c.options["LISTEN_ADDR"].parsedStringList
 }
 
 func (c *configOptions) LogFile() string {
-	return c.options["LOG_FILE"].ParsedStringValue
+	return c.options["LOG_FILE"].parsedStringValue
 }
 
 func (c *configOptions) LogDateTime() bool {
-	return c.options["LOG_DATE_TIME"].ParsedBoolValue
+	return c.options["LOG_DATE_TIME"].parsedBoolValue
 }
 
 func (c *configOptions) LogFormat() string {
-	return c.options["LOG_FORMAT"].ParsedStringValue
+	return c.options["LOG_FORMAT"].parsedStringValue
 }
 
 func (c *configOptions) LogLevel() string {
-	return c.options["LOG_LEVEL"].ParsedStringValue
+	return c.options["LOG_LEVEL"].parsedStringValue
 }
 
 func (c *configOptions) MaintenanceMessage() string {
-	return c.options["MAINTENANCE_MESSAGE"].ParsedStringValue
+	return c.options["MAINTENANCE_MESSAGE"].parsedStringValue
 }
 
 func (c *configOptions) MaintenanceMode() bool {
-	return c.options["MAINTENANCE_MODE"].ParsedBoolValue
+	return c.options["MAINTENANCE_MODE"].parsedBoolValue
 }
 
 func (c *configOptions) MediaCustomProxyURL() *url.URL {
-	return c.options["MEDIA_PROXY_CUSTOM_URL"].ParsedURLValue
+	return c.options["MEDIA_PROXY_CUSTOM_URL"].parsedURLValue
 }
 
 func (c *configOptions) MediaProxyHTTPClientTimeout() time.Duration {
-	return c.options["MEDIA_PROXY_HTTP_CLIENT_TIMEOUT"].ParsedDuration
+	return c.options["MEDIA_PROXY_HTTP_CLIENT_TIMEOUT"].parsedDuration
 }
 
 func (c *configOptions) MediaProxyMode() string {
-	return c.options["MEDIA_PROXY_MODE"].ParsedStringValue
+	return c.options["MEDIA_PROXY_MODE"].parsedStringValue
 }
 
 func (c *configOptions) MediaProxyPrivateKey() []byte {
-	return c.options["MEDIA_PROXY_PRIVATE_KEY"].ParsedBytesValue
+	return c.options["MEDIA_PROXY_PRIVATE_KEY"].parsedBytesValue
 }
 
 func (c *configOptions) MediaProxyResourceTypes() []string {
-	return c.options["MEDIA_PROXY_RESOURCE_TYPES"].ParsedStringList
+	return c.options["MEDIA_PROXY_RESOURCE_TYPES"].parsedStringList
 }
 
 func (c *configOptions) MetricsAllowedNetworks() []string {
-	return c.options["METRICS_ALLOWED_NETWORKS"].ParsedStringList
+	return c.options["METRICS_ALLOWED_NETWORKS"].parsedStringList
 }
 
 func (c *configOptions) MetricsCollector() bool {
-	return c.options["METRICS_COLLECTOR"].ParsedBoolValue
+	return c.options["METRICS_COLLECTOR"].parsedBoolValue
 }
 
 func (c *configOptions) MetricsPassword() string {
-	return c.options["METRICS_PASSWORD"].ParsedStringValue
+	return c.options["METRICS_PASSWORD"].parsedStringValue
 }
 
 func (c *configOptions) MetricsRefreshInterval() time.Duration {
-	return c.options["METRICS_REFRESH_INTERVAL"].ParsedDuration
+	return c.options["METRICS_REFRESH_INTERVAL"].parsedDuration
 }
 
 func (c *configOptions) MetricsUsername() string {
-	return c.options["METRICS_USERNAME"].ParsedStringValue
+	return c.options["METRICS_USERNAME"].parsedStringValue
 }
 
 func (c *configOptions) OAuth2ClientID() string {
-	return c.options["OAUTH2_CLIENT_ID"].ParsedStringValue
+	return c.options["OAUTH2_CLIENT_ID"].parsedStringValue
 }
 
 func (c *configOptions) OAuth2ClientSecret() string {
-	return c.options["OAUTH2_CLIENT_SECRET"].ParsedStringValue
+	return c.options["OAUTH2_CLIENT_SECRET"].parsedStringValue
 }
 
 func (c *configOptions) OAuth2OIDCDiscoveryEndpoint() string {
-	return c.options["OAUTH2_OIDC_DISCOVERY_ENDPOINT"].ParsedStringValue
+	return c.options["OAUTH2_OIDC_DISCOVERY_ENDPOINT"].parsedStringValue
 }
 
 func (c *configOptions) OAuth2OIDCProviderName() string {
-	return c.options["OAUTH2_OIDC_PROVIDER_NAME"].ParsedStringValue
+	return c.options["OAUTH2_OIDC_PROVIDER_NAME"].parsedStringValue
 }
 
 func (c *configOptions) OAuth2Provider() string {
-	return c.options["OAUTH2_PROVIDER"].ParsedStringValue
+	return c.options["OAUTH2_PROVIDER"].parsedStringValue
 }
 
 func (c *configOptions) OAuth2RedirectURL() string {
-	return c.options["OAUTH2_REDIRECT_URL"].ParsedStringValue
+	return c.options["OAUTH2_REDIRECT_URL"].parsedStringValue
 }
 
 func (c *configOptions) OAuth2UserCreation() bool {
-	return c.options["OAUTH2_USER_CREATION"].ParsedBoolValue
+	return c.options["OAUTH2_USER_CREATION"].parsedBoolValue
 }
 
 func (c *configOptions) PollingFrequency() time.Duration {
-	return c.options["POLLING_FREQUENCY"].ParsedDuration
+	return c.options["POLLING_FREQUENCY"].parsedDuration
 }
 
 func (c *configOptions) PollingLimitPerHost() int {
-	return c.options["POLLING_LIMIT_PER_HOST"].ParsedIntValue
+	return c.options["POLLING_LIMIT_PER_HOST"].parsedIntValue
 }
 
 func (c *configOptions) PollingParsingErrorLimit() int {
-	return c.options["POLLING_PARSING_ERROR_LIMIT"].ParsedIntValue
+	return c.options["POLLING_PARSING_ERROR_LIMIT"].parsedIntValue
 }
 
 func (c *configOptions) PollingScheduler() string {
-	return c.options["POLLING_SCHEDULER"].ParsedStringValue
+	return c.options["POLLING_SCHEDULER"].parsedStringValue
 }
 
 func (c *configOptions) Port() string {
-	return c.options["PORT"].ParsedStringValue
+	return c.options["PORT"].parsedStringValue
 }
 
 func (c *configOptions) RunMigrations() bool {
-	return c.options["RUN_MIGRATIONS"].ParsedBoolValue
+	return c.options["RUN_MIGRATIONS"].parsedBoolValue
 }
 
 func (c *configOptions) SetLogLevel(level string) {
-	c.options["LOG_LEVEL"].ParsedStringValue = level
-	c.options["LOG_LEVEL"].RawValue = level
+	c.options["LOG_LEVEL"].parsedStringValue = level
+	c.options["LOG_LEVEL"].rawValue = level
 }
 
 func (c *configOptions) SetHTTPSValue(value bool) {
-	c.options["HTTPS"].ParsedBoolValue = value
+	c.options["HTTPS"].parsedBoolValue = value
 	if value {
-		c.options["HTTPS"].RawValue = "1"
+		c.options["HTTPS"].rawValue = "1"
 	} else {
-		c.options["HTTPS"].RawValue = "0"
+		c.options["HTTPS"].rawValue = "0"
 	}
 }
 
 func (c *configOptions) SchedulerEntryFrequencyFactor() int {
-	return c.options["SCHEDULER_ENTRY_FREQUENCY_FACTOR"].ParsedIntValue
+	return c.options["SCHEDULER_ENTRY_FREQUENCY_FACTOR"].parsedIntValue
 }
 
 func (c *configOptions) SchedulerEntryFrequencyMaxInterval() time.Duration {
-	return c.options["SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL"].ParsedDuration
+	return c.options["SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL"].parsedDuration
 }
 
 func (c *configOptions) SchedulerEntryFrequencyMinInterval() time.Duration {
-	return c.options["SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL"].ParsedDuration
+	return c.options["SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL"].parsedDuration
 }
 
 func (c *configOptions) SchedulerRoundRobinMaxInterval() time.Duration {
-	return c.options["SCHEDULER_ROUND_ROBIN_MAX_INTERVAL"].ParsedDuration
+	return c.options["SCHEDULER_ROUND_ROBIN_MAX_INTERVAL"].parsedDuration
 }
 
 func (c *configOptions) SchedulerRoundRobinMinInterval() time.Duration {
-	return c.options["SCHEDULER_ROUND_ROBIN_MIN_INTERVAL"].ParsedDuration
+	return c.options["SCHEDULER_ROUND_ROBIN_MIN_INTERVAL"].parsedDuration
 }
 
 func (c *configOptions) Watchdog() bool {
-	return c.options["WATCHDOG"].ParsedBoolValue
+	return c.options["WATCHDOG"].parsedBoolValue
 }
 
 func (c *configOptions) WebAuthn() bool {
-	return c.options["WEBAUTHN"].ParsedBoolValue
+	return c.options["WEBAUTHN"].parsedBoolValue
 }
 
 func (c *configOptions) WorkerPoolSize() int {
-	return c.options["WORKER_POOL_SIZE"].ParsedIntValue
+	return c.options["WORKER_POOL_SIZE"].parsedIntValue
 }
 
 func (c *configOptions) YouTubeAPIKey() string {
-	return c.options["YOUTUBE_API_KEY"].ParsedStringValue
+	return c.options["YOUTUBE_API_KEY"].parsedStringValue
 }
 
 func (c *configOptions) YouTubeEmbedUrlOverride() string {
-	return c.options["YOUTUBE_EMBED_URL_OVERRIDE"].ParsedStringValue
+	return c.options["YOUTUBE_EMBED_URL_OVERRIDE"].parsedStringValue
 }
 
 func (c *configOptions) YouTubeEmbedDomain() string {
@@ -982,8 +981,8 @@ func (c *configOptions) ConfigMap(redactSecret bool) []*optionPair {
 	sortedOptions := make([]*optionPair, 0, len(sortedKeys))
 	for _, key := range sortedKeys {
 		value := c.options[key]
-		displayValue := value.RawValue
-		if redactSecret && value.Secret && displayValue != "" {
+		displayValue := value.rawValue
+		if displayValue != "" && redactSecret && value.secret {
 			displayValue = "<redacted>"
 		}
 		sortedOptions = append(sortedOptions, &optionPair{Key: key, Value: displayValue})
@@ -995,7 +994,10 @@ func (c *configOptions) String() string {
 	var builder strings.Builder
 
 	for _, option := range c.ConfigMap(false) {
-		fmt.Fprintf(&builder, "%s=%v\n", option.Key, option.Value)
+		builder.WriteString(option.Key)
+		builder.WriteByte('=')
+		builder.WriteString(option.Value)
+		builder.WriteByte('\n')
 	}
 
 	return builder.String()
