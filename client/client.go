@@ -989,6 +989,20 @@ func (c *Client) ToggleStarredContext(ctx context.Context, entryID int64) error 
 	return err
 }
 
+// UpdateEntryVote updates the vote value for an entry.
+func (c *Client) UpdateEntryVote(entryID int64, vote int) error {
+	ctx, cancel := withDefaultTimeout()
+	defer cancel()
+	return c.UpdateEntryVoteContext(ctx, entryID, vote)
+}
+
+// UpdateEntryVoteContext updates the vote value for an entry.
+func (c *Client) UpdateEntryVoteContext(ctx context.Context, entryID int64, vote int) error {
+	body := map[string]int{"vote": vote}
+	_, err := c.request.Put(ctx, fmt.Sprintf("/v1/entries/%d/vote", entryID), body)
+	return err
+}
+
 // SaveEntry sends an entry to a third-party service.
 func (c *Client) SaveEntry(entryID int64) error {
 	ctx, cancel := withDefaultTimeout()

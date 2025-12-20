@@ -264,6 +264,7 @@ type Entry struct {
 	UserID      int64      `json:"user_id"`
 	FeedID      int64      `json:"feed_id"`
 	Starred     bool       `json:"starred"`
+	Vote        int        `json:"vote"`
 }
 
 // EntryModificationRequest represents a request to modify an entry.
