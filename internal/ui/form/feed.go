@@ -6,8 +6,6 @@ package form // import "miniflux.app/v2/internal/ui/form"
 import (
 	"net/http"
 	"strconv"
-
-	"miniflux.app/v2/internal/model"
 )
 
 // FeedForm represents a feed form in the UI
@@ -45,45 +43,6 @@ type FeedForm struct {
 	PushoverEnabled             bool
 	PushoverPriority            int
 	ProxyURL                    string
-}
-
-// Merge updates the fields of the given feed.
-func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
-	feed.Category.ID = f.CategoryID
-	feed.Title = f.Title
-	feed.SiteURL = f.SiteURL
-	feed.FeedURL = f.FeedURL
-	feed.Description = f.Description
-	feed.ScraperRules = f.ScraperRules
-	feed.RewriteRules = f.RewriteRules
-	feed.UrlRewriteRules = f.UrlRewriteRules
-	feed.BlocklistRules = f.BlocklistRules
-	feed.KeeplistRules = f.KeeplistRules
-	feed.BlockFilterEntryRules = f.BlockFilterEntryRules
-	feed.KeepFilterEntryRules = f.KeepFilterEntryRules
-	feed.Crawler = f.Crawler
-	feed.UserAgent = f.UserAgent
-	feed.Cookie = f.Cookie
-	feed.ParsingErrorCount = 0
-	feed.ParsingErrorMsg = ""
-	feed.Username = f.Username
-	feed.Password = f.Password
-	feed.IgnoreHTTPCache = f.IgnoreHTTPCache
-	feed.AllowSelfSignedCertificates = f.AllowSelfSignedCertificates
-	feed.FetchViaProxy = f.FetchViaProxy
-	feed.Disabled = f.Disabled
-	feed.NoMediaPlayer = f.NoMediaPlayer
-	feed.HideGlobally = f.HideGlobally
-	feed.AppriseServiceURLs = f.AppriseServiceURLs
-	feed.WebhookURL = f.WebhookURL
-	feed.DisableHTTP2 = f.DisableHTTP2
-	feed.NtfyEnabled = f.NtfyEnabled
-	feed.NtfyPriority = f.NtfyPriority
-	feed.NtfyTopic = f.NtfyTopic
-	feed.PushoverEnabled = f.PushoverEnabled
-	feed.PushoverPriority = f.PushoverPriority
-	feed.ProxyURL = f.ProxyURL
-	return feed
 }
 
 // NewFeedForm parses the HTTP request and returns a FeedForm
