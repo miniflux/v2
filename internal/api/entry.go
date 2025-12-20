@@ -352,6 +352,32 @@ func (h *handler) flushHistory(w http.ResponseWriter, r *http.Request) {
 	json.Accepted(w, r)
 }
 
+func (h *handler) updateEntryVote(w http.ResponseWriter, r *http.Request) {
+	entryID := request.RouteInt64Param(r, "entryID")
+
+	type voteRequest struct {
+		Vote int `json:"vote"`
+	}
+
+	var req voteRequest
+	if err := json_parser.NewDecoder(r.Body).Decode(&req); err != nil {
+		json.BadRequest(w, r, err)
+		return
+	}
+
+	if req.Vote < -1 || req.Vote > 1 {
+		json.BadRequest(w, r, errors.New("vote value must be -1, 0, or 1"))
+		return
+	}
+
+	if err := h.store.UpdateEntryVote(request.UserID(r), entryID, req.Vote); err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	json.NoContent(w, r)
+}
+
 func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) {
 	if beforeEntryID := request.QueryInt64Param(r, "before_entry_id", 0); beforeEntryID > 0 {
 		builder.BeforeEntryID(beforeEntryID)
