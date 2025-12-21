@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   app:
     image: mcr.microsoft.com/devcontainers/go:1.23
