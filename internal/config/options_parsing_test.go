@@ -727,6 +727,22 @@ func TestLogFileOptionParsing(t *testing.T) {
 	}
 }
 
+func TestRefererOverrideFileOptionParsing(t *testing.T) {
+	configParser := NewConfigParser()
+
+	if configParser.options.RefererOverrideFile() != "" {
+		t.Fatalf("Expected REFERER_OVERRIDE_FILE to be empty by default")
+	}
+
+	if err := configParser.parseLines([]string{"REFERER_OVERRIDE_FILE=/path/to/referer-overrides.json"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if configParser.options.RefererOverrideFile() != "/path/to/referer-overrides.json" {
+		t.Fatalf("Expected REFERER_OVERRIDE_FILE to be '/path/to/referer-overrides.json'")
+	}
+}
+
 func TestLogFormatOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
 

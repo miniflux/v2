@@ -516,6 +516,11 @@ func NewConfigOptions() *configOptions {
 					return validateRange(rawValue, 1, 65535)
 				},
 			},
+			"REFERER_OVERRIDE_FILE": {
+				ParsedStringValue: "",
+				RawValue:          "",
+				ValueType:         stringType,
+			},
 			"RUN_MIGRATIONS": {
 				parsedBoolValue: false,
 				rawValue:        "0",
@@ -804,6 +809,10 @@ func (c *configOptions) ListenAddr() []string {
 
 func (c *configOptions) LogFile() string {
 	return c.options["LOG_FILE"].parsedStringValue
+}
+
+func (c *configOptions) RefererOverrideFile() string {
+	return c.options["REFERER_OVERRIDE_FILE"].ParsedStringValue
 }
 
 func (c *configOptions) LogDateTime() bool {
