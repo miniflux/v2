@@ -49,6 +49,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		KeepFilterEntryRules:      user.KeepFilterEntryRules,
 		AlwaysOpenExternalLinks:   user.AlwaysOpenExternalLinks,
 		OpenExternalLinksInNewTab: user.OpenExternalLinksInNewTab,
+		ShowVotingButtons:         user.ShowVotingButtons,
 	}
 
 	creds, err := h.store.WebAuthnCredentialsByUserID(user.ID)

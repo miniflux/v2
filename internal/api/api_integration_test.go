@@ -2932,3 +2932,85 @@ func TestFlushHistoryEndpoint(t *testing.T) {
 		t.Fatalf(`Invalid total, got %d`, readEntries.Total)
 	}
 }
+
+func TestUpdateEntryVoteEndpoint(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := regularUserClient.FeedEntries(feedID, &miniflux.Filter{Limit: 1})
+	if err != nil {
+		t.Fatalf(`Failed to get entries: %v`, err)
+	}
+
+	if len(result.Entries) == 0 {
+		t.Fatal(`Expected at least one entry`)
+	}
+
+	entryID := result.Entries[0].ID
+
+	// Test upvote
+	if err := regularUserClient.UpdateEntryVote(entryID, 1); err != nil {
+		t.Fatal(err)
+	}
+
+	entry, err := regularUserClient.Entry(entryID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.Vote != 1 {
+		t.Fatalf(`Expected vote to be 1, got %d`, entry.Vote)
+	}
+
+	// Test downvote
+	if err := regularUserClient.UpdateEntryVote(entryID, -1); err != nil {
+		t.Fatal(err)
+	}
+
+	entry, err = regularUserClient.Entry(entryID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.Vote != -1 {
+		t.Fatalf(`Expected vote to be -1, got %d`, entry.Vote)
+	}
+
+	// Test clear vote
+	if err := regularUserClient.UpdateEntryVote(entryID, 0); err != nil {
+		t.Fatal(err)
+	}
+
+	entry, err = regularUserClient.Entry(entryID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.Vote != 0 {
+		t.Fatalf(`Expected vote to be 0, got %d`, entry.Vote)
+	}
+
+	// Test invalid vote value
+	if err := regularUserClient.UpdateEntryVote(entryID, 5); err == nil {
+		t.Fatal(`Expected error for invalid vote value, got nil`)
+	}
+}
