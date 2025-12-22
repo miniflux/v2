@@ -1,7 +1,6 @@
-version: '3.8'
 services:
   app:
-    image: mcr.microsoft.com/devcontainers/go:1.23
+    image: mcr.microsoft.com/devcontainers/go:1-trixie # https://www.debian.org/releases/trixie/index.en.html
     volumes:
       - ..:/workspace:cached
     command: sleep infinity

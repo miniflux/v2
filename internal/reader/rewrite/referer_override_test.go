@@ -53,6 +53,21 @@ func TestGetRefererForURL(t *testing.T) {
 			url:      "https://example.com/image.jpg",
 			expected: "",
 		},
+		{
+			name:     "Exact hostname match",
+			url:      "https://appinn.com/some/path",
+			expected: "https://appinn.com",
+		},
+		{
+			name:     "Only hostnames starting with a dot should match as suffix",
+			url:      "https://fake-appinn.com/some/path",
+			expected: "",
+		},
+		{
+			name:     "Subdomain match with suffix",
+			url:      "https://sub.moyu.im/image.png",
+			expected: "https://i.jandan.net",
+		},
 	}
 
 	for _, tc := range testCases {

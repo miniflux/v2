@@ -51,7 +51,7 @@ func (cp *configParser) ParseFile(filename string) (*configOptions, error) {
 
 func (cp *configParser) postParsing() error {
 	// Parse basePath and rootURL based on BASE_URL
-	baseURL := cp.options.options["BASE_URL"].ParsedStringValue
+	baseURL := cp.options.options["BASE_URL"].parsedStringValue
 	baseURL = strings.TrimSuffix(baseURL, "/")
 
 	parsedURL, err := url.Parse(baseURL)
@@ -64,14 +64,14 @@ func (cp *configParser) postParsing() error {
 		return errors.New("BASE_URL scheme must be http or https")
 	}
 
-	cp.options.options["BASE_URL"].ParsedStringValue = baseURL
+	cp.options.options["BASE_URL"].parsedStringValue = baseURL
 	cp.options.basePath = parsedURL.Path
 
 	parsedURL.Path = ""
 	cp.options.rootURL = parsedURL.String()
 
 	// Parse YouTube embed domain based on YOUTUBE_EMBED_URL_OVERRIDE
-	youTubeEmbedURLOverride := cp.options.options["YOUTUBE_EMBED_URL_OVERRIDE"].ParsedStringValue
+	youTubeEmbedURLOverride := cp.options.options["YOUTUBE_EMBED_URL_OVERRIDE"].parsedStringValue
 	if youTubeEmbedURLOverride != "" {
 		parsedYouTubeEmbedURL, err := url.Parse(youTubeEmbedURLOverride)
 		if err != nil {
@@ -81,16 +81,16 @@ func (cp *configParser) postParsing() error {
 	}
 
 	// Generate a media proxy private key if not set
-	if len(cp.options.options["MEDIA_PROXY_PRIVATE_KEY"].ParsedBytesValue) == 0 {
+	if len(cp.options.options["MEDIA_PROXY_PRIVATE_KEY"].parsedBytesValue) == 0 {
 		randomKey := make([]byte, 16)
 		rand.Read(randomKey)
-		cp.options.options["MEDIA_PROXY_PRIVATE_KEY"].ParsedBytesValue = randomKey
+		cp.options.options["MEDIA_PROXY_PRIVATE_KEY"].parsedBytesValue = randomKey
 	}
 
 	// Override LISTEN_ADDR with PORT if set (for compatibility reasons)
 	if cp.options.Port() != "" {
-		cp.options.options["LISTEN_ADDR"].ParsedStringList = []string{":" + cp.options.Port()}
-		cp.options.options["LISTEN_ADDR"].RawValue = ":" + cp.options.Port()
+		cp.options.options["LISTEN_ADDR"].parsedStringList = []string{":" + cp.options.Port()}
+		cp.options.options["LISTEN_ADDR"].rawValue = ":" + cp.options.Port()
 	}
 
 	return nil
@@ -124,68 +124,68 @@ func (cp *configParser) parseLine(key, value string) error {
 	}
 
 	// Validate the option if a validator is provided
-	if field.Validator != nil {
-		if err := field.Validator(value); err != nil {
+	if field.validator != nil {
+		if err := field.validator(value); err != nil {
 			return fmt.Errorf("invalid value for key %s: %v", key, err)
 		}
 	}
 
 	// Convert the raw value based on its type
-	switch field.ValueType {
+	switch field.valueType {
 	case stringType:
-		field.ParsedStringValue = parseStringValue(value, field.ParsedStringValue)
-		field.RawValue = value
+		field.parsedStringValue = parseStringValue(value, field.parsedStringValue)
+		field.rawValue = value
 	case stringListType:
-		field.ParsedStringList = parseStringListValue(value, field.ParsedStringList)
-		field.RawValue = value
+		field.parsedStringList = parseStringListValue(value, field.parsedStringList)
+		field.rawValue = value
 	case boolType:
-		parsedValue, err := parseBoolValue(value, field.ParsedBoolValue)
+		parsedValue, err := parseBoolValue(value, field.parsedBoolValue)
 		if err != nil {
 			return fmt.Errorf("invalid boolean value for key %s: %v", key, err)
 		}
-		field.ParsedBoolValue = parsedValue
-		field.RawValue = value
+		field.parsedBoolValue = parsedValue
+		field.rawValue = value
 	case intType:
-		field.ParsedIntValue = parseIntValue(value, field.ParsedIntValue)
-		field.RawValue = value
+		field.parsedIntValue = parseIntValue(value, field.parsedIntValue)
+		field.rawValue = value
 	case int64Type:
-		field.ParsedInt64Value = ParsedInt64Value(value, field.ParsedInt64Value)
-		field.RawValue = value
+		field.parsedInt64Value = ParsedInt64Value(value, field.parsedInt64Value)
+		field.rawValue = value
 	case secondType:
-		field.ParsedDuration = parseDurationValue(value, time.Second, field.ParsedDuration)
-		field.RawValue = value
+		field.parsedDuration = parseDurationValue(value, time.Second, field.parsedDuration)
+		field.rawValue = value
 	case minuteType:
-		field.ParsedDuration = parseDurationValue(value, time.Minute, field.ParsedDuration)
-		field.RawValue = value
+		field.parsedDuration = parseDurationValue(value, time.Minute, field.parsedDuration)
+		field.rawValue = value
 	case hourType:
-		field.ParsedDuration = parseDurationValue(value, time.Hour, field.ParsedDuration)
-		field.RawValue = value
+		field.parsedDuration = parseDurationValue(value, time.Hour, field.parsedDuration)
+		field.rawValue = value
 	case dayType:
-		field.ParsedDuration = parseDurationValue(value, time.Hour*24, field.ParsedDuration)
-		field.RawValue = value
+		field.parsedDuration = parseDurationValue(value, time.Hour*24, field.parsedDuration)
+		field.rawValue = value
 	case urlType:
-		parsedURL, err := parseURLValue(value, field.ParsedURLValue)
+		parsedURL, err := parseURLValue(value, field.parsedURLValue)
 		if err != nil {
 			return fmt.Errorf("invalid URL for key %s: %v", key, err)
 		}
-		field.ParsedURLValue = parsedURL
-		field.RawValue = value
+		field.parsedURLValue = parsedURL
+		field.rawValue = value
 	case secretFileType:
 		secretValue, err := readSecretFileValue(value)
 		if err != nil {
 			return fmt.Errorf("error reading secret file for key %s: %v", key, err)
 		}
-		if field.TargetKey != "" {
-			if targetField, ok := cp.options.options[field.TargetKey]; ok {
-				targetField.ParsedStringValue = secretValue
-				targetField.RawValue = secretValue
+		if field.targetKey != "" {
+			if targetField, ok := cp.options.options[field.targetKey]; ok {
+				targetField.parsedStringValue = secretValue
+				targetField.rawValue = secretValue
 			}
 		}
-		field.RawValue = value
+		field.rawValue = value
 	case bytesType:
 		if value != "" {
-			field.ParsedBytesValue = []byte(value)
-			field.RawValue = value
+			field.parsedBytesValue = []byte(value)
+			field.rawValue = value
 		}
 	}
 
