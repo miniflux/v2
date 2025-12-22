@@ -11,6 +11,7 @@
     "action.save": "Pó-chûn",
     "action.subscribe": "Tēng",
     "action.update": "Ōaⁿ-sin",
+    "action.test": "Thui-sàng thé-sit",
     "alert.account_linked": "Í-keng kah lí ê gōa-pō͘ kháu-chō kiat chòe-hé--ah!",
     "alert.account_unlinked": "Kah lí ê gōa-pō͘ kháu-chō ê kiat í-keng phah khui--ah!",
     "alert.background_feed_refresh": "Tng leh pōe-āu ōaⁿ-sin só͘-ū siau-sit lâi-goân, lí ē-sái kè-sio̍k sú-iōng Miniflux。",
@@ -32,6 +33,7 @@
         "Lí í-keng ín-khí siuⁿ chōe pái siau-sit lâi-goân ōaⁿ-sin, chhiáⁿ tán-hāu %d hun-cheng āu koh chhì-khòaⁿ-māi."
     ],
     "confirm.loading": "Tng leh chip-hêng…",
+    "form.submit.testing": "Tng leh thé-sit…",
     "confirm.no": "Hóⁿ",
     "confirm.question": "Kám ū khak-tēng?",
     "confirm.question.refresh": "Kám beh kiông-chè têng lia̍h?",

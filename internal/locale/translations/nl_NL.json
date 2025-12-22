@@ -11,6 +11,7 @@
     "action.save": "Opslaan",
     "action.subscribe": "Abonneren",
     "action.update": "Bijwerken",
+    "action.test": "Test versturen",
     "alert.account_linked": "Jouw externe account is nu gekoppeld!",
     "alert.account_unlinked": "Jouw externe account is nu ontkoppeld!",
     "alert.background_feed_refresh": "Alle feeds worden op de achtergrond vernieuwd. Je kunt Miniflux blijven gebruiker terwijl dit proces draait.",
@@ -33,6 +34,7 @@
         "Je hebt te veel feed-vernieuwingen getriggered. Wacht aub %d minuten voor opnieuw proberen."
     ],
     "confirm.loading": "Bezig...",
+    "form.submit.testing": "Testen...",
     "confirm.no": "nee",
     "confirm.question": "Weet je het zeker?",
     "confirm.question.refresh": "Wil je vernieuwen forceren?",

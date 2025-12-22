@@ -11,6 +11,7 @@
     "action.save": "Salvează",
     "action.subscribe": "Abonează-te",
     "action.update": "Actualizare",
+    "action.test": "Trimite test",
     "alert.account_linked": "Contul dvs. extern este atașat!",
     "alert.account_unlinked": "Am decuplat contul dvs. extern!",
     "alert.background_feed_refresh": "Toate fluxurile sunt actualizate în fundal. Puteți să continuați utilizarea Miniflux în timp ce procesul rulează.",
@@ -34,6 +35,7 @@
         "Ați activat actualizarea a prea multe fluxuri de informații. Vă rog să așteptați %d minute înainte de a reîncerca."
     ],
     "confirm.loading": "În progres…",
+    "form.submit.testing": "Se testează…",
     "confirm.no": "nu",
     "confirm.question": "Suneți sigur?",
     "confirm.question.refresh": "Sunteți sigur că vreți să forțați reîmprospătarea?",
