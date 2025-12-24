@@ -88,6 +88,11 @@ func NewConfigOptions() *configOptions {
 				valueType:         secretFileType,
 				targetKey:         "ADMIN_USERNAME",
 			},
+			"APPLY_FILTER_RULES_ON_PROCESSED_ENTRY": {
+				ParsedBoolValue: false,
+				RawValue:        "0",
+				ValueType:       boolType,
+			},
 			"AUTH_PROXY_HEADER": {
 				parsedStringValue: "",
 				rawValue:          "",
@@ -597,6 +602,10 @@ func (c *configOptions) AdminPassword() string {
 
 func (c *configOptions) AdminUsername() string {
 	return c.options["ADMIN_USERNAME"].parsedStringValue
+}
+
+func (c *configOptions) ApplyFilterRulesOnProcessedEntry() bool {
+	return c.options["APPLY_FILTER_RULES_ON_PROCESSED_ENTRY"].ParsedBoolValue
 }
 
 func (c *configOptions) AuthProxyHeader() string {
