@@ -246,6 +246,7 @@ func (s *Storage) InsertEntryForFeed(userID, feedID int64, entry *model.Entry, u
     if err != nil {
         return false, fmt.Errorf("store: unable to start transaction: %v", err)
     }
+	defer tx.Rollback()
 
     exists, err := s.entryExists(tx, entry)
     if err != nil {
