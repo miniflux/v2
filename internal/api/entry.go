@@ -358,13 +358,11 @@ func (h *handler) importFeedEntry(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    if req.Status != model.EntryStatusRemoved {
-        if err := h.store.SetEntriesStatus(userID, []int64{entry.ID}, req.Status); err != nil {
-            json.ServerError(w, r, err)
-            return
-        }
-        entry.Status = req.Status
-    }
+	if err := h.store.SetEntriesStatus(userID, []int64{entry.ID}, req.Status); err != nil {
+    	json.ServerError(w, r, err)
+	    return
+	}
+	entry.Status = req.Status
 
     if req.Starred {
         if err := h.store.SetEntriesStarredState(userID, []int64{entry.ID}, true); err != nil {
