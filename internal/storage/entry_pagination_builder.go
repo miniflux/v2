@@ -59,6 +59,23 @@ func (e *EntryPaginationBuilder) WithStatus(status string) {
 	}
 }
 
+// WithStatusOrEntryID adds a status condition that always includes a specific entry ID.
+func (e *EntryPaginationBuilder) WithStatusOrEntryID(status string, entryID int64) {
+	if status == "" {
+		return
+	}
+
+	if entryID == 0 {
+		e.WithStatus(status)
+		return
+	}
+
+	statusArg := len(e.args) + 1
+	entryArg := len(e.args) + 2
+	e.conditions = append(e.conditions, fmt.Sprintf("(e.status = $%d OR e.id = $%d)", statusArg, entryArg))
+	e.args = append(e.args, status, entryID)
+}
+
 func (e *EntryPaginationBuilder) WithTags(tags []string) {
 	if len(tags) > 0 {
 		for _, tag := range tags {

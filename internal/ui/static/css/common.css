@@ -462,6 +462,38 @@ input[type="checkbox"] {
     margin-bottom: 10px;
 }
 
+.search-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.search-input-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.search-input-row input[type="search"] {
+    margin: 0;
+}
+
+.search-input-row .button {
+    margin: 0;
+}
+
+.search-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+.search-filter input[type="checkbox"] {
+    margin: 0;
+}
+
 textarea {
     width: 350px;
     color: var(--input-color);

@@ -22,6 +22,7 @@ func (h *handler) showSearchPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	searchQuery := request.QueryStringParam(r, "q", "")
+	unreadOnly := request.QueryBoolParam(r, "unread", false)
 	offset := request.QueryIntParam(r, "offset", 0)
 
 	var entries model.Entries
@@ -30,6 +31,9 @@ func (h *handler) showSearchPage(w http.ResponseWriter, r *http.Request) {
 	if searchQuery != "" {
 		builder := h.store.NewEntryQueryBuilder(user.ID)
 		builder.WithSearchQuery(searchQuery)
+		if unreadOnly {
+			builder.WithStatus(model.EntryStatusUnread)
+		}
 		builder.WithoutStatus(model.EntryStatusRemoved)
 		builder.WithOffset(offset)
 		builder.WithLimit(user.EntriesPerPage)
@@ -51,8 +55,10 @@ func (h *handler) showSearchPage(w http.ResponseWriter, r *http.Request) {
 	view := view.New(h.tpl, r, sess)
 	pagination := getPagination(route.Path(h.router, "search"), entriesCount, offset, user.EntriesPerPage)
 	pagination.SearchQuery = searchQuery
+	pagination.UnreadOnly = unreadOnly
 
 	view.Set("searchQuery", searchQuery)
+	view.Set("searchUnreadOnly", unreadOnly)
 	view.Set("entries", entries)
 	view.Set("total", entriesCount)
 	view.Set("pagination", pagination)

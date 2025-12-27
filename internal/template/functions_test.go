@@ -162,6 +162,44 @@ func TestFormatFileSize(t *testing.T) {
 	}
 }
 
+func TestQueryString(t *testing.T) {
+	params, err := dict("q", "ai", "unread", true, "offset", 20)
+	if err != nil {
+		t.Fatalf(`The dict should be valid: %v`, err)
+	}
+
+	got := (&funcMap{}).Map()["queryString"].(func(map[string]any) string)(params)
+	if got == "" {
+		t.Fatalf("Expected a query string, got an empty string")
+	}
+
+	if !strings.HasPrefix(got, "?") {
+		t.Fatalf(`Expected query string to start with "?", got %q`, got)
+	}
+
+	if !strings.Contains(got, "q=ai") {
+		t.Fatalf(`Expected query string to contain q=ai, got %q`, got)
+	}
+
+	if !strings.Contains(got, "unread=1") {
+		t.Fatalf(`Expected query string to contain unread=1, got %q`, got)
+	}
+
+	if !strings.Contains(got, "offset=20") {
+		t.Fatalf(`Expected query string to contain offset=20, got %q`, got)
+	}
+
+	empty, err := dict("q", "", "unread", false, "offset", 0)
+	if err != nil {
+		t.Fatalf(`The dict should be valid: %v`, err)
+	}
+
+	got = (&funcMap{}).Map()["queryString"].(func(map[string]any) string)(empty)
+	if got != "" {
+		t.Fatalf(`Expected empty query string, got %q`, got)
+	}
+}
+
 func TestCSPExternalFont(t *testing.T) {
 	want := []string{
 		`default-src 'none';`,
