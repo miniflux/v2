@@ -352,8 +352,8 @@ func (h *handler) importFeedEntry(w http.ResponseWriter, r *http.Request) {
         entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
     }
 
-    created, err := h.store.InsertEntryForFeed(userID, feedID, entry, false)
-    if err != nil {
+    created, err := h.store.InsertEntryForFeed(userID, feedID, entry)
+	if err != nil {
         json.ServerError(w, r, err)
         return
     }

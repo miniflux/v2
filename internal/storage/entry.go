@@ -236,10 +236,26 @@ func (s *Storage) entryExists(tx *sql.Tx, entry *model.Entry) (bool, error) {
 	return result, nil
 }
 
+func (s *Storage) getEntryIDByHash(tx *sql.Tx, feedID int64, entryHash string) (int64, error) {
+    var entryID int64
+
+    err := tx.QueryRow(
+        `SELECT id FROM entries WHERE feed_id=$1 AND hash=$2 LIMIT 1`,
+        feedID,
+        entryHash,
+    ).Scan(&entryID)
+
+    if err != nil {
+        return 0, fmt.Errorf(`store: unable to fetch entry ID: %v`, err)
+    }
+
+    return entryID, nil
+}
+
 // InsertEntryForFeed inserts a single entry into a feed, optionally updating if it already exists.
 // Returns true if a new entry was created, false if an existing one was reused.
-func (s *Storage) InsertEntryForFeed(userID, feedID int64, entry *model.Entry, updateExisting bool) (bool, error) {
-    entry.UserID = userID
+func (s *Storage) InsertEntryForFeed(userID, feedID int64, entry *model.Entry) (bool, error) {
+	entry.UserID = userID
     entry.FeedID = feedID
 
     tx, err := s.db.Begin()
@@ -248,25 +264,22 @@ func (s *Storage) InsertEntryForFeed(userID, feedID int64, entry *model.Entry, u
     }
 	defer tx.Rollback()
 
-    exists, err := s.entryExists(tx, entry)
-    if err != nil {
-        tx.Rollback()
-        return false, err
-    }
+	exists, err := s.entryExists(tx, entry)
+	if err != nil {
+    	return false, err
+	}
 
-    if exists {
-        if updateExisting {
-            if err := s.updateEntry(tx, entry); err != nil {
-                tx.Rollback()
-                return false, err
-            }
-        }
-    } else {
-        if err := s.createEntry(tx, entry); err != nil {
-            tx.Rollback()
-            return false, err
-        }
-    }
+	if exists {
+    	entryID, err := s.getEntryIDByHash(tx, entry.FeedID, entry.Hash)
+    	if err != nil {
+        	return false, err
+    	}
+    	entry.ID = entryID
+	} else {
+    	if err := s.createEntry(tx, entry); err != nil {
+        	return false, err
+    	}
+	}
 
     if err := tx.Commit(); err != nil {
         return false, err
