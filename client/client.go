@@ -717,6 +717,32 @@ func (c *Client) UpdateFeedContext(ctx context.Context, feedID int64, feedChange
 	return f, nil
 }
 
+// ImportFeedEntry imports a single entry into a feed.
+func (c *Client) ImportFeedEntry(feedID int64, payload any) (int64, error) {
+	ctx, cancel := withDefaultTimeout()
+	defer cancel()
+
+	body, err := c.request.Post(
+		ctx,
+		fmt.Sprintf("/v1/feeds/%d/entries/import", feedID),
+		payload,
+	)
+	if err != nil {
+		return 0, err
+	}
+	defer body.Close()
+
+	var response struct {
+		ID int64 `json:"id"`
+	}
+
+	if err := json.NewDecoder(body).Decode(&response); err != nil {
+		return 0, fmt.Errorf("miniflux: json error (%v)", err)
+	}
+
+	return response.ID, nil
+}
+
 // MarkFeedAsRead marks all unread entries of the feed as read.
 func (c *Client) MarkFeedAsRead(feedID int64) error {
 	ctx, cancel := withDefaultTimeout()
