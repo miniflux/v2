@@ -82,6 +82,18 @@ a:hover {
     translate: -50% 0;
 }
 
+/* Smoother pages transition */
+@media not all and (prefers-reduced-motion: reduce) {
+    @view-transition {
+        navigation: auto;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
+
 /* Header and main menu */
 .header {
     margin-top: 10px;
