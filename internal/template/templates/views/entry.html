@@ -53,6 +53,7 @@
                 {{ if .user.ShowVotingButtons }}
                 <li>
                     <button
+                        aria-label="{{ t "entry.vote.upvote" }}"
                         class="page-button vote-button vote-up{{ if eq .entry.Vote 1 }} vote-active{{ end }}"
                         title="{{ t "entry.vote.upvote" }}"
                         data-vote-entry="true"
@@ -63,6 +64,7 @@
                 </li>
                 <li>
                     <button
+                        aria-label="{{ t "entry.vote.downvote" }}"
                         class="page-button vote-button vote-down{{ if eq .entry.Vote -1 }} vote-active{{ end }}"
                         title="{{ t "entry.vote.downvote" }}"
                         data-vote-entry="true"
