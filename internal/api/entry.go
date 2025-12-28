@@ -370,7 +370,23 @@ func (h *handler) updateEntryVote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.store.UpdateEntryVote(request.UserID(r), entryID, req.Vote); err != nil {
+	userID := request.UserID(r)
+	builder := h.store.NewEntryQueryBuilder(userID)
+	builder.WithEntryID(entryID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
+
+	entry, err := builder.GetEntry()
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if entry == nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	if err := h.store.UpdateEntryVote(userID, entryID, req.Vote); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}

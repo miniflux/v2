@@ -3013,4 +3013,42 @@ func TestUpdateEntryVoteEndpoint(t *testing.T) {
 	if err := regularUserClient.UpdateEntryVote(entryID, 5); err == nil {
 		t.Fatal(`Expected error for invalid vote value, got nil`)
 	}
+
+	// Test voting on non-existent entry
+	nonExistentEntryID := int64(99999999)
+	if err := regularUserClient.UpdateEntryVote(nonExistentEntryID, 1); err != miniflux.ErrNotFound {
+		t.Fatalf(`Expected ErrNotFound for non-existent entry, got %v`, err)
+	}
+
+	// Test voting on another user's entry
+	anotherTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(anotherTestUser.ID)
+
+	anotherUserClient := miniflux.NewClient(testConfig.testBaseURL, anotherTestUser.Username, testConfig.testRegularPassword)
+
+	if err := anotherUserClient.UpdateEntryVote(entryID, 1); err != miniflux.ErrNotFound {
+		t.Fatalf(`Expected ErrNotFound when voting on another user's entry, got %v`, err)
+	}
+
+	// Test voting on removed entry
+	removedEntryResult, err := regularUserClient.FeedEntries(feedID, &miniflux.Filter{Limit: 2})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(removedEntryResult.Entries) < 2 {
+		t.Skip(`Not enough entries to test removed entry scenario`)
+	}
+
+	removedEntryID := removedEntryResult.Entries[1].ID
+	if err := regularUserClient.UpdateEntries([]int64{removedEntryID}, miniflux.EntryStatusRemoved); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := regularUserClient.UpdateEntryVote(removedEntryID, 1); err != miniflux.ErrNotFound {
+		t.Fatalf(`Expected ErrNotFound when voting on removed entry, got %v`, err)
+	}
 }
