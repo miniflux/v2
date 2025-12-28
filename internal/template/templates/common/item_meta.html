@@ -17,6 +17,7 @@
         {{ if .user.ShowVotingButtons }}
         <li class="item-meta-icons-vote">
             <button
+                aria-label="{{ t "entry.vote.upvote" }}"
                 aria-describedby="entry-title-{{ .entry.ID }}"
                 title="{{ t "entry.vote.upvote" }}"
                 data-vote-entry="true"
@@ -26,6 +27,7 @@
                 class="vote-button vote-up{{ if eq .entry.Vote 1 }} vote-active{{ end }}"
                 >▲</button>
             <button
+                aria-label="{{ t "entry.vote.downvote" }}"
                 aria-describedby="entry-title-{{ .entry.ID }}"
                 title="{{ t "entry.vote.downvote" }}"
                 data-vote-entry="true"
