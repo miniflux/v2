@@ -49,6 +49,8 @@
     "entry.starred.toast.on": "星を付けました",
     "entry.starred.toggle.off": "星を外す",
     "entry.starred.toggle.on": "星を付ける",
+    "entry.vote.upvote": "Upvote",
+    "entry.vote.downvote": "Downvote",
     "entry.comments.label": "コメント",
     "entry.comments.title": "コメントを見る",
     "entry.estimated_reading_time": [
@@ -366,6 +368,7 @@
     "form.prefs.label.media_playback_rate": "オーディオ/ビデオの再生速度",
     "form.prefs.label.open_external_links_in_new_tab": "外部リンクを新しいタブで開く（リンクに target=\"_blank\" を追加）",
     "form.prefs.label.show_reading_time": "記事の推定読書時間を表示する",
+    "form.prefs.label.show_voting_buttons": "Show voting buttons (upvote/downvote) for entries",
     "form.prefs.label.theme": "テーマ",
     "form.prefs.label.timezone": "タイムゾーン",
     "form.prefs.select.alphabetical": "アルファベット順",

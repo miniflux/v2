@@ -736,6 +736,43 @@ function handleStarAction(element) {
 }
 
 /**
+ * Handle voting on an entry.
+ *
+ * @param {Element} element - The element that triggered the vote action.
+ */
+function handleVoteAction(element) {
+    const currentEntry = findEntry(element);
+    if (!currentEntry) return;
+
+    // Find the actual button element (in case we clicked on a child element like icon-label)
+    const buttonElement = element.closest(":is(a, button)[data-vote-entry]");
+    if (!buttonElement) return;
+
+    const voteValue = parseInt(buttonElement.dataset.voteValue);
+    const currentVote = parseInt(buttonElement.dataset.currentVote);
+
+    // Calculate new vote: if clicking the same vote, toggle to 0, otherwise set to new vote
+    const newVote = (currentVote === voteValue) ? 0 : voteValue;
+
+    // Build the URL with the new vote value
+    const baseUrl = buttonElement.dataset.voteUrl.replace(/\/[-]?\d+$/, '/' + newVote);
+
+    sendPOSTRequest(baseUrl).then(() => {
+        // Update all vote buttons in this entry
+        const voteButtons = currentEntry.querySelectorAll(":is(a, button)[data-vote-entry]");
+        voteButtons.forEach(btn => {
+            btn.dataset.currentVote = newVote;
+            btn.classList.remove('vote-active');
+
+            const btnValue = parseInt(btn.dataset.voteValue);
+            if (newVote === btnValue) {
+                btn.classList.add('vote-active');
+            }
+        });
+    });
+}
+
+/**
  * Handle fetching the original content of an entry.
  *
  * @returns {void}
@@ -1238,6 +1275,7 @@ function initializeClickHandlers() {
     onClick(":is(a, button)[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
     onClick(":is(a, button)[data-fetch-content-entry]", handleFetchOriginalContentAction);
     onClick(":is(a, button)[data-share-status]", handleEntryShareAction);
+    onClick(":is(a, button)[data-vote-entry]", (event) => handleVoteAction(event.target));
 
     // Page actions with confirmation
     onClick(":is(a, button)[data-action=markPageAsRead]", (event) => handleConfirmationMessage(event.target, markPageAsReadAction));
