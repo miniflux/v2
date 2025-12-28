@@ -755,7 +755,7 @@ function handleVoteAction(element) {
     const newVote = (currentVote === voteValue) ? 0 : voteValue;
 
     // Build the URL with the new vote value
-    const baseUrl = buttonElement.dataset.voteUrl.replace(/\/[-]?1$/, '/' + newVote);
+    const baseUrl = buttonElement.dataset.voteUrl.replace(/\/[-]?\d+$/, '/' + newVote);
 
     sendPOSTRequest(baseUrl).then(() => {
         // Update all vote buttons in this entry
