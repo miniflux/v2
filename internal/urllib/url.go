@@ -6,7 +6,9 @@ package urllib // import "miniflux.app/v2/internal/urllib"
 import (
 	"errors"
 	"fmt"
+	"net"
 	"net/url"
+	"slices"
 	"strings"
 )
 
@@ -137,4 +139,34 @@ func JoinBaseURLAndPath(baseURL, path string) (string, error) {
 	}
 
 	return finalURL, nil
+}
+
+// ResolvesToPrivateIP resolves a hostname and returns true if
+// ANY resolved IP address is non-public.
+func ResolvesToPrivateIP(host string) (bool, error) {
+	ips, err := net.LookupIP(host)
+	if err != nil {
+		return false, err
+	}
+
+	if slices.ContainsFunc(ips, isNonPublicIP) {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+// isNonPublicIP returns true if the given IP is private, loopback,
+// link-local, multicast, or unspecified.
+func isNonPublicIP(ip net.IP) bool {
+	if ip == nil {
+		return true
+	}
+
+	return ip.IsPrivate() ||
+		ip.IsLoopback() ||
+		ip.IsLinkLocalUnicast() ||
+		ip.IsLinkLocalMulticast() ||
+		ip.IsMulticast() ||
+		ip.IsUnspecified()
 }
