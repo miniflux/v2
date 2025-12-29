@@ -19,6 +19,7 @@ import (
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/processor"
 	"miniflux.app/v2/internal/reader/readingtime"
+	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/validator"
 )
@@ -275,6 +276,11 @@ func (h *handler) updateEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if entryUpdateRequest.Content != nil {
+		sanitizedContent := sanitizer.SanitizeHTML(entry.URL, *entryUpdateRequest.Content, &sanitizer.SanitizerOptions{OpenLinksInNewTab: user.OpenExternalLinksInNewTab})
+		entryUpdateRequest.Content = &sanitizedContent
+	}
+
 	entryUpdateRequest.Patch(entry)
 	if user.ShowReadingTime {
 		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
@@ -326,7 +332,6 @@ func (h *handler) importFeedEntry(w http.ResponseWriter, r *http.Request) {
 	entry.URL = req.URL
 	entry.CommentsURL = req.CommentsURL
 	entry.Author = req.Author
-	entry.Content = req.Content
 	entry.Tags = req.Tags
 
 	if req.PublishedAt > 0 {
@@ -356,6 +361,10 @@ func (h *handler) importFeedEntry(w http.ResponseWriter, r *http.Request) {
 	if user == nil {
 		json.NotFound(w, r)
 		return
+	}
+
+	if req.Content != "" {
+		entry.Content = sanitizer.SanitizeHTML(entry.URL, req.Content, &sanitizer.SanitizerOptions{OpenLinksInNewTab: user.OpenExternalLinksInNewTab})
 	}
 
 	if user.ShowReadingTime {
