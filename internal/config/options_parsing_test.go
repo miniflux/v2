@@ -1431,6 +1431,30 @@ func TestMediaProxyHTTPClientTimeoutOptionParsing(t *testing.T) {
 	}
 }
 
+func TestMediaProxyAllowPrivateNetworksOptionParsing(t *testing.T) {
+	configParser := NewConfigParser()
+
+	if configParser.options.MediaProxyAllowPrivateNetworks() {
+		t.Fatalf("Expected MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS to be disabled by default")
+	}
+
+	if err := configParser.parseLines([]string{"MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS=1"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if !configParser.options.MediaProxyAllowPrivateNetworks() {
+		t.Fatalf("Expected MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS to be enabled")
+	}
+
+	if err := configParser.parseLines([]string{"MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS=0"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if configParser.options.MediaProxyAllowPrivateNetworks() {
+		t.Fatalf("Expected MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS to be disabled")
+	}
+}
+
 func TestMediaProxyPrivateKeyOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
 
