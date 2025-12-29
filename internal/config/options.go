@@ -300,6 +300,11 @@ func NewConfigOptions() *configOptions {
 				rawValue:        "0",
 				valueType:       boolType,
 			},
+			"ICON_FETCH_ALLOW_PRIVATE_NETWORKS": {
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
+			},
 			"INVIDIOUS_INSTANCE": {
 				parsedStringValue: "yewtu.be",
 				rawValue:          "yewtu.be",
@@ -781,6 +786,10 @@ func (c *configOptions) HTTPServerTimeout() time.Duration {
 
 func (c *configOptions) HTTPS() bool {
 	return c.options["HTTPS"].parsedBoolValue
+}
+
+func (c *configOptions) IconFetchAllowPrivateNetworks() bool {
+	return c.options["ICON_FETCH_ALLOW_PRIVATE_NETWORKS"].parsedBoolValue
 }
 
 func (c *configOptions) InvidiousInstance() string {
