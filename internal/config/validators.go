@@ -20,8 +20,8 @@ func validateChoices(rawValue string, choices []string) error {
 
 func validateListChoices(inputValues, choices []string) error {
 	for _, value := range inputValues {
-		if !slices.Contains(choices, value) {
-			return fmt.Errorf("value must be one of: %v", strings.Join(choices, ", "))
+		if err := validateChoices(value, choices); err != nil {
+			return err
 		}
 	}
 	return nil
