@@ -1364,6 +1364,30 @@ func TestHTTPClientTimeoutOptionParsing(t *testing.T) {
 	}
 }
 
+func TestIconFetchAllowPrivateNetworksOptionParsing(t *testing.T) {
+	configParser := NewConfigParser()
+
+	if configParser.options.IconFetchAllowPrivateNetworks() {
+		t.Fatalf("Expected ICON_FETCH_ALLOW_PRIVATE_NETWORKS to be disabled by default")
+	}
+
+	if err := configParser.parseLines([]string{"ICON_FETCH_ALLOW_PRIVATE_NETWORKS=1"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if !configParser.options.IconFetchAllowPrivateNetworks() {
+		t.Fatalf("Expected ICON_FETCH_ALLOW_PRIVATE_NETWORKS to be enabled")
+	}
+
+	if err := configParser.parseLines([]string{"ICON_FETCH_ALLOW_PRIVATE_NETWORKS=0"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if configParser.options.IconFetchAllowPrivateNetworks() {
+		t.Fatalf("Expected ICON_FETCH_ALLOW_PRIVATE_NETWORKS to be disabled")
+	}
+}
+
 func TestHTTPServerTimeoutOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
 
