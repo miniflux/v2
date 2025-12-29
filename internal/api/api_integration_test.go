@@ -14,6 +14,7 @@ import (
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
+	"miniflux.app/v2/internal/model"
 )
 
 const skipIntegrationTestsMessage = `Set TEST_MINIFLUX_* environment variables to run the API integration tests`
@@ -2930,5 +2931,57 @@ func TestFlushHistoryEndpoint(t *testing.T) {
 
 	if readEntries.Total != 0 {
 		t.Fatalf(`Invalid total, got %d`, readEntries.Total)
+	}
+}
+
+func TestImportFeedEntryEndpoint(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	client := miniflux.NewClient(
+		testConfig.testBaseURL,
+		testConfig.testAdminUsername,
+		testConfig.testAdminPassword,
+	)
+
+	// Create a feed
+	feedID, err := client.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer client.DeleteFeed(feedID)
+
+	payload := map[string]any{
+		"title":        "Imported Entry",
+		"url":          "https://example.org/imported-entry",
+		"content":      "Hello world",
+		"external_id":  "integration-test-entry-1",
+		"status":       model.EntryStatusUnread,
+		"starred":      false,
+		"published_at": 0,
+	}
+
+	// First import
+	firstID, err := client.ImportFeedEntry(feedID, payload)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if firstID == 0 {
+		t.Fatal("expected non-zero entry ID on first import")
+	}
+
+	// Second import (same payload)
+	secondID, err := client.ImportFeedEntry(feedID, payload)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if secondID != firstID {
+		t.Fatalf("expected same entry ID on re-import, got %d and %d", firstID, secondID)
 	}
 }

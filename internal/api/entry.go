@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/integration"
@@ -285,6 +286,107 @@ func (h *handler) updateEntry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.Created(w, r, entry)
+}
+
+func (h *handler) importFeedEntry(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	feedID := request.RouteInt64Param(r, "feedID")
+
+	if feedID <= 0 {
+		json.BadRequest(w, r, errors.New("invalid feed ID"))
+		return
+	}
+
+	if !h.store.FeedExists(userID, feedID) {
+		json.BadRequest(w, r, errors.New("feed does not exist"))
+		return
+	}
+
+	var req EntryImportRequest
+	if err := json_parser.NewDecoder(r.Body).Decode(&req); err != nil {
+		json.BadRequest(w, r, err)
+		return
+	}
+
+	if req.URL == "" {
+		json.BadRequest(w, r, errors.New("url is required"))
+		return
+	}
+
+	if req.Status == "" {
+		req.Status = model.EntryStatusRead
+	}
+
+	if err := validator.ValidateEntryStatus(req.Status); err != nil {
+		json.BadRequest(w, r, err)
+		return
+	}
+
+	entry := model.NewEntry()
+	entry.URL = req.URL
+	entry.CommentsURL = req.CommentsURL
+	entry.Author = req.Author
+	entry.Content = req.Content
+	entry.Tags = req.Tags
+
+	if req.PublishedAt > 0 {
+		entry.Date = time.Unix(req.PublishedAt, 0).UTC()
+	} else {
+		entry.Date = time.Now().UTC()
+	}
+
+	if req.Title == "" {
+		entry.Title = entry.URL
+	} else {
+		entry.Title = req.Title
+	}
+
+	hashInput := req.ExternalID
+	if hashInput == "" {
+		hashInput = req.URL
+	}
+	entry.Hash = crypto.HashFromBytes([]byte(hashInput))
+
+	user, err := h.store.UserByID(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if user == nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	if user.ShowReadingTime {
+		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
+	}
+
+	created, err := h.store.InsertEntryForFeed(userID, feedID, entry)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if err := h.store.SetEntriesStatus(userID, []int64{entry.ID}, req.Status); err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+	entry.Status = req.Status
+
+	if req.Starred {
+		if err := h.store.SetEntriesStarredState(userID, []int64{entry.ID}, true); err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+		entry.Starred = true
+	}
+
+	if created {
+		json.Created(w, r, map[string]int64{"id": entry.ID})
+	} else {
+		json.OK(w, r, map[string]int64{"id": entry.ID})
+	}
 }
 
 func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {

@@ -62,6 +62,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	sr.HandleFunc("/export", handler.exportFeeds).Methods(http.MethodGet)
 	sr.HandleFunc("/import", handler.importFeeds).Methods(http.MethodPost)
 	sr.HandleFunc("/feeds/{feedID}/entries", handler.getFeedEntries).Methods(http.MethodGet)
+	sr.HandleFunc("/feeds/{feedID}/entries/import", handler.importFeedEntry).Methods(http.MethodPost)
 	sr.HandleFunc("/feeds/{feedID}/entries/{entryID}", handler.getFeedEntry).Methods(http.MethodGet)
 	sr.HandleFunc("/entries", handler.getEntries).Methods(http.MethodGet)
 	sr.HandleFunc("/entries", handler.setEntryStatus).Methods(http.MethodPut)
