@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "September 29, 2025" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "December 29, 2025" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -336,6 +336,11 @@ Forces cookies to use secure flag and send HSTS header\&.
 .br
 Default is disabled\&.
 .TP
+.B ICON_FETCH_ALLOW_PRIVATE_NETWORKS
+Set to 1 to allow downloading favicons that resolve to private or loopback networks\&.
+.br
+Disabled by default, private networks are refused\&.
+.TP
 .B INVIDIOUS_INSTANCE
 Set a custom invidious instance to use\&.
 .br
@@ -392,6 +397,11 @@ Default is empty, Miniflux does the proxying\&.
 Time limit in seconds before the media proxy HTTP client cancel the request\&.
 .br
 Default is 120 seconds\&.
+.TP
+.B MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS
+Set to 1 to allow proxying media that resolves to private or loopback networks\&.
+.br
+Disabled by default, private networks are refused\&.
 .TP
 .B MEDIA_PROXY_RESOURCE_TYPES
 A comma-separated list of media types to proxify. Supported values are: image, audio, video\&.

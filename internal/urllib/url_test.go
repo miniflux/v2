@@ -3,7 +3,10 @@
 
 package urllib // import "miniflux.app/v2/internal/urllib"
 
-import "testing"
+import (
+	"net"
+	"testing"
+)
 
 func TestIsRelativePath(t *testing.T) {
 	scenarios := map[string]bool{
@@ -152,5 +155,74 @@ func TestJoinBaseURLAndPath(t *testing.T) {
 				t.Errorf("JoinBaseURLAndPath = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestIsNonPublicIP(t *testing.T) {
+	testCases := []struct {
+		name     string
+		ipString string
+		want     bool
+	}{
+		{"nil", "", true},
+		{"private IPv4", "192.168.1.10", true},
+		{"loopback IPv4", "127.0.0.1", true},
+		{"link-local IPv4", "169.254.42.1", true},
+		{"multicast IPv4", "224.0.0.1", true},
+		{"unspecified IPv6", "::", true},
+		{"loopback IPv6", "::1", true},
+		{"multicast IPv6", "ff02::1", true},
+		{"public IPv4", "93.184.216.34", false},
+		{"public IPv6", "2001:4860:4860::8888", false},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			var ip net.IP
+			if tc.ipString != "" {
+				ip = net.ParseIP(tc.ipString)
+				if ip == nil {
+					t.Fatalf("unable to parse %q", tc.ipString)
+				}
+			}
+
+			if got := isNonPublicIP(ip); got != tc.want {
+				t.Fatalf("unexpected result for %s: got %v want %v", tc.name, got, tc.want)
+			}
+		})
+	}
+}
+
+func TestResolvesToPrivateIP(t *testing.T) {
+	testCases := []struct {
+		name string
+		host string
+		want bool
+	}{
+		{"localhost", "localhost", true},
+		{"example.org", "example.org", false},
+		{"loopback IPv4 literal", "127.0.0.1", true},
+		{"loopback IPv6 literal", "::1", true},
+		{"private IPv4 literal", "192.168.1.1", true},
+		{"public IPv4 literal", "93.184.216.34", false},
+		{"public IPv6 literal", "2001:4860:4860::8888", false},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := ResolvesToPrivateIP(tc.host)
+			if err != nil {
+				t.Fatalf("unexpected error for %s: %v", tc.host, err)
+			}
+			if got != tc.want {
+				t.Fatalf("unexpected result for %s: got %v want %v", tc.name, got, tc.want)
+			}
+		})
+	}
+}
+
+func TestResolvesToPrivateIPError(t *testing.T) {
+	if _, err := ResolvesToPrivateIP(""); err == nil {
+		t.Fatalf("expected an error for empty host")
 	}
 }

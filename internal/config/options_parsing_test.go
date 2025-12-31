@@ -1380,6 +1380,30 @@ func TestHTTPClientTimeoutOptionParsing(t *testing.T) {
 	}
 }
 
+func TestIconFetchAllowPrivateNetworksOptionParsing(t *testing.T) {
+	configParser := NewConfigParser()
+
+	if configParser.options.IconFetchAllowPrivateNetworks() {
+		t.Fatalf("Expected ICON_FETCH_ALLOW_PRIVATE_NETWORKS to be disabled by default")
+	}
+
+	if err := configParser.parseLines([]string{"ICON_FETCH_ALLOW_PRIVATE_NETWORKS=1"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if !configParser.options.IconFetchAllowPrivateNetworks() {
+		t.Fatalf("Expected ICON_FETCH_ALLOW_PRIVATE_NETWORKS to be enabled")
+	}
+
+	if err := configParser.parseLines([]string{"ICON_FETCH_ALLOW_PRIVATE_NETWORKS=0"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if configParser.options.IconFetchAllowPrivateNetworks() {
+		t.Fatalf("Expected ICON_FETCH_ALLOW_PRIVATE_NETWORKS to be disabled")
+	}
+}
+
 func TestHTTPServerTimeoutOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
 
@@ -1444,6 +1468,30 @@ func TestMediaProxyHTTPClientTimeoutOptionParsing(t *testing.T) {
 
 	if configParser.options.MediaProxyHTTPClientTimeout().Seconds() != 60 {
 		t.Fatalf("Expected MEDIA_PROXY_HTTP_CLIENT_TIMEOUT to be 60 seconds")
+	}
+}
+
+func TestMediaProxyAllowPrivateNetworksOptionParsing(t *testing.T) {
+	configParser := NewConfigParser()
+
+	if configParser.options.MediaProxyAllowPrivateNetworks() {
+		t.Fatalf("Expected MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS to be disabled by default")
+	}
+
+	if err := configParser.parseLines([]string{"MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS=1"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if !configParser.options.MediaProxyAllowPrivateNetworks() {
+		t.Fatalf("Expected MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS to be enabled")
+	}
+
+	if err := configParser.parseLines([]string{"MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS=0"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if configParser.options.MediaProxyAllowPrivateNetworks() {
+		t.Fatalf("Expected MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS to be disabled")
 	}
 }
 
