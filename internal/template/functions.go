@@ -21,6 +21,7 @@ import (
 	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/timezone"
+	"miniflux.app/v2/internal/ui/static"
 	"miniflux.app/v2/internal/urllib"
 
 	"github.com/gorilla/mux"
@@ -90,10 +91,16 @@ func (f *funcMap) Map() template.FuncMap {
 		},
 		"theme_color": model.ThemeColor,
 		"icon": func(iconName string) template.HTML {
+			filename := "sprite.svg"
+			value, ok := static.BinaryBundles[filename]
+			if !ok {
+				return ""
+			}
+			baseURL := route.Path(f.router, "appIcon", "filename", filename)
+			url := baseURL + "?checksum=" + url.QueryEscape(value.Checksum)
 			return template.HTML(fmt.Sprintf(
 				`<svg class="icon" aria-hidden="true"><use href="%s#icon-%s"/></svg>`,
-				route.Path(f.router, "appIcon", "filename", "sprite.svg"),
-				iconName,
+				url, iconName,
 			))
 		},
 		"nonce": func() string {

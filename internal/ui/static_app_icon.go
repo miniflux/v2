@@ -16,8 +16,13 @@ import (
 
 func (h *handler) showAppIcon(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "filename")
+	checksum := r.URL.Query().Get("checksum")
 	value, ok := static.BinaryBundles[filename]
 	if !ok {
+		html.NotFound(w, r)
+		return
+	}
+	if checksum != "" && checksum != value.Checksum {
 		html.NotFound(w, r)
 		return
 	}
