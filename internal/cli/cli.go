@@ -14,6 +14,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/database"
 	"miniflux.app/v2/internal/proxyrotator"
+	"miniflux.app/v2/internal/reader/rewrite"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/static"
 	"miniflux.app/v2/internal/version"
@@ -246,6 +247,12 @@ func Parse() {
 		proxyrotator.ProxyRotatorInstance, err = proxyrotator.NewProxyRotator(config.Opts.HTTPClientProxies())
 		if err != nil {
 			printErrorAndExit(fmt.Errorf("unable to initialize proxy rotator: %v", err))
+		}
+	}
+
+	if filePath := config.Opts.RefererOverrideFile(); filePath != "" {
+		if err := rewrite.LoadRefererOverrides(filePath); err != nil {
+			printErrorAndExit(fmt.Errorf("unable to load referer overrides: %v", err))
 		}
 	}
 

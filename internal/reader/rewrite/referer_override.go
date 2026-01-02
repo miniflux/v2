@@ -4,9 +4,41 @@
 package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 
 import (
+	"encoding/json"
 	"net/url"
+	"os"
 	"strings"
 )
+
+var refererMappings = map[string]string{
+	"appinn.com":           "https://appinn.com",
+	"bjp.org.cn":           "https://bjp.org.cn",
+	"cdnfile.sspai.com":    "https://sspai.com",
+	"f.video.weibocdn.com": "https://weibo.com",
+	"i.pximg.net":          "https://www.pixiv.net",
+	"img.hellogithub.com":  "https://hellogithub.com",
+	"moyu.im":              "https://i.jandan.net",
+	"www.parkablogs.com":   "https://www.parkablogs.com",
+	".cdninstagram.com":    "https://www.instagram.com",
+	".moyu.im":             "https://i.jandan.net",
+	".sinaimg.cn":          "https://weibo.com",
+}
+
+func LoadRefererOverrides(externalFilePath string) error {
+	externalData, err := os.ReadFile(externalFilePath)
+	if err != nil {
+		return err
+	}
+	var externalMappings map[string]string
+	if err = json.Unmarshal(externalData, &externalMappings); err != nil {
+		return err
+	}
+	for k, v := range externalMappings {
+		refererMappings[k] = v
+	}
+
+	return nil
+}
 
 // GetRefererForURL returns the referer for the given URL if it exists, otherwise an empty string.
 func GetRefererForURL(u string) string {
@@ -15,32 +47,16 @@ func GetRefererForURL(u string) string {
 		return ""
 	}
 
-	switch parsedUrl.Hostname() {
-	case "appinn.com":
-		return "https://appinn.com"
-	case "bjp.org.cn":
-		return "https://bjp.org.cn"
-	case "cdnfile.sspai.com":
-		return "https://sspai.com"
-	case "f.video.weibocdn.com":
-		return "https://weibo.com"
-	case "i.pximg.net":
-		return "https://www.pixiv.net"
-	case "img.hellogithub.com":
-		return "https://hellogithub.com"
-	case "moyu.im":
-		return "https://i.jandan.net"
-	case "www.parkablogs.com":
-		return "https://www.parkablogs.com"
+	hostname := parsedUrl.Hostname()
+
+	if referer, ok := refererMappings[hostname]; ok {
+		return referer
 	}
 
-	switch {
-	case strings.HasSuffix(parsedUrl.Hostname(), ".cdninstagram.com"):
-		return "https://www.instagram.com"
-	case strings.HasSuffix(parsedUrl.Hostname(), ".moyu.im"):
-		return "https://i.jandan.net"
-	case strings.HasSuffix(parsedUrl.Hostname(), ".sinaimg.cn"):
-		return "https://weibo.com"
+	for suffix, referer := range refererMappings {
+		if strings.HasPrefix(suffix, ".") && strings.HasSuffix(hostname, suffix) {
+			return referer
+		}
 	}
 
 	return ""
