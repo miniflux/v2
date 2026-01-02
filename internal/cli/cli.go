@@ -250,8 +250,8 @@ func Parse() {
 		}
 	}
 
-	if filePath := config.Opts.RefererOverrideFile(); filePath != "" {
-		if err := rewrite.LoadRefererOverrides(filePath); err != nil {
+	if overrides := config.Opts.RefererOverrides(); overrides != "" {
+		if err := rewrite.LoadRefererOverrides(overrides); err != nil {
 			printErrorAndExit(fmt.Errorf("unable to load referer overrides: %v", err))
 		}
 	}

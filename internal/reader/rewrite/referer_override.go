@@ -4,9 +4,9 @@
 package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 
 import (
-	"encoding/json"
+	"errors"
+	"fmt"
 	"net/url"
-	"os"
 	"strings"
 )
 
@@ -24,19 +24,21 @@ var refererMappings = map[string]string{
 	".sinaimg.cn":          "https://weibo.com",
 }
 
-func LoadRefererOverrides(externalFilePath string) error {
-	externalData, err := os.ReadFile(externalFilePath)
-	if err != nil {
-		return err
+func LoadRefererOverrides(overridesString string) error {
+	pairs := strings.Split(overridesString, ",")
+	for _, pair := range pairs {
+		pair = strings.TrimSpace(pair)
+		parts := strings.SplitN(pair, "=", 2)
+		if len(parts) != 2 {
+			return fmt.Errorf("invalid referer override format: %q (expected domain=referer)", pair)
+		}
+		domain := strings.TrimSpace(parts[0])
+		referer := strings.TrimSpace(parts[1])
+		if domain == "" || referer == "" {
+			return errors.New("invalid referer override: domain and referer cannot be empty")
+		}
+		refererMappings[domain] = referer
 	}
-	var externalMappings map[string]string
-	if err = json.Unmarshal(externalData, &externalMappings); err != nil {
-		return err
-	}
-	for k, v := range externalMappings {
-		refererMappings[k] = v
-	}
-
 	return nil
 }
 

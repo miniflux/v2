@@ -541,10 +541,12 @@ Override LISTEN_ADDR to 0.0.0.0:$PORT\&.
 .br
 Default is empty\&.
 .TP
-.B REFERER_OVERRIDE_FILE
-Path to a JSON file containing referer override mappings\&.
+.B REFERER_OVERRIDES
+Comma-separated list of referer override mappings in the format "domain1=referer1,domain2=referer2"\&.
 .br
 External mappings override embedded defaults for the same keys\&.
+.br
+Example: "cdn.example.com=https://example.com,img.site.com=https://site.com"\&.
 .br
 Default is empty\&.
 .TP
