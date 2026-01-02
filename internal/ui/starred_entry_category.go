@@ -91,4 +91,3 @@ func (h *handler) showStarredCategoryEntryPage(w http.ResponseWriter, r *http.Re
 
 	html.OK(w, r, view.Render("entry"))
 }
-
