@@ -3,7 +3,10 @@
 
 package config // import "miniflux.app/v2/internal/config"
 
-import "testing"
+import (
+	"slices"
+	"testing"
+)
 
 func TestBaseURLOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
@@ -1629,6 +1632,32 @@ func TestSchedulerRoundRobinMinIntervalOptionParsing(t *testing.T) {
 
 	if configParser.options.SchedulerRoundRobinMinInterval().Minutes() != 30 {
 		t.Fatalf("Expected SCHEDULER_ROUND_ROBIN_MIN_INTERVAL to be 30 minutes")
+	}
+}
+
+func TestTrustedReverseProxyNetworksOptionParsing(t *testing.T) {
+	configParser := NewConfigParser()
+
+	// Test default value
+	defaultNetworks := configParser.options.TrustedReverseProxyNetworks()
+	if len(defaultNetworks) != 0 {
+		t.Fatalf("Expected 0 allowed networks by default, got %d", len(defaultNetworks))
+	}
+
+	// Test valid value
+	if err := configParser.parseLines([]string{"TRUSTED_REVERSE_PROXY_NETWORKS=10.0.0.0/8,192.168.1.0/24"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	allowedNetworks := configParser.options.TrustedReverseProxyNetworks()
+	if len(allowedNetworks) != 2 {
+		t.Fatalf("Expected 2 allowed networks, got %d", len(allowedNetworks))
+	}
+	if !slices.Contains(allowedNetworks, "10.0.0.0/8") {
+		t.Errorf("Expected 10.0.0.0/8 in allowed networks")
+	}
+	if !slices.Contains(allowedNetworks, "192.168.1.0/24") {
+		t.Errorf("Expected 192.168.1.0/24 in allowed networks")
 	}
 }
 

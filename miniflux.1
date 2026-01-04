@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "December 29, 2025" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "January 3, 2026" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -148,6 +148,8 @@ Default is empty\&.
 .TP
 .B AUTH_PROXY_HEADER
 Proxy authentication HTTP header\&.
+.br
+The option \fBTRUSTED_REVERSE_PROXY_NETWORKS\fR must be configured to allow the proxy to authenticate users\&.
 .br
 Default is empty.
 .TP
@@ -570,6 +572,11 @@ Default is 1440 minutes (24 hours)\&.
 Minimum interval in minutes for the round robin scheduler\&.
 .br
 Default is 60 minutes\&.
+.TP
+.B TRUSTED_REVERSE_PROXY_NETWORKS
+List of networks (CIDR notation) allowed to use the proxy authentication header, \fBX-Forwarded-For\fR, \fBX-Forwarded-Proto\fR, and \fBX-Real-Ip\fR headers\&.
+.br
+Default is empty\&.
 .TP
 .B WATCHDOG
 Enable or disable Systemd watchdog\&.
