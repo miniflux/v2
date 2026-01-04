@@ -109,6 +109,12 @@ func Parse() {
 		}
 	}
 
+	if config.Opts.AuthProxyHeader() != "" {
+		if len(config.Opts.TrustedReverseProxyNetworks()) == 0 {
+			printErrorAndExit(errors.New("TRUSTED_REVERSE_PROXY_NETWORKS must be configured when AUTH_PROXY_HEADER is used"))
+		}
+	}
+
 	if flagConfigDump {
 		fmt.Print(config.Opts)
 		return
