@@ -1000,16 +1000,16 @@ func (h *handler) userInfoHandler(w http.ResponseWriter, r *http.Request) {
 		slog.String("user_agent", r.UserAgent()),
 	)
 
-	if err := checkOutputFormat(r); err != nil {
-		json.BadRequest(w, r, err)
-		return
-	}
-
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
+	if user == nil {
+		json.NotFound(w, r)
+		return
+	}
+
 	userInfo := userInfoResponse{UserID: strconv.FormatInt(user.ID, 10), UserName: user.Username, UserProfileID: strconv.FormatInt(user.ID, 10), UserEmail: user.Username}
 	json.OK(w, r, userInfo)
 }
