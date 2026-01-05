@@ -244,7 +244,6 @@ func (h *handler) tokenHandler(w http.ResponseWriter, r *http.Request) {
 		slog.String("client_ip", clientIP),
 		slog.String("user_agent", r.UserAgent()),
 		slog.Int64("user_id", request.UserID(r)),
-		slog.String("token", token),
 	)
 
 	w.Header().Add("Content-Type", "text/plain; charset=UTF-8")
