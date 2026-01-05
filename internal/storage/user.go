@@ -472,7 +472,8 @@ func (s *Storage) UserByField(field, value string) (*model.User, error) {
 // AnotherUserWithFieldExists returns true if a user has the value set for the given field.
 func (s *Storage) AnotherUserWithFieldExists(userID int64, field, value string) bool {
 	var result bool
-	s.db.QueryRow(fmt.Sprintf(`SELECT true FROM users WHERE id <> $1 AND %s=$2 LIMIT 1`, pq.QuoteIdentifier(field)), userID, value).Scan(&result)
+	query := `SELECT true FROM users WHERE id <> $1 AND ` + pq.QuoteIdentifier(field) + `=$2 LIMIT 1`
+	s.db.QueryRow(query, userID, value).Scan(&result)
 	return result
 }
 
