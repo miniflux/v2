@@ -6,7 +6,19 @@ package model // import "miniflux.app/v2/internal/model"
 import (
 	"time"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/timezone"
+	"miniflux.app/v2/internal/version"
+)
+
+// MarkReadBehavior list all possible behaviors for automatically marking an entry as read
+type MarkReadBehavior string
+
+const (
+	NoAutoMarkAsRead                           MarkReadBehavior = "no-auto"
+	MarkAsReadOnView                           MarkReadBehavior = "on-view"
+	MarkAsReadOnViewButWaitForPlayerCompletion MarkReadBehavior = "on-view-but-wait-for-player-completion"
+	MarkAsReadOnlyOnPlayerCompletion           MarkReadBehavior = "on-player-completion"
 )
 
 // User represents a user in the system.
@@ -90,11 +102,11 @@ type UserModificationRequest struct {
 
 // Patch updates the User object with the modification request.
 func (u *UserModificationRequest) Patch(user *User) {
-	if u.Username != nil {
+	if u.Username != nil && *u.Username != "" && !config.Opts.DisableLocalAuth() {
 		user.Username = *u.Username
 	}
 
-	if u.Password != nil {
+	if u.Password != nil && *u.Password != "" {
 		user.Password = *u.Password
 	}
 
@@ -102,15 +114,15 @@ func (u *UserModificationRequest) Patch(user *User) {
 		user.IsAdmin = *u.IsAdmin
 	}
 
-	if u.Theme != nil {
+	if u.Theme != nil && *u.Theme != "" {
 		user.Theme = *u.Theme
 	}
 
-	if u.Language != nil {
+	if u.Language != nil && *u.Language != "" {
 		user.Language = *u.Language
 	}
 
-	if u.Timezone != nil {
+	if u.Timezone != nil && *u.Timezone != "" {
 		user.Timezone = *u.Timezone
 	}
 
@@ -166,11 +178,11 @@ func (u *UserModificationRequest) Patch(user *User) {
 		user.DisplayMode = *u.DisplayMode
 	}
 
-	if u.DefaultReadingSpeed != nil {
+	if u.DefaultReadingSpeed != nil && *u.DefaultReadingSpeed != 0 {
 		user.DefaultReadingSpeed = *u.DefaultReadingSpeed
 	}
 
-	if u.CJKReadingSpeed != nil {
+	if u.CJKReadingSpeed != nil && *u.CJKReadingSpeed != 0 {
 		user.CJKReadingSpeed = *u.CJKReadingSpeed
 	}
 
@@ -225,5 +237,83 @@ type Users []*User
 func (u Users) UseTimezone(tz string) {
 	for _, user := range u {
 		user.UseTimezone(tz)
+	}
+}
+
+// MarkAsReadBehavior returns the MarkReadBehavior from the given MarkReadOnView and MarkReadOnMediaPlayerCompletion values.
+// Useful to convert the values from the User model to the form
+func MarkAsReadBehavior(markReadOnView, markReadOnMediaPlayerCompletion bool) MarkReadBehavior {
+	switch {
+	case markReadOnView && !markReadOnMediaPlayerCompletion:
+		return MarkAsReadOnView
+	case markReadOnView && markReadOnMediaPlayerCompletion:
+		return MarkAsReadOnViewButWaitForPlayerCompletion
+	case !markReadOnView && markReadOnMediaPlayerCompletion:
+		return MarkAsReadOnlyOnPlayerCompletion
+	case !markReadOnView && !markReadOnMediaPlayerCompletion:
+		fallthrough // Explicit defaulting
+	default:
+		return NoAutoMarkAsRead
+	}
+}
+
+// ExtractMarkAsReadBehavior returns the MarkReadOnView and MarkReadOnMediaPlayerCompletion values from the given MarkReadBehavior.
+// Useful to extract the values from the form to the User model
+func ExtractMarkAsReadBehavior(behavior MarkReadBehavior) (markReadOnView, markReadOnMediaPlayerCompletion bool) {
+	switch behavior {
+	case MarkAsReadOnView:
+		return true, false
+	case MarkAsReadOnViewButWaitForPlayerCompletion:
+		return true, true
+	case MarkAsReadOnlyOnPlayerCompletion:
+		return false, true
+	case NoAutoMarkAsRead:
+		fallthrough // Explicit defaulting
+	default:
+		return false, false
+	}
+}
+
+// UserExport holds user data for exporting to JSON.
+type UserExport struct {
+	UserModificationRequest
+	Version string `json:"miniflux_version"`
+}
+
+// NewUserExport creates a new UserExport for exporting user data to JSON.
+func NewUserExport(u *User) UserExport {
+	return UserExport{
+		UserModificationRequest: UserModificationRequest{
+			Username:                        OptionalString(u.Username),
+			Theme:                           OptionalString(u.Theme),
+			Language:                        OptionalString(u.Language),
+			Timezone:                        OptionalString(u.Timezone),
+			EntryDirection:                  OptionalString(u.EntryDirection),
+			EntryOrder:                      OptionalString(u.EntryOrder),
+			Stylesheet:                      OptionalString(u.Stylesheet),
+			CustomJS:                        OptionalString(u.CustomJS),
+			ExternalFontHosts:               OptionalString(u.ExternalFontHosts),
+			GoogleID:                        OptionalString(u.GoogleID),
+			OpenIDConnectID:                 OptionalString(u.OpenIDConnectID),
+			EntriesPerPage:                  OptionalNumber(u.EntriesPerPage),
+			IsAdmin:                         OptionalField(u.IsAdmin),
+			KeyboardShortcuts:               OptionalField(u.KeyboardShortcuts),
+			ShowReadingTime:                 OptionalField(u.ShowReadingTime),
+			EntrySwipe:                      OptionalField(u.EntrySwipe),
+			GestureNav:                      OptionalString(u.GestureNav),
+			DisplayMode:                     OptionalString(u.DisplayMode),
+			DefaultReadingSpeed:             OptionalNumber(u.DefaultReadingSpeed),
+			CJKReadingSpeed:                 OptionalNumber(u.CJKReadingSpeed),
+			DefaultHomePage:                 OptionalString(u.DefaultHomePage),
+			CategoriesSortingOrder:          OptionalString(u.CategoriesSortingOrder),
+			MarkReadOnView:                  OptionalField(u.MarkReadOnView),
+			MarkReadOnMediaPlayerCompletion: OptionalField(u.MarkReadOnMediaPlayerCompletion),
+			MediaPlaybackRate:               OptionalField(u.MediaPlaybackRate),
+			BlockFilterEntryRules:           OptionalString(u.BlockFilterEntryRules),
+			KeepFilterEntryRules:            OptionalString(u.KeepFilterEntryRules),
+			AlwaysOpenExternalLinks:         OptionalField(u.AlwaysOpenExternalLinks),
+			OpenExternalLinksInNewTab:       OptionalField(u.OpenExternalLinksInNewTab),
+		},
+		Version: version.Version,
 	}
 }

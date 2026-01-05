@@ -29,7 +29,7 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	integrationForm := form.NewIntegrationForm(r)
-	integrationForm.Merge(integration)
+	integrationForm.Patch(integration)
 
 	if integration.FeverUsername != "" && h.store.HasDuplicateFeverUsername(userID, integration.FeverUsername) {
 		sess.NewFlashErrorMessage(printer.Print("error.duplicate_fever_username"))
