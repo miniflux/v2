@@ -30,6 +30,7 @@ var predefinedRules = map[string]string{
 	"linux.com":            "div.content, div[property]",
 	"mac4ever.com":         "div[itemprop=articleBody]",
 	"monwindows.com":       ".blog-post-body",
+	"mympnteam.com":        ".title, .writers, .body"
 	"npr.org":              "#storytext",
 	"oneindia.com":         ".io-article-body",
 	"opensource.com":       "div[property]",
