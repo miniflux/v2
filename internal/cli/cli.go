@@ -30,9 +30,9 @@ const (
 	flagDebugModeHelp        = "Show debug logs"
 	flagConfigFileHelp       = "Load configuration file"
 	flagConfigDumpHelp       = "Print parsed configuration values"
-	flagHealthCheckHelp      = `Perform a health check on the given endpoint (the value "auto" try to guess the health check endpoint).`
+	flagHealthCheckHelp      = `Perform a health check on the given endpoint (the value "auto" tries to guess the health check endpoint).`
 	flagRefreshFeedsHelp     = "Refresh a batch of feeds and exit"
-	flagRunCleanupTasksHelp  = "Run cleanup tasks (delete old sessions and archives old entries)"
+	flagRunCleanupTasksHelp  = "Run cleanup tasks (delete old sessions and archive old entries)"
 	flagExportUserFeedsHelp  = "Export user feeds (provide the username as argument)"
 	flagResetNextCheckAtHelp = "Reset the next check time for all feeds"
 )

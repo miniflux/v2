@@ -1,19 +1,21 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "January 3, 2026" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "January 5, 2026" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
 
 .SH SYNOPSIS
-\fBminiflux\fR [-vic] [-config-dump] [-config-file] [-create-admin] [-debug]
-    [-flush-sessions] [-healthcheck] [-info] [-migrate] [-refresh-feeds]
-    [-reset-feed-errors] [-reset-feed-next-check-at] [-reset-password]
-    [-run-cleanup-tasks] [-version]
+\fBminiflux\fR [\fBoptions\fR]
 
 .SH DESCRIPTION
 \fBminiflux\fR is a minimalist and opinionated feed reader.
 
 .SH OPTIONS
+.PP
+.B \-h, \-help
+.RS 4
+Show usage information and exit\&.
+.RE
 .PP
 .B \-config-dump
 .RS 4
@@ -44,7 +46,10 @@ Set log level to debug\&.
 .RS 4
 Export user feeds (provide the username as argument)\&.
 .br
-Example: "miniflux -export-user-feeds someone > feeds.xml"\&.
+Example:
+.EX
+miniflux -export-user-feeds someone > feeds.xml
+.EE
 .RE
 .PP
 .B \-flush-sessions
@@ -56,7 +61,7 @@ Flush all sessions (disconnect users)\&.
 .RS 4
 Perform a health check on the given endpoint\&.
 .br
-The value "auto" try to guess the health check endpoint\&.
+The value "auto" tries to guess the health check endpoint\&.
 .RE
 .PP
 .B \-i
@@ -96,7 +101,7 @@ Reset user password\&.
 .PP
 .B \-run-cleanup-tasks
 .RS 4
-Run cleanup tasks (delete old sessions and archives old entries)\&.
+Run cleanup tasks (delete old sessions and archive old entries)\&.
 .RE
 .PP
 .B \-v
@@ -110,7 +115,7 @@ Show application version\&.
 .RE
 
 .SH CONFIGURATION FILE
-The configuration file is a text file that follow these rules:
+The configuration file is a text file that follows these rules:
 .LP
 - Miniflux expects each line to be in KEY=VALUE format.
 .br
@@ -120,29 +125,33 @@ The configuration file is a text file that follow these rules:
 .br
 - There is no variable interpolation.
 .PP
-Keys are the same as the environment variables described below.
+Keys are the same as the environment variables described below\&.
 .br
-Environment variables override the values defined in the config file.
+Environment variables override the values defined in the config file\&.
 
 .SH ENVIRONMENT
+.PP
+Boolean options accept the following values (case-insensitive): 1/0, yes/no, true/false, on/off\&.
+.br
+For variables ending in \fB_FILE\fR, the value is a path to a file that contains the corresponding secret value\&.
 .TP
 .B ADMIN_PASSWORD
-Admin user password, used only if $CREATE_ADMIN is enabled\&.
+Admin user password, used only if \fBCREATE_ADMIN\fR is enabled\&.
 .br
 Default is empty\&.
 .TP
 .B ADMIN_PASSWORD_FILE
-Path to a secret key exposed as a file, it should contain $ADMIN_PASSWORD value\&.
+Path to a secret key exposed as a file, it should contain the \fBADMIN_PASSWORD\fR value\&.
 .br
 Default is empty\&.
 .TP
 .B ADMIN_USERNAME
-Admin user login, used only if $CREATE_ADMIN is enabled\&.
+Admin user login, used only if \fBCREATE_ADMIN\fR is enabled\&.
 .br
 Default is empty\&.
 .TP
 .B ADMIN_USERNAME_FILE
-Path to a secret key exposed as a file, it should contain $ADMIN_USERNAME value\&.
+Path to a secret key exposed as a file, it should contain the \fBADMIN_USERNAME\fR value\&.
 .br
 Default is empty\&.
 .TP
@@ -161,7 +170,7 @@ Disabled by default\&.
 .B BASE_URL
 Base URL to generate HTML links and base path for cookies\&.
 .br
-Default is http://localhost/\&.
+Default is http://localhost\&.
 .TP
 .B BATCH_SIZE
 Number of feeds to send to the queue for each interval\&.
@@ -228,12 +237,12 @@ Minimum number of database connections\&.
 Default is 1\&.
 .TP
 .B DATABASE_URL
-Postgresql connection parameters\&.
+PostgreSQL connection parameters\&.
 .br
 Default is "user=postgres password=postgres dbname=miniflux2 sslmode=disable"\&.
 .TP
 .B DATABASE_URL_FILE
-Path to a secret key exposed as a file, it should contain $DATABASE_URL value\&.
+Path to a secret key exposed as a file, it should contain the \fBDATABASE_URL\fR value\&.
 .br
 Default is empty\&.
 .TP
@@ -290,9 +299,9 @@ use it as a reading time\&.
 Disabled by default\&.
 .TP
 .B FILTER_ENTRY_MAX_AGE_DAYS
-Number of days after which new entries should be retained\&.
+Ignore new entries older than the given number of days\&.
 .br
-Set 7 to fetch only entries 7 days old\&.
+Set to 7 to fetch only entries from the last 7 days\&.
 .br
 Default is 0 (disabled)\&.
 .TP
@@ -317,7 +326,7 @@ Proxy URL to use when the "Fetch via proxy" feed option is enabled\&.
 Default is empty\&.
 .TP
 .B HTTP_CLIENT_TIMEOUT
-Time limit in seconds before the HTTP client cancel the request\&.
+Time limit in seconds before the HTTP client cancels the request\&.
 .br
 Default is 20 seconds\&.
 .TP
@@ -329,7 +338,7 @@ When empty, Miniflux uses a default User-Agent that includes the Miniflux versio
 Default is empty.
 .TP
 .B HTTP_SERVER_TIMEOUT
-Time limit in seconds before the HTTP client cancel the request\&.
+Read, write, and idle timeout in seconds for the HTTP server\&.
 .br
 Default is 300 seconds\&.
 .TP
@@ -396,7 +405,7 @@ Sets an external server to proxy media through\&.
 Default is empty, Miniflux does the proxying\&.
 .TP
 .B MEDIA_PROXY_HTTP_CLIENT_TIMEOUT
-Time limit in seconds before the media proxy HTTP client cancel the request\&.
+Time limit in seconds before the media proxy HTTP client cancels the request\&.
 .br
 Default is 120 seconds\&.
 .TP
@@ -416,7 +425,7 @@ Possible values: http-only, all, or none\&.
 Default is http-only\&.
 .TP
 .B MEDIA_PROXY_PRIVATE_KEY
-Set a custom custom private key used to sign proxified media URLs\&.
+Set a custom private key used to sign proxified media URLs\&.
 .br
 By default, a secret key is randomly generated during startup\&.
 .TP
@@ -461,7 +470,7 @@ OAuth2 client ID\&.
 Default is empty\&.
 .TP
 .B OAUTH2_CLIENT_ID_FILE
-Path to a secret key exposed as a file, it should contain $OAUTH2_CLIENT_ID value\&.
+Path to a secret key exposed as a file, it should contain the \fBOAUTH2_CLIENT_ID\fR value\&.
 .br
 Default is empty\&.
 .TP
@@ -471,7 +480,7 @@ OAuth2 client secret\&.
 Default is empty\&.
 .TP
 .B OAUTH2_CLIENT_SECRET_FILE
-Path to a secret key exposed as a file, it should contain $OAUTH2_CLIENT_SECRET value\&.
+Path to a secret key exposed as a file, it should contain the \fBOAUTH2_CLIENT_SECRET\fR value\&.
 .br
 Default is empty\&.
 .TP
@@ -539,7 +548,7 @@ Regardless of the scheduler used, the total number of polled feeds will not exce
 Default is "round_robin"\&.
 .TP
 .B PORT
-Override LISTEN_ADDR to 0.0.0.0:$PORT\&.
+Override \fBLISTEN_ADDR\fR to \fB0.0.0.0:$PORT\fR\&.
 .br
 Default is empty\&.
 .TP
@@ -606,7 +615,7 @@ YouTube URL which will be used for embeds\&.
 Default is https://www.youtube-nocookie.com/embed/\&.
 .SH AUTHORS
 .P
-Miniflux is written and maintained by Fr\['e]d\['e]ric Guillot\&.
+Miniflux is developed and maintained by Fr\['e]d\['e]ric Guillot with contributions from the Miniflux community\&.
 
 .SH "COPYRIGHT"
 .P
