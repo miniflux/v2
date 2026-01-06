@@ -10,27 +10,27 @@ import (
 
 func TestFindClientIPWithoutHeaders(t *testing.T) {
 	r := &http.Request{RemoteAddr: "192.168.0.1:4242"}
-	if ip := FindClientIP(r); ip != "192.168.0.1" {
+	if ip := FindClientIP(r, false); ip != "192.168.0.1" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 
 	r = &http.Request{RemoteAddr: "192.168.0.1"}
-	if ip := FindClientIP(r); ip != "192.168.0.1" {
+	if ip := FindClientIP(r, false); ip != "192.168.0.1" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 
 	r = &http.Request{RemoteAddr: "fe80::14c2:f039:edc7:edc7"}
-	if ip := FindClientIP(r); ip != "fe80::14c2:f039:edc7:edc7" {
+	if ip := FindClientIP(r, false); ip != "fe80::14c2:f039:edc7:edc7" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 
 	r = &http.Request{RemoteAddr: "fe80::14c2:f039:edc7:edc7%eth0"}
-	if ip := FindClientIP(r); ip != "fe80::14c2:f039:edc7:edc7" {
+	if ip := FindClientIP(r, false); ip != "fe80::14c2:f039:edc7:edc7" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 
 	r = &http.Request{RemoteAddr: "[fe80::14c2:f039:edc7:edc7%eth0]:4242"}
-	if ip := FindClientIP(r); ip != "fe80::14c2:f039:edc7:edc7" {
+	if ip := FindClientIP(r, false); ip != "fe80::14c2:f039:edc7:edc7" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 }
@@ -41,7 +41,7 @@ func TestFindClientIPWithXFFHeader(t *testing.T) {
 	headers.Set("X-Forwarded-For", "203.0.113.195, 70.41.3.18, 150.172.238.178")
 	r := &http.Request{RemoteAddr: "192.168.0.1:4242", Header: headers}
 
-	if ip := FindClientIP(r); ip != "203.0.113.195" {
+	if ip := FindClientIP(r, true); ip != "203.0.113.195" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 
@@ -50,7 +50,7 @@ func TestFindClientIPWithXFFHeader(t *testing.T) {
 	headers.Set("X-Forwarded-For", "2001:db8:85a3:8d3:1319:8a2e:370:7348")
 	r = &http.Request{RemoteAddr: "192.168.0.1:4242", Header: headers}
 
-	if ip := FindClientIP(r); ip != "2001:db8:85a3:8d3:1319:8a2e:370:7348" {
+	if ip := FindClientIP(r, true); ip != "2001:db8:85a3:8d3:1319:8a2e:370:7348" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 
@@ -59,7 +59,7 @@ func TestFindClientIPWithXFFHeader(t *testing.T) {
 	headers.Set("X-Forwarded-For", "fe80::14c2:f039:edc7:edc7%eth0")
 	r = &http.Request{RemoteAddr: "192.168.0.1:4242", Header: headers}
 
-	if ip := FindClientIP(r); ip != "fe80::14c2:f039:edc7:edc7" {
+	if ip := FindClientIP(r, true); ip != "fe80::14c2:f039:edc7:edc7" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 
@@ -68,7 +68,7 @@ func TestFindClientIPWithXFFHeader(t *testing.T) {
 	headers.Set("X-Forwarded-For", "70.41.3.18")
 	r = &http.Request{RemoteAddr: "192.168.0.1:4242", Header: headers}
 
-	if ip := FindClientIP(r); ip != "70.41.3.18" {
+	if ip := FindClientIP(r, true); ip != "70.41.3.18" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 
@@ -77,7 +77,7 @@ func TestFindClientIPWithXFFHeader(t *testing.T) {
 	headers.Set("X-Forwarded-For", "fake IP")
 	r = &http.Request{RemoteAddr: "192.168.0.1:4242", Header: headers}
 
-	if ip := FindClientIP(r); ip != "192.168.0.1" {
+	if ip := FindClientIP(r, true); ip != "192.168.0.1" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 }
@@ -87,7 +87,7 @@ func TestClientIPWithXRealIPHeader(t *testing.T) {
 	headers.Set("X-Real-Ip", "192.168.122.1")
 	r := &http.Request{RemoteAddr: "192.168.0.1:4242", Header: headers}
 
-	if ip := FindClientIP(r); ip != "192.168.122.1" {
+	if ip := FindClientIP(r, true); ip != "192.168.122.1" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 }
@@ -99,7 +99,7 @@ func TestClientIPWithBothHeaders(t *testing.T) {
 
 	r := &http.Request{RemoteAddr: "192.168.0.1:4242", Header: headers}
 
-	if ip := FindClientIP(r); ip != "203.0.113.195" {
+	if ip := FindClientIP(r, true); ip != "203.0.113.195" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 }
@@ -107,7 +107,7 @@ func TestClientIPWithBothHeaders(t *testing.T) {
 func TestClientIPWithUnixSocketRemoteAddress(t *testing.T) {
 	r := &http.Request{RemoteAddr: "@"}
 
-	if ip := FindClientIP(r); ip != "@" {
+	if ip := FindClientIP(r, false); ip != "@" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 }
@@ -119,7 +119,39 @@ func TestClientIPWithUnixSocketRemoteAddrAndBothHeaders(t *testing.T) {
 
 	r := &http.Request{RemoteAddr: "@", Header: headers}
 
-	if ip := FindClientIP(r); ip != "203.0.113.195" {
+	if ip := FindClientIP(r, true); ip != "203.0.113.195" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
+	}
+}
+
+func TestIsTrustedIP(t *testing.T) {
+	trustedNetworks := []string{"127.0.0.1/8", "10.0.0.0/8", "::1/128", "invalid"}
+
+	scenarios := []struct {
+		ip       string
+		expected bool
+	}{
+		{"127.0.0.1", true},
+		{"10.0.0.1", true},
+		{"::1", true},
+		{"192.168.1.1", false},
+		{"invalid", false},
+		{"@", true},
+		{"/tmp/miniflux.sock", true},
+	}
+
+	for _, scenario := range scenarios {
+		result := IsTrustedIP(scenario.ip, trustedNetworks)
+		if result != scenario.expected {
+			t.Errorf("Expected %v for IP %s, got %v", scenario.expected, scenario.ip, result)
+		}
+	}
+
+	if IsTrustedIP("127.0.0.1", nil) {
+		t.Error("Expected false when no trusted networks are defined")
+	}
+
+	if IsTrustedIP("127.0.0.1", []string{}) {
+		t.Error("Expected false when trusted networks list is empty")
 	}
 }

@@ -53,36 +53,37 @@ func (s *Storage) createAppSession(session *model.Session) (*model.Session, erro
 	return session, nil
 }
 
-// UpdateAppSessionField updates only one session field.
-func (s *Storage) UpdateAppSessionField(sessionID, field string, value any) error {
+// SetAppSessionTextField sets a text field in the session data.
+func (s *Storage) SetAppSessionTextField(sessionID, field string, value any) error {
 	query := `
 		UPDATE
 			sessions
 		SET
-			data = jsonb_set(data, '{%s}', to_jsonb($1::text), true)
+			data = jsonb_set(data, ARRAY[$2::text], to_jsonb($1::text), true)
 		WHERE
-			id=$2
+			id=$3
 	`
-	_, err := s.db.Exec(fmt.Sprintf(query, field), value, sessionID)
+	_, err := s.db.Exec(query, value, field, sessionID)
 	if err != nil {
-		return fmt.Errorf(`store: unable to update session field: %v`, err)
+		return fmt.Errorf(`store: unable to update session text field %q: %v`, field, err)
 	}
 
 	return nil
 }
 
-func (s *Storage) UpdateAppSessionObjectField(sessionID, field string, value any) error {
+// SetAppSessionJSONField sets a JSON field in the session data.
+func (s *Storage) SetAppSessionJSONField(sessionID, field string, value any) error {
 	query := `
 		UPDATE
 			sessions
 		SET
-			data = jsonb_set(data, '{%s}', $1, true)
+			data = jsonb_set(data, ARRAY[$2::text], $1, true)
 		WHERE
-			id=$2
+			id=$3
 	`
-	_, err := s.db.Exec(fmt.Sprintf(query, field), value, sessionID)
+	_, err := s.db.Exec(query, value, field, sessionID)
 	if err != nil {
-		return fmt.Errorf(`store: unable to update session field: %v`, err)
+		return fmt.Errorf(`store: unable to update session JSON field %q: %v`, field, err)
 	}
 
 	return nil

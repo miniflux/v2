@@ -573,6 +573,11 @@ func NewConfigOptions() *configOptions {
 					return validateGreaterOrEqualThan(rawValue, 1)
 				},
 			},
+			"TRUSTED_REVERSE_PROXY_NETWORKS": {
+				parsedStringList: []string{},
+				rawValue:         "",
+				valueType:        stringListType,
+			},
 			"WATCHDOG": {
 				parsedBoolValue: true,
 				rawValue:        "1",
@@ -977,6 +982,10 @@ func (c *configOptions) SchedulerRoundRobinMaxInterval() time.Duration {
 
 func (c *configOptions) SchedulerRoundRobinMinInterval() time.Duration {
 	return c.options["SCHEDULER_ROUND_ROBIN_MIN_INTERVAL"].parsedDuration
+}
+
+func (c *configOptions) TrustedReverseProxyNetworks() []string {
+	return c.options["TRUSTED_REVERSE_PROXY_NETWORKS"].parsedStringList
 }
 
 func (c *configOptions) Watchdog() bool {

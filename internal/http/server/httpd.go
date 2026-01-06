@@ -316,32 +316,7 @@ func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
 	}
 
 	remoteIP := request.FindRemoteIP(r)
-	if remoteIP == "@" {
-		// This indicates a request sent via a Unix socket, always consider these trusted.
-		return true
-	}
-
-	for _, cidr := range config.Opts.MetricsAllowedNetworks() {
-		_, network, err := net.ParseCIDR(cidr)
-		if err != nil {
-			slog.Error("Metrics endpoint accessed with invalid CIDR",
-				slog.Bool("authentication_failed", true),
-				slog.String("client_ip", clientIP),
-				slog.String("client_user_agent", r.UserAgent()),
-				slog.String("client_remote_addr", r.RemoteAddr),
-				slog.String("cidr", cidr),
-			)
-			return false
-		}
-
-		// We use r.RemoteAddr in this case because HTTP headers like X-Forwarded-For can be easily spoofed.
-		// The recommendation is to use HTTP Basic authentication.
-		if network.Contains(net.ParseIP(remoteIP)) {
-			return true
-		}
-	}
-
-	return false
+	return request.IsTrustedIP(remoteIP, config.Opts.MetricsAllowedNetworks())
 }
 
 func printErrorAndExit(format string, a ...any) {

@@ -15,11 +15,13 @@ import (
 
 func middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		clientIP := request.FindClientIP(r)
+		remoteIP := request.FindRemoteIP(r)
+		isTrustedProxyClientIP := request.IsTrustedIP(remoteIP, config.Opts.TrustedReverseProxyNetworks())
+		clientIP := request.FindClientIP(r, isTrustedProxyClientIP)
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, request.ClientIPContextKey, clientIP)
 
-		if r.Header.Get("X-Forwarded-Proto") == "https" {
+		if isTrustedProxyClientIP && r.Header.Get("X-Forwarded-Proto") == "https" {
 			config.Opts.SetHTTPSValue(true)
 		}
 

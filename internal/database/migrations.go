@@ -1387,4 +1387,20 @@ var migrations = [...]func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		// There is no need to keep an index on the content of deleted entries.
+		_, err = tx.Exec(`DROP INDEX document_vectors_idx;`)
+		if err != nil {
+			return err
+		}
+
+		sql := `
+			CREATE INDEX document_vectors_idx
+				ON entries
+				USING gin(document_vectors)
+				WHERE status != 'removed';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

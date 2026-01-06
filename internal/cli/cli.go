@@ -30,9 +30,9 @@ const (
 	flagDebugModeHelp        = "Show debug logs"
 	flagConfigFileHelp       = "Load configuration file"
 	flagConfigDumpHelp       = "Print parsed configuration values"
-	flagHealthCheckHelp      = `Perform a health check on the given endpoint (the value "auto" try to guess the health check endpoint).`
+	flagHealthCheckHelp      = `Perform a health check on the given endpoint (the value "auto" tries to guess the health check endpoint).`
 	flagRefreshFeedsHelp     = "Refresh a batch of feeds and exit"
-	flagRunCleanupTasksHelp  = "Run cleanup tasks (delete old sessions and archives old entries)"
+	flagRunCleanupTasksHelp  = "Run cleanup tasks (delete old sessions and archive old entries)"
 	flagExportUserFeedsHelp  = "Export user feeds (provide the username as argument)"
 	flagResetNextCheckAtHelp = "Reset the next check time for all feeds"
 )
@@ -106,6 +106,12 @@ func Parse() {
 			printErrorAndExit(errors.New("DISABLE_LOCAL_AUTH is enabled and an OAUTH2_PROVIDER is configured, but OAUTH2_USER_CREATION is not enabled"))
 		case config.Opts.AuthProxyHeader() != "" && !config.Opts.IsAuthProxyUserCreationAllowed():
 			printErrorAndExit(errors.New("DISABLE_LOCAL_AUTH is enabled and an AUTH_PROXY_HEADER is configured, but AUTH_PROXY_USER_CREATION is not enabled"))
+		}
+	}
+
+	if config.Opts.AuthProxyHeader() != "" {
+		if len(config.Opts.TrustedReverseProxyNetworks()) == 0 {
+			printErrorAndExit(errors.New("TRUSTED_REVERSE_PROXY_NETWORKS must be configured when AUTH_PROXY_HEADER is used"))
 		}
 	}
 

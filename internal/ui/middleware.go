@@ -206,6 +206,19 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 			return
 		}
 
+		remoteIP := request.FindRemoteIP(r)
+		trustedNetworks := config.Opts.TrustedReverseProxyNetworks()
+		if !request.IsTrustedIP(remoteIP, trustedNetworks) {
+			slog.Warn("[AuthProxy] Rejecting authentication request from untrusted proxy",
+				slog.String("remote_ip", remoteIP),
+				slog.String("client_ip", request.ClientIP(r)),
+				slog.String("user_agent", r.UserAgent()),
+				slog.Any("trusted_networks", trustedNetworks),
+			)
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		username := r.Header.Get(config.Opts.AuthProxyHeader())
 		if username == "" {
 			next.ServeHTTP(w, r)
@@ -215,6 +228,7 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 		clientIP := request.ClientIP(r)
 		slog.Debug("[AuthProxy] Received authenticated requested",
 			slog.String("client_ip", clientIP),
+			slog.String("remote_ip", remoteIP),
 			slog.String("user_agent", r.UserAgent()),
 			slog.String("username", username),
 		)
@@ -230,6 +244,7 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 				slog.Debug("[AuthProxy] User doesn't exist and user creation is not allowed",
 					slog.Bool("authentication_failed", true),
 					slog.String("client_ip", clientIP),
+					slog.String("remote_ip", remoteIP),
 					slog.String("user_agent", r.UserAgent()),
 					slog.String("username", username),
 				)
@@ -252,6 +267,7 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 		slog.Info("[AuthProxy] User authenticated successfully",
 			slog.Bool("authentication_successful", true),
 			slog.String("client_ip", clientIP),
+			slog.String("remote_ip", remoteIP),
 			slog.String("user_agent", r.UserAgent()),
 			slog.Int64("user_id", user.ID),
 			slog.String("username", user.Username),
