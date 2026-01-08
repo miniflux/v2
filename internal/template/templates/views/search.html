@@ -8,9 +8,12 @@
 
 {{ define "content"}}
 <search role="search">
-    <form action="{{ route "search" }}" aria-labelledby="search-input-label">
-        <input type="search" name="q" id="search-input" aria-label="{{ t "search.label" }}" placeholder="{{ t "search.placeholder" }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ else }}autofocus{{ end }} required>
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "search.submit" }}</button>
+    <form class="search-form" action="{{ route "search" }}" aria-labelledby="search-input-label">
+        <div class="search-input-row">
+            <input type="search" name="q" id="search-input" aria-label="{{ t "search.label" }}" placeholder="{{ t "search.placeholder" }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ else }}autofocus{{ end }} required>
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "search.submit" }}</button>
+        </div>
+        <label class="search-filter"><input type="checkbox" name="unread" value="1" {{ if $.searchUnreadOnly }}checked{{ end }}> {{ t "menu.show_only_unread_entries" }}</label>
     </form>
 </search>
 
@@ -30,7 +33,7 @@
             >
                 <header class="item-header" dir="auto">
                     <h2 id="entry-title-{{ .ID }}" class="item-title">
-                        <a href="{{ route "searchEntry" "entryID" .ID }}?q={{ $.searchQuery }}">
+                        <a href="{{ route "searchEntry" "entryID" .ID }}{{ queryString (dict "q" $.searchQuery "unread" $.searchUnreadOnly) }}">
                             {{ if ne .Feed.Icon.IconID 0 }}
                             <img src="{{ route "feedIcon" "externalIconID" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
                             {{ else }}

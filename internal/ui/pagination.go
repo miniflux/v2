@@ -17,6 +17,7 @@ type pagination struct {
 	PrevOffset   int
 	FirstOffset  int
 	SearchQuery  string
+	UnreadOnly   bool
 }
 
 func getPagination(route string, total, offset, nbItemsPerPage int) pagination {
