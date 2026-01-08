@@ -279,7 +279,7 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 		if csvItemIDs != "" {
 			var itemIDs []int64
 
-			for _, strItemID := range strings.Split(csvItemIDs, ",") {
+			for strItemID := range strings.SplitSeq(csvItemIDs, ",") {
 				strItemID = strings.TrimSpace(strItemID)
 				itemID, _ := strconv.ParseInt(strItemID, 10, 64)
 				itemIDs = append(itemIDs, itemID)
