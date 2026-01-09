@@ -1273,22 +1273,6 @@ func TestDatabaseConnectionLifetimeOptionParsing(t *testing.T) {
 	}
 }
 
-func TestFilterEntryMaxAgeDaysOptionParsing(t *testing.T) {
-	configParser := NewConfigParser()
-
-	if configParser.options.FilterEntryMaxAgeDays() != 0 {
-		t.Fatalf("Expected FILTER_ENTRY_MAX_AGE_DAYS to be 0 by default")
-	}
-
-	if err := configParser.parseLines([]string{"FILTER_ENTRY_MAX_AGE_DAYS=7"}); err != nil {
-		t.Fatalf("Unexpected error: %v", err)
-	}
-
-	if configParser.options.FilterEntryMaxAgeDays() != 7 {
-		t.Fatalf("Expected FILTER_ENTRY_MAX_AGE_DAYS to be 7 days")
-	}
-}
-
 func TestForceRefreshIntervalOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
 

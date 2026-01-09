@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/url"
 	"os"
 	"strconv"
@@ -119,6 +120,9 @@ func (cp *configParser) parseLines(lines []string) error {
 func (cp *configParser) parseLine(key, value string) error {
 	field, exists := cp.options.options[key]
 	if !exists {
+		if key == "FILTER_ENTRY_MAX_AGE_DAYS" {
+			slog.Warn("Configuration option FILTER_ENTRY_MAX_AGE_DAYS is deprecated; use user filter rule max-age:<duration> instead")
+		}
 		// Ignore unknown configuration keys to avoid parsing unrelated environment variables.
 		return nil
 	}
