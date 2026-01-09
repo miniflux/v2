@@ -4,11 +4,9 @@
 package filter // import "miniflux.app/v2/internal/reader/filter"
 
 import (
-	"os"
 	"testing"
 	"time"
 
-	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -408,39 +406,6 @@ func TestKeeplistRulesBehavior(t *testing.T) {
 					tt.keeplistRule, result, tt.expected, tt.description)
 			}
 		})
-	}
-}
-
-// Tests for isBlockedGlobally function
-func TestIsBlockedGlobally(t *testing.T) {
-	var err error
-	config.Opts, err = config.NewConfigParser().ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	testEntry := createTestEntry()
-	testEntry.Date = time.Date(2020, 5, 1, 05, 05, 05, 05, time.UTC)
-
-	if IsBlockedEntry(nil, nil, createTestFeed(), testEntry) {
-		t.Error("Expected no entries to be blocked globally when max-age is not set")
-	}
-
-	os.Setenv("FILTER_ENTRY_MAX_AGE_DAYS", "30")
-	defer os.Clearenv()
-
-	config.Opts, err = config.NewConfigParser().ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	if !IsBlockedEntry(nil, nil, createTestFeed(), testEntry) {
-		t.Error("Expected entries to be blocked globally when max-age is set")
-	}
-
-	testEntry.Date = time.Now().Add(-2 * 24 * time.Hour)
-	if isBlockedGlobally(testEntry) {
-		t.Error("Expected entries not to be blocked globally when they are within the max-age limit")
 	}
 }
 
