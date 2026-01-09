@@ -730,6 +730,22 @@ func TestLogFileOptionParsing(t *testing.T) {
 	}
 }
 
+func TestRefererOverridesOptionParsing(t *testing.T) {
+	configParser := NewConfigParser()
+
+	if configParser.options.RefererOverrides() != "" {
+		t.Fatalf("Expected REFERER_OVERRIDES to be empty by default")
+	}
+
+	if err := configParser.parseLines([]string{"REFERER_OVERRIDES=domain1=https://example1.com,domain2=https://example2.com"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if configParser.options.RefererOverrides() != "domain1=https://example1.com,domain2=https://example2.com" {
+		t.Fatalf("Expected REFERER_OVERRIDES to be 'domain1=https://example1.com,domain2=https://example2.com'")
+	}
+}
+
 func TestLogFormatOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
 
