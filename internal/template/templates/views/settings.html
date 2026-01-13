@@ -144,8 +144,8 @@
 
         <label for="form-timezone">{{ t "form.prefs.label.timezone" }}</label>
         <select id="form-timezone" name="timezone">
-        {{ range $key, $value := .timezones }}
-            <option value="{{ $key }}" {{ if eq $key $.form.Timezone }}selected="selected"{{ end }}>{{ $value }}</option>
+        {{ range $value := .timezones }}
+            <option value="{{ $value }}" {{ if eq $value $.form.Timezone }}selected="selected"{{ end }}>{{ $value }}</option>
         {{ end }}
         </select>
 

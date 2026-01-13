@@ -202,7 +202,7 @@ func validateLanguage(language string) *locale.LocalizedError {
 }
 
 func validateTimezone(timezoneValue string) *locale.LocalizedError {
-	if _, found := timezone.AvailableTimezones()[timezoneValue]; !found {
+	if !timezone.IsValid(timezoneValue) {
 		return locale.NewLocalizedError("error.invalid_timezone")
 	}
 	return nil

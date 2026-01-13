@@ -89,3 +89,28 @@ func TestConvertPostgresDateTimeWithNegativeTimezoneOffset(t *testing.T) {
 		t.Fatalf(`Unexpected year, got %d instead of 0`, year)
 	}
 }
+
+func TestIsValid(t *testing.T) {
+	validTZ := []string{
+		"Antarctica/Davis",
+		"GMT",
+		"UTC",
+	}
+
+	for _, tz := range validTZ {
+		if !IsValid(tz) {
+			t.Fatalf(`Timezone %q should be valid an it's not`, tz)
+		}
+	}
+
+	invalidTZ := []string{
+		"MAP",
+		"Europe/Fronce",
+	}
+
+	for _, tz := range invalidTZ {
+		if IsValid(tz) {
+			t.Fatalf(`Timezone %q should be invalid an it's not`, tz)
+		}
+	}
+}
