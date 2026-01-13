@@ -540,10 +540,11 @@ function initializeMainMenuHandlers() {
 
     onClick(".header nav li", (event) => {
         const linkElement = event.target.closest("a") || event.target.querySelector("a");
-        if (linkElement) {
+        if (linkElement && !event.ctrlKey && !event.shiftKey && !event.metaKey) {
+            event.preventDefault();
             window.location.href = linkElement.getAttribute("href");
         }
-    });
+    }, true);
 }
 
 /**
