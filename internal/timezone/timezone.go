@@ -4,66 +4,15 @@
 package timezone // import "miniflux.app/v2/internal/timezone"
 
 import (
+	"iter"
+	"slices"
 	"sync"
 	"time"
 )
 
 var (
-	tzCache = sync.Map{} // Cache for time locations to avoid loading them multiple times.
-)
-
-// Convert converts provided date time to actual timezone.
-func Convert(tz string, t time.Time) time.Time {
-	userTimezone := getLocation(tz)
-
-	if t.Location().String() == "" {
-		if t.Before(time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC)) {
-			return time.Date(0, time.January, 1, 0, 0, 0, 0, userTimezone)
-		}
-
-		// In this case, the provided date is already converted to the user timezone by Postgres,
-		// but the timezone information is not set in the time struct.
-		// We cannot use time.In() because the date will be converted a second time.
-		return time.Date(
-			t.Year(),
-			t.Month(),
-			t.Day(),
-			t.Hour(),
-			t.Minute(),
-			t.Second(),
-			t.Nanosecond(),
-			userTimezone,
-		)
-	} else if t.Location() != userTimezone {
-		return t.In(userTimezone)
-	}
-
-	return t
-}
-
-// Now returns the current time with the given timezone.
-func Now(tz string) time.Time {
-	return time.Now().In(getLocation(tz))
-}
-
-func getLocation(tz string) *time.Location {
-	if loc, ok := tzCache.Load(tz); ok {
-		return loc.(*time.Location)
-	}
-
-	loc, err := time.LoadLocation(tz)
-	if err != nil {
-		loc = time.Local
-	}
-
-	tzCache.Store(tz, loc)
-	return loc
-}
-
-// AvailableTimezones returns a map of supported timezones.
-// This list is taken from Postgres on Debian Trixie.
-func AvailableTimezones() map[string]string {
-	timezones := []string{
+	tzCache   = sync.Map{} // Cache for time locations to avoid loading them multiple times.
+	timezones = []string{  // This list is taken from Postgres on Debian Trixie.
 		"Africa/Abidjan",
 		"Africa/Accra",
 		"Africa/Addis_Ababa",
@@ -514,9 +463,68 @@ func AvailableTimezones() map[string]string {
 		"Pacific/Yap",
 		"UTC",
 	}
-	availableTimezones := make(map[string]string, len(timezones))
-	for _, tz := range timezones {
-		availableTimezones[tz] = tz
+)
+
+// Convert converts provided date time to actual timezone.
+func Convert(tz string, t time.Time) time.Time {
+	userTimezone := getLocation(tz)
+
+	if t.Location().String() == "" {
+		if t.Before(time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC)) {
+			return time.Date(0, time.January, 1, 0, 0, 0, 0, userTimezone)
+		}
+
+		// In this case, the provided date is already converted to the user timezone by Postgres,
+		// but the timezone information is not set in the time struct.
+		// We cannot use time.In() because the date will be converted a second time.
+		return time.Date(
+			t.Year(),
+			t.Month(),
+			t.Day(),
+			t.Hour(),
+			t.Minute(),
+			t.Second(),
+			t.Nanosecond(),
+			userTimezone,
+		)
+	} else if t.Location() != userTimezone {
+		return t.In(userTimezone)
 	}
-	return availableTimezones
+
+	return t
+}
+
+// Now returns the current time with the given timezone.
+func Now(tz string) time.Time {
+	return time.Now().In(getLocation(tz))
+}
+
+func getLocation(tz string) *time.Location {
+	if loc, ok := tzCache.Load(tz); ok {
+		return loc.(*time.Location)
+	}
+
+	loc, err := time.LoadLocation(tz)
+	if err != nil {
+		loc = time.Local
+	}
+
+	tzCache.Store(tz, loc)
+	return loc
+}
+
+func IsValid(timezone string) bool {
+	_, found := slices.BinarySearch(timezones, timezone)
+	return found
+}
+
+// AvailableTimezones returns an iterator over supported timezones.
+func AvailableTimezones() iter.Seq[string] {
+	return func(yield func(string) bool) {
+		for _, tz := range timezones {
+			if !yield(tz) {
+				return
+			}
+		}
+	}
 }
