@@ -18,8 +18,20 @@ type entriesResponse struct {
 	Entries model.Entries `json:"entries"`
 }
 
-// EntryImportRequest represents a manually imported entry for a feed.
-type EntryImportRequest struct {
+type integrationsStatusResponse struct {
+	HasIntegrations bool `json:"has_integrations"`
+}
+
+type entryIDResponse struct {
+	ID int64 `json:"id"`
+}
+
+type entryContentResponse struct {
+	Content     string `json:"content"`
+	ReadingTime int    `json:"reading_time"`
+}
+
+type entryImportRequest struct {
 	URL         string   `json:"url"`
 	Title       string   `json:"title"`
 	Content     string   `json:"content"`
@@ -34,6 +46,10 @@ type EntryImportRequest struct {
 
 type feedCreationResponse struct {
 	FeedID int64 `json:"feed_id"`
+}
+
+type importFeedsResponse struct {
+	Message string `json:"message"`
 }
 
 type versionResponse struct {

@@ -126,13 +126,7 @@ func (h *handler) getIntegrationsStatus(w http.ResponseWriter, r *http.Request) 
 
 	hasIntegrations := h.store.HasSaveEntry(userID)
 
-	response := struct {
-		HasIntegrations bool `json:"has_integrations"`
-	}{
-		HasIntegrations: hasIntegrations,
-	}
-
-	json.OK(w, r, response)
+	json.OK(w, r, integrationsStatusResponse{HasIntegrations: hasIntegrations})
 }
 
 func (h *handler) users(w http.ResponseWriter, r *http.Request) {

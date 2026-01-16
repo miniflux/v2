@@ -308,47 +308,47 @@ func (h *handler) importFeedEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req EntryImportRequest
-	if err := json_parser.NewDecoder(r.Body).Decode(&req); err != nil {
+	var importRequest entryImportRequest
+	if err := json_parser.NewDecoder(r.Body).Decode(&importRequest); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
 
-	if req.URL == "" {
+	if importRequest.URL == "" {
 		json.BadRequest(w, r, errors.New("url is required"))
 		return
 	}
 
-	if req.Status == "" {
-		req.Status = model.EntryStatusRead
+	if importRequest.Status == "" {
+		importRequest.Status = model.EntryStatusRead
 	}
 
-	if err := validator.ValidateEntryStatus(req.Status); err != nil {
+	if err := validator.ValidateEntryStatus(importRequest.Status); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
 
 	entry := model.NewEntry()
-	entry.URL = req.URL
-	entry.CommentsURL = req.CommentsURL
-	entry.Author = req.Author
-	entry.Tags = req.Tags
+	entry.URL = importRequest.URL
+	entry.CommentsURL = importRequest.CommentsURL
+	entry.Author = importRequest.Author
+	entry.Tags = importRequest.Tags
 
-	if req.PublishedAt > 0 {
-		entry.Date = time.Unix(req.PublishedAt, 0).UTC()
+	if importRequest.PublishedAt > 0 {
+		entry.Date = time.Unix(importRequest.PublishedAt, 0).UTC()
 	} else {
 		entry.Date = time.Now().UTC()
 	}
 
-	if req.Title == "" {
+	if importRequest.Title == "" {
 		entry.Title = entry.URL
 	} else {
-		entry.Title = req.Title
+		entry.Title = importRequest.Title
 	}
 
-	hashInput := req.ExternalID
+	hashInput := importRequest.ExternalID
 	if hashInput == "" {
-		hashInput = req.URL
+		hashInput = importRequest.URL
 	}
 	entry.Hash = crypto.HashFromBytes([]byte(hashInput))
 
@@ -363,8 +363,8 @@ func (h *handler) importFeedEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Content != "" {
-		entry.Content = sanitizer.SanitizeHTML(entry.URL, req.Content, &sanitizer.SanitizerOptions{OpenLinksInNewTab: user.OpenExternalLinksInNewTab})
+	if importRequest.Content != "" {
+		entry.Content = sanitizer.SanitizeHTML(entry.URL, importRequest.Content, &sanitizer.SanitizerOptions{OpenLinksInNewTab: user.OpenExternalLinksInNewTab})
 	}
 
 	if user.ShowReadingTime {
@@ -377,13 +377,13 @@ func (h *handler) importFeedEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.store.SetEntriesStatus(userID, []int64{entry.ID}, req.Status); err != nil {
+	if err := h.store.SetEntriesStatus(userID, []int64{entry.ID}, importRequest.Status); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
-	entry.Status = req.Status
+	entry.Status = importRequest.Status
 
-	if req.Starred {
+	if importRequest.Starred {
 		if err := h.store.SetEntriesStarredState(userID, []int64{entry.ID}, true); err != nil {
 			json.ServerError(w, r, err)
 			return
@@ -392,9 +392,9 @@ func (h *handler) importFeedEntry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if created {
-		json.Created(w, r, map[string]int64{"id": entry.ID})
+		json.Created(w, r, entryIDResponse{ID: entry.ID})
 	} else {
-		json.OK(w, r, map[string]int64{"id": entry.ID})
+		json.OK(w, r, entryIDResponse{ID: entry.ID})
 	}
 }
 
@@ -454,7 +454,7 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	json.OK(w, r, map[string]any{"content": mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entry.Content), "reading_time": entry.ReadingTime})
+	json.OK(w, r, entryContentResponse{Content: mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entry.Content), ReadingTime: entry.ReadingTime})
 }
 
 func (h *handler) flushHistory(w http.ResponseWriter, r *http.Request) {
