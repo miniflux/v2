@@ -24,7 +24,7 @@ func (a *atom03Adapter) buildFeed(baseURL string) *model.Feed {
 	// Populate the feed URL.
 	feedURL := a.atomFeed.Links.firstLinkWithRelation("self")
 	if feedURL != "" {
-		if absoluteFeedURL, err := urllib.AbsoluteURL(baseURL, feedURL); err == nil {
+		if absoluteFeedURL, err := urllib.ResolveToAbsoluteURL(baseURL, feedURL); err == nil {
 			feed.FeedURL = absoluteFeedURL
 		}
 	} else {
@@ -34,7 +34,7 @@ func (a *atom03Adapter) buildFeed(baseURL string) *model.Feed {
 	// Populate the site URL.
 	siteURL := a.atomFeed.Links.originalLink()
 	if siteURL != "" {
-		if absoluteSiteURL, err := urllib.AbsoluteURL(baseURL, siteURL); err == nil {
+		if absoluteSiteURL, err := urllib.ResolveToAbsoluteURL(baseURL, siteURL); err == nil {
 			feed.SiteURL = absoluteSiteURL
 		}
 	} else {
@@ -53,7 +53,7 @@ func (a *atom03Adapter) buildFeed(baseURL string) *model.Feed {
 		// Populate the entry URL.
 		entry.URL = atomEntry.Links.originalLink()
 		if entry.URL != "" {
-			if absoluteEntryURL, err := urllib.AbsoluteURL(feed.SiteURL, entry.URL); err == nil {
+			if absoluteEntryURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, entry.URL); err == nil {
 				entry.URL = absoluteEntryURL
 			}
 		}

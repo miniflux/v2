@@ -32,7 +32,7 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 	}
 
 	// Ensure the Site URL is absolute.
-	if absoluteSiteURL, err := urllib.AbsoluteURL(baseURL, feed.SiteURL); err == nil {
+	if absoluteSiteURL, err := urllib.ResolveToAbsoluteURL(baseURL, feed.SiteURL); err == nil {
 		feed.SiteURL = absoluteSiteURL
 	}
 
@@ -40,7 +40,7 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 	for _, atomLink := range r.rss.Channel.Links {
 		atomLinkHref := strings.TrimSpace(atomLink.Href)
 		if atomLinkHref != "" && atomLink.Rel == "self" {
-			if absoluteFeedURL, err := urllib.AbsoluteURL(feed.FeedURL, atomLinkHref); err == nil {
+			if absoluteFeedURL, err := urllib.ResolveToAbsoluteURL(feed.FeedURL, atomLinkHref); err == nil {
 				feed.FeedURL = absoluteFeedURL
 				break
 			}
@@ -61,7 +61,7 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 
 	// Get the feed icon URL if defined.
 	if r.rss.Channel.Image != nil {
-		if absoluteIconURL, err := urllib.AbsoluteURL(feed.SiteURL, r.rss.Channel.Image.URL); err == nil {
+		if absoluteIconURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, r.rss.Channel.Image.URL); err == nil {
 			feed.IconURL = absoluteIconURL
 		}
 	}
@@ -83,7 +83,7 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 				entry.URL = feed.SiteURL
 			}
 		} else {
-			if absoluteEntryURL, err := urllib.AbsoluteURL(feed.SiteURL, entryURL); err == nil {
+			if absoluteEntryURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, entryURL); err == nil {
 				entry.URL = absoluteEntryURL
 			} else {
 				entry.URL = entryURL
@@ -309,7 +309,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 			continue
 		}
 		if _, found := duplicates[mediaURL]; !found {
-			if mediaAbsoluteURL, err := urllib.AbsoluteURL(siteURL, mediaURL); err != nil {
+			if mediaAbsoluteURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL); err != nil {
 				slog.Debug("Unable to build absolute URL for media thumbnail",
 					slog.String("url", mediaThumbnail.URL),
 					slog.String("site_url", siteURL),
@@ -341,7 +341,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 			continue
 		}
 
-		if absoluteEnclosureURL, err := urllib.AbsoluteURL(siteURL, enclosureURL); err == nil {
+		if absoluteEnclosureURL, err := urllib.ResolveToAbsoluteURL(siteURL, enclosureURL); err == nil {
 			enclosureURL = absoluteEnclosureURL
 		}
 
@@ -363,7 +363,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 		}
 		if _, found := duplicates[mediaURL]; !found {
 			mediaURL := strings.TrimSpace(mediaContent.URL)
-			if mediaAbsoluteURL, err := urllib.AbsoluteURL(siteURL, mediaURL); err != nil {
+			if mediaAbsoluteURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL); err != nil {
 				slog.Debug("Unable to build absolute URL for media content",
 					slog.String("url", mediaContent.URL),
 					slog.String("site_url", siteURL),
@@ -387,7 +387,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 		}
 		if _, found := duplicates[mediaURL]; !found {
 			mediaURL := strings.TrimSpace(mediaPeerLink.URL)
-			if mediaAbsoluteURL, err := urllib.AbsoluteURL(siteURL, mediaURL); err != nil {
+			if mediaAbsoluteURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL); err != nil {
 				slog.Debug("Unable to build absolute URL for media peer link",
 					slog.String("url", mediaPeerLink.URL),
 					slog.String("site_url", siteURL),
