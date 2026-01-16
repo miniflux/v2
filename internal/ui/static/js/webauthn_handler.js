@@ -93,7 +93,9 @@ class WebAuthnHandler {
         credentialCreationOptions.publicKey.challenge = this.decodeBuffer(credentialCreationOptions.publicKey.challenge);
         credentialCreationOptions.publicKey.user.id = this.decodeBuffer(credentialCreationOptions.publicKey.user.id);
         if (Object.hasOwn(credentialCreationOptions.publicKey, 'excludeCredentials')) {
-            credentialCreationOptions.publicKey.excludeCredentials.forEach((credential) => credential.id = this.decodeBuffer(credential.id));
+            credentialCreationOptions.publicKey.excludeCredentials.forEach((credential) => {
+                credential.id = this.decodeBuffer(credential.id);
+            });
         }
 
         let attestation;
@@ -148,7 +150,9 @@ class WebAuthnHandler {
         credentialRequestOptions.publicKey.challenge = this.decodeBuffer(credentialRequestOptions.publicKey.challenge);
 
         if (Object.hasOwn(credentialRequestOptions.publicKey, 'allowCredentials')) {
-            credentialRequestOptions.publicKey.allowCredentials.forEach((credential) => credential.id = this.decodeBuffer(credential.id));
+            credentialRequestOptions.publicKey.allowCredentials.forEach((credential) => {
+                credential.id = this.decodeBuffer(credential.id);
+            });
         }
 
         if (abortController) {
