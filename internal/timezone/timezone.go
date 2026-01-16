@@ -465,7 +465,7 @@ var (
 	}
 )
 
-// Convert converts provided date time to actual timezone.
+// Convert returns the provided time expressed in the given timezone.
 func Convert(tz string, t time.Time) time.Time {
 	userTimezone := getLocation(tz)
 
@@ -494,7 +494,7 @@ func Convert(tz string, t time.Time) time.Time {
 	return t
 }
 
-// Now returns the current time with the given timezone.
+// Now returns the current time in the given timezone.
 func Now(tz string) time.Time {
 	return time.Now().In(getLocation(tz))
 }
@@ -513,12 +513,13 @@ func getLocation(tz string) *time.Location {
 	return loc
 }
 
+// IsValid reports whether the timezone string is in the supported list.
 func IsValid(timezone string) bool {
 	_, found := slices.BinarySearch(timezones, timezone)
 	return found
 }
 
-// AvailableTimezones returns an iterator over supported timezones.
+// AvailableTimezones returns an iterator over supported timezone names.
 func AvailableTimezones() iter.Seq[string] {
 	return func(yield func(string) bool) {
 		for _, tz := range timezones {
