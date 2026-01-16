@@ -1090,6 +1090,22 @@ func TestPollingSchedulerOptionParsing(t *testing.T) {
 	}
 }
 
+func TestPollingSkipExistingEntriesOptionParsing(t *testing.T) {
+	configParser := NewConfigParser()
+
+	if configParser.options.PollingSkipExistingEntries() != false {
+		t.Fatalf("Expected POLLING_SKIP_EXISTING_ENTRIES to be false by default")
+	}
+
+	if err := configParser.parseLines([]string{"POLLING_SKIP_EXISTING_ENTRIES=1"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if configParser.options.PollingSkipExistingEntries() != true {
+		t.Fatalf("Expected POLLING_SKIP_EXISTING_ENTRIES to be true")
+	}
+}
+
 func TestPortOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
 
