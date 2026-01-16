@@ -11,6 +11,7 @@
     "action.save": "Kaydet",
     "action.subscribe": "Abone Ol",
     "action.update": "Güncelle",
+    "action.test": "Test gönder",
     "alert.account_linked": "Harici hesabınız bağlandı!",
     "alert.account_unlinked": "Harici hesabınızın bağlantısı kaldırıldı!",
     "alert.background_feed_refresh": "Tüm beslemeler arkaplanda yenileniyor. Bu süreç devam ederken Miniflux'ı kullanmaya devam edebilirsiniz.",
@@ -33,6 +34,7 @@
         "Çok fazla besleme yenilemesi başlattınız. Tekrar denemeden önce lütfen %d dakika bekleyin."
     ],
     "confirm.loading": "Devam ediyor...",
+    "form.submit.testing": "Test ediliyor...",
     "confirm.no": "hayır",
     "confirm.question": "Emin misiniz?",
     "confirm.question.refresh": "Zorla yenilemek istiyor musunuz?",
