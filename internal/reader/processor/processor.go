@@ -72,18 +72,6 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 			slog.String("feed_url", feed.FeedURL),
 		)
 
-		if filter.IsBlockedEntry(blockRules, allowRules, feed, entry) {
-			slog.Debug("Entry is blocked by filter rules",
-				slog.Int64("user_id", user.ID),
-				slog.String("entry_url", entry.URL),
-				slog.String("entry_hash", entry.Hash),
-				slog.String("entry_title", entry.Title),
-				slog.Int64("feed_id", feed.ID),
-				slog.String("feed_url", feed.FeedURL),
-			)
-			continue
-		}
-
 		parsedInputUrl, _ := url.Parse(entry.URL)
 		if cleanedURL, err := urlcleaner.RemoveTrackingParameters(parsedFeedURL, parsedSiteURL, parsedInputUrl); err == nil {
 			entry.URL = cleanedURL
@@ -146,6 +134,18 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 
 		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered out.
 		entry.Content = sanitizer.SanitizeHTML(webpageBaseURL, entry.Content, &sanitizer.SanitizerOptions{OpenLinksInNewTab: user.OpenExternalLinksInNewTab})
+
+		if filter.IsBlockedEntry(blockRules, allowRules, feed, entry) {
+			slog.Debug("Entry is blocked by filter rules",
+				slog.Int64("user_id", user.ID),
+				slog.String("entry_url", entry.URL),
+				slog.String("entry_hash", entry.Hash),
+				slog.String("entry_title", entry.Title),
+				slog.Int64("feed_id", feed.ID),
+				slog.String("feed_url", feed.FeedURL),
+			)
+			continue
+		}
 
 		updateEntryReadingTime(store, feed, entry, entryIsNew, user)
 
