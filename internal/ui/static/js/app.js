@@ -491,9 +491,9 @@ function toggleAriaAttributesOnMainMenu() {
         homePageLinkElement.tabIndex = -1;
     } else {
         // Remove mobile menu button attributes
-        ["role", "tabindex", "aria-expanded", "aria-label"].forEach(attr =>
-            logoElement.removeAttribute(attr)
-        );
+        ["role", "tabindex", "aria-expanded", "aria-label"].forEach(attr => {
+            logoElement.removeAttribute(attr);
+        });
         homePageLinkElement.removeAttribute("tabindex");
     }
 }
