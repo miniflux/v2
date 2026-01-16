@@ -4,6 +4,7 @@
 package timezone // import "miniflux.app/v2/internal/timezone"
 
 import (
+	"slices"
 	"testing"
 	"time"
 
@@ -112,5 +113,17 @@ func TestIsValid(t *testing.T) {
 		if IsValid(tz) {
 			t.Fatalf(`Timezone %q should be invalid an it's not`, tz)
 		}
+	}
+}
+
+func TestAvailableTimezones(t *testing.T) {
+	var got []string
+
+	for tz := range AvailableTimezones() {
+		got = append(got, tz)
+	}
+
+	if !slices.Equal(got, timezones) {
+		t.Fatalf("available timezones differ from source slice: expected %d entries, got %d", len(timezones), len(got))
 	}
 }
