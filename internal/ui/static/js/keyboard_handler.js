@@ -1,12 +1,12 @@
 class KeyboardHandler {
     constructor() {
         this.queue = [];
-        this.shortcuts = {};
+        this.shortcuts = new Map();
         this.triggers = new Set();
     }
 
     on(combination, callback) {
-        this.shortcuts[combination] = callback;
+        this.shortcuts.set(combination, callback);
         this.triggers.add(combination.split(" ")[0]);
     }
 
@@ -23,18 +23,18 @@ class KeyboardHandler {
 
             this.queue.push(key);
 
-            for (const combination in this.shortcuts) {
+            for (const [combination, callback] of this.shortcuts.entries()) {
                 const keys = combination.split(" ");
 
                 if (keys.every((value, index) => value === this.queue[index])) {
                     this.queue = [];
-                    this.shortcuts[combination](event);
+                    callback(event);
                     return;
                 }
 
                 if (keys.length === 1 && key === keys[0]) {
                     this.queue = [];
-                    this.shortcuts[combination](event);
+                    callback(event);
                     return;
                 }
             }
