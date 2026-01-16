@@ -47,6 +47,7 @@ func IsValidURL(absoluteURL string) bool {
 	return err == nil
 }
 
+// IsValidDomain verifies a single domain name against length and character constraints.
 func IsValidDomain(domain string) bool {
 	domain = strings.ToLower(domain)
 
@@ -57,9 +58,10 @@ func IsValidDomain(domain string) bool {
 	return domainRegex.MatchString(domain)
 }
 
+// IsValidDomainList verifies a space-separated list of domains for validity.
 func IsValidDomainList(value string) bool {
-	domains := strings.Split(strings.TrimSpace(value), " ")
-	for _, domain := range domains {
+	domains := strings.SplitSeq(strings.TrimSpace(value), " ")
+	for domain := range domains {
 		if !IsValidDomain(domain) {
 			return false
 		}
