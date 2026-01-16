@@ -68,11 +68,9 @@ func (r *ResponseHandler) Expires() time.Duration {
 func (r *ResponseHandler) CacheControlMaxAge() time.Duration {
 	cacheControlHeaderValue := r.httpResponse.Header.Get("Cache-Control")
 	if cacheControlHeaderValue != "" {
-		for _, directive := range strings.Split(cacheControlHeaderValue, ",") {
-			directive = strings.TrimSpace(directive)
-			if strings.HasPrefix(directive, "max-age=") {
-				maxAge, err := strconv.Atoi(strings.TrimPrefix(directive, "max-age="))
-				if err == nil {
+		for directive := range strings.SplitSeq(cacheControlHeaderValue, ",") {
+			if after, ok := strings.CutPrefix(strings.TrimSpace(directive), "max-age="); ok {
+				if maxAge, err := strconv.Atoi(after); err == nil {
 					return time.Duration(maxAge) * time.Second
 				}
 			}
@@ -144,9 +142,9 @@ func (r *ResponseHandler) getReader(maxBodySize int64) io.ReadCloser {
 	reader := r.httpResponse.Body
 	switch contentEncoding {
 	case "br":
-		reader = NewBrotliReadCloser(r.httpResponse.Body)
+		reader = NewBrotliReadCloser(reader)
 	case "gzip":
-		reader = NewGzipReadCloser(r.httpResponse.Body)
+		reader = NewGzipReadCloser(reader)
 	}
 	return http.MaxBytesReader(nil, reader, maxBodySize)
 }
@@ -176,17 +174,18 @@ func (r *ResponseHandler) ReadBody(maxBodySize int64) ([]byte, *locale.Localized
 
 func (r *ResponseHandler) LocalizedError() *locale.LocalizedErrorWrapper {
 	if r.clientErr != nil {
+		err := fmt.Errorf("fetcher: %w", r.clientErr)
 		switch {
 		case isSSLError(r.clientErr):
-			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.tls_error", r.clientErr)
+			return locale.NewLocalizedErrorWrapper(err, "error.tls_error", r.clientErr)
 		case isNetworkError(r.clientErr):
-			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.network_operation", r.clientErr)
+			return locale.NewLocalizedErrorWrapper(err, "error.network_operation", r.clientErr)
 		case os.IsTimeout(r.clientErr):
-			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.network_timeout", r.clientErr)
+			return locale.NewLocalizedErrorWrapper(err, "error.network_timeout", r.clientErr)
 		case errors.Is(r.clientErr, io.EOF):
-			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.http_empty_response")
+			return locale.NewLocalizedErrorWrapper(err, "error.http_empty_response")
 		default:
-			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.http_client_error", r.clientErr)
+			return locale.NewLocalizedErrorWrapper(err, "error.http_client_error", r.clientErr)
 		}
 	}
 
@@ -197,16 +196,18 @@ func (r *ResponseHandler) LocalizedError() *locale.LocalizedErrorWrapper {
 		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: access forbidden (403 status code)"), "error.http_forbidden")
 	case http.StatusTooManyRequests:
 		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: too many requests (429 status code)"), "error.http_too_many_requests")
-	case http.StatusNotFound, http.StatusGone:
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: resource not found (%d status code)", r.httpResponse.StatusCode), "error.http_resource_not_found")
+	case http.StatusNotFound:
+		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: resource not found (404 status code)"), "error.http_resource_not_found")
+	case http.StatusGone:
+		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: resource not found (410 status code)"), "error.http_resource_not_found")
 	case http.StatusInternalServerError:
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: remote server error (%d status code)", r.httpResponse.StatusCode), "error.http_internal_server_error")
+		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: remote server error (500 status code)"), "error.http_internal_server_error")
 	case http.StatusBadGateway:
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: bad gateway (%d status code)", r.httpResponse.StatusCode), "error.http_bad_gateway")
+		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: bad gateway (502 status code)"), "error.http_bad_gateway")
 	case http.StatusServiceUnavailable:
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: service unavailable (%d status code)", r.httpResponse.StatusCode), "error.http_service_unavailable")
+		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: service unavailable (503 status code)"), "error.http_service_unavailable")
 	case http.StatusGatewayTimeout:
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: gateway timeout (%d status code)", r.httpResponse.StatusCode), "error.http_gateway_timeout")
+		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: gateway timeout (504 status code)"), "error.http_gateway_timeout")
 	}
 
 	if r.httpResponse.StatusCode >= 400 {
