@@ -3,7 +3,7 @@ Miniflux API Client
 
 [![PkgGoDev](https://pkg.go.dev/badge/miniflux.app/v2/client)](https://pkg.go.dev/miniflux.app/v2/client)
 
-Client library for Miniflux REST API.
+Go client for the Miniflux REST API. It supports API tokens or basic authentication and mirrors the server endpoints closely.
 
 Installation
 ------------
