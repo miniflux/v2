@@ -275,7 +275,7 @@ func findIconURLsFromHTMLDocument(documentURL string, body io.Reader, contentTyp
 				continue
 			}
 
-			if absoluteIconURL, err := urllib.AbsoluteURL(documentURL, href); err != nil {
+			if absoluteIconURL, err := urllib.ResolveToAbsoluteURL(documentURL, href); err != nil {
 				slog.Warn("Unable to convert icon URL to absolute URL", slog.Any("error", err), slog.String("icon_href", href))
 			} else {
 				iconURLs = append(iconURLs, absoluteIconURL)

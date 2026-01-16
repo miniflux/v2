@@ -374,7 +374,7 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 				value = attribute.Val
 				isAnchorLink = true
 			default:
-				value, err = absoluteURLParsedBase(parsedBaseUrl, value)
+				value, err = urllib.ResolveToAbsoluteURLWithParsedBaseURL(parsedBaseUrl, value)
 				if err != nil {
 					continue
 				}
@@ -575,7 +575,7 @@ func sanitizeSrcsetAttr(parsedBaseURL *url.URL, value string) string {
 	imageCandidates := ParseSrcSetAttribute(value)
 
 	for _, imageCandidate := range imageCandidates {
-		if absoluteURL, err := absoluteURLParsedBase(parsedBaseURL, imageCandidate.ImageURL); err == nil {
+		if absoluteURL, err := urllib.ResolveToAbsoluteURLWithParsedBaseURL(parsedBaseURL, imageCandidate.ImageURL); err == nil {
 			imageCandidate.ImageURL = absoluteURL
 		}
 	}
@@ -626,20 +626,4 @@ func isValidDecodingValue(value string) bool {
 		return true
 	}
 	return false
-}
-
-// absoluteURLParsedBase is used instead of urllib.AbsoluteURL to avoid parsing baseURL over and over.
-func absoluteURLParsedBase(parsedBaseURL *url.URL, input string) (string, error) {
-	absURL, u, err := urllib.GetAbsoluteURL(input)
-	if err != nil {
-		return "", err
-	}
-	if absURL != "" {
-		return absURL, nil
-	}
-	if parsedBaseURL == nil {
-		return "", nil
-	}
-
-	return parsedBaseURL.ResolveReference(u).String(), nil
 }

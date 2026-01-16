@@ -32,7 +32,7 @@ func (r *rdfAdapter) buildFeed(baseURL string) *model.Feed {
 		feed.Title = baseURL
 	}
 
-	if siteURL, err := urllib.AbsoluteURL(feed.FeedURL, feed.SiteURL); err == nil {
+	if siteURL, err := urllib.ResolveToAbsoluteURL(feed.FeedURL, feed.SiteURL); err == nil {
 		feed.SiteURL = siteURL
 	}
 
@@ -43,7 +43,7 @@ func (r *rdfAdapter) buildFeed(baseURL string) *model.Feed {
 		// Populate the entry URL.
 		if itemLink == "" {
 			entry.URL = feed.SiteURL // Fallback to the feed URL if the entry URL is empty.
-		} else if entryURL, err := urllib.AbsoluteURL(feed.SiteURL, itemLink); err == nil {
+		} else if entryURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, itemLink); err == nil {
 			entry.URL = entryURL
 		} else {
 			entry.URL = itemLink
