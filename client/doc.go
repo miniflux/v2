@@ -6,7 +6,7 @@ Package client implements a client library for the Miniflux REST API.
 
 # Examples
 
-This code snippet fetch the list of users:
+This example fetches the list of users:
 
 	import (
 		miniflux "miniflux.app/v2/client"
@@ -20,7 +20,7 @@ This code snippet fetch the list of users:
 	}
 	fmt.Println(users, err)
 
-This one discover subscriptions on a website:
+This example discovers subscriptions on a website:
 
 	subscriptions, err := client.Discover("https://example.org/")
 	if err != nil {

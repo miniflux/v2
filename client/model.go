@@ -356,6 +356,7 @@ type APIKeyCreationRequest struct {
 	Description string `json:"description"`
 }
 
+// SetOptionalField returns a pointer to the given value so optional request fields can be marked as set.
 func SetOptionalField[T any](value T) *T {
 	return &value
 }
