@@ -48,7 +48,7 @@ class WebAuthnHandler {
     async post(urlKey, username, data) {
         let url = document.body.dataset[urlKey];
         if (username) {
-            url += "?username=" + encodeURIComponent(username);
+            url += `?username=${encodeURIComponent(username)}`;
         }
 
         return sendPOSTRequest(url, data);
@@ -57,7 +57,7 @@ class WebAuthnHandler {
     async get(urlKey, username) {
         let url = document.body.dataset[urlKey];
         if (username) {
-            url += "?username=" + encodeURIComponent(username);
+            url += `?username=${encodeURIComponent(username)}`;
         }
         return fetch(url);
     }
@@ -121,7 +121,7 @@ class WebAuthnHandler {
         }
 
         if (!registrationFinishResponse.ok) {
-            throw new Error("Registration failed with HTTP status code " + registrationFinishResponse.status);
+            throw new Error(`Registration failed with HTTP status code ${registrationFinishResponse.status}`);
         }
 
         const jsonData = await registrationFinishResponse.json();
@@ -192,7 +192,7 @@ class WebAuthnHandler {
         }
 
         if (!loginFinishResponse.ok) {
-            throw new Error("Login failed with HTTP status code " + loginFinishResponse.status);
+            throw new Error(`Login failed with HTTP status code ${loginFinishResponse.status}`);
         }
 
         window.location.reload();

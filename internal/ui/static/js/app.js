@@ -284,7 +284,7 @@ function showToastNotification(iconType, notificationMessage) {
  * @param {boolean} reloadOnFail - If true, reload the current page if the target page is not found.
  */
 function goToPage(page, reloadOnFail = false) {
-    const element = document.querySelector(":is(a, button)[data-page=" + page + "]");
+    const element = document.querySelector(`:is(a, button)[data-page=${page}]`);
 
     if (element) {
         document.location.href = element.href;
@@ -649,7 +649,7 @@ function toggleEntryStatus(element, toasting) {
             showToastNotification(newStatus, currentStatus === "read" ? buttonElement.dataset.toastUnread : buttonElement.dataset.toastRead);
         }
 
-        element.classList.replace("item-status-" + currentStatus, "item-status-" + newStatus);
+        element.classList.replace(`item-status-${currentStatus}`, `item-status-${newStatus}`);
 
         if (isListView() && getVisibleEntries().length === 0) {
             window.location.reload();
@@ -953,7 +953,7 @@ function handleConfirmationMessage(linkElement, callback) {
     };
 
     questionElement.className = "confirm";
-    questionElement.appendChild(document.createTextNode(linkElement.dataset.labelQuestion + " "));
+    questionElement.appendChild(document.createTextNode(`${linkElement.dataset.labelQuestion} `));
     questionElement.appendChild(yesElement);
     questionElement.appendChild(document.createTextNode(", "));
     questionElement.appendChild(noElement);

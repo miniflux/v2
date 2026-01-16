@@ -62,7 +62,7 @@ class TouchHandler {
 
             const tx = (absDistance > 75 ? Math.sqrt(absDistance - 75) + 75 : absDistance) * Math.sign(distance);
 
-            this.touch.element.style.transform = "translateX(" + tx + "px)";
+            this.touch.element.style.transform = `translateX(${tx}px)`;
 
             event.preventDefault();
         }
