@@ -5,7 +5,7 @@ package request // import "miniflux.app/v2/internal/http/request"
 
 import "net/http"
 
-// CookieValue returns the cookie value.
+// CookieValue returns the named cookie value, or an empty string if the cookie is missing.
 func CookieValue(r *http.Request, name string) string {
 	cookie, err := r.Cookie(name)
 	if err != nil {

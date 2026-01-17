@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// IsTrustedIP checks if the given remote IP belongs to one of the trusted networks.
+// IsTrustedIP reports whether the given remote IP address belongs to one of the trusted networks.
 func IsTrustedIP(remoteIP string, trustedNetworks []string) bool {
 	if remoteIP == "@" || strings.HasPrefix(remoteIP, "/") {
 		return true
@@ -34,7 +34,7 @@ func IsTrustedIP(remoteIP string, trustedNetworks []string) bool {
 	return false
 }
 
-// FindClientIP returns the client real IP address based on trusted Reverse-Proxy HTTP headers.
+// FindClientIP returns the real client IP address using trusted reverse-proxy headers when allowed.
 func FindClientIP(r *http.Request, isTrustedProxyClient bool) string {
 	if isTrustedProxyClient {
 		headers := [...]string{"X-Forwarded-For", "X-Real-Ip"}
@@ -57,7 +57,7 @@ func FindClientIP(r *http.Request, isTrustedProxyClient bool) string {
 	return FindRemoteIP(r)
 }
 
-// FindRemoteIP returns remote client IP address without considering HTTP headers.
+// FindRemoteIP returns the remote client IP address without considering HTTP headers.
 func FindRemoteIP(r *http.Request) string {
 	remoteIP, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {

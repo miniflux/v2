@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"reflect"
 	"testing"
 
 	"github.com/gorilla/mux"
@@ -179,7 +180,7 @@ func TestQueryInt64Param(t *testing.T) {
 		t.Errorf(`Unexpected result, got %d instead of %d`, result, expected)
 	}
 
-	result = QueryInt64Param(r, "invalid", int64(69))
+	result = QueryInt64Param(r, "negative", int64(69))
 	expected = int64(69)
 
 	if result != expected {
@@ -191,6 +192,58 @@ func TestQueryInt64Param(t *testing.T) {
 
 	if result != expected {
 		t.Errorf(`Unexpected result, got %d instead of %d`, result, expected)
+	}
+}
+
+func TestQueryBoolParam(t *testing.T) {
+	u, _ := url.Parse("http://example.org/?truthy=true&falsy=false&invalid=wat")
+	r := &http.Request{URL: u}
+
+	result := QueryBoolParam(r, "truthy", false)
+	expected := true
+
+	if result != expected {
+		t.Errorf(`Unexpected result, got %v instead of %v`, result, expected)
+	}
+
+	result = QueryBoolParam(r, "falsy", true)
+	expected = false
+
+	if result != expected {
+		t.Errorf(`Unexpected result, got %v instead of %v`, result, expected)
+	}
+
+	result = QueryBoolParam(r, "missing", true)
+	expected = true
+
+	if result != expected {
+		t.Errorf(`Unexpected result, got %v instead of %v`, result, expected)
+	}
+
+	result = QueryBoolParam(r, "invalid", true)
+	expected = true
+
+	if result != expected {
+		t.Errorf(`Unexpected result, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestQueryStringParamList(t *testing.T) {
+	u, _ := url.Parse("http://example.org/?tag=alpha&tag=beta&tag=+&tag=%20%20gamma%20%20&empty=")
+	r := &http.Request{URL: u}
+
+	result := QueryStringParamList(r, "tag")
+	expected := []string{"alpha", "beta", "gamma"}
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf(`Unexpected result, got %v instead of %v`, result, expected)
+	}
+
+	result = QueryStringParamList(r, "missing")
+	expected = nil
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf(`Unexpected result, got %v instead of %v`, result, expected)
 	}
 }
 
