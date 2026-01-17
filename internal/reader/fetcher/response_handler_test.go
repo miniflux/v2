@@ -4,10 +4,25 @@
 package fetcher // import "miniflux.app/v2/internal/reader/fetcher"
 
 import (
+	"errors"
+	"io"
 	"net/http"
 	"testing"
 	"time"
 )
+
+type testReadCloser struct {
+	closed bool
+}
+
+func (rc *testReadCloser) Read(_ []byte) (int, error) {
+	return 0, io.EOF
+}
+
+func (rc *testReadCloser) Close() error {
+	rc.closed = true
+	return nil
+}
 
 func TestIsModified(t *testing.T) {
 	var cachedEtag = "abc123"
@@ -172,5 +187,19 @@ func TestCacheControlMaxAgeInMinutes(t *testing.T) {
 				t.Errorf("Expected %d, got %d for scenario %q", tc.Expected, rh.CacheControlMaxAge(), name)
 			}
 		})
+	}
+}
+
+func TestResponseHandlerCloseClosesBodyOnClientError(t *testing.T) {
+	body := &testReadCloser{}
+	rh := ResponseHandler{
+		httpResponse: &http.Response{Body: body},
+		clientErr:    errors.New("boom"),
+	}
+
+	rh.Close()
+
+	if !body.closed {
+		t.Error("Expected response body to be closed")
 	}
 }

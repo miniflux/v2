@@ -125,7 +125,7 @@ func (r *ResponseHandler) IsRedirect() bool {
 }
 
 func (r *ResponseHandler) Close() {
-	if r.httpResponse != nil && r.httpResponse.Body != nil && r.clientErr == nil {
+	if r.httpResponse != nil && r.httpResponse.Body != nil {
 		r.httpResponse.Body.Close()
 	}
 }
