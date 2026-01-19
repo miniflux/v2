@@ -14,7 +14,7 @@ import (
 // Parse returns a normalized feed struct from a JSON feed.
 func Parse(baseURL string, data io.Reader) (*model.Feed, error) {
 	jsonFeed := new(JSONFeed)
-	if err := json.NewDecoder(data).Decode(&jsonFeed); err != nil {
+	if err := json.NewDecoder(data).Decode(jsonFeed); err != nil {
 		return nil, fmt.Errorf("json: unable to parse feed: %w", err)
 	}
 
