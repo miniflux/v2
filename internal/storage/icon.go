@@ -12,7 +12,7 @@ import (
 	"miniflux.app/v2/internal/model"
 )
 
-// HasFeedIcon checks if the given feed has an icon.
+// HasFeedIcon reports whether the specified feed already has an associated icon record.
 func (s *Storage) HasFeedIcon(feedID int64) bool {
 	var result bool
 	query := `SELECT true FROM feed_icons WHERE feed_id=$1 LIMIT 1`
@@ -20,7 +20,7 @@ func (s *Storage) HasFeedIcon(feedID int64) bool {
 	return result
 }
 
-// IconByID returns an icon by the ID.
+// IconByID fetches a single icon by its internal identifier, returning nil when it is not found.
 func (s *Storage) IconByID(iconID int64) (*model.Icon, error) {
 	var icon model.Icon
 	query := `
@@ -33,16 +33,17 @@ func (s *Storage) IconByID(iconID int64) (*model.Icon, error) {
 		FROM icons
 		WHERE id=$1`
 	err := s.db.QueryRow(query, iconID).Scan(&icon.ID, &icon.Hash, &icon.MimeType, &icon.Content, &icon.ExternalID)
-	if err == sql.ErrNoRows {
+	switch {
+	case err == sql.ErrNoRows:
 		return nil, nil
-	} else if err != nil {
-		return nil, fmt.Errorf("store: unable to fetch icon #%d: %w", iconID, err)
+	case err != nil:
+		return nil, fmt.Errorf("store: cannot load icon id=%d: %w", iconID, err)
+	default:
+		return &icon, nil
 	}
-
-	return &icon, nil
 }
 
-// IconByExternalID returns an icon by the External Icon ID.
+// IconByExternalID fetches an icon using its external identifier, returning nil when no match exists.
 func (s *Storage) IconByExternalID(externalIconID string) (*model.Icon, error) {
 	var icon model.Icon
 	query := `
@@ -56,16 +57,17 @@ func (s *Storage) IconByExternalID(externalIconID string) (*model.Icon, error) {
 		WHERE external_id=$1
 	`
 	err := s.db.QueryRow(query, externalIconID).Scan(&icon.ID, &icon.Hash, &icon.MimeType, &icon.Content, &icon.ExternalID)
-	if err == sql.ErrNoRows {
+	switch {
+	case err == sql.ErrNoRows:
 		return nil, nil
-	} else if err != nil {
-		return nil, fmt.Errorf("store: unable to fetch icon %s: %w", externalIconID, err)
+	case err != nil:
+		return nil, fmt.Errorf("store: cannot load icon external_id=%s: %w", externalIconID, err)
+	default:
+		return &icon, nil
 	}
-
-	return &icon, nil
 }
 
-// IconByFeedID returns a feed icon.
+// IconByFeedID returns the icon linked to the given feed for the specified user, or nil if none is set.
 func (s *Storage) IconByFeedID(userID, feedID int64) (*model.Icon, error) {
 	query := `
 		SELECT
@@ -83,14 +85,17 @@ func (s *Storage) IconByFeedID(userID, feedID int64) (*model.Icon, error) {
 	`
 	var icon model.Icon
 	err := s.db.QueryRow(query, userID, feedID).Scan(&icon.ID, &icon.Hash, &icon.MimeType, &icon.Content, &icon.ExternalID)
-	if err != nil {
-		return nil, fmt.Errorf(`store: unable to fetch icon: %v`, err)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, fmt.Errorf("store: cannot load icon for feed_id=%d user_id=%d: %w", feedID, userID, err)
+	default:
+		return &icon, nil
 	}
-
-	return &icon, nil
 }
 
-// StoreFeedIcon creates or updates a feed icon.
+// StoreFeedIcon creates or reuses an icon by hash and associates it with the given feed atomically.
 func (s *Storage) StoreFeedIcon(feedID int64, icon *model.Icon) error {
 	tx, err := s.db.Begin()
 	if err != nil {
@@ -140,7 +145,7 @@ func (s *Storage) StoreFeedIcon(feedID int64, icon *model.Icon) error {
 	return nil
 }
 
-// Icons returns all icons that belongs to a user.
+// Icons lists all icons currently associated with any feed owned by the given user.
 func (s *Storage) Icons(userID int64) (model.Icons, error) {
 	query := `
 		SELECT

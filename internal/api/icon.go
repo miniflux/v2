@@ -13,11 +13,6 @@ import (
 func (h *handler) getIconByFeedID(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 
-	if !h.store.HasFeedIcon(feedID) {
-		json.NotFound(w, r)
-		return
-	}
-
 	icon, err := h.store.IconByFeedID(request.UserID(r), feedID)
 	if err != nil {
 		json.ServerError(w, r, err)
