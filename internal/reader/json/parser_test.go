@@ -5,6 +5,8 @@ package json // import "miniflux.app/v2/internal/reader/json"
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"testing"
 	"time"
 )
@@ -833,15 +835,64 @@ func TestParseItemTitleWithXMLTags(t *testing.T) {
 	}
 }
 
-func TestParseItemWithoutID(t *testing.T) {
+func TestParseItemHashPrefersIDOverURL(t *testing.T) {
 	data := `{
 		"version": "https://jsonfeed.org/version/1",
-		"title": "My Example Feed",
+		"title": "Example",
 		"home_page_url": "https://example.org/",
 		"feed_url": "https://example.org/feed.json",
 		"items": [
 			{
-				"content_text": "Some text."
+				"id": "id-value",
+				"url": "https://example.org/article"
+			}
+		]
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := sha256.Sum256([]byte("id-value"))
+	if feed.Entries[0].Hash != hex.EncodeToString(expected[:]) {
+		t.Errorf("Incorrect entry hash, got: %s", feed.Entries[0].Hash)
+	}
+}
+
+func TestParseItemHashUsesURLWhenNoID(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "Example",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"items": [
+			{
+				"url": "https://example.org/article"
+			}
+		]
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := sha256.Sum256([]byte("https://example.org/article"))
+	if feed.Entries[0].Hash != hex.EncodeToString(expected[:]) {
+		t.Errorf("Incorrect entry hash, got: %s", feed.Entries[0].Hash)
+	}
+}
+
+func TestParseItemHashUsesExternalURLFallback(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "Example",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"items": [
+			{
+				"external_url": "https://example.org/external"
 			}
 		]
 	}`
@@ -852,10 +903,37 @@ func TestParseItemWithoutID(t *testing.T) {
 	}
 
 	if len(feed.Entries) != 1 {
-		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+		t.Fatalf("Incorrect number of entries, got: %d", len(feed.Entries))
 	}
 
-	if feed.Entries[0].Hash != "13b4c5aecd1b6d749afcee968fbf9c80f1ed1bbdbe1aaf25cb34ebd01144bbe9" {
+	expected := sha256.Sum256([]byte("https://example.org/external"))
+	if feed.Entries[0].Hash != hex.EncodeToString(expected[:]) {
+		t.Errorf("Incorrect entry hash, got: %s", feed.Entries[0].Hash)
+	}
+}
+
+func TestParseItemHashFallsBackToContent(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "Example",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"items": [
+			{
+				"content_text": "Text",
+				"content_html": "<p>HTML</p>",
+				"summary": "Summary"
+			}
+		]
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := sha256.Sum256([]byte("Text<p>HTML</p>Summary"))
+	if feed.Entries[0].Hash != hex.EncodeToString(expected[:]) {
 		t.Errorf("Incorrect entry hash, got: %s", feed.Entries[0].Hash)
 	}
 }
