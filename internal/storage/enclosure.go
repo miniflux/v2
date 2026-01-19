@@ -176,6 +176,18 @@ func (s *Storage) createEnclosure(tx *sql.Tx, enclosure *model.Enclosure) error 
 
 func (s *Storage) updateEnclosures(tx *sql.Tx, entry *model.Entry) error {
 	if len(entry.Enclosures) == 0 {
+		// Do not keep any old enclosures if there is none in the updated entry.
+		query := `
+			DELETE FROM
+				enclosures
+			WHERE
+				user_id=$1 AND entry_id=$2
+		`
+
+		_, err := tx.Exec(query, entry.UserID, entry.ID)
+		if err != nil {
+			return fmt.Errorf(`store: unable to delete old enclosures: %v`, err)
+		}
 		return nil
 	}
 
