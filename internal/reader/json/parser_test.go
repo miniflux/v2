@@ -1012,3 +1012,15 @@ func TestParseInvalidJSON(t *testing.T) {
 		t.Error("Parse should returns an error")
 	}
 }
+
+func TestParseNullJSONFeed(t *testing.T) {
+	data := `null`
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatalf("Unexpected error when parsing null feed: %v", err)
+	}
+
+	if feed == nil {
+		t.Fatalf("Feed should not be nil")
+	}
+}
