@@ -598,6 +598,39 @@ func TestParseItemWithMultipleDuplicateAuthors(t *testing.T) {
 	}
 }
 
+func TestParseItemWithAuthorsObject(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1.1",
+		"title": "Example",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"items": [
+			{
+				"id": "1",
+				"title": "Example Item",
+				"url": "https://example.org/item",
+				"date_published": "2020-01-02T03:04:05Z",
+				"authors": {
+					"name": "Example Author"
+				}
+			}
+		]
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].Author != "Example Author" {
+		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	}
+}
+
 func TestParseItemWithInvalidDate(t *testing.T) {
 	data := `{
 		"version": "https://jsonfeed.org/version/1",
