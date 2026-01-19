@@ -3,6 +3,8 @@
 
 package json // import "miniflux.app/v2/internal/reader/json"
 
+import "encoding/json"
+
 // JSON Feed specs:
 // https://www.jsonfeed.org/version/1.1/
 // https://www.jsonfeed.org/version/1/
@@ -31,7 +33,7 @@ type JSONFeed struct {
 	FaviconURL string `json:"favicon"`
 
 	// Authors specifies one or more feed authors. The author object has several members.
-	Authors []JSONAuthor `json:"authors"` // JSON Feed v1.1
+	Authors JSONAuthors `json:"authors"` // JSON Feed v1.1
 
 	// Author specifies the feed author. The author object has several members.
 	// JSON Feed v1 (deprecated)
@@ -60,6 +62,27 @@ type JSONAuthor struct {
 
 	// Author's avatar URL.
 	AvatarURL string `json:"avatar"`
+}
+
+// JSONAuthors unmarshals either an array or a single author object.
+// Some feeds incorrectly use an object for "authors"; we accept it to avoid failing the whole feed.
+type JSONAuthors []JSONAuthor
+
+func (a *JSONAuthors) UnmarshalJSON(data []byte) error {
+	var authors []JSONAuthor
+	if err := json.Unmarshal(data, &authors); err == nil {
+		*a = authors
+		return nil
+	}
+
+	var author JSONAuthor
+	if err := json.Unmarshal(data, &author); err == nil {
+		*a = []JSONAuthor{author}
+		return nil
+	}
+
+	// Ignore invalid formats silently; the caller can still use other fields.
+	return nil
 }
 
 type JSONHub struct {
@@ -112,7 +135,7 @@ type JSONItem struct {
 	Language string `json:"language"`
 
 	// Authors is an array of JSONAuthor.
-	Authors []JSONAuthor `json:"authors"`
+	Authors JSONAuthors `json:"authors"`
 
 	// Author is a JSONAuthor.
 	// JSON Feed v1 (deprecated)
