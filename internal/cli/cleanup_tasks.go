@@ -47,7 +47,7 @@ func runCleanupTasks(store *storage.Storage) {
 		}
 	}
 
-	if enclosuresAffected, err := store.DeleteRemovedEntriesEnclosures(); err != nil {
+	if enclosuresAffected, err := store.DeleteEnclosuresOfRemovedEntries(); err != nil {
 		slog.Error("Unable to delete enclosures from removed entries", slog.Any("error", err))
 	} else {
 		slog.Info("Deleting enclosures from removed entries completed",

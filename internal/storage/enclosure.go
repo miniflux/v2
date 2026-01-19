@@ -245,3 +245,24 @@ func (s *Storage) UpdateEnclosure(enclosure *model.Enclosure) error {
 
 	return nil
 }
+
+// DeleteEnclosuresOfRemovedEntries deletes enclosures associated with entries marked as "removed".
+func (s *Storage) DeleteEnclosuresOfRemovedEntries() (int64, error) {
+	query := `
+		DELETE FROM
+			enclosures
+		WHERE
+			enclosures.entry_id IN (SELECT id FROM entries WHERE status=$1)
+	`
+	result, err := s.db.Exec(query, model.EntryStatusRemoved)
+	if err != nil {
+		return 0, fmt.Errorf(`store: unable to delete enclosures from removed entries: %v`, err)
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf(`store: unable to get the number of rows affected while deleting enclosures from removed entries: %v`, err)
+	}
+
+	return count, nil
+}
