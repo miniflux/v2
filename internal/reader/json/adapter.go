@@ -83,8 +83,10 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		// The entry title is optional, so we need to find a fallback.
 		if entry.Title == "" {
 			for _, value := range []string{item.Summary, item.ContentText, item.ContentHTML} {
+				value = strings.TrimSpace(value)
 				if value != "" {
 					entry.Title = sanitizer.TruncateHTML(value, 100)
+					break
 				}
 			}
 		}
