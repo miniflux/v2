@@ -253,6 +253,10 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 
 			buffer.WriteString(token.String())
 		case html.StartTagToken:
+			if len(blockedStack) != 0 {
+				continue
+			}
+
 			parentTag = tagName
 
 			if isPixelTracker(tagName, token.Attr) {
@@ -264,7 +268,7 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 				continue
 			}
 
-			if len(blockedStack) == 0 && isValidTag(tagName) {
+			if isAllowedTag(tagName) {
 				attrNames, htmlAttributes := sanitizeAttributes(parsedBaseUrl, tagName, token.Attr, sanitizerOptions)
 				if hasRequiredAttributes(tagName, attrNames) {
 					if len(attrNames) > 0 {
