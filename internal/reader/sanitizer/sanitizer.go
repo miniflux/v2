@@ -284,7 +284,7 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 			}
 		case html.EndTagToken:
 			if len(blockedStack) == 0 {
-				if isValidTag(tagName) && slices.Contains(tagStack, tagName) {
+				if isAllowedTag(tagName) && slices.Contains(tagStack, tagName) {
 					buffer.WriteString("</" + tagName + ">")
 				}
 			} else {
@@ -296,7 +296,7 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 			if isPixelTracker(tagName, token.Attr) {
 				continue
 			}
-			if len(blockedStack) == 0 && isValidTag(tagName) {
+			if len(blockedStack) == 0 && isAllowedTag(tagName) {
 				attrNames, htmlAttributes := sanitizeAttributes(parsedBaseUrl, tagName, token.Attr, sanitizerOptions)
 				if hasRequiredAttributes(tagName, attrNames) {
 					if len(attrNames) > 0 {
@@ -444,7 +444,7 @@ func getExtraAttributes(tagName string, isYouTubeEmbed bool, sanitizerOptions *S
 	}
 }
 
-func isValidTag(tagName string) bool {
+func isAllowedTag(tagName string) bool {
 	_, ok := allowedHTMLTagsAndAttributes[tagName]
 	return ok
 }
