@@ -11,6 +11,7 @@
     "action.save": "保存",
     "action.subscribe": "订阅",
     "action.update": "更新",
+    "action.test": "发送测试",
     "alert.account_linked": "您的外部账号已关联！",
     "alert.account_unlinked": "您的外部帐户已解除关联！",
     "alert.background_feed_refresh": "所有订阅源正在后台刷新。您可以在刷新过程中继续使用 Miniflux。",
@@ -32,6 +33,7 @@
         "您触发了太多次订阅源刷新。请在 %d 分钟后重试。"
     ],
     "confirm.loading": "进行中…",
+    "form.submit.testing": "测试中…",
     "confirm.no": "否",
     "confirm.question": "您确定吗？",
     "confirm.question.refresh": "您确定要强制刷新吗？",
