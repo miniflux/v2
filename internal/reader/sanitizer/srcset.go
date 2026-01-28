@@ -41,10 +41,10 @@ func ParseSrcSetAttribute(attributeValue string) (candidates imageCandidates) {
 		return nil
 	}
 
-	position := 0
-	for position < len(attributeValue) {
+	var position uint = 0
+	for position < uint(len(attributeValue)) {
 		position = skipWhileHTMLSpaceOrComma(attributeValue, position)
-		if position >= len(attributeValue) {
+		if position >= uint(len(attributeValue)) {
 			break
 		}
 
@@ -166,20 +166,20 @@ const (
 	descriptorStateAfterToken
 )
 
-func tokenizeDescriptors(input string, start int) (tokens []string, newPosition int) {
+func tokenizeDescriptors(input string, start uint) (tokens []string, newPosition uint) {
 	state := descriptorStateInitial
 	currentStart := start
 	currentSet := true
 	position := start
 
-	appendDescriptorAndReset := func(position int) {
+	appendDescriptorAndReset := func(position uint) {
 		if currentSet && position > currentStart {
 			tokens = append(tokens, input[currentStart:position])
 		}
 		currentSet = false
 	}
 
-	appendCharacter := func(position int) {
+	appendCharacter := func(position uint) {
 		if !currentSet {
 			currentStart = position
 			currentSet = true
@@ -187,7 +187,7 @@ func tokenizeDescriptors(input string, start int) (tokens []string, newPosition 
 	}
 
 	for {
-		if position >= len(input) {
+		if position >= uint(len(input)) {
 			if state != descriptorStateAfterToken {
 				appendDescriptorAndReset(position)
 			}
@@ -272,22 +272,22 @@ func formatFloat(value float64) string {
 	return strconv.FormatFloat(value, 'g', -1, 64)
 }
 
-func skipWhileHTMLSpaceOrComma(value string, position int) int {
-	for position < len(value) && (isASCIIWhitespace(value[position]) || isComma(value[position])) {
+func skipWhileHTMLSpaceOrComma(value string, position uint) uint {
+	for position < uint(len(value)) && (isASCIIWhitespace(value[position]) || isComma(value[position])) {
 		position++
 	}
 	return position
 }
 
-func skipWhileASCIIWhitespace(value string, position int) int {
-	for position < len(value) && isASCIIWhitespace(value[position]) {
+func skipWhileASCIIWhitespace(value string, position uint) uint {
+	for position < uint(len(value)) && isASCIIWhitespace(value[position]) {
 		position++
 	}
 	return position
 }
 
-func skipUntilASCIIWhitespace(value string, position int) int {
-	for position < len(value) && !isASCIIWhitespace(value[position]) {
+func skipUntilASCIIWhitespace(value string, position uint) uint {
+	for position < uint(len(value)) && !isASCIIWhitespace(value[position]) {
 		position++
 	}
 	return position
