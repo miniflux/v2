@@ -81,8 +81,8 @@ func ParseSrcSetAttribute(attributeValue string) (candidates imageCandidates) {
 
 type descriptorParsingResult struct {
 	density        float64
-	resourceWidth  int
-	resourceHeight int
+	resourceWidth  uint
+	resourceHeight uint
 	hasDensity     bool
 	hasWidth       bool
 	hasHeight      bool
@@ -93,12 +93,12 @@ func (r *descriptorParsingResult) setDensity(value float64) {
 	r.hasDensity = true
 }
 
-func (r *descriptorParsingResult) setResourceWidth(value int) {
+func (r *descriptorParsingResult) setResourceWidth(value uint) {
 	r.resourceWidth = value
 	r.hasWidth = true
 }
 
-func (r *descriptorParsingResult) setResourceHeight(value int) {
+func (r *descriptorParsingResult) setResourceHeight(value uint) {
 	r.resourceHeight = value
 	r.hasHeight = true
 }
@@ -108,7 +108,7 @@ func serializeDescriptor(result descriptorParsingResult) string {
 		return formatFloat(result.density) + "x"
 	}
 	if result.hasWidth {
-		return strconv.Itoa(result.resourceWidth) + "w"
+		return strconv.FormatUint(uint64(result.resourceWidth), 10) + "w"
 	}
 	return ""
 }
@@ -233,7 +233,7 @@ func tokenizeDescriptors(input string, start uint) (tokens []string, newPosition
 	}
 }
 
-func parseValidHTMLNonNegativeInteger(value string) (int, bool) {
+func parseValidHTMLNonNegativeInteger(value string) (uint, bool) {
 	if value == "" {
 		return 0, false
 	}
@@ -244,12 +244,12 @@ func parseValidHTMLNonNegativeInteger(value string) (int, bool) {
 		}
 	}
 
-	parsed, err := strconv.Atoi(value)
+	parsed, err := strconv.ParseUint(value, 10, 0)
 	if err != nil {
 		return 0, false
 	}
 
-	return parsed, true
+	return uint(parsed), true
 }
 
 func parseValidHTMLFloatingPointNumber(value string) (float64, bool) {
