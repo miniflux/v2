@@ -339,7 +339,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		processor.ProcessFeedEntries(store, originalFeed, userID, forceRefresh)
 
 		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries). Unless it is forced to refresh
-		updateExistingEntries := forceRefresh || !originalFeed.Crawler
+		updateExistingEntries := forceRefresh || (!originalFeed.Crawler && !config.Opts.PollingSkipExistingEntries())
 		newEntries, storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, updateExistingEntries)
 		if storeErr != nil {
 			localizedError := locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)

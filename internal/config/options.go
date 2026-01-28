@@ -510,6 +510,11 @@ func NewConfigOptions() *configOptions {
 					return validateChoices(rawValue, []string{"round_robin", "entry_frequency"})
 				},
 			},
+			"POLLING_SKIP_EXISTING_ENTRIES": {
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
+			},
 			"PORT": {
 				parsedStringValue: "",
 				rawValue:          "",
@@ -919,6 +924,10 @@ func (c *configOptions) PollingParsingErrorLimit() int {
 
 func (c *configOptions) PollingScheduler() string {
 	return c.options["POLLING_SCHEDULER"].parsedStringValue
+}
+
+func (c *configOptions) PollingSkipExistingEntries() bool {
+	return c.options["POLLING_SKIP_EXISTING_ENTRIES"].parsedBoolValue
 }
 
 func (c *configOptions) Port() string {
