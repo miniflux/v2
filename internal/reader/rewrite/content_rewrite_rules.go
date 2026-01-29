@@ -36,6 +36,7 @@ var predefinedRules = map[string]string{
 	"thedoghousediaries.com": "add_image_title",
 	"theverge.com":           `add_dynamic_image, remove("div.duet--recirculation--related-list, .hidden")`,
 	"treelobsters.com":       "add_image_title",
+	"vnexpress.net":          `add_dynamic_image, remove("h1.title-detail, .box-tinlienquanv2, .thumb-above-video, .parser_title, table[border=\"0\"], p.Normal[style=\"text-align:center;\"], ul.gaBoxLinkDisplay")`,
 	"xkcd.com":               "add_image_title",
 	"youtube.com":            "add_youtube_video",
 }
