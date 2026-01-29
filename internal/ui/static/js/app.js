@@ -42,10 +42,8 @@ function sendPOSTRequest(url, body = null) {
  * @param {string} url
  */
 function openNewTab(url) {
-    const win = window.open("");
-    win.opener = null;
-    win.location = url;
-    win.focus();
+    const win = window.open(url, "_blank", "noreferrer");
+    if (win) win.focus();
 }
 
 /**
