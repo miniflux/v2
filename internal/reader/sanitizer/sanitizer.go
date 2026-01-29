@@ -4,7 +4,6 @@
 package sanitizer // import "miniflux.app/v2/internal/reader/sanitizer"
 
 import (
-	"io"
 	"net/url"
 	"slices"
 	"strconv"
@@ -204,10 +203,97 @@ type SanitizerOptions struct {
 	OpenLinksInNewTab bool
 }
 
+func isHidden(n *html.Node) bool {
+	for _, attr := range n.Attr {
+		if strings.ToLower(attr.Key) == "hidden" {
+			return true
+		}
+	}
+	return false
+}
+
+func shouldIgnoreTag(n *html.Node, tag string) bool {
+	if isPixelTracker(tag, n.Attr) {
+		return true
+	}
+	if isBlockedTag(tag) {
+		return true
+	}
+	if isHidden(n) {
+		return true
+	}
+
+	return false
+}
+
+func isSelfContainedTag(tag string) bool {
+	switch tag {
+	case "area", "base", "br", "col", "embed", "hr", "img", "input",
+		"link", "meta", "param", "source", "track", "wbr":
+		return true
+	}
+	return false
+}
+
+func filterAndRenderHTMLChildren(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.URL, sanitizerOptions *SanitizerOptions) {
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		filterAndRenderHTML(buf, c, parsedBaseUrl, sanitizerOptions)
+	}
+}
+
+func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.URL, sanitizerOptions *SanitizerOptions) {
+	if n == nil {
+		return
+	}
+
+	switch n.Type {
+	case html.TextNode:
+		buf.WriteString(html.EscapeString(n.Data))
+	case html.ElementNode:
+		tag := strings.ToLower(n.Data)
+		if shouldIgnoreTag(n, tag) {
+			return
+		}
+
+		_, ok := allowedHTMLTagsAndAttributes[tag]
+		if !ok {
+			// The tag isn't allowed, but we're still interested in its content
+			filterAndRenderHTMLChildren(buf, n, parsedBaseUrl, sanitizerOptions)
+			return
+		}
+
+		attrNames, htmlAttributes := sanitizeAttributes(parsedBaseUrl, tag, n.Attr, sanitizerOptions)
+		if !hasRequiredAttributes(tag, attrNames) {
+			// The tag doesn't have every required attributes but we're still interested in its content
+			filterAndRenderHTMLChildren(buf, n, parsedBaseUrl, sanitizerOptions)
+			return
+		}
+		buf.WriteString("<")
+		buf.WriteString(n.Data)
+		if len(attrNames) > 0 {
+			buf.WriteString(" " + htmlAttributes)
+		}
+		buf.WriteString(">")
+
+		if isSelfContainedTag(tag) {
+			return
+		}
+
+		if tag != "iframe" {
+			// iframes aren't allowed to have child nodes.
+			filterAndRenderHTMLChildren(buf, n, parsedBaseUrl, sanitizerOptions)
+		}
+
+		buf.WriteString("</")
+		buf.WriteString(n.Data)
+		buf.WriteString(">")
+	case html.DocumentNode:
+		filterAndRenderHTMLChildren(buf, n, parsedBaseUrl, sanitizerOptions)
+	default:
+	}
+}
+
 func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) string {
-	var tagStack []string
-	var parentTag string
-	var blockedStack []string
 	var buffer strings.Builder
 
 	// Educated guess about how big the sanitized HTML will be,
@@ -215,99 +301,27 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 	estimatedRatio := len(rawHTML) * 3 / 4
 	buffer.Grow(estimatedRatio)
 
-	// Errors are a non-issue, so they're handled later in the function.
-	parsedBaseUrl, _ := url.Parse(baseURL)
-
-	tokenizer := html.NewTokenizer(strings.NewReader(rawHTML))
-	for {
-		if tokenizer.Next() == html.ErrorToken {
-			err := tokenizer.Err()
-			if err == io.EOF {
-				return buffer.String()
-			}
-
-			return ""
-		}
-
-		token := tokenizer.Token()
-
-		// Note: MathML elements are not fully supported by golang.org/x/net/html.
-		// See https://github.com/golang/net/blob/master/html/atom/gen.go
-		// and https://github.com/golang/net/blob/master/html/atom/table.go
-		tagName := token.Data
-		if tagName == "" {
-			continue
-		}
-
-		switch token.Type {
-		case html.TextToken:
-			if len(blockedStack) > 0 {
-				continue
-			}
-
-			// An iframe element never has fallback content.
-			// See https://www.w3.org/TR/2010/WD-html5-20101019/the-iframe-element.html#the-iframe-element
-			if parentTag == "iframe" {
-				continue
-			}
-
-			buffer.WriteString(token.String())
-		case html.StartTagToken:
-			if len(blockedStack) != 0 {
-				continue
-			}
-
-			parentTag = tagName
-
-			if isPixelTracker(tagName, token.Attr) {
-				continue
-			}
-
-			if isBlockedTag(tagName) || slices.ContainsFunc(token.Attr, func(attr html.Attribute) bool { return attr.Key == "hidden" }) {
-				blockedStack = append(blockedStack, tagName)
-				continue
-			}
-
-			if isAllowedTag(tagName) {
-				attrNames, htmlAttributes := sanitizeAttributes(parsedBaseUrl, tagName, token.Attr, sanitizerOptions)
-				if hasRequiredAttributes(tagName, attrNames) {
-					if len(attrNames) > 0 {
-						// Rewrite the start tag with allowed attributes.
-						buffer.WriteString("<" + tagName + " " + htmlAttributes + ">")
-					} else {
-						// Rewrite the start tag without any attributes.
-						buffer.WriteString("<" + tagName + ">")
-					}
-
-					tagStack = append(tagStack, tagName)
-				}
-			}
-		case html.EndTagToken:
-			if len(blockedStack) == 0 {
-				if isAllowedTag(tagName) && slices.Contains(tagStack, tagName) {
-					buffer.WriteString("</" + tagName + ">")
-				}
-			} else {
-				if blockedStack[len(blockedStack)-1] == tagName {
-					blockedStack = blockedStack[:len(blockedStack)-1]
-				}
-			}
-		case html.SelfClosingTagToken:
-			if isPixelTracker(tagName, token.Attr) {
-				continue
-			}
-			if len(blockedStack) == 0 && isAllowedTag(tagName) {
-				attrNames, htmlAttributes := sanitizeAttributes(parsedBaseUrl, tagName, token.Attr, sanitizerOptions)
-				if hasRequiredAttributes(tagName, attrNames) {
-					if len(attrNames) > 0 {
-						buffer.WriteString("<" + tagName + " " + htmlAttributes + "/>")
-					} else {
-						buffer.WriteString("<" + tagName + "/>")
-					}
-				}
-			}
-		}
+	// We need to surround `rawHTML` with body tags so that html.Parse
+	// will consider it a valid html document.
+	doc, err := html.Parse(strings.NewReader("<body>" + rawHTML + "</body>"))
+	if err != nil {
+		return ""
 	}
+
+	/* The structure of `doc` is always:
+	<html>
+	<head>...</head>
+	<body>..</body>
+	*/
+	body := doc.FirstChild.FirstChild.NextSibling
+
+	// Errors are a non-issue, so they're handled in filterAndRenderHTML
+	parsedBaseUrl, _ := url.Parse(baseURL)
+	for c := body.FirstChild; c != nil; c = c.NextSibling {
+		filterAndRenderHTML(&buffer, c, parsedBaseUrl, sanitizerOptions)
+	}
+
+	return buffer.String()
 }
 
 func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []html.Attribute, sanitizerOptions *SanitizerOptions) ([]string, string) {
@@ -444,11 +458,6 @@ func getExtraAttributes(tagName string, isYouTubeEmbed bool, sanitizerOptions *S
 	}
 }
 
-func isAllowedTag(tagName string) bool {
-	_, ok := allowedHTMLTagsAndAttributes[tagName]
-	return ok
-}
-
 func isValidAttribute(tagName, attributeName string) bool {
 	if attributes, ok := allowedHTMLTagsAndAttributes[tagName]; ok {
 		return slices.Contains(attributes, attributeName)
@@ -465,8 +474,8 @@ func isExternalResourceAttribute(attribute string) bool {
 	}
 }
 
-func isPixelTracker(tagName string, attributes []html.Attribute) bool {
-	if tagName != "img" {
+func isPixelTracker(tag string, attributes []html.Attribute) bool {
+	if tag != "img" {
 		return false
 	}
 	hasHeight := false

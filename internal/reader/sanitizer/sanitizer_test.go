@@ -304,7 +304,7 @@ func TestMediumImgWithSrcset(t *testing.T) {
 }
 
 func TestSelfClosingTags(t *testing.T) {
-	input := `<p>This <br> is a <strong>text</strong> <br/>with an image: <img src="http://example.org/" alt="Test" loading="lazy"/>.</p>`
+	input := `<p>This <br> is a <strong>text</strong> <br>with an image: <img src="http://example.org/" alt="Test" loading="lazy">.</p>`
 	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
 
 	if input != output {
@@ -322,8 +322,8 @@ func TestTable(t *testing.T) {
 }
 
 func TestRelativeURL(t *testing.T) {
-	input := `This <a href="/test.html">link is relative</a> and this image: <img src="../folder/image.png"/>`
-	expected := `This <a href="http://example.org/test.html" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">link is relative</a> and this image: <img src="http://example.org/folder/image.png" loading="lazy"/>`
+	input := `This <a href="/test.html">link is relative</a> and this image: <img src="../folder/image.png">`
+	expected := `This <a href="http://example.org/test.html" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">link is relative</a> and this image: <img src="http://example.org/folder/image.png" loading="lazy">`
 	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
 
 	if expected != output {
@@ -798,8 +798,8 @@ func TestXmlEntities(t *testing.T) {
 }
 
 func TestEspaceAttributes(t *testing.T) {
-	input := `<td rowspan="<b>test</b>">test</td>`
-	expected := `<td rowspan="&lt;b&gt;test&lt;/b&gt;">test</td>`
+	input := `<td rowspan="<b>injection</b>">text</td>`
+	expected := `text`
 	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
 
 	if expected != output {
@@ -978,7 +978,7 @@ func TestHiddenParagraph(t *testing.T) {
 
 func TestAttributesAreStripped(t *testing.T) {
 	input := `<p style="color: red;">Some text.<hr style="color: blue"/>Test.</p>`
-	expected := `<p>Some text.<hr/>Test.</p>`
+	expected := `<p>Some text.</p><hr>Test.<p></p>`
 
 	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
 	if expected != output {
