@@ -321,8 +321,6 @@ func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.
 		buf.WriteString("</")
 		buf.WriteString(n.Data)
 		buf.WriteString(">")
-	case html.DocumentNode:
-		filterAndRenderHTMLChildren(buf, n, parsedBaseUrl, sanitizerOptions)
 	default:
 	}
 }
