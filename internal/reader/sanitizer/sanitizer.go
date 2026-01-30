@@ -331,12 +331,17 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 	htmlAttrs := make([]string, 0, len(attributes))
 	attrNames := make([]string, 0, len(attributes))
 
-	var err error
 	var isAnchorLink bool
 	var isYouTubeEmbed bool
 
+	allowedAttributes, ok := allowedHTMLTagsAndAttributes[tagName]
+	if !ok {
+		// This should never happen, as the tag was validated in the caller of `sanitizeAttributes`
+		return []string{}, ""
+	}
+
 	for _, attribute := range attributes {
-		if !isValidAttribute(tagName, attribute.Key) {
+		if !slices.Contains(allowedAttributes, attribute.Key) {
 			continue
 		}
 
@@ -391,6 +396,7 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 				value = attribute.Val
 				isAnchorLink = true
 			default:
+				var err error
 				value, err = urllib.ResolveToAbsoluteURLWithParsedBaseURL(parsedBaseUrl, value)
 				if err != nil {
 					continue
@@ -455,13 +461,6 @@ func getExtraAttributes(tagName string, isYouTubeEmbed bool, sanitizerOptions *S
 	default:
 		return nil, nil
 	}
-}
-
-func isValidAttribute(tagName, attributeName string) bool {
-	if attributes, ok := allowedHTMLTagsAndAttributes[tagName]; ok {
-		return slices.Contains(attributes, attributeName)
-	}
-	return false
 }
 
 func isExternalResourceAttribute(attribute string) bool {
