@@ -199,8 +199,42 @@ var (
 	}
 )
 
+// SanitizerOptions holds options for the HTML sanitizer.
 type SanitizerOptions struct {
 	OpenLinksInNewTab bool
+}
+
+// SanitizeHTML takes raw HTML input and removes any disallowed tags and attributes.
+func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) string {
+	var buffer strings.Builder
+
+	// Educated guess about how big the sanitized HTML will be,
+	// to reduce the amount of buffer re-allocations in this function.
+	estimatedRatio := len(rawHTML) * 3 / 4
+	buffer.Grow(estimatedRatio)
+
+	// We need to surround `rawHTML` with body tags so that html.Parse
+	// will consider it a valid html document.
+	doc, err := html.Parse(strings.NewReader("<body>" + rawHTML + "</body>"))
+	if err != nil {
+		return ""
+	}
+
+	/* The structure of `doc` is always:
+	<html>
+	<head>...</head>
+	<body>..</body>
+	</html>
+	*/
+	body := doc.FirstChild.FirstChild.NextSibling
+
+	// Errors are a non-issue, so they're handled in filterAndRenderHTML
+	parsedBaseUrl, _ := url.Parse(baseURL)
+	for c := body.FirstChild; c != nil; c = c.NextSibling {
+		filterAndRenderHTML(&buffer, c, parsedBaseUrl, sanitizerOptions)
+	}
+
+	return buffer.String()
 }
 
 func isHidden(n *html.Node) bool {
@@ -293,40 +327,10 @@ func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.
 	}
 }
 
-func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) string {
-	var buffer strings.Builder
-
-	// Educated guess about how big the sanitized HTML will be,
-	// to reduce the amount of buffer re-allocations in this function.
-	estimatedRatio := len(rawHTML) * 3 / 4
-	buffer.Grow(estimatedRatio)
-
-	// We need to surround `rawHTML` with body tags so that html.Parse
-	// will consider it a valid html document.
-	doc, err := html.Parse(strings.NewReader("<body>" + rawHTML + "</body>"))
-	if err != nil {
-		return ""
-	}
-
-	/* The structure of `doc` is always:
-	<html>
-	<head>...</head>
-	<body>..</body>
-	*/
-	body := doc.FirstChild.FirstChild.NextSibling
-
-	// Errors are a non-issue, so they're handled in filterAndRenderHTML
-	parsedBaseUrl, _ := url.Parse(baseURL)
-	for c := body.FirstChild; c != nil; c = c.NextSibling {
-		filterAndRenderHTML(&buffer, c, parsedBaseUrl, sanitizerOptions)
-	}
-
-	return buffer.String()
-}
-
 func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []html.Attribute, sanitizerOptions *SanitizerOptions) ([]string, string) {
 	htmlAttrs := make([]string, 0, len(attributes))
 	attrNames := make([]string, 0, len(attributes))
+
 	var err error
 	var isAnchorLink bool
 	var isYouTubeEmbed bool
@@ -357,11 +361,6 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 				}
 			case "width", "height":
 				if !isPositiveInteger(value) {
-					continue
-				}
-
-				// Discard width and height attributes when width is larger than Miniflux layout (750px)
-				if imgWidth := getIntegerAttributeValue("width", attributes); imgWidth > 750 {
 					continue
 				}
 			case "srcset":
@@ -474,8 +473,8 @@ func isExternalResourceAttribute(attribute string) bool {
 	}
 }
 
-func isPixelTracker(tag string, attributes []html.Attribute) bool {
-	if tag != "img" {
+func isPixelTracker(tagName string, attributes []html.Attribute) bool {
+	if tagName != "img" {
 		return false
 	}
 	hasHeight := false
@@ -613,16 +612,6 @@ func isPositiveInteger(value string) bool {
 		return number > 0
 	}
 	return false
-}
-
-func getIntegerAttributeValue(name string, attributes []html.Attribute) int {
-	for _, attribute := range attributes {
-		if attribute.Key == name {
-			number, _ := strconv.Atoi(attribute.Val)
-			return number
-		}
-	}
-	return 0
 }
 
 func isValidFetchPriorityValue(value string) bool {
