@@ -4,6 +4,7 @@
 package sanitizer // import "miniflux.app/v2/internal/reader/sanitizer"
 
 import (
+	"log/slog"
 	"net/url"
 	"slices"
 	"strconv"
@@ -205,7 +206,7 @@ type SanitizerOptions struct {
 }
 
 // SanitizeHTML takes raw HTML input and removes any disallowed tags and attributes.
-func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) string {
+func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) (result string) {
 	var buffer strings.Builder
 
 	// Educated guess about how big the sanitized HTML will be,
@@ -230,6 +231,16 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 
 	// Errors are a non-issue, so they're handled in filterAndRenderHTML
 	parsedBaseUrl, _ := url.Parse(baseURL)
+	defer func() {
+		// Since `filterAndRenderHTML` is called recursively, the go runtime might panic
+		// on maliciously-too-deeply nested HTML, so we have to use `recover`.
+		// The function SanitizeHTML is using a named return value, so that we
+		// can change it from here.
+		if r := recover(); r != nil {
+			slog.Error("the page has too many nested elements", slog.String("page", baseURL), slog.Any("err", err))
+			result = ""
+		}
+	}()
 	for c := body.FirstChild; c != nil; c = c.NextSibling {
 		filterAndRenderHTML(&buffer, c, parsedBaseUrl, sanitizerOptions)
 	}

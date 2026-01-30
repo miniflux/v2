@@ -1021,3 +1021,14 @@ func TestBlockedResourcesSubstrings(t *testing.T) {
 		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
 	}
 }
+func TestDeeplyNestedpage(t *testing.T) {
+	input := "test"
+	for range 25000 {
+		input = "<div>" + input + "</div>"
+	}
+	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if output != "" {
+		t.Errorf(`Wrong output: "%s" != "%s"`, "", output)
+	}
+}
