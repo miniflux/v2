@@ -239,7 +239,7 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 
 func isHidden(n *html.Node) bool {
 	for _, attr := range n.Attr {
-		if strings.ToLower(attr.Key) == "hidden" {
+		if attr.Key == "hidden" {
 			return true
 		}
 	}
