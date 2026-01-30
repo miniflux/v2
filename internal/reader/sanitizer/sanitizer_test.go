@@ -1021,3 +1021,13 @@ func TestBlockedResourcesSubstrings(t *testing.T) {
 		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
 	}
 }
+
+func TestAttrLowerCase(t *testing.T) {
+	input := `<a HrEF="http://example.com" HIddEN>test</a>`
+	expected := ``
+	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}
