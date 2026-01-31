@@ -69,193 +69,123 @@ func TestValidInput(t *testing.T) {
 	}
 }
 
-func TestImgWithWidthAndHeightAttribute(t *testing.T) {
-	input := `<img src="https://example.org/image.png" width="10" height="20">`
-	expected := `<img src="https://example.org/image.png" width="10" height="20" loading="lazy">`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
-	}
-}
-
-func TestImgWithIncorrectWidthAndHeightAttribute(t *testing.T) {
-	input := `<img src="https://example.org/image.png" width="10px" height="20px">`
-	expected := `<img src="https://example.org/image.png" loading="lazy">`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
-	}
-}
-
-func TestImgWithIncorrectWidthAttribute(t *testing.T) {
-	input := `<img src="https://example.org/image.png" width="10px" height="20">`
-	expected := `<img src="https://example.org/image.png" height="20" loading="lazy">`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
-	}
-}
-
-func TestImgWithEmptyWidthAndHeightAttribute(t *testing.T) {
-	input := `<img src="https://example.org/image.png" width="" height="">`
-	expected := `<img src="https://example.org/image.png" loading="lazy">`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
-	}
-}
-
-func TestImgWithIncorrectHeightAttribute(t *testing.T) {
-	input := `<img src="https://example.org/image.png" width="10" height="20px">`
-	expected := `<img src="https://example.org/image.png" width="10" loading="lazy">`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
-	}
-}
-
-func TestImgWithNegativeWidthAttribute(t *testing.T) {
-	input := `<img src="https://example.org/image.png" width="-10" height="20">`
-	expected := `<img src="https://example.org/image.png" height="20" loading="lazy">`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
-	}
-}
-
-func TestImgWithNegativeHeightAttribute(t *testing.T) {
-	input := `<img src="https://example.org/image.png" width="10" height="-20">`
-	expected := `<img src="https://example.org/image.png" width="10" loading="lazy">`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
-	}
-}
-
-func TestImgWithTextDataURL(t *testing.T) {
-	input := `<img src="data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==" alt="Example">`
-	expected := ``
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
-	}
-}
-
-func TestImgWithDataURL(t *testing.T) {
-	input := `<img src="data:image/gif;base64,test" alt="Example">`
-	expected := `<img src="data:image/gif;base64,test" alt="Example" loading="lazy">`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
-	}
-}
-
-func TestImgWithSrcsetAttribute(t *testing.T) {
-	input := `<img srcset="example-320w.jpg, example-480w.jpg 1.5x,   example-640w.jpg 2x, example-640w.jpg 640w" src="example-640w.jpg" alt="Example">`
-	expected := `<img srcset="http://example.org/example-320w.jpg, http://example.org/example-480w.jpg 1.5x, http://example.org/example-640w.jpg 2x, http://example.org/example-640w.jpg 640w" src="http://example.org/example-640w.jpg" alt="Example" loading="lazy">`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
-	}
-}
-
-func TestImgWithSrcsetAndNoSrcAttribute(t *testing.T) {
-	input := `<img srcset="example-320w.jpg, example-480w.jpg 1.5x,   example-640w.jpg 2x, example-640w.jpg 640w" alt="Example">`
-	expected := `<img srcset="http://example.org/example-320w.jpg, http://example.org/example-480w.jpg 1.5x, http://example.org/example-640w.jpg 2x, http://example.org/example-640w.jpg 640w" alt="Example" loading="lazy">`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
-	}
-}
-
-func TestImgWithFetchPriorityAttribute(t *testing.T) {
-	cases := []struct {
+func TestImgSanitization(t *testing.T) {
+	baseURL := "http://example.org/"
+	testCases := []struct {
+		name     string
 		input    string
 		expected string
 	}{
 		{
-			`<img src="https://example.org/image.png" fetchpriority="high">`,
-			`<img src="https://example.org/image.png" fetchpriority="high" loading="lazy">`,
+			name:     "width-and-height-attributes",
+			input:    `<img src="https://example.org/image.png" width="10" height="20">`,
+			expected: `<img src="https://example.org/image.png" width="10" height="20" loading="lazy">`,
 		},
 		{
-			`<img src="https://example.org/image.png" fetchpriority="low">`,
-			`<img src="https://example.org/image.png" fetchpriority="low" loading="lazy">`,
+			name:     "invalid-width-and-height-attributes",
+			input:    `<img src="https://example.org/image.png" width="10px" height="20px">`,
+			expected: `<img src="https://example.org/image.png" loading="lazy">`,
 		},
 		{
-			`<img src="https://example.org/image.png" fetchpriority="auto">`,
-			`<img src="https://example.org/image.png" fetchpriority="auto" loading="lazy">`,
+			name:     "invalid-width-attribute",
+			input:    `<img src="https://example.org/image.png" width="10px" height="20">`,
+			expected: `<img src="https://example.org/image.png" height="20" loading="lazy">`,
+		},
+		{
+			name:     "empty-width-and-height-attributes",
+			input:    `<img src="https://example.org/image.png" width="" height="">`,
+			expected: `<img src="https://example.org/image.png" loading="lazy">`,
+		},
+		{
+			name:     "invalid-height-attribute",
+			input:    `<img src="https://example.org/image.png" width="10" height="20px">`,
+			expected: `<img src="https://example.org/image.png" width="10" loading="lazy">`,
+		},
+		{
+			name:     "negative-width-attribute",
+			input:    `<img src="https://example.org/image.png" width="-10" height="20">`,
+			expected: `<img src="https://example.org/image.png" height="20" loading="lazy">`,
+		},
+		{
+			name:     "negative-height-attribute",
+			input:    `<img src="https://example.org/image.png" width="10" height="-20">`,
+			expected: `<img src="https://example.org/image.png" width="10" loading="lazy">`,
+		},
+		{
+			name:     "text-data-url",
+			input:    `<img src="data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==" alt="Example">`,
+			expected: ``,
+		},
+		{
+			name:     "image-data-url",
+			input:    `<img src="data:image/gif;base64,test" alt="Example">`,
+			expected: `<img src="data:image/gif;base64,test" alt="Example" loading="lazy">`,
+		},
+		{
+			name:     "srcset-attribute",
+			input:    `<img srcset="example-320w.jpg, example-480w.jpg 1.5x,   example-640w.jpg 2x, example-640w.jpg 640w" src="example-640w.jpg" alt="Example">`,
+			expected: `<img srcset="http://example.org/example-320w.jpg, http://example.org/example-480w.jpg 1.5x, http://example.org/example-640w.jpg 2x, http://example.org/example-640w.jpg 640w" src="http://example.org/example-640w.jpg" alt="Example" loading="lazy">`,
+		},
+		{
+			name:     "srcset-attribute-without-src",
+			input:    `<img srcset="example-320w.jpg, example-480w.jpg 1.5x,   example-640w.jpg 2x, example-640w.jpg 640w" alt="Example">`,
+			expected: `<img srcset="http://example.org/example-320w.jpg, http://example.org/example-480w.jpg 1.5x, http://example.org/example-640w.jpg 2x, http://example.org/example-640w.jpg 640w" alt="Example" loading="lazy">`,
+		},
+		{
+			name:     "fetchpriority-high",
+			input:    `<img src="https://example.org/image.png" fetchpriority="high">`,
+			expected: `<img src="https://example.org/image.png" fetchpriority="high" loading="lazy">`,
+		},
+		{
+			name:     "fetchpriority-low",
+			input:    `<img src="https://example.org/image.png" fetchpriority="low">`,
+			expected: `<img src="https://example.org/image.png" fetchpriority="low" loading="lazy">`,
+		},
+		{
+			name:     "fetchpriority-auto",
+			input:    `<img src="https://example.org/image.png" fetchpriority="auto">`,
+			expected: `<img src="https://example.org/image.png" fetchpriority="auto" loading="lazy">`,
+		},
+		{
+			name:     "fetchpriority-invalid",
+			input:    `<img src="https://example.org/image.png" fetchpriority="invalid">`,
+			expected: `<img src="https://example.org/image.png" loading="lazy">`,
+		},
+		{
+			name:     "decoding-sync",
+			input:    `<img src="https://example.org/image.png" decoding="sync">`,
+			expected: `<img src="https://example.org/image.png" decoding="sync" loading="lazy">`,
+		},
+		{
+			name:     "decoding-async",
+			input:    `<img src="https://example.org/image.png" decoding="async">`,
+			expected: `<img src="https://example.org/image.png" decoding="async" loading="lazy">`,
+		},
+		{
+			name:     "decoding-auto",
+			input:    `<img src="https://example.org/image.png" decoding="auto">`,
+			expected: `<img src="https://example.org/image.png" decoding="auto" loading="lazy">`,
+		},
+		{
+			name:     "decoding-invalid",
+			input:    `<img src="https://example.org/image.png" decoding="invalid">`,
+			expected: `<img src="https://example.org/image.png" loading="lazy">`,
 		},
 	}
 
-	for _, tc := range cases {
-		output := sanitizeHTMLWithDefaultOptions("http://example.org/", tc.input)
-		if output != tc.expected {
-			t.Errorf(`Wrong output for input %q: expected %q, got %q`, tc.input, tc.expected, output)
-		}
-	}
-}
-
-func TestImgWithInvalidFetchPriorityAttribute(t *testing.T) {
-	input := `<img src="https://example.org/image.png" fetchpriority="invalid">`
-	expected := `<img src="https://example.org/image.png" loading="lazy">`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: expected %q, got %q`, expected, output)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			output := sanitizeHTMLWithDefaultOptions(baseURL, tc.input)
+			if output != tc.expected {
+				t.Errorf(`Wrong output for input %q: expected %q, got %q`, tc.input, tc.expected, output)
+			}
+		})
 	}
 }
 
 func TestNonImgWithFetchPriorityAttribute(t *testing.T) {
 	input := `<p fetchpriority="high">Text</p>`
 	expected := `<p>Text</p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: expected %q, got %q`, expected, output)
-	}
-}
-
-func TestImgWithDecodingAttribute(t *testing.T) {
-	cases := []struct {
-		input    string
-		expected string
-	}{
-		{
-			`<img src="https://example.org/image.png" decoding="sync">`,
-			`<img src="https://example.org/image.png" decoding="sync" loading="lazy">`,
-		},
-		{
-			`<img src="https://example.org/image.png" decoding="async">`,
-			`<img src="https://example.org/image.png" decoding="async" loading="lazy">`,
-		},
-		{
-			`<img src="https://example.org/image.png" decoding="auto">`,
-			`<img src="https://example.org/image.png" decoding="auto" loading="lazy">`,
-		},
-	}
-
-	for _, tc := range cases {
-		output := sanitizeHTMLWithDefaultOptions("http://example.org/", tc.input)
-		if output != tc.expected {
-			t.Errorf(`Wrong output for input %q: expected %q, got %q`, tc.input, tc.expected, output)
-		}
-	}
-}
-
-func TestImgWithInvalidDecodingAttribute(t *testing.T) {
-	input := `<img src="https://example.org/image.png" decoding="invalid">`
-	expected := `<img src="https://example.org/image.png" loading="lazy">`
 	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
 
 	if output != expected {
@@ -499,231 +429,142 @@ func TestInvalidURLScheme(t *testing.T) {
 	}
 }
 
-func TestAPTURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="apt:some-package?channel=test">valid</a></p>`
-	expected := `<p>This link is <a href="apt:some-package?channel=test" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestBitcoinURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W">valid</a></p>`
-	expected := `<p>This link is <a href="bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestCallToURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="callto:12345679">valid</a></p>`
-	expected := `<p>This link is <a href="callto:12345679" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestFeedURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="feed://example.com/rss.xml">valid</a></p>`
-	expected := `<p>This link is <a href="feed://example.com/rss.xml" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-
-	input = `<p>This link is <a href="feed:https://example.com/rss.xml">valid</a></p>`
-	expected = `<p>This link is <a href="feed:https://example.com/rss.xml" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output = sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestGeoURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="geo:13.4125,103.8667">valid</a></p>`
-	expected := `<p>This link is <a href="geo:13.4125,103.8667" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestItunesURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="itms://itunes.com/apps/my-app-name">valid</a></p>`
-	expected := `<p>This link is <a href="itms://itunes.com/apps/my-app-name" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-
-	input = `<p>This link is <a href="itms-apps://itunes.com/apps/my-app-name">valid</a></p>`
-	expected = `<p>This link is <a href="itms-apps://itunes.com/apps/my-app-name" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output = sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestMagnetURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="magnet:?xt.1=urn:sha1:YNCKHTQCWBTRNJIV4WNAE52SJUQCZO5C&amp;xt.2=urn:sha1:TXGCZQTH26NL6OUQAJJPFALHG2LTGBC7">valid</a></p>`
-	expected := `<p>This link is <a href="magnet:?xt.1=urn:sha1:YNCKHTQCWBTRNJIV4WNAE52SJUQCZO5C&amp;xt.2=urn:sha1:TXGCZQTH26NL6OUQAJJPFALHG2LTGBC7" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestMailtoURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="mailto:jsmith@example.com?subject=A%20Test&amp;body=My%20idea%20is%3A%20%0A">valid</a></p>`
-	expected := `<p>This link is <a href="mailto:jsmith@example.com?subject=A%20Test&amp;body=My%20idea%20is%3A%20%0A" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestNewsURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="news://news.server.example/*">valid</a></p>`
-	expected := `<p>This link is <a href="news://news.server.example/*" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-
-	input = `<p>This link is <a href="news:example.group.this">valid</a></p>`
-	expected = `<p>This link is <a href="news:example.group.this" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output = sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-
-	input = `<p>This link is <a href="nntp://news.server.example/example.group.this">valid</a></p>`
-	expected = `<p>This link is <a href="nntp://news.server.example/example.group.this" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output = sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestRTMPURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="rtmp://mycompany.com/vod/mp4:mycoolvideo.mov">valid</a></p>`
-	expected := `<p>This link is <a href="rtmp://mycompany.com/vod/mp4:mycoolvideo.mov" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestSIPURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="sip:+1-212-555-1212:1234@gateway.com;user=phone">valid</a></p>`
-	expected := `<p>This link is <a href="sip:+1-212-555-1212:1234@gateway.com;user=phone" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+func TestURISchemes(t *testing.T) {
+	baseURL := "http://example.org/"
+	testCases := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{
+			name:     "apt",
+			input:    `<p>This link is <a href="apt:some-package?channel=test">valid</a></p>`,
+			expected: `<p>This link is <a href="apt:some-package?channel=test" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "bitcoin",
+			input:    `<p>This link is <a href="bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W">valid</a></p>`,
+			expected: `<p>This link is <a href="bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "callto",
+			input:    `<p>This link is <a href="callto:12345679">valid</a></p>`,
+			expected: `<p>This link is <a href="callto:12345679" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "feed-double-slash",
+			input:    `<p>This link is <a href="feed://example.com/rss.xml">valid</a></p>`,
+			expected: `<p>This link is <a href="feed://example.com/rss.xml" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "feed-https",
+			input:    `<p>This link is <a href="feed:https://example.com/rss.xml">valid</a></p>`,
+			expected: `<p>This link is <a href="feed:https://example.com/rss.xml" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "geo",
+			input:    `<p>This link is <a href="geo:13.4125,103.8667">valid</a></p>`,
+			expected: `<p>This link is <a href="geo:13.4125,103.8667" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "itms",
+			input:    `<p>This link is <a href="itms://itunes.com/apps/my-app-name">valid</a></p>`,
+			expected: `<p>This link is <a href="itms://itunes.com/apps/my-app-name" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "itms-apps",
+			input:    `<p>This link is <a href="itms-apps://itunes.com/apps/my-app-name">valid</a></p>`,
+			expected: `<p>This link is <a href="itms-apps://itunes.com/apps/my-app-name" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "magnet",
+			input:    `<p>This link is <a href="magnet:?xt.1=urn:sha1:YNCKHTQCWBTRNJIV4WNAE52SJUQCZO5C&amp;xt.2=urn:sha1:TXGCZQTH26NL6OUQAJJPFALHG2LTGBC7">valid</a></p>`,
+			expected: `<p>This link is <a href="magnet:?xt.1=urn:sha1:YNCKHTQCWBTRNJIV4WNAE52SJUQCZO5C&amp;xt.2=urn:sha1:TXGCZQTH26NL6OUQAJJPFALHG2LTGBC7" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "mailto",
+			input:    `<p>This link is <a href="mailto:jsmith@example.com?subject=A%20Test&amp;body=My%20idea%20is%3A%20%0A">valid</a></p>`,
+			expected: `<p>This link is <a href="mailto:jsmith@example.com?subject=A%20Test&amp;body=My%20idea%20is%3A%20%0A" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "news-double-slash",
+			input:    `<p>This link is <a href="news://news.server.example/*">valid</a></p>`,
+			expected: `<p>This link is <a href="news://news.server.example/*" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "news-single-colon",
+			input:    `<p>This link is <a href="news:example.group.this">valid</a></p>`,
+			expected: `<p>This link is <a href="news:example.group.this" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "nntp",
+			input:    `<p>This link is <a href="nntp://news.server.example/example.group.this">valid</a></p>`,
+			expected: `<p>This link is <a href="nntp://news.server.example/example.group.this" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "rtmp",
+			input:    `<p>This link is <a href="rtmp://mycompany.com/vod/mp4:mycoolvideo.mov">valid</a></p>`,
+			expected: `<p>This link is <a href="rtmp://mycompany.com/vod/mp4:mycoolvideo.mov" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "sip",
+			input:    `<p>This link is <a href="sip:+1-212-555-1212:1234@gateway.com;user=phone">valid</a></p>`,
+			expected: `<p>This link is <a href="sip:+1-212-555-1212:1234@gateway.com;user=phone" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "sips",
+			input:    `<p>This link is <a href="sips:alice@atlanta.com?subject=project%20x&amp;priority=urgent">valid</a></p>`,
+			expected: `<p>This link is <a href="sips:alice@atlanta.com?subject=project%20x&amp;priority=urgent" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "skype",
+			input:    `<p>This link is <a href="skype:echo123?call">valid</a></p>`,
+			expected: `<p>This link is <a href="skype:echo123?call" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "spotify",
+			input:    `<p>This link is <a href="spotify:track:2jCnn1QPQ3E8ExtLe6INsx">valid</a></p>`,
+			expected: `<p>This link is <a href="spotify:track:2jCnn1QPQ3E8ExtLe6INsx" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "steam",
+			input:    `<p>This link is <a href="steam://settings/account">valid</a></p>`,
+			expected: `<p>This link is <a href="steam://settings/account" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "svn",
+			input:    `<p>This link is <a href="svn://example.org">valid</a></p>`,
+			expected: `<p>This link is <a href="svn://example.org" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "svn-ssh",
+			input:    `<p>This link is <a href="svn+ssh://example.org">valid</a></p>`,
+			expected: `<p>This link is <a href="svn+ssh://example.org" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "tel",
+			input:    `<p>This link is <a href="tel:+1-201-555-0123">valid</a></p>`,
+			expected: `<p>This link is <a href="tel:+1-201-555-0123" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "webcal",
+			input:    `<p>This link is <a href="webcal://example.com/calendar.ics">valid</a></p>`,
+			expected: `<p>This link is <a href="webcal://example.com/calendar.ics" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
+		{
+			name:     "xmpp",
+			input:    `<p>This link is <a href="xmpp:user@host?subscribe&amp;type=subscribed">valid</a></p>`,
+			expected: `<p>This link is <a href="xmpp:user@host?subscribe&amp;type=subscribed" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`,
+		},
 	}
 
-	input = `<p>This link is <a href="sips:alice@atlanta.com?subject=project%20x&amp;priority=urgent">valid</a></p>`
-	expected = `<p>This link is <a href="sips:alice@atlanta.com?subject=project%20x&amp;priority=urgent" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output = sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestSkypeURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="skype:echo123?call">valid</a></p>`
-	expected := `<p>This link is <a href="skype:echo123?call" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestSpotifyURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="spotify:track:2jCnn1QPQ3E8ExtLe6INsx">valid</a></p>`
-	expected := `<p>This link is <a href="spotify:track:2jCnn1QPQ3E8ExtLe6INsx" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestSteamURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="steam://settings/account">valid</a></p>`
-	expected := `<p>This link is <a href="steam://settings/account" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestSubversionURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="svn://example.org">valid</a></p>`
-	expected := `<p>This link is <a href="svn://example.org" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-
-	input = `<p>This link is <a href="svn+ssh://example.org">valid</a></p>`
-	expected = `<p>This link is <a href="svn+ssh://example.org" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output = sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestTelURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="tel:+1-201-555-0123">valid</a></p>`
-	expected := `<p>This link is <a href="tel:+1-201-555-0123" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestWebcalURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="webcal://example.com/calendar.ics">valid</a></p>`
-	expected := `<p>This link is <a href="webcal://example.com/calendar.ics" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
-	}
-}
-
-func TestXMPPURIScheme(t *testing.T) {
-	input := `<p>This link is <a href="xmpp:user@host?subscribe&amp;type=subscribed">valid</a></p>`
-	expected := `<p>This link is <a href="xmpp:user@host?subscribe&amp;type=subscribed" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">valid</a></p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			output := sanitizeHTMLWithDefaultOptions(baseURL, tc.input)
+			if tc.expected != output {
+				t.Errorf(`Wrong output for input %q: expected %q, got %q`, tc.input, tc.expected, output)
+			}
+		})
 	}
 }
 
