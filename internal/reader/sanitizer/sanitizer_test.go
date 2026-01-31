@@ -224,11 +224,46 @@ func TestMediumImgWithSrcset(t *testing.T) {
 }
 
 func TestSelfClosingTags(t *testing.T) {
-	input := `<p>This <br> is a <strong>text</strong> <br>with an image: <img src="http://example.org/" alt="Test" loading="lazy">.</p>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
+	baseURL := "http://example.org/"
+	testCases := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{
+			name:     "br",
+			input:    `<p>Line<br>Break</p>`,
+			expected: `<p>Line<br>Break</p>`,
+		},
+		{
+			name:     "hr",
+			input:    `<p>Before</p><hr><p>After</p>`,
+			expected: `<p>Before</p><hr><p>After</p>`,
+		},
+		{
+			name:     "img",
+			input:    `<p>Image <img src="http://example.org/image.png" alt="Test"></p>`,
+			expected: `<p>Image <img src="http://example.org/image.png" alt="Test" loading="lazy"></p>`,
+		},
+		{
+			name:     "source",
+			input:    `<picture><source src="http://example.org/video.mp4" type="video/mp4"></picture>`,
+			expected: `<picture><source src="http://example.org/video.mp4" type="video/mp4"></picture>`,
+		},
+		{
+			name:     "wbr",
+			input:    `<p>soft<wbr>break</p>`,
+			expected: `<p>soft<wbr>break</p>`,
+		},
+	}
 
-	if input != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, input, output)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			output := sanitizeHTMLWithDefaultOptions(baseURL, tc.input)
+			if output != tc.expected {
+				t.Errorf(`Wrong output for input %q: expected %q, got %q`, tc.input, tc.expected, output)
+			}
+		})
 	}
 }
 
