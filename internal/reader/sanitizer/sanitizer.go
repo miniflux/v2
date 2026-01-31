@@ -237,42 +237,22 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 	return buffer.String()
 }
 
-func isHidden(n *html.Node) bool {
-	for _, attr := range n.Attr {
-		if attr.Key == "hidden" {
-			return true
-		}
-	}
-	return false
-}
+func findAllowedIframeSourceDomain(iframeSourceURL string) (string, bool) {
+	iframeSourceDomain := urllib.DomainWithoutWWW(iframeSourceURL)
 
-func shouldIgnoreTag(n *html.Node, tag string) bool {
-	if isPixelTracker(tag, n.Attr) {
-		return true
-	}
-	if isBlockedTag(tag) {
-		return true
-	}
-	if isHidden(n) {
-		return true
+	if _, ok := iframeAllowList[iframeSourceDomain]; ok {
+		return iframeSourceDomain, true
 	}
 
-	return false
-}
-
-func isSelfContainedTag(tag string) bool {
-	switch tag {
-	case "area", "base", "br", "col", "embed", "hr", "img", "input",
-		"link", "meta", "param", "source", "track", "wbr":
-		return true
+	if ytDomain := config.Opts.YouTubeEmbedDomain(); ytDomain != "" && iframeSourceDomain == strings.TrimPrefix(ytDomain, "www.") {
+		return iframeSourceDomain, true
 	}
-	return false
-}
 
-func filterAndRenderHTMLChildren(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.URL, sanitizerOptions *SanitizerOptions) {
-	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		filterAndRenderHTML(buf, c, parsedBaseUrl, sanitizerOptions)
+	if invidiousInstance := config.Opts.InvidiousInstance(); invidiousInstance != "" && iframeSourceDomain == strings.TrimPrefix(invidiousInstance, "www.") {
+		return iframeSourceDomain, true
 	}
+
+	return "", false
 }
 
 func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.URL, sanitizerOptions *SanitizerOptions) {
@@ -323,6 +303,200 @@ func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.
 		buf.WriteString(">")
 	default:
 	}
+}
+
+func filterAndRenderHTMLChildren(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.URL, sanitizerOptions *SanitizerOptions) {
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		filterAndRenderHTML(buf, c, parsedBaseUrl, sanitizerOptions)
+	}
+}
+
+func getExtraAttributes(tagName string, isYouTubeEmbed bool, sanitizerOptions *SanitizerOptions) ([]string, []string) {
+	switch tagName {
+	case "a":
+		attributeNames := []string{"rel", "referrerpolicy"}
+		htmlAttributes := []string{`rel="noopener noreferrer"`, `referrerpolicy="no-referrer"`}
+		if sanitizerOptions.OpenLinksInNewTab {
+			attributeNames = append(attributeNames, "target")
+			htmlAttributes = append(htmlAttributes, `target="_blank"`)
+		}
+		return attributeNames, htmlAttributes
+	case "video", "audio":
+		return []string{"controls"}, []string{"controls"}
+	case "iframe":
+		extraAttrNames := []string{}
+		extraHTMLAttributes := []string{}
+
+		// Note: the referrerpolicy seems to be required to avoid YouTube error 153 video player configuration error
+		// See https://developers.google.com/youtube/terms/required-minimum-functionality#embedded-player-api-client-identity
+		if isYouTubeEmbed {
+			extraAttrNames = append(extraAttrNames, "referrerpolicy")
+			extraHTMLAttributes = append(extraHTMLAttributes, `referrerpolicy="strict-origin-when-cross-origin"`)
+		}
+
+		extraAttrNames = append(extraAttrNames, "sandbox", "loading")
+		extraHTMLAttributes = append(extraHTMLAttributes, `sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"`, `loading="lazy"`)
+
+		return extraAttrNames, extraHTMLAttributes
+	case "img":
+		return []string{"loading"}, []string{`loading="lazy"`}
+	default:
+		return nil, nil
+	}
+}
+
+func hasRequiredAttributes(tagName string, attributes []string) bool {
+	switch tagName {
+	case "a":
+		return slices.Contains(attributes, "href")
+	case "iframe":
+		return slices.Contains(attributes, "src")
+	case "source", "img":
+		for _, attribute := range attributes {
+			if attribute == "src" || attribute == "srcset" {
+				return true
+			}
+		}
+		return false
+	default:
+		return true
+	}
+}
+
+func hasValidURIScheme(absoluteURL string) bool {
+	for _, scheme := range validURISchemes {
+		if strings.HasPrefix(absoluteURL, scheme) {
+			return true
+		}
+	}
+	return false
+}
+
+func isBlockedResource(absoluteURL string) bool {
+	for _, blockedURL := range blockedResourceURLSubstrings {
+		if strings.Contains(absoluteURL, blockedURL) {
+			return true
+		}
+	}
+	return false
+}
+
+func isBlockedTag(tagName string) bool {
+	switch tagName {
+	case "noscript", "script", "style":
+		return true
+	}
+	return false
+}
+
+func isExternalResourceAttribute(attribute string) bool {
+	switch attribute {
+	case "src", "href", "poster", "cite":
+		return true
+	default:
+		return false
+	}
+}
+
+func isHidden(n *html.Node) bool {
+	for _, attr := range n.Attr {
+		if attr.Key == "hidden" {
+			return true
+		}
+	}
+	return false
+}
+
+func isPixelTracker(tagName string, attributes []html.Attribute) bool {
+	if tagName != "img" {
+		return false
+	}
+	hasHeight := false
+	hasWidth := false
+
+	for _, attribute := range attributes {
+		if attribute.Val == "1" || attribute.Val == "0" {
+			switch attribute.Key {
+			case "height":
+				hasHeight = true
+			case "width":
+				hasWidth = true
+			}
+		}
+	}
+
+	return hasHeight && hasWidth
+}
+
+func isPositiveInteger(value string) bool {
+	if value == "" {
+		return false
+	}
+	if number, err := strconv.Atoi(value); err == nil {
+		return number > 0
+	}
+	return false
+}
+
+func isSelfContainedTag(tag string) bool {
+	switch tag {
+	case "area", "base", "br", "col", "embed", "hr", "img", "input",
+		"link", "meta", "param", "source", "track", "wbr":
+		return true
+	}
+	return false
+}
+
+func isValidDataAttribute(value string) bool {
+	for _, prefix := range dataAttributeAllowedPrefixes {
+		if strings.HasPrefix(value, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
+func isValidDecodingValue(value string) bool {
+	switch value {
+	case "sync", "async", "auto":
+		return true
+	}
+	return false
+}
+
+func isValidFetchPriorityValue(value string) bool {
+	switch value {
+	case "high", "low", "auto":
+		return true
+	}
+	return false
+}
+
+func rewriteIframeURL(link string) string {
+	u, err := url.Parse(link)
+	if err != nil {
+		return link
+	}
+
+	switch strings.TrimPrefix(u.Hostname(), "www.") {
+	case "youtube.com":
+		if pathWithoutEmbed, ok := strings.CutPrefix(u.Path, "/embed/"); ok {
+			if len(u.RawQuery) > 0 {
+				return config.Opts.YouTubeEmbedUrlOverride() + pathWithoutEmbed + "?" + u.RawQuery
+			}
+			return config.Opts.YouTubeEmbedUrlOverride() + pathWithoutEmbed
+		}
+	case "player.vimeo.com":
+		// See https://help.vimeo.com/hc/en-us/articles/12426260232977-About-Player-parameters
+		if strings.HasPrefix(u.Path, "/video/") {
+			if len(u.RawQuery) > 0 {
+				return link + "&dnt=1"
+			}
+			return link + "?dnt=1"
+		}
+	}
+
+	return link
 }
 
 func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []html.Attribute, sanitizerOptions *SanitizerOptions) ([]string, string) {
@@ -433,159 +607,6 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 	return attrNames, strings.Join(htmlAttrs, " ")
 }
 
-func getExtraAttributes(tagName string, isYouTubeEmbed bool, sanitizerOptions *SanitizerOptions) ([]string, []string) {
-	switch tagName {
-	case "a":
-		attributeNames := []string{"rel", "referrerpolicy"}
-		htmlAttributes := []string{`rel="noopener noreferrer"`, `referrerpolicy="no-referrer"`}
-		if sanitizerOptions.OpenLinksInNewTab {
-			attributeNames = append(attributeNames, "target")
-			htmlAttributes = append(htmlAttributes, `target="_blank"`)
-		}
-		return attributeNames, htmlAttributes
-	case "video", "audio":
-		return []string{"controls"}, []string{"controls"}
-	case "iframe":
-		extraAttrNames := []string{}
-		extraHTMLAttributes := []string{}
-
-		// Note: the referrerpolicy seems to be required to avoid YouTube error 153 video player configuration error
-		// See https://developers.google.com/youtube/terms/required-minimum-functionality#embedded-player-api-client-identity
-		if isYouTubeEmbed {
-			extraAttrNames = append(extraAttrNames, "referrerpolicy")
-			extraHTMLAttributes = append(extraHTMLAttributes, `referrerpolicy="strict-origin-when-cross-origin"`)
-		}
-
-		extraAttrNames = append(extraAttrNames, "sandbox", "loading")
-		extraHTMLAttributes = append(extraHTMLAttributes, `sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"`, `loading="lazy"`)
-
-		return extraAttrNames, extraHTMLAttributes
-	case "img":
-		return []string{"loading"}, []string{`loading="lazy"`}
-	default:
-		return nil, nil
-	}
-}
-
-func isExternalResourceAttribute(attribute string) bool {
-	switch attribute {
-	case "src", "href", "poster", "cite":
-		return true
-	default:
-		return false
-	}
-}
-
-func isPixelTracker(tagName string, attributes []html.Attribute) bool {
-	if tagName != "img" {
-		return false
-	}
-	hasHeight := false
-	hasWidth := false
-
-	for _, attribute := range attributes {
-		if attribute.Val == "1" || attribute.Val == "0" {
-			switch attribute.Key {
-			case "height":
-				hasHeight = true
-			case "width":
-				hasWidth = true
-			}
-		}
-	}
-
-	return hasHeight && hasWidth
-}
-
-func hasRequiredAttributes(tagName string, attributes []string) bool {
-	switch tagName {
-	case "a":
-		return slices.Contains(attributes, "href")
-	case "iframe":
-		return slices.Contains(attributes, "src")
-	case "source", "img":
-		for _, attribute := range attributes {
-			if attribute == "src" || attribute == "srcset" {
-				return true
-			}
-		}
-		return false
-	default:
-		return true
-	}
-}
-
-func hasValidURIScheme(absoluteURL string) bool {
-	for _, scheme := range validURISchemes {
-		if strings.HasPrefix(absoluteURL, scheme) {
-			return true
-		}
-	}
-	return false
-}
-
-func isBlockedResource(absoluteURL string) bool {
-	for _, blockedURL := range blockedResourceURLSubstrings {
-		if strings.Contains(absoluteURL, blockedURL) {
-			return true
-		}
-	}
-	return false
-}
-
-func findAllowedIframeSourceDomain(iframeSourceURL string) (string, bool) {
-	iframeSourceDomain := urllib.DomainWithoutWWW(iframeSourceURL)
-
-	if _, ok := iframeAllowList[iframeSourceDomain]; ok {
-		return iframeSourceDomain, true
-	}
-
-	if ytDomain := config.Opts.YouTubeEmbedDomain(); ytDomain != "" && iframeSourceDomain == strings.TrimPrefix(ytDomain, "www.") {
-		return iframeSourceDomain, true
-	}
-
-	if invidiousInstance := config.Opts.InvidiousInstance(); invidiousInstance != "" && iframeSourceDomain == strings.TrimPrefix(invidiousInstance, "www.") {
-		return iframeSourceDomain, true
-	}
-
-	return "", false
-}
-
-func rewriteIframeURL(link string) string {
-	u, err := url.Parse(link)
-	if err != nil {
-		return link
-	}
-
-	switch strings.TrimPrefix(u.Hostname(), "www.") {
-	case "youtube.com":
-		if pathWithoutEmbed, ok := strings.CutPrefix(u.Path, "/embed/"); ok {
-			if len(u.RawQuery) > 0 {
-				return config.Opts.YouTubeEmbedUrlOverride() + pathWithoutEmbed + "?" + u.RawQuery
-			}
-			return config.Opts.YouTubeEmbedUrlOverride() + pathWithoutEmbed
-		}
-	case "player.vimeo.com":
-		// See https://help.vimeo.com/hc/en-us/articles/12426260232977-About-Player-parameters
-		if strings.HasPrefix(u.Path, "/video/") {
-			if len(u.RawQuery) > 0 {
-				return link + "&dnt=1"
-			}
-			return link + "?dnt=1"
-		}
-	}
-
-	return link
-}
-
-func isBlockedTag(tagName string) bool {
-	switch tagName {
-	case "noscript", "script", "style":
-		return true
-	}
-	return false
-}
-
 func sanitizeSrcsetAttr(parsedBaseURL *url.URL, value string) string {
 	candidates := ParseSrcSetAttribute(value)
 	if len(candidates) == 0 {
@@ -611,37 +632,16 @@ func sanitizeSrcsetAttr(parsedBaseURL *url.URL, value string) string {
 	return imageCandidates(sanitizedCandidates).String()
 }
 
-func isValidDataAttribute(value string) bool {
-	for _, prefix := range dataAttributeAllowedPrefixes {
-		if strings.HasPrefix(value, prefix) {
-			return true
-		}
-	}
-	return false
-}
-
-func isPositiveInteger(value string) bool {
-	if value == "" {
-		return false
-	}
-	if number, err := strconv.Atoi(value); err == nil {
-		return number > 0
-	}
-	return false
-}
-
-func isValidFetchPriorityValue(value string) bool {
-	switch value {
-	case "high", "low", "auto":
+func shouldIgnoreTag(n *html.Node, tag string) bool {
+	if isPixelTracker(tag, n.Attr) {
 		return true
 	}
-	return false
-}
-
-func isValidDecodingValue(value string) bool {
-	switch value {
-	case "sync", "async", "auto":
+	if isBlockedTag(tag) {
 		return true
 	}
+	if isHidden(n) {
+		return true
+	}
+
 	return false
 }
