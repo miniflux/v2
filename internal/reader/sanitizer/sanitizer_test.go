@@ -1023,11 +1023,31 @@ func TestBlockedResourcesSubstrings(t *testing.T) {
 }
 
 func TestAttrLowerCase(t *testing.T) {
-	input := `<a HrEF="http://example.com" HIddEN>test</a>`
-	expected := ``
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
+	baseURL := "http://example.org/"
+	testCases := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{
+			name:     "href-and-hidden-mixed-case",
+			input:    `<a HrEF="http://example.com" HIddEN>test</a>`,
+			expected: ``,
+		},
+		{
+			name:     "href-mixed-case",
+			input:    `<a HrEF="http://example.com">test</a>`,
+			expected: `<a href="http://example.com" rel="noopener noreferrer" referrerpolicy="no-referrer" target="_blank">test</a>`,
+		},
+	}
 
-	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			output := sanitizeHTMLWithDefaultOptions(baseURL, tc.input)
+			if tc.expected != output {
+				t.Errorf(`Wrong output for input %q: expected %q, got %q`, tc.input, tc.expected, output)
+			}
+		})
 	}
 }
