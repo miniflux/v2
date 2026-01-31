@@ -132,6 +132,16 @@ func TestImgSanitization(t *testing.T) {
 			expected: `<img srcset="http://example.org/example-320w.jpg, http://example.org/example-480w.jpg 1.5x, http://example.org/example-640w.jpg 2x, http://example.org/example-640w.jpg 640w" alt="Example" loading="lazy">`,
 		},
 		{
+			name:     "srcset-attribute-with-blocked-candidate",
+			input:    `<img srcset="https://stats.wordpress.com/tracker.png 1x, /example-640w.jpg 2x" src="/example-640w.jpg" alt="Example">`,
+			expected: `<img srcset="http://example.org/example-640w.jpg 2x" src="http://example.org/example-640w.jpg" alt="Example" loading="lazy">`,
+		},
+		{
+			name:     "srcset-attribute-all-candidates-invalid",
+			input:    `<img srcset="javascript:alert(1) 1x, data:text/plain;base64,SGVsbG8= 2x" alt="Example">`,
+			expected: ``,
+		},
+		{
 			name:     "fetchpriority-high",
 			input:    `<img src="https://example.org/image.png" fetchpriority="high">`,
 			expected: `<img src="https://example.org/image.png" fetchpriority="high" loading="lazy">`,
@@ -200,16 +210,6 @@ func TestNonImgWithDecodingAttribute(t *testing.T) {
 
 	if output != expected {
 		t.Errorf(`Wrong output: expected %q, got %q`, expected, output)
-	}
-}
-
-func TestSourceWithSrcsetAndMedia(t *testing.T) {
-	input := `<picture><source media="(min-width: 800px)" srcset="elva-800w.jpg"></picture>`
-	expected := `<picture><source media="(min-width: 800px)" srcset="http://example.org/elva-800w.jpg"></picture>`
-	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
 	}
 }
 
@@ -303,6 +303,45 @@ func TestInvalidTag(t *testing.T) {
 
 	if expected != output {
 		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}
+
+func TestSourceSanitization(t *testing.T) {
+	baseURL := "http://example.org/"
+	testCases := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{
+			name:     "srcset-and-media",
+			input:    `<picture><source media="(min-width: 800px)" srcset="elva-800w.jpg"></picture>`,
+			expected: `<picture><source media="(min-width: 800px)" srcset="http://example.org/elva-800w.jpg"></picture>`,
+		},
+		{
+			name:     "src-attribute",
+			input:    `<picture><source src="video.mp4" type="video/mp4"></picture>`,
+			expected: `<picture><source src="http://example.org/video.mp4" type="video/mp4"></picture>`,
+		},
+		{
+			name:     "srcset-with-blocked-candidate",
+			input:    `<picture><source srcset="https://stats.wordpress.com/tracker.png 1x, /elva-800w.jpg 2x"></picture>`,
+			expected: `<picture><source srcset="http://example.org/elva-800w.jpg 2x"></picture>`,
+		},
+		{
+			name:     "srcset-all-invalid",
+			input:    `<picture><source srcset="javascript:alert(1) 1x, data:text/plain;base64,SGVsbG8= 2x"></picture>`,
+			expected: `<picture></picture>`,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			output := sanitizeHTMLWithDefaultOptions(baseURL, tc.input)
+			if output != tc.expected {
+				t.Errorf(`Wrong output for input %q: expected %q, got %q`, tc.input, tc.expected, output)
+			}
+		})
 	}
 }
 

@@ -368,10 +368,16 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 				}
 			case "srcset":
 				value = sanitizeSrcsetAttr(parsedBaseUrl, value)
+				if value == "" {
+					continue
+				}
 			}
 		case "source":
 			if attribute.Key == "srcset" {
 				value = sanitizeSrcsetAttr(parsedBaseUrl, value)
+				if value == "" {
+					continue
+				}
 			}
 		}
 
@@ -581,15 +587,28 @@ func isBlockedTag(tagName string) bool {
 }
 
 func sanitizeSrcsetAttr(parsedBaseURL *url.URL, value string) string {
-	imageCandidates := ParseSrcSetAttribute(value)
-
-	for _, imageCandidate := range imageCandidates {
-		if absoluteURL, err := urllib.ResolveToAbsoluteURLWithParsedBaseURL(parsedBaseURL, imageCandidate.ImageURL); err == nil {
-			imageCandidate.ImageURL = absoluteURL
-		}
+	candidates := ParseSrcSetAttribute(value)
+	if len(candidates) == 0 {
+		return ""
 	}
 
-	return imageCandidates.String()
+	sanitizedCandidates := make([]*imageCandidate, 0, len(candidates))
+
+	for _, imageCandidate := range candidates {
+		absoluteURL, err := urllib.ResolveToAbsoluteURLWithParsedBaseURL(parsedBaseURL, imageCandidate.ImageURL)
+		if err != nil {
+			continue
+		}
+
+		if !hasValidURIScheme(absoluteURL) || isBlockedResource(absoluteURL) {
+			continue
+		}
+
+		imageCandidate.ImageURL = absoluteURL
+		sanitizedCandidates = append(sanitizedCandidates, imageCandidate)
+	}
+
+	return imageCandidates(sanitizedCandidates).String()
 }
 
 func isValidDataAttribute(value string) bool {
