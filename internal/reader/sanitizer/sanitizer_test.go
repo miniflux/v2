@@ -443,7 +443,7 @@ func TestIFrameWithChildElements(t *testing.T) {
 	config.Opts = config.NewConfigOptions()
 
 	input := `<iframe src="https://www.youtube.com/"><p>test</p></iframe>`
-	expected := `<iframe src="https://www.youtube.com/" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
+	expected := `<iframe src="https://www.youtube.com/" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
 	output := sanitizeHTMLWithDefaultOptions("http://example.com/", input)
 
 	if expected != output {
@@ -455,7 +455,7 @@ func TestIFrameWithReferrerPolicy(t *testing.T) {
 	config.Opts = config.NewConfigOptions()
 
 	input := `<iframe src="https://www.youtube.com/embed/test123" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
 	output := sanitizeHTMLWithDefaultOptions("http://example.com/", input)
 
 	if expected != output {
@@ -722,7 +722,7 @@ func TestReplaceYoutubeURL(t *testing.T) {
 	}
 
 	input := `<iframe src="http://www.youtube.com/embed/test123?version=3&#038;rel=1&#038;fs=1&#038;autohide=2&#038;showsearch=0&#038;showinfo=1&#038;iv_load_policy=1&#038;wmode=transparent"></iframe>`
-	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123?version=3&amp;rel=1&amp;fs=1&amp;autohide=2&amp;showsearch=0&amp;showinfo=1&amp;iv_load_policy=1&amp;wmode=transparent" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123?version=3&amp;rel=1&amp;fs=1&amp;autohide=2&amp;showsearch=0&amp;showinfo=1&amp;iv_load_policy=1&amp;wmode=transparent" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
 	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
 
 	if expected != output {
@@ -740,7 +740,7 @@ func TestReplaceSecureYoutubeURL(t *testing.T) {
 	}
 
 	input := `<iframe src="https://www.youtube.com/embed/test123"></iframe>`
-	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
 	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
 
 	if expected != output {
@@ -758,7 +758,7 @@ func TestReplaceSecureYoutubeURLWithParameters(t *testing.T) {
 	}
 
 	input := `<iframe src="https://www.youtube.com/embed/test123?rel=0&amp;controls=0"></iframe>`
-	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123?rel=0&amp;controls=0" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123?rel=0&amp;controls=0" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
 	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
 
 	if expected != output {
@@ -776,7 +776,7 @@ func TestReplaceYoutubeURLAlreadyReplaced(t *testing.T) {
 	}
 
 	input := `<iframe src="https://www.youtube-nocookie.com/embed/test123?rel=0&amp;controls=0" sandbox="allow-scripts allow-same-origin"></iframe>`
-	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123?rel=0&amp;controls=0" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123?rel=0&amp;controls=0" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
 	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
 
 	if expected != output {
@@ -794,7 +794,7 @@ func TestReplaceProtocolRelativeYoutubeURL(t *testing.T) {
 	}
 
 	input := `<iframe src="//www.youtube.com/embed/Bf2W84jrGqs" width="560" height="314" allowfullscreen="allowfullscreen"></iframe>`
-	expected := `<iframe src="https://www.youtube-nocookie.com/embed/Bf2W84jrGqs" width="560" height="314" allowfullscreen="allowfullscreen" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/Bf2W84jrGqs" width="560" height="314" allowfullscreen="allowfullscreen" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
 	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
 
 	if expected != output {
@@ -813,7 +813,7 @@ func TestReplaceYoutubeURLWithCustomURL(t *testing.T) {
 	}
 
 	input := `<iframe src="https://www.youtube.com/embed/test123?version=3&#038;rel=1&#038;fs=1&#038;autohide=2&#038;showsearch=0&#038;showinfo=1&#038;iv_load_policy=1&#038;wmode=transparent"></iframe>`
-	expected := `<iframe src="https://invidious.custom/embed/test123?version=3&amp;rel=1&amp;fs=1&amp;autohide=2&amp;showsearch=0&amp;showinfo=1&amp;iv_load_policy=1&amp;wmode=transparent" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
+	expected := `<iframe src="https://invidious.custom/embed/test123?version=3&amp;rel=1&amp;fs=1&amp;autohide=2&amp;showsearch=0&amp;showinfo=1&amp;iv_load_policy=1&amp;wmode=transparent" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
 	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
 
 	if expected != output {
