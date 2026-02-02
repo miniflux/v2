@@ -966,3 +966,27 @@ func TestAttrLowerCase(t *testing.T) {
 		})
 	}
 }
+
+func TestDeeplyNestedpage(t *testing.T) {
+	input := "test"
+	// -3 instead of -1 because <html><body> is automatically added.
+	for range maxDepth - 3 {
+		input = "<div>" + input + "</div>"
+	}
+	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
+	want := "test"
+
+	if output != want {
+		t.Errorf(`Wrong output: "%s" != "%s"`, want, output)
+	}
+
+	input = "test"
+	for range maxDepth - 2 {
+		input = "<div>" + input + "</div>"
+	}
+	output = sanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if output != "" {
+		t.Errorf(`Wrong output: "%s" != "%s"`, "", output)
+	}
+}
