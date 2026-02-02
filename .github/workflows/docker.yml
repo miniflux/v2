@@ -12,6 +12,7 @@ on:
 jobs:
   docker-images:
     name: Docker Images
+    if: github.repository_owner == 'miniflux'
     permissions:
       packages: write
     runs-on: ubuntu-latest
