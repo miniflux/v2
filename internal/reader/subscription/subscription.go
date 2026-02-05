@@ -20,5 +20,5 @@ func (s subscription) String() string {
 	return fmt.Sprintf(`Title=%q, URL=%q, Type=%q`, s.Title, s.URL, s.Type)
 }
 
-// Subscriptions represents a list of subscription.
-type Subscriptions []*subscription
+// subscriptions represents a list of subscription.
+type subscriptions []*subscription
