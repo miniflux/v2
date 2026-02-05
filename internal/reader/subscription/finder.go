@@ -292,7 +292,7 @@ func (f *subscriptionFinder) findSubscriptionsFromYouTube(websiteURL string) (Su
 		return nil, locale.NewLocalizedErrorWrapper(err, "error.invalid_site_url", err)
 	}
 
-	if !strings.HasSuffix(decodedURL.Host, "youtube.com") {
+	if !strings.HasSuffix(strings.TrimPrefix(decodedURL.Host, "www."), "youtube.com") {
 		slog.Debug("YouTube feed discovery skipped: not a YouTube domain", slog.String("website_url", websiteURL))
 		return nil, nil
 	}
