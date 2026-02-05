@@ -298,7 +298,7 @@ func (f *subscriptionFinder) findSubscriptionsFromYouTube(websiteURL string) (Su
 	}
 
 	if _, baseID, found := strings.Cut(decodedURL.Path, "channel/UC"); found {
-		var subscriptions Subscriptions
+		subscriptions := make([]*subscription, len(playlistPrefixes)+1)
 
 		channelFeedURL := "https://www.youtube.com/feeds/videos.xml?channel_id=UC" + baseID
 		subscriptions = append(subscriptions, NewSubscription("Channel", channelFeedURL, parser.FormatAtom))
