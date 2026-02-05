@@ -129,14 +129,16 @@ var (
 
 	blockedResourceURLSubstrings = []string{
 		"api.flattr.com",
+		"www.facebook.com/sharer.php",
 		"feeds.feedburner.com",
 		"feedsportal.com",
+		"linkedin.com/shareArticle",
 		"pinterest.com/pin/create/button/",
 		"stats.wordpress.com",
 		"twitter.com/intent/tweet",
 		"twitter.com/share",
-		"facebook.com/sharer.php",
-		"linkedin.com/shareArticle",
+		"x.com/intent/tweet",
+		"x.com/share",
 	}
 
 	// See https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
@@ -564,13 +566,17 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 				value = attribute.Val
 				isAnchorLink = true
 			default:
+				if isBlockedResource(value) {
+					continue
+				}
+
 				var err error
 				value, err = urllib.ResolveToAbsoluteURLWithParsedBaseURL(parsedBaseUrl, value)
 				if err != nil {
 					continue
 				}
 
-				if !hasValidURIScheme(value) || isBlockedResource(value) {
+				if !hasValidURIScheme(value) {
 					continue
 				}
 
