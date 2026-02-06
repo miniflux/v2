@@ -12,8 +12,8 @@ import (
 	"miniflux.app/v2/internal/model"
 )
 
-// EntryPaginationBuilder is a builder for entry prev/next queries.
-type EntryPaginationBuilder struct {
+// entryPaginationBuilder is a builder for entry prev/next queries.
+type entryPaginationBuilder struct {
 	store      *Storage
 	conditions []string
 	args       []any
@@ -23,7 +23,7 @@ type EntryPaginationBuilder struct {
 }
 
 // WithSearchQuery adds full-text search query to the condition.
-func (e *EntryPaginationBuilder) WithSearchQuery(query string) {
+func (e *entryPaginationBuilder) WithSearchQuery(query string) {
 	if query != "" {
 		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", len(e.args)+1))
 		e.args = append(e.args, query)
@@ -31,12 +31,12 @@ func (e *EntryPaginationBuilder) WithSearchQuery(query string) {
 }
 
 // WithStarred adds starred to the condition.
-func (e *EntryPaginationBuilder) WithStarred() {
+func (e *entryPaginationBuilder) WithStarred() {
 	e.conditions = append(e.conditions, "e.starred is true")
 }
 
 // WithFeedID adds feed_id to the condition.
-func (e *EntryPaginationBuilder) WithFeedID(feedID int64) {
+func (e *entryPaginationBuilder) WithFeedID(feedID int64) {
 	if feedID != 0 {
 		e.conditions = append(e.conditions, "e.feed_id = $"+strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, feedID)
@@ -44,7 +44,7 @@ func (e *EntryPaginationBuilder) WithFeedID(feedID int64) {
 }
 
 // WithCategoryID adds category_id to the condition.
-func (e *EntryPaginationBuilder) WithCategoryID(categoryID int64) {
+func (e *entryPaginationBuilder) WithCategoryID(categoryID int64) {
 	if categoryID != 0 {
 		e.conditions = append(e.conditions, "f.category_id = $"+strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, categoryID)
@@ -52,7 +52,7 @@ func (e *EntryPaginationBuilder) WithCategoryID(categoryID int64) {
 }
 
 // WithStatus adds status to the condition.
-func (e *EntryPaginationBuilder) WithStatus(status string) {
+func (e *entryPaginationBuilder) WithStatus(status string) {
 	if status != "" {
 		e.conditions = append(e.conditions, "e.status = $"+strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, status)
@@ -60,7 +60,7 @@ func (e *EntryPaginationBuilder) WithStatus(status string) {
 }
 
 // WithStatusOrEntryID adds a status condition that always includes a specific entry ID.
-func (e *EntryPaginationBuilder) WithStatusOrEntryID(status string, entryID int64) {
+func (e *entryPaginationBuilder) WithStatusOrEntryID(status string, entryID int64) {
 	if status == "" {
 		return
 	}
@@ -76,7 +76,7 @@ func (e *EntryPaginationBuilder) WithStatusOrEntryID(status string, entryID int6
 	e.args = append(e.args, status, entryID)
 }
 
-func (e *EntryPaginationBuilder) WithTags(tags []string) {
+func (e *entryPaginationBuilder) WithTags(tags []string) {
 	if len(tags) > 0 {
 		for _, tag := range tags {
 			e.conditions = append(e.conditions, fmt.Sprintf("LOWER($%d) = ANY(LOWER(e.tags::text)::text[])", len(e.args)+1))
@@ -86,13 +86,13 @@ func (e *EntryPaginationBuilder) WithTags(tags []string) {
 }
 
 // WithGloballyVisible adds global visibility to the condition.
-func (e *EntryPaginationBuilder) WithGloballyVisible() {
+func (e *entryPaginationBuilder) WithGloballyVisible() {
 	e.conditions = append(e.conditions, "not c.hide_globally")
 	e.conditions = append(e.conditions, "not f.hide_globally")
 }
 
 // Entries returns previous and next entries.
-func (e *EntryPaginationBuilder) Entries() (*model.Entry, *model.Entry, error) {
+func (e *entryPaginationBuilder) Entries() (*model.Entry, *model.Entry, error) {
 	tx, err := e.store.db.Begin()
 	if err != nil {
 		return nil, nil, fmt.Errorf("begin transaction for entry pagination: %v", err)
@@ -125,7 +125,7 @@ func (e *EntryPaginationBuilder) Entries() (*model.Entry, *model.Entry, error) {
 	return prevEntry, nextEntry, nil
 }
 
-func (e *EntryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID int64, err error) {
+func (e *entryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID int64, err error) {
 	cte := `
 		WITH entry_pagination AS (
 			SELECT
@@ -166,7 +166,7 @@ func (e *EntryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID
 	return prevID, nextID, nil
 }
 
-func (e *EntryPaginationBuilder) getEntry(tx *sql.Tx, entryID int64) (*model.Entry, error) {
+func (e *entryPaginationBuilder) getEntry(tx *sql.Tx, entryID int64) (*model.Entry, error) {
 	var entry model.Entry
 
 	err := tx.QueryRow(`SELECT id, title FROM entries WHERE id = $1`, entryID).Scan(
@@ -185,8 +185,8 @@ func (e *EntryPaginationBuilder) getEntry(tx *sql.Tx, entryID int64) (*model.Ent
 }
 
 // NewEntryPaginationBuilder returns a new EntryPaginationBuilder.
-func NewEntryPaginationBuilder(store *Storage, userID, entryID int64, order, direction string) *EntryPaginationBuilder {
-	return &EntryPaginationBuilder{
+func NewEntryPaginationBuilder(store *Storage, userID, entryID int64, order, direction string) *entryPaginationBuilder {
+	return &entryPaginationBuilder{
 		store:      store,
 		args:       []any{userID, "removed"},
 		conditions: []string{"e.user_id = $1", "e.status <> $2"},
