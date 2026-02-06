@@ -1067,7 +1067,7 @@ func (h *handler) streamItemIDsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *handler) handleReadingListStreamHandler(w http.ResponseWriter, r *http.Request, rm RequestModifiers) {
+func (h *handler) handleReadingListStreamHandler(w http.ResponseWriter, r *http.Request, rm requestModifiers) {
 	clientIP := request.ClientIP(r)
 
 	slog.Debug("[GoogleReader] Handle ReadingListStream",
@@ -1126,7 +1126,7 @@ func (h *handler) handleReadingListStreamHandler(w http.ResponseWriter, r *http.
 	json.OK(w, r, streamIDResponse{itemRefs, continuation})
 }
 
-func (h *handler) handleStarredStreamHandler(w http.ResponseWriter, r *http.Request, rm RequestModifiers) {
+func (h *handler) handleStarredStreamHandler(w http.ResponseWriter, r *http.Request, rm requestModifiers) {
 	builder := h.store.NewEntryQueryBuilder(rm.UserID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStarred(true)
@@ -1164,7 +1164,7 @@ func (h *handler) handleStarredStreamHandler(w http.ResponseWriter, r *http.Requ
 	json.OK(w, r, streamIDResponse{itemRefs, continuation})
 }
 
-func (h *handler) handleReadStreamHandler(w http.ResponseWriter, r *http.Request, rm RequestModifiers) {
+func (h *handler) handleReadStreamHandler(w http.ResponseWriter, r *http.Request, rm requestModifiers) {
 	builder := h.store.NewEntryQueryBuilder(rm.UserID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStatus(model.EntryStatusRead)
@@ -1202,7 +1202,7 @@ func (h *handler) handleReadStreamHandler(w http.ResponseWriter, r *http.Request
 	json.OK(w, r, streamIDResponse{itemRefs, continuation})
 }
 
-func (h *handler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request, rm RequestModifiers) {
+func (h *handler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request, rm requestModifiers) {
 	feedID, err := strconv.ParseInt(rm.Streams[0].ID, 10, 64)
 	if err != nil {
 		json.ServerError(w, r, err)
