@@ -148,7 +148,7 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 	return builder.GetFeeds()
 }
 
-func getFeedsSorted(builder *FeedQueryBuilder) (model.Feeds, error) {
+func getFeedsSorted(builder *feedQueryBuilder) (model.Feeds, error) {
 	result, err := builder.GetFeeds()
 	if err == nil {
 		sort.Sort(byStateAndName{result})

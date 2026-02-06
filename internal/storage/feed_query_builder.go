@@ -13,8 +13,8 @@ import (
 	"miniflux.app/v2/internal/timezone"
 )
 
-// FeedQueryBuilder builds a SQL query to fetch feeds.
-type FeedQueryBuilder struct {
+// feedQueryBuilder builds a SQL query to fetch feeds.
+type feedQueryBuilder struct {
 	store             *Storage
 	args              []any
 	conditions        []string
@@ -28,8 +28,8 @@ type FeedQueryBuilder struct {
 }
 
 // NewFeedQueryBuilder returns a new FeedQueryBuilder.
-func NewFeedQueryBuilder(store *Storage, userID int64) *FeedQueryBuilder {
-	return &FeedQueryBuilder{
+func NewFeedQueryBuilder(store *Storage, userID int64) *feedQueryBuilder {
+	return &feedQueryBuilder{
 		store:             store,
 		args:              []any{userID},
 		conditions:        []string{"f.user_id = $1"},
@@ -39,7 +39,7 @@ func NewFeedQueryBuilder(store *Storage, userID int64) *FeedQueryBuilder {
 }
 
 // WithCategoryID filter by category ID.
-func (f *FeedQueryBuilder) WithCategoryID(categoryID int64) *FeedQueryBuilder {
+func (f *feedQueryBuilder) WithCategoryID(categoryID int64) *feedQueryBuilder {
 	if categoryID > 0 {
 		f.conditions = append(f.conditions, "f.category_id = $"+strconv.Itoa(len(f.args)+1))
 		f.args = append(f.args, categoryID)
@@ -51,7 +51,7 @@ func (f *FeedQueryBuilder) WithCategoryID(categoryID int64) *FeedQueryBuilder {
 }
 
 // WithFeedID filter by feed ID.
-func (f *FeedQueryBuilder) WithFeedID(feedID int64) *FeedQueryBuilder {
+func (f *feedQueryBuilder) WithFeedID(feedID int64) *feedQueryBuilder {
 	if feedID > 0 {
 		f.conditions = append(f.conditions, "f.id = $"+strconv.Itoa(len(f.args)+1))
 		f.args = append(f.args, feedID)
@@ -60,38 +60,38 @@ func (f *FeedQueryBuilder) WithFeedID(feedID int64) *FeedQueryBuilder {
 }
 
 // WithCounters let the builder return feeds with counters of statuses of entries.
-func (f *FeedQueryBuilder) WithCounters() *FeedQueryBuilder {
+func (f *feedQueryBuilder) WithCounters() *feedQueryBuilder {
 	f.withCounters = true
 	return f
 }
 
 // WithSorting add a sort expression.
-func (f *FeedQueryBuilder) WithSorting(column, direction string) *FeedQueryBuilder {
+func (f *feedQueryBuilder) WithSorting(column, direction string) *feedQueryBuilder {
 	f.sortExpressions = append(f.sortExpressions, column+" "+direction)
 	return f
 }
 
 // WithLimit set the limit.
-func (f *FeedQueryBuilder) WithLimit(limit int) *FeedQueryBuilder {
+func (f *feedQueryBuilder) WithLimit(limit int) *feedQueryBuilder {
 	f.limit = limit
 	return f
 }
 
 // WithOffset set the offset.
-func (f *FeedQueryBuilder) WithOffset(offset int) *FeedQueryBuilder {
+func (f *feedQueryBuilder) WithOffset(offset int) *feedQueryBuilder {
 	f.offset = offset
 	return f
 }
 
-func (f *FeedQueryBuilder) buildCondition() string {
+func (f *feedQueryBuilder) buildCondition() string {
 	return strings.Join(f.conditions, " AND ")
 }
 
-func (f *FeedQueryBuilder) buildCounterCondition() string {
+func (f *feedQueryBuilder) buildCounterCondition() string {
 	return strings.Join(f.counterConditions, " AND ")
 }
 
-func (f *FeedQueryBuilder) buildSorting() string {
+func (f *feedQueryBuilder) buildSorting() string {
 	var parts string
 
 	if len(f.sortExpressions) > 0 {
@@ -114,7 +114,7 @@ func (f *FeedQueryBuilder) buildSorting() string {
 }
 
 // GetFeed returns a single feed that match the condition.
-func (f *FeedQueryBuilder) GetFeed() (*model.Feed, error) {
+func (f *feedQueryBuilder) GetFeed() (*model.Feed, error) {
 	f.limit = 1
 	feeds, err := f.GetFeeds()
 	if err != nil {
@@ -129,7 +129,7 @@ func (f *FeedQueryBuilder) GetFeed() (*model.Feed, error) {
 }
 
 // GetFeeds returns a list of feeds that match the condition.
-func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
+func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 	var query = `
 		SELECT
 			f.id,
@@ -291,7 +291,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 	return feeds, nil
 }
 
-func (f *FeedQueryBuilder) fetchFeedCounter() (unreadCounters map[int64]int, readCounters map[int64]int, err error) {
+func (f *feedQueryBuilder) fetchFeedCounter() (unreadCounters map[int64]int, readCounters map[int64]int, err error) {
 	if !f.withCounters {
 		return nil, nil, nil
 	}
