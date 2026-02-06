@@ -20,7 +20,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui"
-	"miniflux.app/v2/internal/version"
 	"miniflux.app/v2/internal/worker"
 
 	"github.com/gorilla/mux"
@@ -249,10 +248,6 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 	ui.Serve(subrouter, store, pool)
 
 	subrouter.HandleFunc("/healthcheck", readinessProbe).Name("healthcheck")
-
-	subrouter.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(version.Version))
-	}).Name("version")
 
 	if config.Opts.HasMetricsCollector() {
 		subrouter.Handle("/metrics", promhttp.Handler()).Name("metrics")
