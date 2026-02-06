@@ -72,22 +72,23 @@ func StartWebServer(store *storage.Storage, pool *worker.Pool) []*http.Server {
 			Handler:      setupHandler(store, pool),
 		}
 
-		if !strings.HasPrefix(listenAddr, "/") && os.Getenv("LISTEN_PID") != strconv.Itoa(os.Getpid()) {
+		isUNIXSocket := strings.HasPrefix(listenAddr, "/")
+		isListenPID := os.Getenv("LISTEN_PID") == strconv.Itoa(os.Getpid())
+
+		if !isUNIXSocket && !isListenPID {
 			server.Addr = listenAddr
 		}
 
-		shouldAddServer := true
-
 		switch {
-		case os.Getenv("LISTEN_PID") == strconv.Itoa(os.Getpid()):
+		case isListenPID:
 			if i == 0 {
 				slog.Info("Starting server using systemd socket for the first listen address", slog.String("address_info", listenAddr))
 				startSystemdSocketServer(server)
 			} else {
-				slog.Warn("Systemd socket activation: Only the first listen address is used by systemd. Other addresses ignored.", slog.String("skipped_address", listenAddr))
-				shouldAddServer = false
+				slog.Warn("Systemd socket activation: Only the first listen address is used by systemd. Other addresses are ignored.", slog.String("skipped_address", listenAddr))
+				continue
 			}
-		case strings.HasPrefix(listenAddr, "/"): // Unix socket
+		case isUNIXSocket:
 			startUnixSocketServer(server, listenAddr)
 		case certDomain != "" && (listenAddr == ":https" || (i == 0 && strings.Contains(listenAddr, ":"))):
 			server.Addr = listenAddr
@@ -101,9 +102,7 @@ func StartWebServer(store *storage.Storage, pool *worker.Pool) []*http.Server {
 			startHTTPServer(server)
 		}
 
-		if shouldAddServer {
-			httpServers = append(httpServers, server)
-		}
+		httpServers = append(httpServers, server)
 	}
 
 	return httpServers
