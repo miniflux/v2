@@ -48,6 +48,10 @@ func NewCharsetReader(r io.Reader, contentType string) (io.Reader, error) {
 		return nil, fmt.Errorf(`encoding: unable to read input: %w`, err)
 	}
 
+	return NewCharsetReaderFromBytes(buffer, contentType)
+}
+
+func NewCharsetReaderFromBytes(buffer []byte, contentType string) (io.Reader, error) {
 	internalReader := bytes.NewReader(buffer)
 
 	// The document is already UTF-8, do not do anything.
