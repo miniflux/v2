@@ -11,7 +11,7 @@ import (
 	"miniflux.app/v2/internal/http/request"
 )
 
-type RequestModifiers struct {
+type requestModifiers struct {
 	ExcludeTargets    []Stream
 	FilterTargets     []Stream
 	Streams           []Stream
@@ -24,7 +24,7 @@ type RequestModifiers struct {
 	UserID            int64
 }
 
-func (r RequestModifiers) String() string {
+func (r requestModifiers) String() string {
 	var results []string
 
 	results = append(results, fmt.Sprintf("UserID: %d", r.UserID))
@@ -57,9 +57,9 @@ func (r RequestModifiers) String() string {
 	return strings.Join(results, "; ")
 }
 
-func parseStreamFilterFromRequest(r *http.Request) (RequestModifiers, error) {
+func parseStreamFilterFromRequest(r *http.Request) (requestModifiers, error) {
 	userID := request.UserID(r)
-	result := RequestModifiers{
+	result := requestModifiers{
 		SortDirection: "desc",
 		UserID:        userID,
 	}
@@ -71,16 +71,16 @@ func parseStreamFilterFromRequest(r *http.Request) (RequestModifiers, error) {
 	var err error
 	result.Streams, err = getStreams(request.QueryStringParamList(r, paramStreamID), userID)
 	if err != nil {
-		return RequestModifiers{}, err
+		return requestModifiers{}, err
 	}
 	result.ExcludeTargets, err = getStreams(request.QueryStringParamList(r, paramStreamExcludes), userID)
 	if err != nil {
-		return RequestModifiers{}, err
+		return requestModifiers{}, err
 	}
 
 	result.FilterTargets, err = getStreams(request.QueryStringParamList(r, paramStreamFilters), userID)
 	if err != nil {
-		return RequestModifiers{}, err
+		return requestModifiers{}, err
 	}
 
 	result.Count = request.QueryIntParam(r, paramStreamMaxItems, 0)
