@@ -33,6 +33,16 @@ func TestFindClientIPWithoutHeaders(t *testing.T) {
 	if ip := FindClientIP(r, false); ip != "fe80::14c2:f039:edc7:edc7" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
+
+	r = &http.Request{RemoteAddr: "@"}
+	if ip := FindClientIP(r, false); ip != "127.0.0.1" {
+		t.Fatalf(`Unexpected result, got: %q`, ip)
+	}
+
+	r = &http.Request{RemoteAddr: ""}
+	if ip := FindClientIP(r, false); ip != "127.0.0.1" {
+		t.Fatalf(`Unexpected result, got: %q`, ip)
+	}
 }
 
 func TestFindClientIPWithXFFHeader(t *testing.T) {
@@ -104,14 +114,6 @@ func TestClientIPWithBothHeaders(t *testing.T) {
 	}
 }
 
-func TestClientIPWithUnixSocketRemoteAddress(t *testing.T) {
-	r := &http.Request{RemoteAddr: "@"}
-
-	if ip := FindClientIP(r, false); ip != "@" {
-		t.Fatalf(`Unexpected result, got: %q`, ip)
-	}
-}
-
 func TestClientIPWithUnixSocketRemoteAddrAndBothHeaders(t *testing.T) {
 	headers := http.Header{}
 	headers.Set("X-Forwarded-For", "203.0.113.195, 70.41.3.18, 150.172.238.178")
@@ -136,8 +138,9 @@ func TestIsTrustedIP(t *testing.T) {
 		{"::1", true},
 		{"192.168.1.1", false},
 		{"invalid", false},
-		{"@", true},
-		{"/tmp/miniflux.sock", true},
+		{"@", false},
+		{"/tmp/miniflux.sock", false},
+		{"", false},
 	}
 
 	for _, scenario := range scenarios {
@@ -153,5 +156,27 @@ func TestIsTrustedIP(t *testing.T) {
 
 	if IsTrustedIP("127.0.0.1", []string{}) {
 		t.Error("Expected false when trusted networks list is empty")
+	}
+}
+
+func TestFindRemoteIP(t *testing.T) {
+	scenarios := []struct {
+		ip       string
+		expected string
+	}{
+		{"192.168.0.1:4242", "192.168.0.1"},
+		{"[2001:db8::1]:4242", "2001:db8::1"},
+		{"fe80::14c2:f039:edc7:edc7%eth0", "fe80::14c2:f039:edc7:edc7"},
+		{"", "127.0.0.1"},
+		{"@", "127.0.0.1"},
+		{"invalid", "127.0.0.1"},
+	}
+
+	for _, scenario := range scenarios {
+		r := &http.Request{RemoteAddr: scenario.ip}
+		result := FindRemoteIP(r)
+		if result != scenario.expected {
+			t.Errorf("Expected %q for RemoteAddr %q, got %q", scenario.expected, scenario.ip, result)
+		}
 	}
 }
