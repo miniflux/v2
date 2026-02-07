@@ -15,6 +15,7 @@ body {
     text-rendering: optimizeLegibility;
     color: var(--body-color);
     background: var(--body-background);
+    padding: 0 10px;
 }
 
 hr {
