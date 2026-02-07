@@ -6,7 +6,7 @@ from typing import Match
 
 # Conventional commit pattern (including Git revert messages)
 CONVENTIONAL_COMMIT_PATTERN: str = (
-    r"^((build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9-]+\))?!?: .{1,100}|Revert .+)"
+    r"^((build|chore|ci|docs|feat|fix|perf|refactor|revert|security|style|test)(\([a-z0-9-]+\))?!?: .{1,100}|Revert .+)"
 )
 
 
