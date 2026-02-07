@@ -240,6 +240,28 @@ func TestParseWebPageWithOldJSONFeedMimeType(t *testing.T) {
 	}
 }
 
+func TestParseWebPageWithJSONFeedWpJsonIgnored(t *testing.T) {
+	htmlPage := `
+	<!doctype html>
+	<html>
+		<head>
+			<link rel="https://api.w.org/" href="https://example.org/wp-json/" />
+			<link rel="alternate" title="JSON" type="application/json" href="https://example.org/wp-json/wp/v2/posts/123456" />
+		</head>
+		<body>
+		</body>
+	</html>`
+
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", []byte(htmlPage))
+	if err != nil {
+		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
+	}
+
+	if len(subscriptions) != 0 {
+		t.Fatal(`Incorrect number of subscriptions returned`)
+	}
+}
+
 func TestParseWebPageWithRelativeFeedURL(t *testing.T) {
 	htmlPage := `
 	<!doctype html>
