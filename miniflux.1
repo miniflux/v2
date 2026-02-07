@@ -540,6 +540,15 @@ Regardless of the scheduler used, the total number of polled feeds will not exce
 .br
 Default is "round_robin"\&.
 .TP
+.B POLLING_SKIP_EXISTING_ENTRIES
+Skip updating existing entries during scheduled polling.
+.br
+When enabled, only new entries are created; existing entries are not updated unless force refresh is triggered.
+.br
+This is useful when external tools modify entry content and you want to preserve those modifications.
+.br
+Default is disabled\&.
+.TP
 .B PORT
 Override \fBLISTEN_ADDR\fR to \fB0.0.0.0:$PORT\fR\&.
 .br
