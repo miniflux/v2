@@ -435,7 +435,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 
 		hasExtra := false
 		if err := tx.QueryRow(`
-			SELECT true 
+			SELECT true
 			FROM information_schema.columns
 			WHERE
 				table_name='users' AND
@@ -1401,6 +1401,14 @@ var migrations = [...]func(tx *sql.Tx) error{
 				WHERE status != 'removed';
 		`
 		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`UPDATE user_sessions SET ip = '127.0.0.1' WHERE ip IS NULL`)
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec(`ALTER TABLE user_sessions ALTER COLUMN ip SET NOT NULL`)
 		return err
 	},
 }

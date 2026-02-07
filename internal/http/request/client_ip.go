@@ -11,8 +11,8 @@ import (
 
 // IsTrustedIP reports whether the given remote IP address belongs to one of the trusted networks.
 func IsTrustedIP(remoteIP string, trustedNetworks []string) bool {
-	if remoteIP == "@" || strings.HasPrefix(remoteIP, "/") {
-		return true
+	if len(trustedNetworks) == 0 {
+		return false
 	}
 
 	ip := net.ParseIP(remoteIP)
@@ -57,19 +57,35 @@ func FindClientIP(r *http.Request, isTrustedProxyClient bool) string {
 	return FindRemoteIP(r)
 }
 
-// FindRemoteIP returns the remote client IP address without considering HTTP headers.
+// FindRemoteIP returns the parsed remote IP address from the request,
+// falling back to 127.0.0.1 if the address is empty, a unix socket, or invalid.
 func FindRemoteIP(r *http.Request) string {
-	remoteIP, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		remoteIP = r.RemoteAddr
+	if r.RemoteAddr == "@" || r.RemoteAddr == "" {
+		return "127.0.0.1"
 	}
-	return dropIPv6zone(remoteIP)
+
+	// If it looks like it has a port (IPv4:port or [IPv6]:port), try to split it.
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		// No port — could be a bare IPv4, IPv6, or IPv6 with zone.
+		ip = r.RemoteAddr
+	}
+
+	// Strip IPv6 zone identifier if present (e.g., %eth0).
+	ip = dropIPv6zone(ip)
+
+	// Validate the IP address.
+	if net.ParseIP(ip) == nil {
+		return "127.0.0.1"
+	}
+
+	return ip
 }
 
 func dropIPv6zone(address string) string {
-	i := strings.IndexByte(address, '%')
-	if i != -1 {
-		address = address[:i]
+	idx := strings.IndexByte(address, '%')
+	if idx != -1 {
+		address = address[:idx]
 	}
 	return address
 }
