@@ -142,12 +142,16 @@ func (f *subscriptionFinder) findSubscriptionsFromWebPage(websiteURL, contentTyp
 
 	var subscriptions Subscriptions
 	subscriptionURLs := make(map[string]bool)
-	for query, kind := range queries {
-		doc.Find(query).Each(func(i int, s *goquery.Selection) {
+	for feedQuerySelector, feedFormat := range queries {
+		doc.Find(feedQuerySelector).Each(func(i int, s *goquery.Selection) {
 			subscription := new(subscription)
-			subscription.Type = kind
+			subscription.Type = feedFormat
 
 			if feedURL, exists := s.Attr("href"); exists && feedURL != "" {
+				// Ignore JSON feed URLs that contain "wp-json" to avoid confusion with WordPress REST API endpoints.
+				if feedFormat == parser.FormatJSON && strings.Contains(feedURL, "wp-json") {
+					return
+				}
 				subscription.URL, err = urllib.ResolveToAbsoluteURL(websiteURL, feedURL)
 				if err != nil {
 					return
