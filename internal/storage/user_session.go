@@ -58,6 +58,9 @@ func (s *Storage) UserSessions(userID int64) ([]model.UserSession, error) {
 // CreateUserSessionFromUsername creates a new user session.
 func (s *Storage) CreateUserSessionFromUsername(username, userAgent, ip string) (sessionID string, userID int64, err error) {
 	token := rand.Text()
+	if ip == "" {
+		ip = "127.0.0.1"
+	}
 
 	tx, err := s.db.Begin()
 	if err != nil {
@@ -100,7 +103,7 @@ func (s *Storage) UserSessionByToken(token string) (*model.UserSession, error) {
 			token,
 			created_at,
 			user_agent,
-			ip 
+			ip
 		FROM
 			user_sessions
 		WHERE
