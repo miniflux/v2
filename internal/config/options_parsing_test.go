@@ -1643,6 +1643,11 @@ func TestTrustedReverseProxyNetworksOptionParsing(t *testing.T) {
 	if !slices.Contains(allowedNetworks, "192.168.1.0/24") {
 		t.Errorf("Expected 192.168.1.0/24 in allowed networks")
 	}
+
+	// Test invalid value
+	if err := configParser.parseLines([]string{"TRUSTED_REVERSE_PROXY_NETWORKS=127.0.0.1"}); err == nil {
+		t.Fatal("Expected error when parsing invalid CIDR notation IP 127.0.0.1, got nil")
+	}
 }
 
 func TestYouTubeEmbedDomainOptionParsing(t *testing.T) {

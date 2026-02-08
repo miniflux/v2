@@ -5,6 +5,7 @@ package config // import "miniflux.app/v2/internal/config"
 
 import (
 	"maps"
+	"net"
 	"net/url"
 	"slices"
 	"strings"
@@ -564,6 +565,15 @@ func NewConfigOptions() *configOptions {
 				parsedStringList: []string{},
 				rawValue:         "",
 				valueType:        stringListType,
+				validator: func(rawValue string) error {
+					for ip := range strings.SplitSeq(rawValue, ",") {
+						if _, _, err := net.ParseCIDR(ip); err != nil {
+							return err
+						}
+					}
+
+					return nil
+				},
 			},
 			"WATCHDOG": {
 				parsedBoolValue: true,
