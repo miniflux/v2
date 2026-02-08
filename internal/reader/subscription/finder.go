@@ -118,9 +118,13 @@ func (f *subscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string, 
 
 func (f *subscriptionFinder) findSubscriptionsFromWebPage(websiteURL, contentType string, body []byte) (Subscriptions, *locale.LocalizedErrorWrapper) {
 	queries := map[string]string{
-		"link[type='application/rss+xml']":                                  parser.FormatRSS,
-		"link[type='application/atom+xml']":                                 parser.FormatAtom,
-		"link[type='application/json'], link[type='application/feed+json']": parser.FormatJSON,
+		"link[type='application/rss+xml']":   parser.FormatRSS,
+		"link[type='application/atom+xml']":  parser.FormatAtom,
+		"link[type='application/feed+json']": parser.FormatJSON,
+
+		// Ignore JSON feed URLs that contain "/wp-json/" to avoid confusion
+		// with WordPress REST API endpoints.
+		"link[type='application/json']:not([href*='/wp-json/'])": parser.FormatJSON,
 	}
 
 	htmlDocumentReader, err := encoding.NewCharsetReaderFromBytes(body, contentType)
@@ -148,10 +152,6 @@ func (f *subscriptionFinder) findSubscriptionsFromWebPage(websiteURL, contentTyp
 			subscription.Type = feedFormat
 
 			if feedURL, exists := s.Attr("href"); exists && feedURL != "" {
-				// Ignore JSON feed URLs that contain "wp-json" to avoid confusion with WordPress REST API endpoints.
-				if feedFormat == parser.FormatJSON && strings.Contains(feedURL, "wp-json") {
-					return
-				}
 				subscription.URL, err = urllib.ResolveToAbsoluteURL(websiteURL, feedURL)
 				if err != nil {
 					return
