@@ -296,8 +296,9 @@ func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.
 		}
 		buf.WriteString("<")
 		buf.WriteString(n.Data)
-		if len(htmlAttributes) > 0 {
-			buf.WriteString(" " + htmlAttributes)
+		if htmlAttributes != "" {
+			buf.WriteByte(' ')
+			buf.WriteString(htmlAttributes)
 		}
 		buf.WriteString(">")
 
