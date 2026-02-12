@@ -328,33 +328,6 @@ func filterAndRenderHTMLChildren(buf *strings.Builder, n *html.Node, parsedBaseU
 	return nil
 }
 
-func getExtraAttributes(tagName string, isYouTubeEmbed bool, sanitizerOptions *SanitizerOptions) []string {
-	switch tagName {
-	case "a":
-		htmlAttributes := []string{`rel="noopener noreferrer"`, `referrerpolicy="no-referrer"`}
-		if sanitizerOptions.OpenLinksInNewTab {
-			htmlAttributes = append(htmlAttributes, `target="_blank"`)
-		}
-		return htmlAttributes
-	case "video", "audio":
-		return []string{"controls"}
-	case "iframe":
-		extraHTMLAttributes := []string{`sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"`, `loading="lazy"`}
-
-		// Note: the referrerpolicy seems to be required to avoid YouTube error 153 video player configuration error
-		// See https://developers.google.com/youtube/terms/required-minimum-functionality#embedded-player-api-client-identity
-		if isYouTubeEmbed {
-			extraHTMLAttributes = append(extraHTMLAttributes, `referrerpolicy="strict-origin-when-cross-origin"`)
-		}
-
-		return extraHTMLAttributes
-	case "img":
-		return []string{`loading="lazy"`}
-	default:
-		return nil
-	}
-}
-
 func hasRequiredAttributes(tagName string, attributes []string) bool {
 	switch tagName {
 	case "a":
@@ -612,7 +585,26 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 	}
 
 	if !isAnchorLink {
-		htmlAttrs = append(htmlAttrs, getExtraAttributes(tagName, isYouTubeEmbed, sanitizerOptions)...)
+		switch tagName {
+		case "a":
+			htmlAttrs = append(htmlAttrs, `rel="noopener noreferrer"`, `referrerpolicy="no-referrer"`)
+			if sanitizerOptions.OpenLinksInNewTab {
+				htmlAttrs = append(htmlAttrs, `target="_blank"`)
+			}
+		case "video", "audio":
+			htmlAttrs = append(htmlAttrs, "controls")
+		case "iframe":
+			htmlAttrs = append(htmlAttrs, `sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"`, `loading="lazy"`)
+
+			// Note: the referrerpolicy seems to be required to avoid YouTube error 153 video player configuration error
+			// See https://developers.google.com/youtube/terms/required-minimum-functionality#embedded-player-api-client-identity
+			if isYouTubeEmbed {
+				htmlAttrs = append(htmlAttrs, `referrerpolicy="strict-origin-when-cross-origin"`)
+			}
+
+		case "img":
+			htmlAttrs = append(htmlAttrs, `loading="lazy"`)
+		}
 	}
 
 	return strings.Join(htmlAttrs, " "), true
