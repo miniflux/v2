@@ -294,13 +294,13 @@ func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.
 			// The tag doesn't have every required attributes but we're still interested in its content
 			return filterAndRenderHTMLChildren(buf, n, parsedBaseUrl, sanitizerOptions, depth-1)
 		}
-		buf.WriteString("<")
+		buf.WriteByte('<')
 		buf.WriteString(n.Data)
 		if htmlAttributes != "" {
 			buf.WriteByte(' ')
 			buf.WriteString(htmlAttributes)
 		}
-		buf.WriteString(">")
+		buf.WriteByte('>')
 
 		if isSelfContainedTag(tag) {
 			return nil
@@ -313,7 +313,7 @@ func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.
 
 		buf.WriteString("</")
 		buf.WriteString(n.Data)
-		buf.WriteString(">")
+		buf.WriteByte('>')
 	default:
 	}
 	return nil
