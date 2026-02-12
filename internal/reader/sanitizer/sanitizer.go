@@ -328,22 +328,16 @@ func filterAndRenderHTMLChildren(buf *strings.Builder, n *html.Node, parsedBaseU
 	return nil
 }
 
-func hasRequiredAttributes(tagName string, attributes []string) bool {
+func hasRequiredAttributes(s *mandatoryAttributesStruct, tagName string) bool {
 	switch tagName {
 	case "a":
-		return slices.Contains(attributes, "href")
+		return s.href
 	case "iframe":
-		return slices.Contains(attributes, "src")
+		return s.src
 	case "source", "img":
-		for _, attribute := range attributes {
-			if attribute == "src" || attribute == "srcset" {
-				return true
-			}
-		}
-		return false
-	default:
-		return true
+		return s.src || s.srcset
 	}
+	return true
 }
 
 func hasValidURIScheme(absoluteURL string) bool {
@@ -482,9 +476,28 @@ func rewriteIframeURL(link string) string {
 	return link
 }
 
+type mandatoryAttributesStruct struct {
+	href   bool
+	src    bool
+	srcset bool
+}
+
+func trackAttributes(s *mandatoryAttributesStruct, attributeName string) {
+	switch attributeName {
+	case "href":
+		s.href = true
+	case "src":
+		s.src = true
+	case "srcset":
+		s.srcset = true
+	}
+}
+
 func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []html.Attribute, sanitizerOptions *SanitizerOptions) (string, bool) {
 	htmlAttrs := make([]string, 0, len(attributes))
-	attrNames := make([]string, 0, len(attributes))
+
+	// Keep track of mandatory attributes for some tags
+	mandatoryAttributes := mandatoryAttributesStruct{false, false, false}
 
 	var isAnchorLink bool
 	var isYouTubeEmbed bool
@@ -540,7 +553,7 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 			case tagName == "iframe":
 				iframeSourceDomain, trustedIframeDomain := findAllowedIframeSourceDomain(attribute.Val)
 				if !trustedIframeDomain {
-					continue
+					return "", false
 				}
 
 				value = rewriteIframeURL(attribute.Val)
@@ -555,7 +568,7 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 				isAnchorLink = true
 			default:
 				if isBlockedResource(value) {
-					continue
+					return "", false
 				}
 
 				var err error
@@ -576,11 +589,11 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 			}
 		}
 
-		attrNames = append(attrNames, attribute.Key)
+		trackAttributes(&mandatoryAttributes, attribute.Key)
 		htmlAttrs = append(htmlAttrs, attribute.Key+`="`+html.EscapeString(value)+`"`)
 	}
 
-	if !hasRequiredAttributes(tagName, attrNames) {
+	if !hasRequiredAttributes(&mandatoryAttributes, tagName) {
 		return "", false
 	}
 
