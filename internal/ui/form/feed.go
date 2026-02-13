@@ -24,6 +24,7 @@ type FeedForm struct {
 	BlockFilterEntryRules       string
 	KeepFilterEntryRules        string
 	Crawler                     bool
+	IgnoreEntryUpdates          bool
 	UserAgent                   string
 	Cookie                      string
 	CategoryID                  int64
@@ -62,6 +63,7 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.BlockFilterEntryRules = f.BlockFilterEntryRules
 	feed.KeepFilterEntryRules = f.KeepFilterEntryRules
 	feed.Crawler = f.Crawler
+	feed.IgnoreEntryUpdates = f.IgnoreEntryUpdates
 	feed.UserAgent = f.UserAgent
 	feed.Cookie = f.Cookie
 	feed.ParsingErrorCount = 0
@@ -118,6 +120,7 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		BlockFilterEntryRules:       r.FormValue("block_filter_entry_rules"),
 		KeepFilterEntryRules:        r.FormValue("keep_filter_entry_rules"),
 		Crawler:                     r.FormValue("crawler") == "1",
+		IgnoreEntryUpdates:          r.FormValue("ignore_entry_updates") == "1",
 		CategoryID:                  int64(categoryID),
 		Username:                    r.FormValue("feed_username"),
 		Password:                    r.FormValue("feed_password"),

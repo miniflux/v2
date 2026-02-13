@@ -178,6 +178,7 @@
     "form.feed.label.category": "Categorie",
     "form.feed.label.cookie": "Setare Cookie-uri",
     "form.feed.label.crawler": "Aduce conținutul original",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Descriere",
     "form.feed.label.disable_http2": "Dezactivează HTTP/2 pentru a preveni amprentarea",
     "form.feed.label.disabled": "Nu actualiza acest flux",

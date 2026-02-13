@@ -172,6 +172,7 @@
     "form.feed.label.category": "カテゴリ",
     "form.feed.label.cookie": "Cookie の設定",
     "form.feed.label.crawler": "オリジナルの内容を取得",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "説明",
     "form.feed.label.disable_http2": "フィンガープリンティング回避のため HTTP/2 を無効化",
     "form.feed.label.disabled": "このフィードを更新しない",

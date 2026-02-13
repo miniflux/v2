@@ -178,6 +178,7 @@
     "form.feed.label.category": "Категорія",
     "form.feed.label.cookie": "Встановити кукі",
     "form.feed.label.crawler": "Завантажувати оригінальний вміст",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Опис",
     "form.feed.label.disable_http2": "Вимкнути HTTP/2 для уникнення відбитків",
     "form.feed.label.disabled": "Не оновлювати цю стрічку",

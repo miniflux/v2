@@ -172,6 +172,7 @@
     "form.feed.label.category": "分类",
     "form.feed.label.cookie": "设置 Cookie",
     "form.feed.label.crawler": "获取原始内容",
+    "form.feed.label.ignore_entry_updates": "忽略条目更新",
     "form.feed.label.description": "描述",
     "form.feed.label.disable_http2": "禁用 HTTP/2 以避免指纹识别",
     "form.feed.label.disabled": "不刷新此订阅",
