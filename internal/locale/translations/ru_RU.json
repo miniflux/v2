@@ -178,6 +178,7 @@
     "form.feed.label.category": "Категория",
     "form.feed.label.cookie": "Установить куки",
     "form.feed.label.crawler": "Извлечь оригинальное содержимое",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Описание",
     "form.feed.label.disable_http2": "Отключить HTTP/2 для предотвращения фингерпринтинга",
     "form.feed.label.disabled": "Не обновлять эту подписку",

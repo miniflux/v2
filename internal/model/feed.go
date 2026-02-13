@@ -55,6 +55,7 @@ type Feed struct {
 	PushoverEnabled             bool      `json:"pushover_enabled"`
 	NtfyEnabled                 bool      `json:"ntfy_enabled"`
 	Crawler                     bool      `json:"crawler"`
+	IgnoreEntryUpdates          bool      `json:"ignore_entry_updates"`
 	AppriseServiceURLs          string    `json:"apprise_service_urls"`
 	WebhookURL                  string    `json:"webhook_url"`
 	NtfyPriority                int       `json:"ntfy_priority"`
@@ -156,6 +157,7 @@ type FeedCreationRequest struct {
 	Username                    string `json:"username"`
 	Password                    string `json:"password"`
 	Crawler                     bool   `json:"crawler"`
+	IgnoreEntryUpdates          bool   `json:"ignore_entry_updates"`
 	Disabled                    bool   `json:"disabled"`
 	NoMediaPlayer               bool   `json:"no_media_player"`
 	IgnoreHTTPCache             bool   `json:"ignore_http_cache"`
@@ -195,6 +197,7 @@ type FeedModificationRequest struct {
 	BlockFilterEntryRules       *string `json:"block_filter_entry_rules"`
 	KeepFilterEntryRules        *string `json:"keep_filter_entry_rules"`
 	Crawler                     *bool   `json:"crawler"`
+	IgnoreEntryUpdates          *bool   `json:"ignore_entry_updates"`
 	UserAgent                   *string `json:"user_agent"`
 	Cookie                      *string `json:"cookie"`
 	Username                    *string `json:"username"`
@@ -258,6 +261,10 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 
 	if f.Crawler != nil {
 		feed.Crawler = *f.Crawler
+	}
+
+	if f.IgnoreEntryUpdates != nil {
+		feed.IgnoreEntryUpdates = *f.IgnoreEntryUpdates
 	}
 
 	if f.UserAgent != nil {

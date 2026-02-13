@@ -175,6 +175,7 @@
     "form.feed.label.category": "Categoría",
     "form.feed.label.cookie": "Configurar las cookies",
     "form.feed.label.crawler": "Obtener rastreador original",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Descripción",
     "form.feed.label.disable_http2": "Deshabilite HTTP/2 para evitar huellas digitales",
     "form.feed.label.disabled": "No actualice este feed",

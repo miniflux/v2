@@ -178,6 +178,7 @@
     "form.feed.label.category": "Kategoria",
     "form.feed.label.cookie": "Ustaw ciasteczka",
     "form.feed.label.crawler": "Pobierz oryginalną treść",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Opis",
     "form.feed.label.disable_http2": "Wyłącz protokół HTTP/2, aby uniknąć identyfikowania",
     "form.feed.label.disabled": "Nie aktualizuj tego kanału",

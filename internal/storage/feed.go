@@ -263,10 +263,11 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			webhook_url,
 			disable_http2,
 			description,
-			proxy_url
+			proxy_url,
+			ignore_entry_updates
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31)
 		RETURNING
 			id
 	`
@@ -302,6 +303,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.DisableHTTP2,
 		feed.Description,
 		feed.ProxyURL,
+		feed.IgnoreEntryUpdates,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
@@ -384,9 +386,10 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			ntfy_topic=$35,
 			pushover_enabled=$36,
 			pushover_priority=$37,
-			proxy_url=$38
+			proxy_url=$38,
+			ignore_entry_updates=$39
 		WHERE
-			id=$39 AND user_id=$40
+			id=$40 AND user_id=$41
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -427,6 +430,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.PushoverEnabled,
 		feed.PushoverPriority,
 		feed.ProxyURL,
+		feed.IgnoreEntryUpdates,
 		feed.ID,
 		feed.UserID,
 	)

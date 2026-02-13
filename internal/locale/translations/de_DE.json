@@ -175,6 +175,7 @@
     "form.feed.label.category": "Kategorie",
     "form.feed.label.cookie": "Cookies setzen",
     "form.feed.label.crawler": "Originalinhalt herunterladen",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Beschreibung",
     "form.feed.label.disable_http2": "HTTP/2 deaktivieren, um Fingerprinting zu verhindern",
     "form.feed.label.disabled": "Dieses Abonnement nicht aktualisieren",

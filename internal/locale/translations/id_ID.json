@@ -172,6 +172,7 @@
     "form.feed.label.category": "Kategori",
     "form.feed.label.cookie": "Atur Kuki",
     "form.feed.label.crawler": "Ambil konten asli",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Deskripsi",
     "form.feed.label.disable_http2": "Matikan HTTP/2 untuk menghindari pelacakan",
     "form.feed.label.disabled": "Jangan perbarui umpan ini",

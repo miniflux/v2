@@ -175,6 +175,7 @@
     "form.feed.label.category": "Κατηγορία",
     "form.feed.label.cookie": "Ορισμός Cookies",
     "form.feed.label.crawler": "Λήψη αρχικού περιεχομένου",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Περιγραφή",
     "form.feed.label.disable_http2": "Απενεργοποίηση HTTP/2 για αποφυγή δακτυλικών αποτυπωμάτων",
     "form.feed.label.disabled": "Μη ανανέωση αυτής της ροής",
