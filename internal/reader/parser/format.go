@@ -20,6 +20,8 @@ const (
 	FormatUnknown = "unknown"
 )
 
+const maxTokensToConsider = uint(50)
+
 // DetectFeedFormat tries to guess the feed format from input data.
 func DetectFeedFormat(r io.ReadSeeker) (string, string) {
 	r.Seek(0, io.SeekStart)
@@ -32,11 +34,13 @@ func DetectFeedFormat(r io.ReadSeeker) (string, string) {
 	r.Seek(0, io.SeekStart)
 	decoder := rxml.NewXMLDecoder(r)
 
+	processedTokens := uint(0)
 	for {
 		token, _ := decoder.Token()
-		if token == nil {
+		if token == nil || processedTokens == maxTokensToConsider {
 			break
 		}
+		processedTokens += 1
 
 		if element, ok := token.(xml.StartElement); ok {
 			switch element.Name.Local {
