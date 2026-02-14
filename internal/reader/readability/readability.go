@@ -173,13 +173,20 @@ func getArticle(topCandidate *candidate, candidates candidateList) string {
 
 		if append {
 			html, _ := s.Html()
-			output.WriteString("<" + tag + ">" + html + "</" + tag + ">")
+			output.WriteByte('<')
+			output.WriteString(tag)
+			output.WriteByte('>')
+			output.WriteString(html)
+			output.WriteString("</")
+			output.WriteString(tag)
+			output.WriteByte('>')
 		}
 	})
 
 	output.WriteString("</div>")
 	return output.String()
 }
+
 func shouldRemoveCandidate(str string) bool {
 	str = strings.ToLower(str)
 
@@ -190,17 +197,17 @@ func shouldRemoveCandidate(str string) bool {
 		}
 	}
 
+	isFalsePositive := false
+	for _, maybeCandidateToRemove := range maybeCandidateToRemove {
+		if strings.Contains(str, maybeCandidateToRemove) {
+			isFalsePositive = true
+			break
+		}
+	}
+
 	for _, unlikelyCandidateToRemove := range unlikelyCandidateToRemove {
 		if strings.Contains(str, unlikelyCandidateToRemove) {
-			// Do we have a false positive?
-			for _, maybeCandidateToRemove := range maybeCandidateToRemove {
-				if strings.Contains(str, maybeCandidateToRemove) {
-					return false
-				}
-			}
-
-			// Nope, it's a true positive!
-			return true
+			return !isFalsePositive
 		}
 	}
 	return false
