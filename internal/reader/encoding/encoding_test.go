@@ -187,7 +187,7 @@ func TestNewReaderWithUTF8Document(t *testing.T) {
 		t.Fatalf("Unable to open file: %v", err)
 	}
 
-	reader, err := NewCharsetReader(f, "text/html; charset=UTF-8")
+	reader, err := CharsetReader("text/html; charset=UTF-8", f)
 	if err != nil {
 		t.Fatalf("Unable to create reader: %v", err)
 	}
@@ -215,7 +215,7 @@ func TestNewReaderWithUTF8DocumentAndNoContentEncoding(t *testing.T) {
 		t.Fatalf("Unable to open file: %v", err)
 	}
 
-	reader, err := NewCharsetReader(f, "text/html")
+	reader, err := CharsetReader("text/html", f)
 	if err != nil {
 		t.Fatalf("Unable to create reader: %v", err)
 	}
@@ -243,7 +243,7 @@ func TestNewReaderWithISO88591Document(t *testing.T) {
 		t.Fatalf("Unable to open file: %v", err)
 	}
 
-	reader, err := NewCharsetReader(f, "text/html; charset=ISO-8859-1")
+	reader, err := CharsetReader("text/html; charset=ISO-8859-1", f)
 	if err != nil {
 		t.Fatalf("Unable to create reader: %v", err)
 	}
@@ -271,7 +271,7 @@ func TestNewReaderWithISO88591DocumentAndNoContentType(t *testing.T) {
 		t.Fatalf("Unable to open file: %v", err)
 	}
 
-	reader, err := NewCharsetReader(f, "")
+	reader, err := CharsetReader("", f)
 	if err != nil {
 		t.Fatalf("Unable to create reader: %v", err)
 	}
@@ -299,7 +299,7 @@ func TestNewReaderWithISO88591DocumentWithMetaAfter1024Bytes(t *testing.T) {
 		t.Fatalf("Unable to open file: %v", err)
 	}
 
-	reader, err := NewCharsetReader(f, "text/html")
+	reader, err := CharsetReader("text/html", f)
 	if err != nil {
 		t.Fatalf("Unable to create reader: %v", err)
 	}
@@ -327,7 +327,7 @@ func TestNewReaderWithUTF8DocumentWithMetaAfter1024Bytes(t *testing.T) {
 		t.Fatalf("Unable to open file: %v", err)
 	}
 
-	reader, err := NewCharsetReader(f, "text/html")
+	reader, err := CharsetReader("text/html", f)
 	if err != nil {
 		t.Fatalf("Unable to create reader: %v", err)
 	}

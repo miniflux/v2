@@ -12,7 +12,8 @@ import (
 	"golang.org/x/net/html/charset"
 )
 
-// CharsetReader is used when the XML encoding is specified for the input document.
+// CharsetReader returns an io.Reader that converts the content of r to UTF-8,
+// it should be used when the XML encoding is specified for the input document.
 //
 // The document is converted in UTF-8 only if a different encoding is specified
 // and the document is not already UTF-8.
@@ -23,26 +24,7 @@ import (
 // - Feeds with encoding specified in both places
 // - Feeds with encoding specified only in XML document and not in HTTP header
 // - Feeds with wrong encoding defined and already in UTF-8
-func CharsetReader(charsetLabel string, input io.Reader) (io.Reader, error) {
-	buffer, err := io.ReadAll(input)
-	if err != nil {
-		return nil, fmt.Errorf(`encoding: unable to read input: %w`, err)
-	}
-
-	r := bytes.NewReader(buffer)
-
-	// The document is already UTF-8, do not do anything (avoid double-encoding).
-	// That means the specified encoding in XML prolog is wrong.
-	if utf8.Valid(buffer) {
-		return r, nil
-	}
-
-	// Transform document to UTF-8 from the specified encoding in XML prolog.
-	return charset.NewReaderLabel(charsetLabel, r)
-}
-
-// NewCharsetReader returns an io.Reader that converts the content of r to UTF-8.
-func NewCharsetReader(r io.Reader, contentType string) (io.Reader, error) {
+func CharsetReader(contentType string, r io.Reader) (io.Reader, error) {
 	buffer, err := io.ReadAll(r)
 	if err != nil {
 		return nil, fmt.Errorf(`encoding: unable to read input: %w`, err)
@@ -54,7 +36,8 @@ func NewCharsetReader(r io.Reader, contentType string) (io.Reader, error) {
 func NewCharsetReaderFromBytes(buffer []byte, contentType string) (io.Reader, error) {
 	internalReader := bytes.NewReader(buffer)
 
-	// The document is already UTF-8, do not do anything.
+	// The document is already UTF-8, do not do anything (avoid double-encoding).
+	// That means the specified encoding in XML prolog is wrong.
 	if utf8.Valid(buffer) {
 		return internalReader, nil
 	}

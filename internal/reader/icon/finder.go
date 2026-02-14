@@ -247,7 +247,7 @@ func resizeIcon(icon *model.Icon) *model.Icon {
 }
 
 func findIconURLsFromHTMLDocument(documentURL string, body io.Reader, contentType string) ([]string, error) {
-	htmlDocumentReader, err := encoding.NewCharsetReader(body, contentType)
+	htmlDocumentReader, err := encoding.CharsetReader(contentType, body)
 	if err != nil {
 		return nil, fmt.Errorf("icon: unable to create charset reader: %w", err)
 	}
