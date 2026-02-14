@@ -39,9 +39,9 @@ func ScrapeWebsite(requestBuilder *fetcher.RequestBuilder, pageURL, rules string
 		rules = getPredefinedScraperRules(pageURL)
 	}
 
-	htmlDocumentReader, err := encoding.NewCharsetReader(
-		responseHandler.Body(config.Opts.HTTPClientMaxBodySize()),
+	htmlDocumentReader, err := encoding.CharsetReader(
 		responseHandler.ContentType(),
+		responseHandler.Body(config.Opts.HTTPClientMaxBodySize()),
 	)
 
 	if err != nil {
