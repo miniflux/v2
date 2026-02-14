@@ -14,8 +14,8 @@ func TestPluralRules(t *testing.T) {
 			2: 1, // n > 1
 			5: 1, // n > 1
 		},
-		// Arabic (ar_AR) - 6 forms
-		"ar_AR": {
+		// Arabic (ar_SA) - 6 forms
+		"ar_SA": {
 			0:   0, // n == 0
 			1:   1, // n == 1
 			2:   2, // n == 2
