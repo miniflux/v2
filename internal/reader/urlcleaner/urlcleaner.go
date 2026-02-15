@@ -131,20 +131,29 @@ func RemoveTrackingParameters(parsedFeedURL, parsedSiteURL, parsedInputUrl *url.
 		return "", errors.New("urlcleaner: one of the URLs is nil")
 	}
 
+	if parsedInputUrl.RawQuery == "" {
+		return parsedInputUrl.String(), nil
+	}
+
 	queryParams := parsedInputUrl.Query()
 	hasTrackers := false
+	feedHostname := parsedFeedURL.Hostname()
+	siteHostname := parsedSiteURL.Hostname()
 
 	// Remove tracking parameters
 	for param := range queryParams {
 		lowerParam := strings.ToLower(param)
+
 		if isTrackingParam(lowerParam) {
 			queryParams.Del(param)
 			hasTrackers = true
+			continue
 		}
+
 		if trackingParamsOutbound[lowerParam] {
 			// handle duplicate parameters like ?a=b&a=c&a=d…
 			for _, value := range queryParams[param] {
-				if value == parsedFeedURL.Hostname() || value == parsedSiteURL.Hostname() {
+				if value == feedHostname || value == siteHostname {
 					queryParams.Del(param)
 					hasTrackers = true
 					break
