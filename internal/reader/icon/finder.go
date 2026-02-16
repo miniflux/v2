@@ -66,7 +66,11 @@ func (f *iconFinder) findIcon() (*model.Icon, error) {
 
 	// Try the website URL first, then fall back to the root URL if no icon is found.
 	// The website URL may include a subdirectory (e.g., https://example.org/subfolder/), and icons can be referenced relative to that path.
-	for _, documentURL := range []string{f.websiteURL, urllib.RootURL(f.websiteURL)} {
+	urls := []string{f.websiteURL}
+	if rootURL := urllib.RootURL(f.websiteURL); rootURL != urls[0] {
+		urls = []string{f.websiteURL, rootURL}
+	}
+	for _, documentURL := range urls {
 		if icon, err := f.fetchIconsFromHTMLDocument(documentURL); err != nil {
 			slog.Debug("Unable to fetch icons from HTML document",
 				slog.String("document_url", documentURL),
@@ -257,34 +261,30 @@ func findIconURLsFromHTMLDocument(documentURL string, body io.Reader, contentTyp
 		return nil, fmt.Errorf("icon: unable to read document: %v", err)
 	}
 
-	queries := [...]string{
-		"link[rel='icon' i][href]",
-		"link[rel='shortcut icon' i][href]",
-		"link[rel='icon shortcut' i][href]",
-		"link[rel='apple-touch-icon'][href]",
-	}
+	query := `link[rel='icon' i][href],
+		link[rel='shortcut icon' i][href],
+		link[rel='icon shortcut' i][href],
+		link[rel='apple-touch-icon'][href]`
 
 	var iconURLs []string
-	for _, query := range queries {
-		slog.Debug("Searching icon URL in HTML document", slog.String("query", query))
+	slog.Debug("Searching icon URL in HTML document", slog.String("query", query))
 
-		for _, s := range doc.Find(query).EachIter() {
-			href, _ := s.Attr("href")
-			href = strings.TrimSpace(href)
-			if href == "" {
-				continue
-			}
+	for _, s := range doc.Find(query).EachIter() {
+		href, _ := s.Attr("href")
+		href = strings.TrimSpace(href)
+		if href == "" {
+			continue
+		}
 
-			if absoluteIconURL, err := urllib.ResolveToAbsoluteURL(documentURL, href); err != nil {
-				slog.Warn("Unable to convert icon URL to absolute URL", slog.Any("error", err), slog.String("icon_href", href))
-			} else {
-				iconURLs = append(iconURLs, absoluteIconURL)
-				slog.Debug("Found icon URL in HTML document",
-					slog.String("query", query),
-					slog.String("icon_href", href),
-					slog.String("absolute_icon_url", absoluteIconURL),
-				)
-			}
+		if absoluteIconURL, err := urllib.ResolveToAbsoluteURL(documentURL, href); err != nil {
+			slog.Warn("Unable to convert icon URL to absolute URL", slog.Any("error", err), slog.String("icon_href", href))
+		} else {
+			iconURLs = append(iconURLs, absoluteIconURL)
+			slog.Debug("Found icon URL in HTML document",
+				slog.String("query", query),
+				slog.String("icon_href", href),
+				slog.String("absolute_icon_url", absoluteIconURL),
+			)
 		}
 	}
 
