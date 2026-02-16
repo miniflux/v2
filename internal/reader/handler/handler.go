@@ -211,7 +211,6 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	weeklyEntryCount := 0
-	var refreshDelay time.Duration
 	if config.Opts.PollingScheduler() == model.SchedulerEntryFrequency {
 		var weeklyCountErr error
 		weeklyEntryCount, weeklyCountErr = store.WeeklyFeedEntryCount(userID, feedID)
@@ -221,7 +220,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	originalFeed.CheckedNow()
-	originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelay)
+	originalFeed.ScheduleNextCheck(weeklyEntryCount, time.Duration(0))
 
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithUsernameAndPassword(originalFeed.Username, originalFeed.Password)
@@ -251,7 +250,6 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		slog.Warn("Feed is rate limited",
 			slog.String("feed_url", originalFeed.FeedURL),
 			slog.Int("retry_delay_in_seconds", int(retryDelay.Seconds())),
-			slog.Int("refresh_delay_in_minutes", int(refreshDelay.Minutes())),
 			slog.Int("calculated_next_check_interval_in_minutes", int(calculatedNextCheckInterval.Minutes())),
 			slog.Time("new_next_check_at", originalFeed.NextCheckAt),
 		)
@@ -320,7 +318,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		feedTTLValue := updatedFeed.TTL
 		cacheControlMaxAgeValue := responseHandler.CacheControlMaxAge()
 		expiresValue := responseHandler.Expires()
-		refreshDelay = max(feedTTLValue, cacheControlMaxAgeValue, expiresValue)
+		refreshDelay := max(feedTTLValue, cacheControlMaxAgeValue, expiresValue)
 
 		// Set the next check at with updated arguments.
 		calculatedNextCheckInterval := originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelay)
