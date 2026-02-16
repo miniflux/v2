@@ -403,6 +403,37 @@ func TestCharsetReaderWithUppercaseKOI8RLabel(t *testing.T) {
 	}
 }
 
+func TestCharsetReaderWithKOI8RFeedFixture(t *testing.T) {
+	file := "testdata/koi8r.xml"
+
+	f, err := os.Open(file)
+	if err != nil {
+		t.Fatalf("Unable to open file: %v", err)
+	}
+
+	reader, err := CharsetReader("KOI8-R", f)
+	if err != nil {
+		t.Fatalf("Unable to create reader: %v", err)
+	}
+
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatalf("Unable to read data: %v", err)
+	}
+
+	if !utf8.Valid(data) {
+		t.Fatalf("Data is not valid UTF-8")
+	}
+
+	if !bytes.Contains(data, []byte("Пример RSS ленты")) {
+		t.Fatalf("Data does not contain expected unicode string: %s", "Пример RSS ленты")
+	}
+
+	if !bytes.Contains(data, []byte("Привет мир! Ёжик, чай, Москва, Санкт-Петербург.")) {
+		t.Fatalf("Data does not contain expected unicode string: %s", "Привет мир! Ёжик, чай, Москва, Санкт-Петербург.")
+	}
+}
+
 func TestNewCharsetReaderWithKOI8RContentType(t *testing.T) {
 	expectedUnicodeString := "Привет мир"
 
@@ -427,5 +458,36 @@ func TestNewCharsetReaderWithKOI8RContentType(t *testing.T) {
 
 	if string(data) != expectedUnicodeString {
 		t.Fatalf("Data does not match expected unicode string, got %q expected %q", string(data), expectedUnicodeString)
+	}
+}
+
+func TestNewCharsetReaderWithKOI8RFeedFixtureAndContentType(t *testing.T) {
+	file := "testdata/koi8r.xml"
+
+	f, err := os.Open(file)
+	if err != nil {
+		t.Fatalf("Unable to open file: %v", err)
+	}
+
+	reader, err := NewCharsetReader(f, "application/rss+xml; charset=KOI8-R")
+	if err != nil {
+		t.Fatalf("Unable to create reader: %v", err)
+	}
+
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatalf("Unable to read data: %v", err)
+	}
+
+	if !utf8.Valid(data) {
+		t.Fatalf("Data is not valid UTF-8")
+	}
+
+	if !bytes.Contains(data, []byte("Тестовая лента в кодировке KOI8-R")) {
+		t.Fatalf("Data does not contain expected unicode string: %s", "Тестовая лента в кодировке KOI8-R")
+	}
+
+	if !bytes.Contains(data, []byte("Проверка специальных символов")) {
+		t.Fatalf("Data does not contain expected unicode string: %s", "Проверка специальных символов")
 	}
 }
