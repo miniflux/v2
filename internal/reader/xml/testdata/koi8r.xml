@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="KOI8-R"?>
+<rss version="2.0">
+  <channel>
+    <title>Пример RSS ленты</title>
+    <link>http://example.com/</link>
+    <description>Тестовая лента в кодировке KOI8-R</description>
+    <language>ru</language>
+    <lastBuildDate>Sat, 15 Feb 2026 12:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>Первая новость</title>
+      <link>http://example.com/post1</link>
+      <guid>http://example.com/post1</guid>
+      <pubDate>Sat, 15 Feb 2026 10:00:00 +0000</pubDate>
+      <description>
+        Это тестовое описание с русскими символами: 
+        Привет мир! Ёжик, чай, Москва, Санкт-Петербург.
+      </description>
+    </item>
+
+    <item>
+      <title>Вторая новость</title>
+      <link>http://example.com/post2</link>
+      <guid>http://example.com/post2</guid>
+      <pubDate>Sat, 15 Feb 2026 11:00:00 +0000</pubDate>
+      <description>
+        Проверка специальных символов: &amp; &lt; &gt; 
+        А также числа: 1234567890.
+      </description>
+    </item>
+
+  </channel>
+</rss>
