@@ -27,6 +27,16 @@ var (
 	ErrDuplicatedFeed   = errors.New("fetcher: duplicated feed")
 )
 
+func getTranslatedLocalizedError(store *storage.Storage, userID int64, originalFeed *model.Feed, localizedError *locale.LocalizedErrorWrapper) *locale.LocalizedErrorWrapper {
+	user, storeErr := store.UserByID(userID)
+	if storeErr != nil {
+		return locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
+	}
+	originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
+	store.UpdateFeedError(originalFeed)
+	return localizedError
+}
+
 func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, feedCreationRequest *model.FeedCreationRequestFromSubscriptionDiscovery) (*model.Feed, *locale.LocalizedErrorWrapper) {
 	slog.Debug("Begin feed creation process from subscription discovery",
 		slog.Int64("user_id", userID),
@@ -262,24 +272,12 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 			slog.String("feed_url", originalFeed.FeedURL),
 			slog.Any("error", localizedError.Error()),
 		)
-		user, storeErr := store.UserByID(userID)
-		if storeErr != nil {
-			return locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
-		}
-		originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
-		store.UpdateFeedError(originalFeed)
-		return localizedError
+		return getTranslatedLocalizedError(store, userID, originalFeed, localizedError)
 	}
 
 	if store.AnotherFeedURLExists(userID, originalFeed.ID, responseHandler.EffectiveURL()) {
 		localizedError := locale.NewLocalizedErrorWrapper(ErrDuplicatedFeed, "error.duplicated_feed")
-		user, storeErr := store.UserByID(userID)
-		if storeErr != nil {
-			return locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
-		}
-		originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
-		store.UpdateFeedError(originalFeed)
-		return localizedError
+		return getTranslatedLocalizedError(store, userID, originalFeed, localizedError)
 	}
 
 	if ignoreHTTPCache || responseHandler.IsModified(originalFeed.EtagHeader, originalFeed.LastModifiedHeader) {
@@ -299,18 +297,10 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		updatedFeed, parseErr := parser.ParseFeed(responseHandler.EffectiveURL(), bytes.NewReader(responseBody))
 		if parseErr != nil {
 			localizedError := locale.NewLocalizedErrorWrapper(parseErr, "error.unable_to_parse_feed", parseErr)
-
 			if errors.Is(parseErr, parser.ErrFeedFormatNotDetected) {
 				localizedError = locale.NewLocalizedErrorWrapper(parseErr, "error.feed_format_not_detected", parseErr)
 			}
-			user, storeErr := store.UserByID(userID)
-			if storeErr != nil {
-				return locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
-			}
-
-			originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
-			store.UpdateFeedError(originalFeed)
-			return localizedError
+			return getTranslatedLocalizedError(store, userID, originalFeed, localizedError)
 		}
 
 		// Use the RSS TTL value, or the Cache-Control or Expires HTTP headers if available.
@@ -345,13 +335,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		newEntries, storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, updateExistingEntries)
 		if storeErr != nil {
 			localizedError := locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
-			user, storeErr := store.UserByID(userID)
-			if storeErr != nil {
-				return locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
-			}
-			originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
-			store.UpdateFeedError(originalFeed)
-			return localizedError
+			return getTranslatedLocalizedError(store, userID, originalFeed, localizedError)
 		}
 
 		userIntegrations, intErr := store.Integration(userID)
@@ -392,13 +376,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 	if storeErr := store.UpdateFeed(originalFeed); storeErr != nil {
 		localizedError := locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
-		user, storeErr := store.UserByID(userID)
-		if storeErr != nil {
-			return locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
-		}
-		originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
-		store.UpdateFeedError(originalFeed)
-		return localizedError
+		return getTranslatedLocalizedError(store, userID, originalFeed, localizedError)
 	}
 
 	return nil
