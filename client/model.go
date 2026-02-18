@@ -149,7 +149,7 @@ type Feed struct {
 	FeedURL                     string    `json:"feed_url"`
 	SiteURL                     string    `json:"site_url"`
 	Title                       string    `json:"title"`
-	CheckedAt                   time.Time `json:"checked_at,omitempty"`
+	CheckedAt                   time.Time `json:"checked_at"`
 	EtagHeader                  string    `json:"etag_header,omitempty"`
 	LastModifiedHeader          string    `json:"last_modified_header,omitempty"`
 	ParsingErrorMsg             string    `json:"parsing_error_message,omitempty"`

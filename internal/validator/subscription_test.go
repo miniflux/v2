@@ -33,7 +33,6 @@ func TestValidateSubscriptionDiscovery(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			if err := ValidateSubscriptionDiscovery(tc.req); (err != nil) != tc.wantErr {
 				t.Fatalf("expected error %v, got %v", tc.wantErr, err)
