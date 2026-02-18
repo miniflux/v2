@@ -11,6 +11,7 @@
     "action.save": "Salvar",
     "action.subscribe": "Inscrever",
     "action.update": "Atualizar",
+    "action.test": "Enviar teste",
     "alert.account_linked": "Sua conta externa está vinculada!",
     "alert.account_unlinked": "Sua conta externa está desvinculada!",
     "alert.background_feed_refresh": "Todas as fontes estão sendo atualizadas em segundo plano. Você pode continuar usando o Miniflux enquanto este processo está em execução.",
@@ -33,6 +34,7 @@
         "Você acionou muitas atualizações de fontes. Por favor, aguarde %d minutos antes de tentar novamente."
     ],
     "confirm.loading": "Carregando...",
+    "form.submit.testing": "Testando...",
     "confirm.no": "Não",
     "confirm.question": "Tem certeza?",
     "confirm.question.refresh": "Você deseja forçar a atualização?",
