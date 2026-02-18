@@ -486,7 +486,7 @@ func (c *Client) UpdateCategory(categoryID int64, title string) (*Category, erro
 // UpdateCategoryContext updates a category.
 func (c *Client) UpdateCategoryContext(ctx context.Context, categoryID int64, title string) (*Category, error) {
 	body, err := c.request.Put(ctx, fmt.Sprintf("/v1/categories/%d", categoryID), &CategoryModificationRequest{
-		Title: SetOptionalField(title),
+		Title: new(title),
 	})
 	if err != nil {
 		return nil, err
