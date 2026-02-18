@@ -1,6 +1,6 @@
 module miniflux.app/v2
 
-// +heroku goVersion go1.24
+// +heroku goVersion go1.26
 
 require (
 	github.com/PuerkitoBio/goquery v1.11.0
@@ -16,6 +16,7 @@ require (
 	golang.org/x/net v0.50.0
 	golang.org/x/oauth2 v0.35.0
 	golang.org/x/term v0.40.0
+	golang.org/x/text v0.34.0
 )
 
 require (
@@ -41,10 +42,7 @@ require (
 	github.com/x448/float16 v0.8.4 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	golang.org/x/sys v0.41.0 // indirect
-	golang.org/x/text v0.34.0 // indirect
 	google.golang.org/protobuf v1.36.8 // indirect
 )
 
-go 1.24.0
-
-toolchain go1.24.1
+go 1.26.0

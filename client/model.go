@@ -360,6 +360,8 @@ type APIKeyCreationRequest struct {
 }
 
 // SetOptionalField returns a pointer to the given value so optional request fields can be marked as set.
+//
+//go:fix inline
 func SetOptionalField[T any](value T) *T {
-	return &value
+	return new(value)
 }

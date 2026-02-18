@@ -21,6 +21,7 @@ func OptionalString(value string) *string {
 	return nil
 }
 
+//go:fix inline
 func SetOptionalField[T any](value T) *T {
-	return &value
+	return new(value)
 }
