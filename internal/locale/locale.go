@@ -5,6 +5,7 @@ package locale // import "miniflux.app/v2/internal/locale"
 
 // AvailableLanguages is the list of available languages.
 var AvailableLanguages = map[string]string{
+	"ar_SA":            "العربية",
 	"de_DE":            "Deutsch",
 	"el_EL":            "Ελληνικά",
 	"en_US":            "English",
