@@ -238,8 +238,7 @@ func containsRegexPattern(pattern string, items []string) bool {
 func parseDuration(duration string) (time.Duration, error) {
 	// Handle common duration formats like "30d", "7d", "1h", "1m", etc.
 	// Go's time.ParseDuration doesn't support days, so we handle them manually
-	if strings.HasSuffix(duration, "d") {
-		daysStr := strings.TrimSuffix(duration, "d")
+	if daysStr, ok := strings.CutSuffix(duration, "d"); ok {
 		days := 0
 		if daysStr != "" {
 			var err error

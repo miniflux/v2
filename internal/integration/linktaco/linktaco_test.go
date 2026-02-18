@@ -50,7 +50,7 @@ func TestCreateBookmark(t *testing.T) {
 
 				// Parse and verify request
 				body, _ := io.ReadAll(r.Body)
-				var req map[string]interface{}
+				var req map[string]any
 				if err := json.Unmarshal(body, &req); err != nil {
 					t.Errorf("Failed to parse request body: %v", err)
 				}
@@ -62,9 +62,9 @@ func TestCreateBookmark(t *testing.T) {
 
 				// Return success response
 				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(map[string]interface{}{
-					"data": map[string]interface{}{
-						"addLink": map[string]interface{}{
+				json.NewEncoder(w).Encode(map[string]any{
+					"data": map[string]any{
+						"addLink": map[string]any{
 							"id":    "123",
 							"url":   "https://example.com",
 							"title": "Test Article",
@@ -111,9 +111,9 @@ func TestCreateBookmark(t *testing.T) {
 			entryContent: "Content",
 			serverResponse: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(map[string]interface{}{
-					"errors": []interface{}{
-						map[string]interface{}{
+				json.NewEncoder(w).Encode(map[string]any{
+					"errors": []any{
+						map[string]any{
 							"message": "Invalid input",
 						},
 					},
@@ -145,9 +145,9 @@ func TestCreateBookmark(t *testing.T) {
 			entryContent: "Content",
 			serverResponse: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(map[string]interface{}{
-					"errors": []interface{}{
-						map[string]interface{}{
+				json.NewEncoder(w).Encode(map[string]any{
+					"errors": []any{
+						map[string]any{
 							"message": "PRIVATE visibility requires a paid LinkTaco account",
 						},
 					},
@@ -165,12 +165,12 @@ func TestCreateBookmark(t *testing.T) {
 			entryContent: strings.Repeat("a", 600), // Content longer than 500 chars
 			serverResponse: func(w http.ResponseWriter, r *http.Request) {
 				body, _ := io.ReadAll(r.Body)
-				var req map[string]interface{}
+				var req map[string]any
 				json.Unmarshal(body, &req)
 
 				// Check that description was truncated
-				variables := req["variables"].(map[string]interface{})
-				input := variables["input"].(map[string]interface{})
+				variables := req["variables"].(map[string]any)
+				input := variables["input"].(map[string]any)
 				description := input["description"].(string)
 
 				if len(description) != maxDescriptionLength {
@@ -178,9 +178,9 @@ func TestCreateBookmark(t *testing.T) {
 				}
 
 				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(map[string]interface{}{
-					"data": map[string]interface{}{
-						"addLink": map[string]interface{}{"id": "123"},
+				json.NewEncoder(w).Encode(map[string]any{
+					"data": map[string]any{
+						"addLink": map[string]any{"id": "123"},
 					},
 				})
 			},
@@ -196,12 +196,12 @@ func TestCreateBookmark(t *testing.T) {
 			entryContent: "Content",
 			serverResponse: func(w http.ResponseWriter, r *http.Request) {
 				body, _ := io.ReadAll(r.Body)
-				var req map[string]interface{}
+				var req map[string]any
 				json.Unmarshal(body, &req)
 
 				// Check that only 10 tags were sent
-				variables := req["variables"].(map[string]interface{})
-				input := variables["input"].(map[string]interface{})
+				variables := req["variables"].(map[string]any)
+				input := variables["input"].(map[string]any)
 				tags := input["tags"].(string)
 
 				tagCount := len(strings.Split(tags, ","))
@@ -210,9 +210,9 @@ func TestCreateBookmark(t *testing.T) {
 				}
 
 				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(map[string]interface{}{
-					"data": map[string]interface{}{
-						"addLink": map[string]interface{}{"id": "123"},
+				json.NewEncoder(w).Encode(map[string]any{
+					"data": map[string]any{
+						"addLink": map[string]any{"id": "123"},
 					},
 				})
 			},
@@ -326,7 +326,7 @@ func TestGraphQLMutation(t *testing.T) {
 	// Test that the GraphQL mutation is properly formatted
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		body, _ := io.ReadAll(r.Body)
-		var req map[string]interface{}
+		var req map[string]any
 		if err := json.Unmarshal(body, &req); err != nil {
 			t.Fatalf("Failed to parse request: %v", err)
 		}
@@ -349,12 +349,12 @@ func TestGraphQLMutation(t *testing.T) {
 		}
 
 		// Verify variables structure
-		variables, ok := req["variables"].(map[string]interface{})
+		variables, ok := req["variables"].(map[string]any)
 		if !ok {
 			t.Fatal("Missing variables field")
 		}
 
-		input, ok := variables["input"].(map[string]interface{})
+		input, ok := variables["input"].(map[string]any)
 		if !ok {
 			t.Fatal("Missing input in variables")
 		}
@@ -369,9 +369,9 @@ func TestGraphQLMutation(t *testing.T) {
 
 		// Return success
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"data": map[string]interface{}{
-				"addLink": map[string]interface{}{
+		json.NewEncoder(w).Encode(map[string]any{
+			"data": map[string]any{
+				"addLink": map[string]any{
 					"id": "123",
 				},
 			},
@@ -397,9 +397,9 @@ func BenchmarkCreateBookmark(b *testing.B) {
 	// Create a mock server that always returns success
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"data": map[string]interface{}{
-				"addLink": map[string]interface{}{
+		json.NewEncoder(w).Encode(map[string]any{
+			"data": map[string]any{
+				"addLink": map[string]any{
 					"id": "123",
 				},
 			},

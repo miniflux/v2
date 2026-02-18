@@ -75,7 +75,7 @@ func (c *Client) CreateLink(entryURL, entryTitle string) error {
 
 func (c *Client) generateBearerToken() string {
 	header := base64.RawURLEncoding.EncodeToString([]byte(`{"typ":"JWT","alg":"HS512"}`))
-	payload := base64.RawURLEncoding.EncodeToString([]byte(fmt.Sprintf(`{"iat":%d}`, time.Now().Unix())))
+	payload := base64.RawURLEncoding.EncodeToString(fmt.Appendf(nil, `{"iat":%d}`, time.Now().Unix()))
 	data := header + "." + payload
 
 	mac := hmac.New(sha512.New, []byte(c.apiSecret))
