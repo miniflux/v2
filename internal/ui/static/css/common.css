@@ -1099,6 +1099,8 @@ article.category-has-unread {
 
 .entry-content img {
     height: auto;
+    display: block;
+    margin: auto;
 }
 
 .entry-content figure {
