@@ -11,6 +11,7 @@
     "action.save": "儲存",
     "action.subscribe": "訂閱",
     "action.update": "更新",
+    "action.test": "送出測試",
     "alert.account_linked": "您的外部帳號已成功關聯！",
     "alert.account_unlinked": "您的外部帳戶已解除關聯！",
     "alert.background_feed_refresh": "所有 Feed 正在背景中更新，您可以繼續使用 Miniflux。",
@@ -32,6 +33,7 @@
         "您已觸發過太多次 Feed 更新，請等待 %d 分鐘後再嘗試。"
     ],
     "confirm.loading": "執行中…",
+    "form.submit.testing": "測試中…",
     "confirm.no": "否",
     "confirm.question": "您確定嗎？",
     "confirm.question.refresh": "您想要強制重新整理嗎？",

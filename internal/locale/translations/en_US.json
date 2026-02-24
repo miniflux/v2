@@ -11,6 +11,7 @@
     "action.save": "Save",
     "action.subscribe": "Subscribe",
     "action.update": "Update",
+    "action.test": "Send Test",
     "alert.account_linked": "Your external account is now linked!",
     "alert.account_unlinked": "Your external account is now dissociated!",
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",
@@ -33,6 +34,7 @@
         "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
     ],
     "confirm.loading": "In progress…",
+    "form.submit.testing": "Testing…",
     "confirm.no": "no",
     "confirm.question": "Are you sure?",
     "confirm.question.refresh": "Are you sure you want to force refresh?",

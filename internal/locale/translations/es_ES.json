@@ -11,6 +11,7 @@
     "action.save": "Guardar",
     "action.subscribe": "Suscribir",
     "action.update": "Actualizar",
+    "action.test": "Enviar prueba",
     "alert.account_linked": "¡Tu cuenta externa ya está vinculada!",
     "alert.account_unlinked": "¡Tu cuenta externa ya está desvinculada!",
     "alert.background_feed_refresh": "Todos los feeds se actualizan en segundo plano. Puede continuar usando Miniflux mientras se ejecuta este proceso.",
@@ -33,6 +34,7 @@
         "Has activado demasiadas actualizaciones del feed. Espere %d minutos antes de volver a intentarlo."
     ],
     "confirm.loading": "En progreso...",
+    "form.submit.testing": "Probando...",
     "confirm.no": "no",
     "confirm.question": "¿Estás seguro?",
     "confirm.question.refresh": "¿Quieres forzar la actualización?",

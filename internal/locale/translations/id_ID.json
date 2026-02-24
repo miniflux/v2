@@ -11,6 +11,7 @@
     "action.save": "Simpan",
     "action.subscribe": "Langgan",
     "action.update": "Perbarui",
+    "action.test": "Kirim Tes",
     "alert.account_linked": "Akun eksternal Anda sudah terhubung!",
     "alert.account_unlinked": "Akun eksternal Anda sudah terputus!",
     "alert.background_feed_refresh": "Semua umpan sedang disegarkan di latar belakang. Anda bisa lanjut menggunakan Miniflux sembari proses ini berlanjut.",
@@ -32,6 +33,7 @@
         "Anda terlalu banyak menyegarkan umpan. Mohon tunggu %d menit sebelum mencoba lagi."
     ],
     "confirm.loading": "Sedang progres...",
+    "form.submit.testing": "Menguji...",
     "confirm.no": "tidak",
     "confirm.question": "Apakah Anda yakin?",
     "confirm.question.refresh": "Apakah Anda ingin memaksa penyegaran?",
