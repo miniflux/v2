@@ -175,6 +175,7 @@
     "form.feed.label.category": "Categoria",
     "form.feed.label.cookie": "Definir Cookies",
     "form.feed.label.crawler": "Obter conteúdo original",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Descrição",
     "form.feed.label.disable_http2": "Desativar HTTP/2 para evitar fingerprinting",
     "form.feed.label.disabled": "Não atualizar esta fonte",

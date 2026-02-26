@@ -149,7 +149,7 @@ type Feed struct {
 	FeedURL                     string    `json:"feed_url"`
 	SiteURL                     string    `json:"site_url"`
 	Title                       string    `json:"title"`
-	CheckedAt                   time.Time `json:"checked_at,omitempty"`
+	CheckedAt                   time.Time `json:"checked_at"`
 	EtagHeader                  string    `json:"etag_header,omitempty"`
 	LastModifiedHeader          string    `json:"last_modified_header,omitempty"`
 	ParsingErrorMsg             string    `json:"parsing_error_message,omitempty"`
@@ -166,6 +166,7 @@ type Feed struct {
 	BlockFilterEntryRules       string    `json:"block_filter_entry_rules"`
 	KeepFilterEntryRules        string    `json:"keep_filter_entry_rules"`
 	Crawler                     bool      `json:"crawler"`
+	IgnoreEntryUpdates          bool      `json:"ignore_entry_updates"`
 	UserAgent                   string    `json:"user_agent"`
 	Cookie                      string    `json:"cookie"`
 	Username                    string    `json:"username"`
@@ -185,6 +186,7 @@ type FeedCreationRequest struct {
 	Username                    string `json:"username"`
 	Password                    string `json:"password"`
 	Crawler                     bool   `json:"crawler"`
+	IgnoreEntryUpdates          bool   `json:"ignore_entry_updates"`
 	Disabled                    bool   `json:"disabled"`
 	IgnoreHTTPCache             bool   `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
@@ -214,6 +216,7 @@ type FeedModificationRequest struct {
 	BlockFilterEntryRules       *string `json:"block_filter_entry_rules"`
 	KeepFilterEntryRules        *string `json:"keep_filter_entry_rules"`
 	Crawler                     *bool   `json:"crawler"`
+	IgnoreEntryUpdates          *bool   `json:"ignore_entry_updates"`
 	UserAgent                   *string `json:"user_agent"`
 	Cookie                      *string `json:"cookie"`
 	Username                    *string `json:"username"`
@@ -357,6 +360,8 @@ type APIKeyCreationRequest struct {
 }
 
 // SetOptionalField returns a pointer to the given value so optional request fields can be marked as set.
+//
+//go:fix inline
 func SetOptionalField[T any](value T) *T {
-	return &value
+	return new(value)
 }

@@ -5,7 +5,6 @@ package subscription // import "miniflux.app/v2/internal/reader/subscription"
 
 import (
 	"bytes"
-	"io"
 	"log/slog"
 	"net/url"
 	"strings"
@@ -69,9 +68,16 @@ func (f *subscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string, 
 		return Subscriptions{NewSubscription(responseHandler.EffectiveURL(), responseHandler.EffectiveURL(), feedFormat)}, nil
 	}
 
+	// It's not a feed, so we have to process its HTML.
+	doc, err := parseHTMLDocument(responseHandler.ContentType(), responseBody)
+	if err != nil {
+		return nil, locale.NewLocalizedErrorWrapper(err, "error.unable_to_parse_html_document", err)
+	}
+	baseURL := getBaseURL(websiteURL, doc)
+
 	// Step 2) Find the canonical URL of the website.
 	slog.Debug("Try to find the canonical URL of the website", slog.String("website_url", websiteURL))
-	websiteURL = f.findCanonicalURL(websiteURL, responseHandler.ContentType(), bytes.NewReader(responseBody))
+	websiteURL = f.findCanonicalURL(websiteURL, baseURL, doc)
 
 	// Step 3) Check if the website URL is a YouTube channel.
 	slog.Debug("Try to detect feeds for a YouTube page", slog.String("website_url", websiteURL))
@@ -87,7 +93,8 @@ func (f *subscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string, 
 		slog.String("website_url", websiteURL),
 		slog.String("content_type", responseHandler.ContentType()),
 	)
-	if subscriptions, localizedError := f.findSubscriptionsFromWebPage(websiteURL, responseHandler.ContentType(), bytes.NewReader(responseBody)); localizedError != nil {
+
+	if subscriptions, localizedError := f.findSubscriptionsFromWebPage(baseURL, doc); localizedError != nil {
 		return nil, localizedError
 	} else if len(subscriptions) > 0 {
 		slog.Debug("Subscriptions found from web page", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
@@ -117,38 +124,26 @@ func (f *subscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string, 
 	return nil, nil
 }
 
-func (f *subscriptionFinder) findSubscriptionsFromWebPage(websiteURL, contentType string, body io.Reader) (Subscriptions, *locale.LocalizedErrorWrapper) {
+func (f *subscriptionFinder) findSubscriptionsFromWebPage(websiteURL string, doc *goquery.Document) (Subscriptions, *locale.LocalizedErrorWrapper) {
 	queries := map[string]string{
-		"link[type='application/rss+xml']":                                  parser.FormatRSS,
-		"link[type='application/atom+xml']":                                 parser.FormatAtom,
-		"link[type='application/json'], link[type='application/feed+json']": parser.FormatJSON,
-	}
+		"link[type='application/rss+xml']":   parser.FormatRSS,
+		"link[type='application/atom+xml']":  parser.FormatAtom,
+		"link[type='application/feed+json']": parser.FormatJSON,
 
-	htmlDocumentReader, err := encoding.NewCharsetReader(body, contentType)
-	if err != nil {
-		return nil, locale.NewLocalizedErrorWrapper(err, "error.unable_to_parse_html_document", err)
-	}
-
-	doc, err := goquery.NewDocumentFromReader(htmlDocumentReader)
-	if err != nil {
-		return nil, locale.NewLocalizedErrorWrapper(err, "error.unable_to_parse_html_document", err)
-	}
-
-	if hrefValue, exists := doc.FindMatcher(goquery.Single("head base")).Attr("href"); exists {
-		hrefValue = strings.TrimSpace(hrefValue)
-		if urllib.IsAbsoluteURL(hrefValue) {
-			websiteURL = hrefValue
-		}
+		// Ignore JSON feed URLs that contain "/wp-json/" to avoid confusion
+		// with WordPress REST API endpoints.
+		"link[type='application/json']:not([href*='/wp-json/'])": parser.FormatJSON,
 	}
 
 	var subscriptions Subscriptions
 	subscriptionURLs := make(map[string]bool)
-	for query, kind := range queries {
-		doc.Find(query).Each(func(i int, s *goquery.Selection) {
+	for feedQuerySelector, feedFormat := range queries {
+		doc.Find(feedQuerySelector).Each(func(i int, s *goquery.Selection) {
 			subscription := new(subscription)
-			subscription.Type = kind
+			subscription.Type = feedFormat
 
 			if feedURL, exists := s.Attr("href"); exists && feedURL != "" {
+				var err error
 				subscription.URL, err = urllib.ResolveToAbsoluteURL(websiteURL, feedURL)
 				if err != nil {
 					return
@@ -323,26 +318,8 @@ func (f *subscriptionFinder) findSubscriptionsFromYouTube(websiteURL string) (Su
 
 // findCanonicalURL extracts the canonical URL from the HTML <link rel="canonical"> tag.
 // Returns the canonical URL if found, otherwise returns the effective URL.
-func (f *subscriptionFinder) findCanonicalURL(effectiveURL, contentType string, body io.Reader) string {
-	htmlDocumentReader, err := encoding.NewCharsetReader(body, contentType)
-	if err != nil {
-		return effectiveURL
-	}
-
-	doc, err := goquery.NewDocumentFromReader(htmlDocumentReader)
-	if err != nil {
-		return effectiveURL
-	}
-
-	baseURL := effectiveURL
-	if hrefValue, exists := doc.FindMatcher(goquery.Single("head base")).Attr("href"); exists {
-		hrefValue = strings.TrimSpace(hrefValue)
-		if urllib.IsAbsoluteURL(hrefValue) {
-			baseURL = hrefValue
-		}
-	}
-
-	canonicalHref, exists := doc.Find("link[rel='canonical' i]").First().Attr("href")
+func (f *subscriptionFinder) findCanonicalURL(effectiveURL, baseURL string, doc *goquery.Document) string {
+	canonicalHref, exists := doc.Find("head link[rel='canonical' i]").First().Attr("href")
 	if !exists || strings.TrimSpace(canonicalHref) == "" {
 		return effectiveURL
 	}
@@ -353,4 +330,29 @@ func (f *subscriptionFinder) findCanonicalURL(effectiveURL, contentType string, 
 	}
 
 	return canonicalURL
+}
+
+// getBaseURL returns the url specified in the <base> tag, and `websiteURL` otherwise.
+func getBaseURL(websiteURL string, doc *goquery.Document) string {
+	baseURL := websiteURL
+	if hrefValue, exists := doc.FindMatcher(goquery.Single("head base")).Attr("href"); exists {
+		hrefValue = strings.TrimSpace(hrefValue)
+		if urllib.IsAbsoluteURL(hrefValue) {
+			baseURL = hrefValue
+		}
+	}
+	return baseURL
+}
+
+func parseHTMLDocument(contentType string, body []byte) (*goquery.Document, error) {
+	htmlDocumentReader, err := encoding.NewCharsetReaderFromBytes(body, contentType)
+	if err != nil {
+		return nil, err
+	}
+
+	doc, err := goquery.NewDocumentFromReader(htmlDocumentReader)
+	if err != nil {
+		return nil, err
+	}
+	return doc, nil
 }

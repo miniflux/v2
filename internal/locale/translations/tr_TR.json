@@ -175,6 +175,7 @@
     "form.feed.label.category": "Kategori",
     "form.feed.label.cookie": "Çerezleri Ayarla",
     "form.feed.label.crawler": "Orijinal içeriği çek",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Açıklama",
     "form.feed.label.disable_http2": "Parmak izini önlemek için HTTP/2'yi devre dışı bırakın",
     "form.feed.label.disabled": "Bu beslemeyi yenileme",

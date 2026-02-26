@@ -29,6 +29,9 @@
     {{ if .form.Crawler }}
         <input type="hidden" name="crawler" value="1">
     {{ end }}
+    {{ if .form.IgnoreEntryUpdates }}
+        <input type="hidden" name="ignore_entry_updates" value="1">
+    {{ end }}
     {{ if .form.AllowSelfSignedCertificates }}
         <input type="hidden" name="allow_self_signed_certificates" value="1">
     {{ end }}

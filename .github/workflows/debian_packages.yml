@@ -13,7 +13,8 @@ on:
       - 'packaging/debian/**' # Only run on changes to the debian packaging files
 jobs:
   test-packages:
-    if: github.event_name == 'schedule' || github.event_name == 'pull_request'
+    if: (github.event_name == 'schedule' && github.repository_owner == 'miniflux' )
+      || github.event_name == 'pull_request'
     name: Test Packages
     runs-on: ubuntu-latest
     steps:

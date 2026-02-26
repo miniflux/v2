@@ -25,7 +25,7 @@ func NewIconChecker(store *storage.Storage, feed *model.Feed) *iconChecker {
 	}
 }
 
-func (c *iconChecker) fetchAndStoreIcon() {
+func (c *iconChecker) UpdateOrCreateFeedIcon() {
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithUserAgent(c.feed.UserAgent, config.Opts.HTTPClientUserAgent())
 	requestBuilder.WithCookie(c.feed.Cookie)
@@ -79,9 +79,5 @@ func (c *iconChecker) CreateFeedIconIfMissing() {
 		return
 	}
 
-	c.fetchAndStoreIcon()
-}
-
-func (c *iconChecker) UpdateOrCreateFeedIcon() {
-	c.fetchAndStoreIcon()
+	c.UpdateOrCreateFeedIcon()
 }

@@ -175,6 +175,7 @@
     "form.feed.label.category": "श्रेणी",
     "form.feed.label.cookie": "कुकीज़ सेट करें",
     "form.feed.label.crawler": "मूल सामग्री प्राप्त करें",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "विवरण",
     "form.feed.label.disable_http2": "फिंगरप्रिंटिंग से बचने के लिए HTTP/2 अक्षम करें",
     "form.feed.label.disabled": "इस फ़ीड को रीफ़्रेश न करें",

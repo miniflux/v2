@@ -98,11 +98,11 @@ func TestCreateBookmark(t *testing.T) {
 				if !strings.HasPrefix(ct, "multipart/form-data;") {
 					t.Errorf("expected multipart/form-data, got %s", ct)
 				}
-				boundaryIdx := strings.Index(ct, "boundary=")
-				if boundaryIdx == -1 {
+				_, after, ok := strings.Cut(ct, "boundary=")
+				if !ok {
 					t.Fatalf("missing multipart boundary in Content-Type: %s", ct)
 				}
-				boundary := ct[boundaryIdx+len("boundary="):]
+				boundary := after
 				mr := multipart.NewReader(r.Body, boundary)
 
 				seenLabels := []string{}
@@ -132,12 +132,12 @@ func TestCreateBookmark(t *testing.T) {
 					case "resource":
 						// First line is JSON header, then newline, then content
 						all := string(data)
-						idx := strings.IndexByte(all, '\n')
-						if idx == -1 {
+						before, after, ok := strings.Cut(all, "\n")
+						if !ok {
 							t.Fatalf("resource content missing header separator")
 						}
-						headerJSON := all[:idx]
-						resourceBody = all[idx+1:]
+						headerJSON := before
+						resourceBody = after
 						if err := json.Unmarshal([]byte(headerJSON), &resourceHeader); err != nil {
 							t.Fatalf("invalid resource header JSON: %v", err)
 						}

@@ -175,6 +175,7 @@
     "form.feed.label.category": "Kategoria",
     "form.feed.label.cookie": "Aseta evästeet",
     "form.feed.label.crawler": "Nouda alkuperäinen sisältö",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Kuvaus",
     "form.feed.label.disable_http2": "Poista HTTP/2 käytöstä sormenjälkien välttämiseksi",
     "form.feed.label.disabled": "Älä päivitä tätä syötettä",

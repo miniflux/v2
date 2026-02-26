@@ -172,6 +172,7 @@
     "form.feed.label.category": "lūi-pia̍t",
     "form.feed.label.cookie": "Siat-tēng Cookies",
     "form.feed.label.crawler": "Lia̍h goân-tóe lōe-iông",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Biâu-su̍t",
     "form.feed.label.disable_http2": "Thêng iōng HTTP/2 pī-bián chéng-thâu-á-hûn tui-chong",
     "form.feed.label.disabled": "Mài tha̍k chit ê siau-sit lâi-goân ê sin siau-sit",

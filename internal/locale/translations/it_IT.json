@@ -175,6 +175,7 @@
     "form.feed.label.category": "Categoria",
     "form.feed.label.cookie": "Installare i cookies",
     "form.feed.label.crawler": "Scarica il contenuto integrale",
+    "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Descrizione",
     "form.feed.label.disable_http2": "Disabilita HTTP/2 per evitare il fingerprinting",
     "form.feed.label.disabled": "Non aggiornare questo feed",

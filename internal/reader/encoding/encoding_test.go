@@ -9,6 +9,8 @@ import (
 	"os"
 	"testing"
 	"unicode/utf8"
+
+	"golang.org/x/text/encoding/charmap"
 )
 
 func TestCharsetReaderWithUTF8(t *testing.T) {
@@ -344,5 +346,148 @@ func TestNewReaderWithUTF8DocumentWithMetaAfter1024Bytes(t *testing.T) {
 	expectedUnicodeString := "Café"
 	if !bytes.Contains(data, []byte(expectedUnicodeString)) {
 		t.Fatalf("Data does not contain expected unicode string: %s", expectedUnicodeString)
+	}
+}
+
+func TestCharsetReaderWithKOI8RLabel(t *testing.T) {
+	expectedUnicodeString := "Привет мир"
+
+	input, err := charmap.KOI8R.NewEncoder().Bytes([]byte(expectedUnicodeString))
+	if err != nil {
+		t.Fatalf("Unable to build KOI8-R input: %v", err)
+	}
+
+	reader, err := CharsetReader("koi8-r", bytes.NewReader(input))
+	if err != nil {
+		t.Fatalf("Unable to create reader: %v", err)
+	}
+
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatalf("Unable to read data: %v", err)
+	}
+
+	if !utf8.Valid(data) {
+		t.Fatalf("Data is not valid UTF-8")
+	}
+
+	if string(data) != expectedUnicodeString {
+		t.Fatalf("Data does not match expected unicode string, got %q expected %q", string(data), expectedUnicodeString)
+	}
+}
+
+func TestCharsetReaderWithUppercaseKOI8RLabel(t *testing.T) {
+	expectedUnicodeString := "Привет мир"
+
+	input, err := charmap.KOI8R.NewEncoder().Bytes([]byte(expectedUnicodeString))
+	if err != nil {
+		t.Fatalf("Unable to build KOI8-R input: %v", err)
+	}
+
+	reader, err := CharsetReader("KOI8-R", bytes.NewReader(input))
+	if err != nil {
+		t.Fatalf("Unable to create reader: %v", err)
+	}
+
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatalf("Unable to read data: %v", err)
+	}
+
+	if !utf8.Valid(data) {
+		t.Fatalf("Data is not valid UTF-8")
+	}
+
+	if string(data) != expectedUnicodeString {
+		t.Fatalf("Data does not match expected unicode string, got %q expected %q", string(data), expectedUnicodeString)
+	}
+}
+
+func TestCharsetReaderWithKOI8RFeedFixture(t *testing.T) {
+	file := "testdata/koi8r.xml"
+
+	f, err := os.Open(file)
+	if err != nil {
+		t.Fatalf("Unable to open file: %v", err)
+	}
+
+	reader, err := CharsetReader("KOI8-R", f)
+	if err != nil {
+		t.Fatalf("Unable to create reader: %v", err)
+	}
+
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatalf("Unable to read data: %v", err)
+	}
+
+	if !utf8.Valid(data) {
+		t.Fatalf("Data is not valid UTF-8")
+	}
+
+	if !bytes.Contains(data, []byte("Пример RSS ленты")) {
+		t.Fatalf("Data does not contain expected unicode string: %s", "Пример RSS ленты")
+	}
+
+	if !bytes.Contains(data, []byte("Привет мир! Ёжик, чай, Москва, Санкт-Петербург.")) {
+		t.Fatalf("Data does not contain expected unicode string: %s", "Привет мир! Ёжик, чай, Москва, Санкт-Петербург.")
+	}
+}
+
+func TestNewCharsetReaderWithKOI8RContentType(t *testing.T) {
+	expectedUnicodeString := "Привет мир"
+
+	input, err := charmap.KOI8R.NewEncoder().Bytes([]byte(expectedUnicodeString))
+	if err != nil {
+		t.Fatalf("Unable to build KOI8-R input: %v", err)
+	}
+
+	reader, err := NewCharsetReader(bytes.NewReader(input), "text/xml; charset=koi8-r")
+	if err != nil {
+		t.Fatalf("Unable to create reader: %v", err)
+	}
+
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatalf("Unable to read data: %v", err)
+	}
+
+	if !utf8.Valid(data) {
+		t.Fatalf("Data is not valid UTF-8")
+	}
+
+	if string(data) != expectedUnicodeString {
+		t.Fatalf("Data does not match expected unicode string, got %q expected %q", string(data), expectedUnicodeString)
+	}
+}
+
+func TestNewCharsetReaderWithKOI8RFeedFixtureAndContentType(t *testing.T) {
+	file := "testdata/koi8r.xml"
+
+	f, err := os.Open(file)
+	if err != nil {
+		t.Fatalf("Unable to open file: %v", err)
+	}
+
+	reader, err := NewCharsetReader(f, "application/rss+xml; charset=KOI8-R")
+	if err != nil {
+		t.Fatalf("Unable to create reader: %v", err)
+	}
+
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatalf("Unable to read data: %v", err)
+	}
+
+	if !utf8.Valid(data) {
+		t.Fatalf("Data is not valid UTF-8")
+	}
+
+	if !bytes.Contains(data, []byte("Тестовая лента в кодировке KOI8-R")) {
+		t.Fatalf("Data does not contain expected unicode string: %s", "Тестовая лента в кодировке KOI8-R")
+	}
+
+	if !bytes.Contains(data, []byte("Проверка специальных символов")) {
+		t.Fatalf("Data does not contain expected unicode string: %s", "Проверка специальных символов")
 	}
 }

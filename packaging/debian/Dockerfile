@@ -1,4 +1,4 @@
-FROM docker.io/golang:1.25-bookworm AS build
+FROM docker.io/golang:1-trixie AS build
 
 ENV DEBIAN_FRONTEND=noninteractive
 

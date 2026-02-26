@@ -70,7 +70,7 @@ func (c *Client) CreateRaindrop(entryURL, entryTitle string) error {
 type raindrop struct {
 	Link       string     `json:"link"`
 	Title      string     `json:"title"`
-	Collection collection `json:"collection,omitempty"`
+	Collection collection `json:"collection"`
 	Tags       []string   `json:"tags"`
 }
 

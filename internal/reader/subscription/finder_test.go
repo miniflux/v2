@@ -4,7 +4,6 @@
 package subscription
 
 import (
-	"strings"
 	"testing"
 )
 
@@ -119,8 +118,12 @@ func TestParseWebPageWithRssFeed(t *testing.T) {
 		<body>
 		</body>
 	</html>`
+	doc, shouldNeverHappenErr := parseHTMLDocument("text/html", []byte(htmlPage))
+	if shouldNeverHappenErr != nil {
+		t.Fatalf(`Unable to parse the HTML: %v`, shouldNeverHappenErr)
+	}
 
-	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", doc)
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -152,8 +155,12 @@ func TestParseWebPageWithAtomFeed(t *testing.T) {
 		<body>
 		</body>
 	</html>`
+	doc, shouldNeverHappenErr := parseHTMLDocument("text/html", []byte(htmlPage))
+	if shouldNeverHappenErr != nil {
+		t.Fatalf(`Unable to parse the HTML: %v`, shouldNeverHappenErr)
+	}
 
-	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", doc)
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -185,8 +192,12 @@ func TestParseWebPageWithJSONFeed(t *testing.T) {
 		<body>
 		</body>
 	</html>`
+	doc, shouldNeverHappenErr := parseHTMLDocument("text/html", []byte(htmlPage))
+	if shouldNeverHappenErr != nil {
+		t.Fatalf(`Unable to parse the HTML: %v`, shouldNeverHappenErr)
+	}
 
-	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", doc)
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -218,8 +229,12 @@ func TestParseWebPageWithOldJSONFeedMimeType(t *testing.T) {
 		<body>
 		</body>
 	</html>`
+	doc, shouldNeverHappenErr := parseHTMLDocument("text/html", []byte(htmlPage))
+	if shouldNeverHappenErr != nil {
+		t.Fatalf(`Unable to parse the HTML: %v`, shouldNeverHappenErr)
+	}
 
-	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", doc)
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -241,6 +256,32 @@ func TestParseWebPageWithOldJSONFeedMimeType(t *testing.T) {
 	}
 }
 
+func TestParseWebPageWithJSONFeedWpJsonIgnored(t *testing.T) {
+	htmlPage := `
+	<!doctype html>
+	<html>
+		<head>
+			<link rel="https://api.w.org/" href="https://example.org/wp-json/" />
+			<link rel="alternate" title="JSON" type="application/json" href="https://example.org/wp-json/wp/v2/posts/123456" />
+		</head>
+		<body>
+		</body>
+	</html>`
+	doc, shouldNeverHappenErr := parseHTMLDocument("text/html", []byte(htmlPage))
+	if shouldNeverHappenErr != nil {
+		t.Fatalf(`Unable to parse the HTML: %v`, shouldNeverHappenErr)
+	}
+
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", doc)
+	if err != nil {
+		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
+	}
+
+	if len(subscriptions) != 0 {
+		t.Fatal(`Incorrect number of subscriptions returned`)
+	}
+}
+
 func TestParseWebPageWithRelativeFeedURL(t *testing.T) {
 	htmlPage := `
 	<!doctype html>
@@ -251,8 +292,12 @@ func TestParseWebPageWithRelativeFeedURL(t *testing.T) {
 		<body>
 		</body>
 	</html>`
+	doc, shouldNeverHappenErr := parseHTMLDocument("text/html", []byte(htmlPage))
+	if shouldNeverHappenErr != nil {
+		t.Fatalf(`Unable to parse the HTML: %v`, shouldNeverHappenErr)
+	}
 
-	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", doc)
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -284,8 +329,12 @@ func TestParseWebPageWithEmptyTitle(t *testing.T) {
 		<body>
 		</body>
 	</html>`
+	doc, shouldNeverHappenErr := parseHTMLDocument("text/html", []byte(htmlPage))
+	if shouldNeverHappenErr != nil {
+		t.Fatalf(`Unable to parse the HTML: %v`, shouldNeverHappenErr)
+	}
 
-	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", doc)
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -318,8 +367,12 @@ func TestParseWebPageWithMultipleFeeds(t *testing.T) {
 		<body>
 		</body>
 	</html>`
+	doc, shouldNeverHappenErr := parseHTMLDocument("text/html", []byte(htmlPage))
+	if shouldNeverHappenErr != nil {
+		t.Fatalf(`Unable to parse the HTML: %v`, shouldNeverHappenErr)
+	}
 
-	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", doc)
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -340,8 +393,12 @@ func TestParseWebPageWithDuplicatedFeeds(t *testing.T) {
 		<body>
 		</body>
 	</html>`
+	doc, shouldNeverHappenErr := parseHTMLDocument("text/html", []byte(htmlPage))
+	if shouldNeverHappenErr != nil {
+		t.Fatalf(`Unable to parse the HTML: %v`, shouldNeverHappenErr)
+	}
 
-	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", doc)
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -373,8 +430,12 @@ func TestParseWebPageWithEmptyFeedURL(t *testing.T) {
 		<body>
 		</body>
 	</html>`
+	doc, shouldNeverHappenErr := parseHTMLDocument("text/html", []byte(htmlPage))
+	if shouldNeverHappenErr != nil {
+		t.Fatalf(`Unable to parse the HTML: %v`, shouldNeverHappenErr)
+	}
 
-	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", doc)
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -394,8 +455,12 @@ func TestParseWebPageWithNoHref(t *testing.T) {
 		<body>
 		</body>
 	</html>`
+	doc, shouldNeverHappenErr := parseHTMLDocument("text/html", []byte(htmlPage))
+	if shouldNeverHappenErr != nil {
+		t.Fatalf(`Unable to parse the HTML: %v`, shouldNeverHappenErr)
+	}
 
-	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", "text/html", strings.NewReader(htmlPage))
+	subscriptions, err := NewSubscriptionFinder(nil).findSubscriptionsFromWebPage("http://example.org/", doc)
 	if err != nil {
 		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
 	}
@@ -415,8 +480,12 @@ func TestFindCanonicalURL(t *testing.T) {
 		<body>
 		</body>
 	</html>`
+	doc, shouldNeverHappenErr := parseHTMLDocument("text/html", []byte(htmlPage))
+	if shouldNeverHappenErr != nil {
+		t.Fatalf(`Unable to parse the HTML: %v`, shouldNeverHappenErr)
+	}
 
-	canonicalURL := NewSubscriptionFinder(nil).findCanonicalURL("https://example.org/page", "text/html", strings.NewReader(htmlPage))
+	canonicalURL := NewSubscriptionFinder(nil).findCanonicalURL("https://example.org/page", "http://example.org", doc)
 	if canonicalURL != "https://example.org/canonical-page" {
 		t.Errorf(`Unexpected canonical URL, got %q, expected %q`, canonicalURL, "https://example.org/canonical-page")
 	}
@@ -431,8 +500,12 @@ func TestFindCanonicalURLNotFound(t *testing.T) {
 		<body>
 		</body>
 	</html>`
+	doc, shouldNeverHappenErr := parseHTMLDocument("text/html", []byte(htmlPage))
+	if shouldNeverHappenErr != nil {
+		t.Fatalf(`Unable to parse the HTML: %v`, shouldNeverHappenErr)
+	}
 
-	canonicalURL := NewSubscriptionFinder(nil).findCanonicalURL("https://example.org/page", "text/html", strings.NewReader(htmlPage))
+	canonicalURL := NewSubscriptionFinder(nil).findCanonicalURL("https://example.org/page", "https://example.org", doc)
 	if canonicalURL != "https://example.org/page" {
 		t.Errorf(`Expected effective URL when canonical not found, got %q`, canonicalURL)
 	}

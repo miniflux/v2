@@ -78,6 +78,62 @@ func TestXMLDocumentWithISO88591FileEncodingButUTF8Prolog(t *testing.T) {
 	}
 }
 
+func TestXMLDocumentWithKOI8REncoding(t *testing.T) {
+	fp, err := os.Open("testdata/koi8r.xml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer fp.Close()
+
+	type item struct {
+		Title       string `xml:"title"`
+		Description string `xml:"description"`
+	}
+
+	type channel struct {
+		Title       string `xml:"title"`
+		Description string `xml:"description"`
+		Items       []item `xml:"item"`
+	}
+
+	type rss struct {
+		XMLName xml.Name `xml:"rss"`
+		Channel channel  `xml:"channel"`
+	}
+
+	var doc rss
+
+	decoder := NewXMLDecoder(fp)
+	err = decoder.Decode(&doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if doc.Channel.Title != "Пример RSS ленты" {
+		t.Errorf("Incorrect channel title, expected: %q, got: %q", "Пример RSS ленты", doc.Channel.Title)
+	}
+
+	if doc.Channel.Description != "Тестовая лента в кодировке KOI8-R" {
+		t.Errorf("Incorrect channel description, expected: %q, got: %q", "Тестовая лента в кодировке KOI8-R", doc.Channel.Description)
+	}
+
+	if len(doc.Channel.Items) != 2 {
+		t.Fatalf("Incorrect number of items, expected: %d, got: %d", 2, len(doc.Channel.Items))
+	}
+
+	if doc.Channel.Items[0].Title != "Первая новость" {
+		t.Errorf("Incorrect first item title, expected: %q, got: %q", "Первая новость", doc.Channel.Items[0].Title)
+	}
+
+	if !strings.Contains(doc.Channel.Items[0].Description, "Привет мир! Ёжик, чай, Москва, Санкт-Петербург.") {
+		t.Errorf("First item description does not contain expected text, got: %q", doc.Channel.Items[0].Description)
+	}
+
+	if !strings.Contains(doc.Channel.Items[1].Description, "Проверка специальных символов") {
+		t.Errorf("Second item description does not contain expected text, got: %q", doc.Channel.Items[1].Description)
+	}
+}
+
 func TestXMLDocumentWithIllegalUnicodeCharacters(t *testing.T) {
 	type myxml struct {
 		XMLName xml.Name `xml:"rss"`
