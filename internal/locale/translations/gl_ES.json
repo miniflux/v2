@@ -183,6 +183,7 @@
     "form.feed.label.feed_username": "Identificador para a canle",
     "form.feed.label.fetch_via_proxy": "Usar o mandatario configurado a nivel da aplicación",
     "form.feed.label.hide_globally": "Ocultar entradas na lista global de non lidos",
+    "form.feed.label.ignore_entry_updates": "Ignorar actualizacións da entrada",
     "form.feed.label.ignore_http_cache": "Ignorar memoria tobo HTTP",
     "form.feed.label.keep_filter_entry_rules": "Regra para Entradas permitidas",
     "form.feed.label.keeplist_rules": "Filtros para Manter baseados en RegEx",
