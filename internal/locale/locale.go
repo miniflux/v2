@@ -11,6 +11,7 @@ var AvailableLanguages = map[string]string{
 	"es_ES":            "Español",
 	"fi_FI":            "Suomi",
 	"fr_FR":            "Français",
+	"gl_ES":            "Galego",
 	"hi_IN":            "हिन्दी",
 	"id_ID":            "Bahasa Indonesia",
 	"it_IT":            "Italiano",
