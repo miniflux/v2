@@ -31,6 +31,11 @@ func getPluralForm(lang string, n int) int {
 		default:
 			return 2
 		}
+	case "gl_ES":
+		if n != 1 {
+			return 1
+		}
+		return 0
 	case "id_ID", "ja_JP":
 		return 0
 	case "pl_PL":
