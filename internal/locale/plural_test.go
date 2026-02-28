@@ -44,6 +44,13 @@ func TestPluralRules(t *testing.T) {
 			2: 1, // n > 1
 			5: 1, // n > 1
 		},
+		// Galician (gl_ES) - n != 1
+		"gl_ES": {
+			0: 1, // n != 1
+			1: 0, // n == 1
+			2: 1, // n != 1
+			5: 1, // n != 1
+		},
 		// Indonesian (id_ID) - always form 0
 		"id_ID": {
 			0:   0,
