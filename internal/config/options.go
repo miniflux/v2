@@ -219,6 +219,11 @@ func NewConfigOptions() *configOptions {
 				rawValue:        "0",
 				valueType:       boolType,
 			},
+			"FETCHER_ALLOW_PRIVATE_NETWORKS": {
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
+			},
 			"FETCH_BILIBILI_WATCH_TIME": {
 				parsedBoolValue: false,
 				rawValue:        "0",
@@ -293,11 +298,6 @@ func NewConfigOptions() *configOptions {
 				rawValue:        "0",
 				valueType:       boolType,
 			},
-			"ICON_FETCH_ALLOW_PRIVATE_NETWORKS": {
-				parsedBoolValue: false,
-				rawValue:        "0",
-				valueType:       boolType,
-			},
 			"INVIDIOUS_INSTANCE": {
 				parsedStringValue: "yewtu.be",
 				rawValue:          "yewtu.be",
@@ -352,11 +352,6 @@ func NewConfigOptions() *configOptions {
 			"MEDIA_PROXY_CUSTOM_URL": {
 				rawValue:  "",
 				valueType: urlType,
-			},
-			"MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS": {
-				parsedBoolValue: false,
-				rawValue:        "0",
-				valueType:       boolType,
 			},
 			"MEDIA_PROXY_HTTP_CLIENT_TIMEOUT": {
 				parsedDuration: 120 * time.Second,
@@ -791,8 +786,8 @@ func (c *configOptions) HTTPS() bool {
 	return c.options["HTTPS"].parsedBoolValue
 }
 
-func (c *configOptions) IconFetchAllowPrivateNetworks() bool {
-	return c.options["ICON_FETCH_ALLOW_PRIVATE_NETWORKS"].parsedBoolValue
+func (c *configOptions) FetcherAllowPrivateNetworks() bool {
+	return c.options["FETCHER_ALLOW_PRIVATE_NETWORKS"].parsedBoolValue
 }
 
 func (c *configOptions) InvidiousInstance() string {
@@ -845,10 +840,6 @@ func (c *configOptions) MaintenanceMode() bool {
 
 func (c *configOptions) MediaCustomProxyURL() *url.URL {
 	return c.options["MEDIA_PROXY_CUSTOM_URL"].parsedURLValue
-}
-
-func (c *configOptions) MediaProxyAllowPrivateNetworks() bool {
-	return c.options["MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS"].parsedBoolValue
 }
 
 func (c *configOptions) MediaProxyHTTPClientTimeout() time.Duration {

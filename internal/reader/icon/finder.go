@@ -160,10 +160,6 @@ func (f *iconFinder) downloadIcon(iconURL string) (*model.Icon, error) {
 		slog.String("icon_url", iconURL),
 	)
 
-	if err := ensureRemoteIconURLAllowed(iconURL, config.Opts.IconFetchAllowPrivateNetworks()); err != nil {
-		return nil, err
-	}
-
 	responseHandler := fetcher.NewResponseHandler(f.requestBuilder.ExecuteRequest(iconURL))
 	defer responseHandler.Close()
 
@@ -333,40 +329,4 @@ func parseImageDataURL(value string) (*model.Icon, error) {
 		Content:  blob,
 		MimeType: mediaType,
 	}, nil
-}
-
-func ensureRemoteIconURLAllowed(iconURL string, allowPrivateNetworks bool) error {
-	parsedURL, err := url.Parse(iconURL)
-	if err != nil {
-		return fmt.Errorf("icon: invalid icon URL %q: %w", iconURL, err)
-	}
-
-	if !parsedURL.IsAbs() {
-		return fmt.Errorf("icon: icon URL %q must be absolute", iconURL)
-	}
-
-	scheme := strings.ToLower(parsedURL.Scheme)
-	if scheme != "http" && scheme != "https" {
-		return fmt.Errorf("icon: unsupported icon URL scheme %q", parsedURL.Scheme)
-	}
-
-	hostname := parsedURL.Hostname()
-	if hostname == "" {
-		return fmt.Errorf("icon: icon URL %q has no hostname", iconURL)
-	}
-
-	if allowPrivateNetworks {
-		return nil
-	}
-
-	isPrivate, err := urllib.ResolvesToPrivateIP(hostname)
-	if err != nil {
-		return fmt.Errorf("icon: unable to resolve icon hostname %q: %w", hostname, err)
-	}
-
-	if isPrivate {
-		return fmt.Errorf("icon: refusing to download icon from private network host %q", hostname)
-	}
-
-	return nil
 }

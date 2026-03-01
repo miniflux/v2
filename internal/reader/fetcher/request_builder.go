@@ -6,6 +6,7 @@ package fetcher // import "miniflux.app/v2/internal/reader/fetcher"
 import (
 	"crypto/tls"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
@@ -14,12 +15,19 @@ import (
 	"slices"
 	"time"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/proxyrotator"
+	"miniflux.app/v2/internal/urllib"
 )
 
 const (
 	defaultHTTPClientTimeout = 20 * time.Second
 	defaultAcceptHeader      = "application/xml, application/atom+xml, application/rss+xml, application/rdf+xml, application/feed+json, text/html, */*;q=0.9"
+)
+
+var (
+	ErrHostnameResolution = errors.New("fetcher: unable to resolve request hostname")
+	ErrPrivateNetworkHost = errors.New("fetcher: refusing to access private network host")
 )
 
 type RequestBuilder struct {
@@ -199,6 +207,19 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
 		return nil, err
+	}
+
+	allowPrivateNetworks := config.Opts == nil || config.Opts.FetcherAllowPrivateNetworks()
+	if !allowPrivateNetworks {
+		hostname := req.URL.Hostname()
+		isPrivate, err := urllib.ResolvesToPrivateIP(hostname)
+		if err != nil {
+			return nil, fmt.Errorf("%w %q: %w", ErrHostnameResolution, hostname, err)
+		}
+
+		if isPrivate {
+			return nil, fmt.Errorf("%w %q", ErrPrivateNetworkHost, hostname)
+		}
 	}
 
 	req.Header = r.headers

@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "January 5, 2026" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "February 28, 2026" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -274,6 +274,11 @@ Set the value to 1 to disable the internal scheduler service\&.
 .br
 Default is false (The internal scheduler service is enabled)\&.
 .TP
+.B FETCHER_ALLOW_PRIVATE_NETWORKS
+Set to 1 to allow outgoing fetcher requests to private or loopback networks\&.
+.br
+Disabled by default, private networks are refused\&.
+.TP
 .B FETCH_BILIBILI_WATCH_TIME
 Set the value to 1 to scrape video duration from Bilibili website and
 use it as a reading time\&.
@@ -340,11 +345,6 @@ Forces cookies to use secure flag and send HSTS header\&.
 .br
 Default is disabled\&.
 .TP
-.B ICON_FETCH_ALLOW_PRIVATE_NETWORKS
-Set to 1 to allow downloading favicons that resolve to private or loopback networks\&.
-.br
-Disabled by default, private networks are refused\&.
-.TP
 .B INVIDIOUS_INSTANCE
 Set a custom invidious instance to use\&.
 .br
@@ -401,11 +401,6 @@ Default is empty, Miniflux does the proxying\&.
 Time limit in seconds before the media proxy HTTP client cancels the request\&.
 .br
 Default is 120 seconds\&.
-.TP
-.B MEDIA_PROXY_ALLOW_PRIVATE_NETWORKS
-Set to 1 to allow proxying media that resolves to private or loopback networks\&.
-.br
-Disabled by default, private networks are refused\&.
 .TP
 .B MEDIA_PROXY_RESOURCE_TYPES
 A comma-separated list of media types to proxify. Supported values are: image, audio, video\&.

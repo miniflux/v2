@@ -398,24 +398,6 @@ func TestResizeIconWebp(t *testing.T) {
 	}
 }
 
-func TestEnsureRemoteIconURLAllowedRejectsPrivateNetworks(t *testing.T) {
-	if err := ensureRemoteIconURLAllowed("http://192.168.0.1/favicon.ico", false); err == nil {
-		t.Fatal("Expected private network hosts to be rejected")
-	}
-}
-
-func TestEnsureRemoteIconURLAllowedAllowsPublicNetworks(t *testing.T) {
-	if err := ensureRemoteIconURLAllowed("https://1.1.1.1/favicon.ico", false); err != nil {
-		t.Fatalf("Expected public network hosts to be allowed: %v", err)
-	}
-}
-
-func TestEnsureRemoteIconURLAllowedAllowsPrivateWhenEnabled(t *testing.T) {
-	if err := ensureRemoteIconURLAllowed("http://10.0.0.5/icon.png", true); err != nil {
-		t.Fatalf("Expected private network hosts to be allowed when explicitly enabled: %v", err)
-	}
-}
-
 func TestResizeInvalidImage(t *testing.T) {
 	icon := model.Icon{
 		Content:  []byte("invalid data"),
