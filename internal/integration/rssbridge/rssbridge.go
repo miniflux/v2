@@ -11,6 +11,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"miniflux.app/v2/internal/version"
 )
 
 const defaultClientTimeout = 30 * time.Second
@@ -27,7 +29,7 @@ type BridgeMeta struct {
 func DetectBridges(rssBridgeURL, rssBridgeToken, websiteURL string) ([]*Bridge, error) {
 	endpointURL, err := url.Parse(rssBridgeURL)
 	if err != nil {
-		return nil, fmt.Errorf("RSS-Bridge: unable to parse bridge URL: %w", err)
+		return nil, fmt.Errorf("rssbridge: unable to parse bridge URL: %w", err)
 	}
 
 	values := endpointURL.Query()
@@ -43,14 +45,16 @@ func DetectBridges(rssBridgeURL, rssBridgeToken, websiteURL string) ([]*Bridge, 
 
 	request, err := http.NewRequest(http.MethodGet, endpointURL.String(), nil)
 	if err != nil {
-		return nil, fmt.Errorf("RSS-Bridge: unable to create request: %w", err)
+		return nil, fmt.Errorf("rssbridge: unable to create request: %w", err)
 	}
+
+	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
 	httpClient := &http.Client{Timeout: defaultClientTimeout}
 
 	response, err := httpClient.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf("RSS-Bridge: unable to execute request: %w", err)
+		return nil, fmt.Errorf("rssbridge: unable to execute request: %w", err)
 	}
 	defer response.Body.Close()
 
@@ -58,13 +62,13 @@ func DetectBridges(rssBridgeURL, rssBridgeToken, websiteURL string) ([]*Bridge, 
 		return nil, nil
 	}
 
-	if response.StatusCode > 400 {
-		return nil, fmt.Errorf("RSS-Bridge: unexpected status code %d", response.StatusCode)
+	if response.StatusCode >= 400 {
+		return nil, fmt.Errorf("rssbridge: unexpected status code %d", response.StatusCode)
 	}
 
 	var bridgeResponse []*Bridge
 	if err := json.NewDecoder(response.Body).Decode(&bridgeResponse); err != nil {
-		return nil, fmt.Errorf("RSS-Bridge: unable to decode bridge response: %w", err)
+		return nil, fmt.Errorf("rssbridge: unable to decode bridge response: %w", err)
 	}
 
 	for _, bridge := range bridgeResponse {
@@ -76,7 +80,7 @@ func DetectBridges(rssBridgeURL, rssBridgeToken, websiteURL string) ([]*Bridge, 
 		if strings.HasPrefix(bridge.URL, "./") {
 			bridge.URL = rssBridgeURL + bridge.URL[2:]
 
-			slog.Debug("Rewrited relative RSS bridge URL",
+			slog.Debug("Rewrote relative RSS bridge URL",
 				slog.String("name", bridge.BridgeMeta.Name),
 				slog.String("url", bridge.URL),
 			)

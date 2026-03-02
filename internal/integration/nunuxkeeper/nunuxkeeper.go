@@ -43,7 +43,7 @@ func (c *Client) AddEntry(entryURL, entryTitle, entryContent string) error {
 		ContentType: "text/html",
 	})
 	if err != nil {
-		return fmt.Errorf("notion: unable to encode request body: %v", err)
+		return fmt.Errorf("nunux-keeper: unable to encode request body: %v", err)
 	}
 
 	request, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBody))

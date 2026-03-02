@@ -32,7 +32,16 @@ func NewClient(ntfyURL, ntfyTopic, ntfyApiToken, ntfyUsername, ntfyPassword, ntf
 	if ntfyURL == "" {
 		ntfyURL = defaultNtfyURL
 	}
-	return &Client{ntfyURL, ntfyTopic, ntfyApiToken, ntfyUsername, ntfyPassword, ntfyIconURL, ntfyInternalLinks, ntfyPriority}
+	return &Client{
+		ntfyURL:           ntfyURL,
+		ntfyTopic:         ntfyTopic,
+		ntfyApiToken:      ntfyApiToken,
+		ntfyUsername:      ntfyUsername,
+		ntfyPassword:      ntfyPassword,
+		ntfyIconURL:       ntfyIconURL,
+		ntfyInternalLinks: ntfyInternalLinks,
+		ntfyPriority:      ntfyPriority,
+	}
 }
 
 func (c *Client) SendMessages(feed *model.Feed, entries model.Entries) error {

@@ -44,7 +44,7 @@ func (c *Client) AddURL(entryURL, entryTitle string) error {
 		return fmt.Errorf("linkace: invalid API endpoint: %v", err)
 	}
 	requestBody, err := json.Marshal(&createItemRequest{
-		Url:           entryURL,
+		URL:           entryURL,
 		Title:         entryTitle,
 		Tags:          strings.FieldsFunc(c.tags, tagsSplitFn),
 		Private:       c.private,
@@ -80,7 +80,7 @@ func (c *Client) AddURL(entryURL, entryTitle string) error {
 
 type createItemRequest struct {
 	Title         string   `json:"title,omitempty"`
-	Url           string   `json:"url"`
+	URL           string   `json:"url"`
 	Tags          []string `json:"tags,omitempty"`
 	Private       bool     `json:"is_private,omitempty"`
 	CheckDisabled bool     `json:"check_disabled,omitempty"`

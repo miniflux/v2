@@ -30,7 +30,15 @@ type Client struct {
 }
 
 func NewClient(baseURL, clientID, clientSecret, username, password, tags string, onlyURL bool) *Client {
-	return &Client{baseURL, clientID, clientSecret, username, password, tags, onlyURL}
+	return &Client{
+		baseURL:      baseURL,
+		clientID:     clientID,
+		clientSecret: clientSecret,
+		username:     username,
+		password:     password,
+		tags:         tags,
+		onlyURL:      onlyURL,
+	}
 }
 
 func (c *Client) CreateEntry(entryURL, entryTitle, entryContent string) error {
@@ -49,7 +57,7 @@ func (c *Client) CreateEntry(entryURL, entryTitle, entryContent string) error {
 func (c *Client) createEntry(accessToken, entryURL, entryTitle, entryContent, tags string) error {
 	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/entries.json")
 	if err != nil {
-		return fmt.Errorf("wallbag: unable to generate entries endpoint: %v", err)
+		return fmt.Errorf("wallabag: unable to generate entries endpoint: %v", err)
 	}
 
 	if c.onlyURL {
@@ -63,12 +71,12 @@ func (c *Client) createEntry(accessToken, entryURL, entryTitle, entryContent, ta
 		Tags:    tags,
 	})
 	if err != nil {
-		return fmt.Errorf("wallbag: unable to encode request body: %v", err)
+		return fmt.Errorf("wallabag: unable to encode request body: %v", err)
 	}
 
 	request, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBody))
 	if err != nil {
-		return fmt.Errorf("wallbag: unable to create request: %v", err)
+		return fmt.Errorf("wallabag: unable to create request: %v", err)
 	}
 
 	request.Header.Set("Content-Type", "application/json")
@@ -100,12 +108,12 @@ func (c *Client) getAccessToken() (string, error) {
 
 	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/oauth/v2/token")
 	if err != nil {
-		return "", fmt.Errorf("wallbag: unable to generate token endpoint: %v", err)
+		return "", fmt.Errorf("wallabag: unable to generate token endpoint: %v", err)
 	}
 
 	request, err := http.NewRequest(http.MethodPost, apiEndpoint, strings.NewReader(values.Encode()))
 	if err != nil {
-		return "", fmt.Errorf("wallbag: unable to create request: %v", err)
+		return "", fmt.Errorf("wallabag: unable to create request: %v", err)
 	}
 
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")

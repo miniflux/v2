@@ -31,7 +31,7 @@ type Client struct {
 	priority int
 }
 
-type Message struct {
+type message struct {
 	Token string `json:"token"`
 	User  string `json:"user"`
 
@@ -44,14 +44,14 @@ type Message struct {
 	Device   string `json:"device,omitempty"`
 }
 
-type ErrorResponse struct {
+type errorResponse struct {
 	User    string   `json:"user"`
 	Errors  []string `json:"errors"`
 	Status  int      `json:"status"`
 	Request string   `json:"request"`
 }
 
-func New(user, token string, priority int, device, urlPrefix string) *Client {
+func NewClient(user, token string, priority int, device, urlPrefix string) *Client {
 	if urlPrefix == "" {
 		urlPrefix = defaultPushoverURL
 	}
@@ -76,7 +76,7 @@ func (c *Client) SendMessages(feed *model.Feed, entries model.Entries) error {
 		return errors.New("pushover token and user are required")
 	}
 	for _, entry := range entries {
-		msg := &Message{
+		msg := &message{
 			User:   c.user,
 			Token:  c.token,
 			Device: c.device,
@@ -94,22 +94,22 @@ func (c *Client) SendMessages(feed *model.Feed, entries model.Entries) error {
 		)
 
 		if err := c.makeRequest(msg); err != nil {
-			return fmt.Errorf("c.makeRequest: %w", err)
+			return fmt.Errorf("pushover: unable to send message: %w", err)
 		}
 	}
 
 	return nil
 }
 
-func (c *Client) makeRequest(payload *Message) error {
+func (c *Client) makeRequest(payload *message) error {
 	jsonData, err := json.Marshal(payload)
 	if err != nil {
-		return fmt.Errorf("json.Marshal: %w", err)
+		return fmt.Errorf("pushover: unable to encode request body: %w", err)
 	}
 	url := c.prefix + "/1/messages.json"
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(jsonData))
 	if err != nil {
-		return fmt.Errorf("http.NewRequest: %w", err)
+		return fmt.Errorf("pushover: unable to create request: %w", err)
 	}
 
 	req.Header.Add("Content-Type", "application/json")
@@ -118,21 +118,21 @@ func (c *Client) makeRequest(payload *Message) error {
 	httpClient := &http.Client{Timeout: defaultClientTimeout}
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("httpClient.Do: %w", err)
+		return fmt.Errorf("pushover: unable to send request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		errorMessage := resp.Status
 
-		var errResp ErrorResponse
-		if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
+		var errResp errorResponse
+		if err := json.NewDecoder(resp.Body).Decode(&errResp); err == nil {
 			if len(errResp.Errors) > 0 {
 				errorMessage = strings.Join(errResp.Errors, ",")
 			}
 		}
 
-		return fmt.Errorf("pushover API error (%d): %s", resp.StatusCode, errorMessage)
+		return fmt.Errorf("pushover: API error: status=%d %s", resp.StatusCode, errorMessage)
 	}
 
 	return nil

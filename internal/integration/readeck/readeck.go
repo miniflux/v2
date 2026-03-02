@@ -48,7 +48,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string, entryContent string
 	var request *http.Request
 	if c.onlyURL {
 		requestBodyJson, err := json.Marshal(&readeckBookmark{
-			Url:    entryURL,
+			URL:    entryURL,
 			Title:  entryTitle,
 			Labels: labelsSplit,
 		})
@@ -91,7 +91,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string, entryContent string
 		}
 
 		contentBodyHeader, err := json.Marshal(&partContentHeader{
-			Url:           entryURL,
+			URL:           entryURL,
 			ContentHeader: contentHeader{ContentType: "text/html; charset=utf-8"},
 		})
 		if err != nil {
@@ -135,7 +135,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string, entryContent string
 }
 
 type readeckBookmark struct {
-	Url    string   `json:"url"`
+	URL    string   `json:"url"`
 	Title  string   `json:"title"`
 	Labels []string `json:"labels,omitempty"`
 }
@@ -145,6 +145,6 @@ type contentHeader struct {
 }
 
 type partContentHeader struct {
-	Url           string        `json:"url"`
+	URL           string        `json:"url"`
 	ContentHeader contentHeader `json:"headers"`
 }

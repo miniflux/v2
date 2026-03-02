@@ -41,7 +41,6 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string, tags []string) erro
 		return fmt.Errorf("betula: unable to create request: %v", err)
 	}
 
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 	request.AddCookie(&http.Cookie{Name: "betula-token", Value: c.token})
 

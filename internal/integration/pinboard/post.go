@@ -13,7 +13,7 @@ import (
 // Post a Pinboard bookmark.  "inspiration" from https://github.com/drags/pinboard/blob/master/posts.go#L32-L42
 type Post struct {
 	XMLName     xml.Name  `xml:"post"`
-	Url         string    `xml:"href,attr"`
+	URL         string    `xml:"href,attr"`
 	Description string    `xml:"description,attr"`
 	Tags        string    `xml:"tag,attr"`
 	Extended    string    `xml:"extended,attr"`
@@ -30,7 +30,7 @@ type posts struct {
 
 func NewPost(url string, description string) *Post {
 	return &Post{
-		Url:         url,
+		URL:         url,
 		Description: description,
 		Date:        time.Now(),
 		Toread:      "no",
@@ -48,7 +48,7 @@ func (p *Post) SetToread() {
 }
 
 func (p *Post) AddValues(values url.Values) {
-	values.Add("url", p.Url)
+	values.Add("url", p.URL)
 	values.Add("description", p.Description)
 	values.Add("tags", p.Tags)
 	if p.Toread != "" {

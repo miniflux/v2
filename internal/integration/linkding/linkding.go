@@ -44,7 +44,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 	}
 
 	requestBody, err := json.Marshal(&linkdingBookmark{
-		Url:      entryURL,
+		URL:      entryURL,
 		Title:    entryTitle,
 		TagNames: strings.FieldsFunc(c.tags, tagsSplitFn),
 		Unread:   c.unread,
@@ -78,7 +78,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 }
 
 type linkdingBookmark struct {
-	Url      string   `json:"url,omitempty"`
+	URL      string   `json:"url,omitempty"`
 	Title    string   `json:"title,omitempty"`
 	TagNames []string `json:"tag_names,omitempty"`
 	Unread   bool     `json:"unread,omitempty"`

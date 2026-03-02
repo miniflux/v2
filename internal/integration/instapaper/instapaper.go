@@ -40,7 +40,6 @@ func (c *Client) AddURL(entryURL, entryTitle string) error {
 	}
 
 	request.SetBasicAuth(c.username, c.password)
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
 	httpClient := &http.Client{Timeout: defaultClientTimeout}

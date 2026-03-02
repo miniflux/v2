@@ -80,7 +80,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 	return nil
 }
 
-func (c *Client) authenticate() (token string, err error) {
+func (c *Client) authenticate() (string, error) {
 	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/v1/auth/login")
 	if err != nil {
 		return "", fmt.Errorf("shiori: invalid API endpoint: %v", err)

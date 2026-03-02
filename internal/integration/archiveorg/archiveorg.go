@@ -4,10 +4,15 @@
 package archiveorg
 
 import (
-	"log/slog"
+	"fmt"
 	"net/http"
 	"net/url"
+	"time"
+
+	"miniflux.app/v2/internal/version"
 )
+
+const defaultClientTimeout = 30 * time.Second
 
 // See https://docs.google.com/document/d/1Nsv52MvSjbLb2PCpHlat0gkzw0EvtSgpKHu4mk0MnrA/edit?tab=t.0
 const options = "delay_wb_availability=1&if_not_archived_within=15d"
@@ -18,26 +23,25 @@ func NewClient() *Client {
 	return &Client{}
 }
 
-func (c *Client) SendURL(entryURL, title string) {
-	// We're using a goroutine here as submissions to archive.org might take a long time
-	// and trigger a timeout on miniflux' side.
-	go func(entryURL string) {
-		res, err := http.Get("https://web.archive.org/save/" + url.QueryEscape(entryURL) + "?" + options)
-		if err != nil {
-			slog.Error("archiveorg: unable to send request: %v",
-				slog.Any("err", err),
-				slog.String("title", title),
-				slog.String("url", entryURL),
-			)
-			return
-		}
-		if res.StatusCode > 299 {
-			slog.Error("archiveorg: failed with status code",
-				slog.String("title", title),
-				slog.String("url", entryURL),
-				slog.Int("code", res.StatusCode),
-			)
-		}
-		res.Body.Close()
-	}(entryURL)
+func (c *Client) SendURL(entryURL string) error {
+	requestURL := "https://web.archive.org/save/" + url.QueryEscape(entryURL) + "?" + options
+	request, err := http.NewRequest(http.MethodGet, requestURL, nil)
+	if err != nil {
+		return fmt.Errorf("archiveorg: unable to create request: %v", err)
+	}
+
+	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
+
+	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return fmt.Errorf("archiveorg: unable to send request: %v", err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		return fmt.Errorf("archiveorg: unexpected status code: url=%s status=%d", requestURL, response.StatusCode)
+	}
+
+	return nil
 }

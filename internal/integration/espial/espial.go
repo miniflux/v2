@@ -38,7 +38,7 @@ func (c *Client) CreateLink(entryURL, entryTitle, espialTags string) error {
 
 	requestBody, err := json.Marshal(&espialDocument{
 		Title:  entryTitle,
-		Url:    entryURL,
+		URL:    entryURL,
 		ToRead: true,
 		Tags:   espialTags,
 	})
@@ -75,7 +75,7 @@ func (c *Client) CreateLink(entryURL, entryTitle, espialTags string) error {
 
 type espialDocument struct {
 	Title  string `json:"title,omitempty"`
-	Url    string `json:"url,omitempty"`
+	URL    string `json:"url,omitempty"`
 	ToRead bool   `json:"toread,omitempty"`
 	Tags   string `json:"tags,omitempty"`
 }
