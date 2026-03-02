@@ -80,6 +80,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 				slog.String("entry_title", entry.Title),
 				slog.Int64("feed_id", feed.ID),
 				slog.String("feed_url", feed.FeedURL),
+				slog.String("filter_stage", "before_scrape"),
 			)
 			continue
 		}
@@ -92,6 +93,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 		webpageBaseURL := ""
 		entry.URL = rewrite.RewriteEntryURL(feed, entry)
 		entryIsNew := store.IsNewEntry(feed.ID, entry.Hash)
+		contentExtractedSuccessfully := false
 		if feed.Crawler && (entryIsNew || forceRefresh) {
 			slog.Debug("Scraping entry",
 				slog.Int64("user_id", user.ID),
@@ -135,10 +137,25 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 			} else if extractedContent != "" {
 				// We replace the entry content only if the scraper doesn't return any error.
 				entry.Content = minifyContent(extractedContent)
+				contentExtractedSuccessfully = true
 			}
 		}
 
 		rewrite.ApplyContentRewriteRules(entry, feed.RewriteRules)
+
+		// Re-run filters only when extracted content replaced entry.Content.
+		if contentExtractedSuccessfully && filter.IsBlockedEntry(blockRules, allowRules, feed, entry) {
+			slog.Debug("Entry is blocked by filter rules",
+				slog.Int64("user_id", user.ID),
+				slog.String("entry_url", entry.URL),
+				slog.String("entry_hash", entry.Hash),
+				slog.String("entry_title", entry.Title),
+				slog.Int64("feed_id", feed.ID),
+				slog.String("feed_url", feed.FeedURL),
+				slog.String("filter_stage", "after_scrape"),
+			)
+			continue
+		}
 
 		if webpageBaseURL == "" {
 			webpageBaseURL = entry.URL
