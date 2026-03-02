@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"time"
 
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -42,7 +43,7 @@ func (c *Client) AddURL(entryURL, entryTitle string) error {
 	request.SetBasicAuth(c.username, c.password)
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return fmt.Errorf("instapaper: unable to send request: %v", err)

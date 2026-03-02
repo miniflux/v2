@@ -162,16 +162,16 @@ func ResolvesToPrivateIP(host string) (bool, error) {
 		return false, err
 	}
 
-	if slices.ContainsFunc(ips, isNonPublicIP) {
+	if slices.ContainsFunc(ips, IsNonPublicIP) {
 		return true, nil
 	}
 
 	return false, nil
 }
 
-// isNonPublicIP returns true if the given IP is private, loopback,
+// IsNonPublicIP returns true if the given IP is private, loopback,
 // link-local, multicast, or unspecified.
-func isNonPublicIP(ip net.IP) bool {
+func IsNonPublicIP(ip net.IP) bool {
 	if ip == nil {
 		return true
 	}

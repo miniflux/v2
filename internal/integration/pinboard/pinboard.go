@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"time"
 
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -59,7 +60,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle, pinboardTags string, markA
 
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return fmt.Errorf("pinboard: unable to send request: %v", err)
@@ -91,7 +92,7 @@ func (c *Client) getBookmark(entryURL string) (*Post, error) {
 
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("pinboard: unable fetch bookmark: %v", err)

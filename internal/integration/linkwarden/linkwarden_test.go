@@ -11,10 +11,13 @@ import (
 	"strings"
 	"testing"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
 )
 
 func TestCreateBookmark(t *testing.T) {
+	configureIntegrationAllowPrivateNetworksOption(t)
+
 	tests := []struct {
 		name           string
 		baseURL        string
@@ -322,4 +325,22 @@ func TestNewClient(t *testing.T) {
 			}
 		})
 	}
+}
+
+func configureIntegrationAllowPrivateNetworksOption(t *testing.T) {
+	t.Helper()
+
+	t.Setenv("INTEGRATION_ALLOW_PRIVATE_NETWORKS", "1")
+
+	configParser := config.NewConfigParser()
+	parsedOptions, err := configParser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf("Unable to configure test options: %v", err)
+	}
+
+	previousOptions := config.Opts
+	config.Opts = parsedOptions
+	t.Cleanup(func() {
+		config.Opts = previousOptions
+	})
 }

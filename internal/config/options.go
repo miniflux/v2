@@ -298,6 +298,11 @@ func NewConfigOptions() *configOptions {
 				rawValue:        "0",
 				valueType:       boolType,
 			},
+			"INTEGRATION_ALLOW_PRIVATE_NETWORKS": {
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
+			},
 			"INVIDIOUS_INSTANCE": {
 				parsedStringValue: "yewtu.be",
 				rawValue:          "yewtu.be",
@@ -788,6 +793,13 @@ func (c *configOptions) HTTPS() bool {
 
 func (c *configOptions) FetcherAllowPrivateNetworks() bool {
 	return c.options["FETCHER_ALLOW_PRIVATE_NETWORKS"].parsedBoolValue
+}
+
+func (c *configOptions) IntegrationAllowPrivateNetworks() bool {
+	if c == nil {
+		return false
+	}
+	return c.options["INTEGRATION_ALLOW_PRIVATE_NETWORKS"].parsedBoolValue
 }
 
 func (c *configOptions) InvidiousInstance() string {

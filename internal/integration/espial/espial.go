@@ -11,6 +11,8 @@ import (
 	"net/http"
 	"time"
 
+	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/version"
 )
@@ -56,7 +58,7 @@ func (c *Client) CreateLink(entryURL, entryTitle, espialTags string) error {
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 	request.Header.Set("Authorization", "ApiKey "+c.apiKey)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return fmt.Errorf("espial: unable to send request: %v", err)

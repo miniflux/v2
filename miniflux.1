@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "February 28, 2026" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "March 1, 2026" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -344,6 +344,11 @@ Default is 300 seconds\&.
 Forces cookies to use secure flag and send HSTS header\&.
 .br
 Default is disabled\&.
+.TP
+.B INTEGRATION_ALLOW_PRIVATE_NETWORKS
+Set to 1 to allow outgoing integration requests to private or loopback networks\&.
+.br
+Disabled by default, private networks are refused\&.
 .TP
 .B INVIDIOUS_INSTANCE
 Set a custom invidious instance to use\&.

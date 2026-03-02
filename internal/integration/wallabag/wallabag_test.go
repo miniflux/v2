@@ -10,9 +10,13 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"miniflux.app/v2/internal/config"
 )
 
 func TestCreateEntry(t *testing.T) {
+	configureIntegrationAllowPrivateNetworksOption(t)
+
 	entryURL := "https://example.com"
 	entryTitle := "title"
 	entryContent := "content"
@@ -318,4 +322,22 @@ func TestNewClient(t *testing.T) {
 			}
 		})
 	}
+}
+
+func configureIntegrationAllowPrivateNetworksOption(t *testing.T) {
+	t.Helper()
+
+	t.Setenv("INTEGRATION_ALLOW_PRIVATE_NETWORKS", "1")
+
+	configParser := config.NewConfigParser()
+	parsedOptions, err := configParser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf("Unable to configure test options: %v", err)
+	}
+
+	previousOptions := config.Opts
+	config.Opts = parsedOptions
+	t.Cleanup(func() {
+		config.Opts = previousOptions
+	})
 }

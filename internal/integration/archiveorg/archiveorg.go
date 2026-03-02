@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"time"
 
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -32,7 +33,7 @@ func (c *Client) SendURL(entryURL string) error {
 
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return fmt.Errorf("archiveorg: unable to send request: %v", err)

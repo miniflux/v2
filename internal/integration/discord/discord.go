@@ -13,6 +13,8 @@ import (
 	"net/http"
 	"time"
 
+	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/version"
@@ -77,7 +79,7 @@ func (c *Client) SendDiscordMsg(feed *model.Feed, entries model.Entries) error {
 			slog.String("entry_url", entry.URL),
 		)
 
-		httpClient := &http.Client{Timeout: defaultClientTimeout}
+		httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
 		response, err := httpClient.Do(request)
 		if err != nil {
 			return fmt.Errorf("discord: unable to send request: %v", err)

@@ -11,7 +11,9 @@ import (
 	"net/http"
 	"time"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -60,7 +62,7 @@ func NewClient(apiToken string, apiEndpoint string) *Client {
 		apiEndpoint = defaultApiEndpoint
 	}
 
-	return &Client{wrapped: &http.Client{Timeout: defaultClientTimeout}, apiEndpoint: apiEndpoint, apiToken: apiToken}
+	return &Client{wrapped: client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()}), apiEndpoint: apiEndpoint, apiToken: apiToken}
 }
 
 func (c *Client) SaveURL(url string) error {

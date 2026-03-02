@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/version"
 )
@@ -115,7 +117,7 @@ func (c *Client) makeRequest(payload *message) error {
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("pushover: unable to send request: %w", err)

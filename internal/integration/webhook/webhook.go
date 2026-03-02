@@ -11,7 +11,9 @@ import (
 	"net/http"
 	"time"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/version"
 )
@@ -132,7 +134,7 @@ func (c *Client) makeRequest(eventType string, payload any) error {
 	request.Header.Set("X-Miniflux-Signature", crypto.GenerateSHA256Hmac(c.webhookSecret, requestBody))
 	request.Header.Set("X-Miniflux-Event-Type", eventType)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return fmt.Errorf("webhook: unable to send request: %v", err)

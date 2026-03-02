@@ -246,7 +246,7 @@ func TestIsNonPublicIP(t *testing.T) {
 				}
 			}
 
-			if got := isNonPublicIP(ip); got != tc.want {
+			if got := IsNonPublicIP(ip); got != tc.want {
 				t.Fatalf("unexpected result for %s: got %v want %v", tc.name, got, tc.want)
 			}
 		})

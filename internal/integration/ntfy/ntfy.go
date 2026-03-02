@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/version"
 )
@@ -107,7 +108,7 @@ func (c *Client) makeRequest(payload any) error {
 		request.SetBasicAuth(c.ntfyUsername, c.ntfyPassword)
 	}
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return fmt.Errorf("ntfy: unable to send request: %v", err)
