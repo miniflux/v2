@@ -436,6 +436,34 @@ func TestRequestBuilder_AllowPrivateNetworkWhenEnabled(t *testing.T) {
 	defer resp.Body.Close()
 }
 
+func TestRequestBuilder_RefusePrivateNetworkOnRedirect(t *testing.T) {
+	configureFetcherAllowPrivateNetworksOption(t, "0")
+
+	// Target server on a loopback address (private).
+	privateServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer privateServer.Close()
+
+	// Redirector that sends the client to the private server.
+	// Because the Control callback checks the IP at connection time, the
+	// redirect target is also validated (unlike a pre-flight DNS check).
+	redirectServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, privateServer.URL, http.StatusFound)
+	}))
+	defer redirectServer.Close()
+
+	builder := NewRequestBuilder()
+	_, err := builder.ExecuteRequest(redirectServer.URL)
+	if err == nil {
+		t.Fatal("Expected redirect to private network to be rejected")
+	}
+
+	if !strings.Contains(err.Error(), "refusing to access private network host") {
+		t.Fatalf("Unexpected error for redirected private network request: %v", err)
+	}
+}
+
 func TestRequestBuilder_TimeoutConfiguration(t *testing.T) {
 	// Create a slow server
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
