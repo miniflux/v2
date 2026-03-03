@@ -1376,3 +1376,51 @@ footer .elevator {
 .pagination-entry-top .elevator {
     display: none;
 }
+
+/* AI Summary & Score */
+.ai-summary {
+    margin: 0 0 1.5em;
+    padding: 0.8em 1em;
+    border: 1px solid var(--entry-header-border-color, #ddd);
+    border-radius: 4px;
+    background: var(--body-background, #fff);
+}
+
+.ai-summary summary {
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.ai-summary p {
+    margin: 0.5em 0 0;
+    line-height: 1.5;
+}
+
+.ai-score {
+    display: inline-block;
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: bold;
+    line-height: 1.2;
+    vertical-align: middle;
+    margin-left: 0.3em;
+}
+
+.ai-score-high {
+    background-color: #22863a;
+    color: #fff;
+}
+
+.ai-score-medium {
+    background-color: #b08800;
+    color: #fff;
+}
+
+.ai-score-low {
+    background-color: #cb2431;
+    color: #fff;
+}

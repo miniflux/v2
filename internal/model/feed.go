@@ -63,6 +63,16 @@ type Feed struct {
 	PushoverPriority            int       `json:"pushover_priority"`
 	ProxyURL                    string    `json:"proxy_url"`
 
+	// Web scraper fields for feeds with FeedSourceType="web_scraper".
+	FeedSourceType         string `json:"feed_source_type"`
+	WebScraperItemSelector string `json:"ws_item_selector"`
+	WebScraperTitleSelector string `json:"ws_title_selector"`
+	WebScraperLinkSelector string `json:"ws_link_selector"`
+	WebScraperDescSelector string `json:"ws_description_selector"`
+	WebScraperNextPageSelector string `json:"ws_next_page_selector"`
+	WebScraperMaxItems     int    `json:"ws_max_items"`
+	UseJSRender            bool   `json:"use_js_render"`
+
 	// Non-persisted attributes
 	Category *Category `json:"category,omitempty"`
 	Icon     *FeedIcon `json:"icon"`
@@ -173,6 +183,14 @@ type FeedCreationRequest struct {
 	KeepFilterEntryRules        string `json:"keep_filter_entry_rules"`
 	UrlRewriteRules             string `json:"urlrewrite_rules"`
 	ProxyURL                    string `json:"proxy_url"`
+	FeedSourceType              string `json:"feed_source_type"`
+	WebScraperItemSelector      string `json:"ws_item_selector"`
+	WebScraperTitleSelector     string `json:"ws_title_selector"`
+	WebScraperLinkSelector      string `json:"ws_link_selector"`
+	WebScraperDescSelector      string `json:"ws_description_selector"`
+	WebScraperNextPageSelector  string `json:"ws_next_page_selector"`
+	WebScraperMaxItems          int    `json:"ws_max_items"`
+	UseJSRender                 bool   `json:"use_js_render"`
 }
 
 type FeedCreationRequestFromSubscriptionDiscovery struct {
@@ -211,6 +229,14 @@ type FeedModificationRequest struct {
 	HideGlobally                *bool   `json:"hide_globally"`
 	DisableHTTP2                *bool   `json:"disable_http2"`
 	ProxyURL                    *string `json:"proxy_url"`
+	FeedSourceType              *string `json:"feed_source_type"`
+	WebScraperItemSelector      *string `json:"ws_item_selector"`
+	WebScraperTitleSelector     *string `json:"ws_title_selector"`
+	WebScraperLinkSelector      *string `json:"ws_link_selector"`
+	WebScraperDescSelector      *string `json:"ws_description_selector"`
+	WebScraperNextPageSelector  *string `json:"ws_next_page_selector"`
+	WebScraperMaxItems          *int    `json:"ws_max_items"`
+	UseJSRender                 *bool   `json:"use_js_render"`
 }
 
 // Patch updates a feed with modified values.
@@ -317,6 +343,38 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 
 	if f.ProxyURL != nil {
 		feed.ProxyURL = *f.ProxyURL
+	}
+
+	if f.FeedSourceType != nil {
+		feed.FeedSourceType = *f.FeedSourceType
+	}
+
+	if f.WebScraperItemSelector != nil {
+		feed.WebScraperItemSelector = *f.WebScraperItemSelector
+	}
+
+	if f.WebScraperTitleSelector != nil {
+		feed.WebScraperTitleSelector = *f.WebScraperTitleSelector
+	}
+
+	if f.WebScraperLinkSelector != nil {
+		feed.WebScraperLinkSelector = *f.WebScraperLinkSelector
+	}
+
+	if f.WebScraperDescSelector != nil {
+		feed.WebScraperDescSelector = *f.WebScraperDescSelector
+	}
+
+	if f.WebScraperNextPageSelector != nil {
+		feed.WebScraperNextPageSelector = *f.WebScraperNextPageSelector
+	}
+
+	if f.WebScraperMaxItems != nil {
+		feed.WebScraperMaxItems = *f.WebScraperMaxItems
+	}
+
+	if f.UseJSRender != nil {
+		feed.UseJSRender = *f.UseJSRender
 	}
 }
 

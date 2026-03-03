@@ -15,6 +15,7 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/integration"
+	"miniflux.app/v2/internal/integration/ai"
 	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/processor"
@@ -510,4 +511,63 @@ func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) {
 	if searchQuery := request.QueryStringParam(r, "search", ""); searchQuery != "" {
 		builder.WithSearchQuery(searchQuery)
 	}
+}
+
+func (h *handler) summarizeEntry(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	entryID := request.RouteInt64Param(r, "entryID")
+
+	entryBuilder := h.store.NewEntryQueryBuilder(userID)
+	entryBuilder.WithEntryID(entryID)
+	entryBuilder.WithoutStatus(model.EntryStatusRemoved)
+
+	entry, err := entryBuilder.GetEntry()
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if entry == nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	userIntegrations, err := h.store.Integration(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if !userIntegrations.AIEnabled || userIntegrations.AIProviderURL == "" || userIntegrations.AIAPIKey == "" || userIntegrations.AIModel == "" {
+		json.BadRequest(w, r, errors.New("AI integration is not configured"))
+		return
+	}
+
+	client := ai.NewClient(
+		userIntegrations.AIProviderURL,
+		userIntegrations.AIAPIKey,
+		userIntegrations.AIModel,
+	)
+
+	// Skip if already summarized — pass existing summary to let client decide
+	result, err := client.SummarizeEntry(entry.Title, entry.Content, entry.AISummary)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	// result is nil when entry already has a summary
+	if result != nil {
+		now := time.Now()
+		entry.AISummary = result.Summary
+		entry.AIScore = result.Score
+		entry.AISummarizedAt = &now
+
+		if err := h.store.UpdateEntryAISummary(entry); err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+	}
+
+	json.OK(w, r, entry)
 }

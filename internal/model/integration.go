@@ -127,4 +127,8 @@ type Integration struct {
 	PushoverDevice                   string
 	PushoverPrefix                   string
 	ArchiveorgEnabled                bool
+	AIEnabled                        bool
+	AIProviderURL                    string
+	AIAPIKey                         string
+	AIModel                          string
 }

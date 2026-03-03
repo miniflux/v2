@@ -86,6 +86,9 @@
                 <li {{ if eq .menu "history" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g h" }}">
                     <a href="{{ route "history" }}" data-page="history">{{ icon "history" }}{{ t "menu.history" }}</a>
                 </li>
+                <li {{ if eq .menu "ai-digest" }}class="active"{{ end }}>
+                    <a href="{{ route "aiDigest" }}" data-page="ai-digest">{{ icon "star" }}{{ t "menu.ai_digest" }}</a>
+                </li>
                 <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g f" }}">
                     <a href="{{ route "feeds" }}" data-page="feeds">{{ icon "feeds" }}{{ t "menu.feeds" }}
                       {{ if gt .countErrorFeeds 0 }}

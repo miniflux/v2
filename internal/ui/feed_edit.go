@@ -74,6 +74,14 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		PushoverEnabled:             feed.PushoverEnabled,
 		PushoverPriority:            feed.PushoverPriority,
 		ProxyURL:                    feed.ProxyURL,
+		FeedSourceType:              feed.FeedSourceType,
+		WebScraperItemSelector:      feed.WebScraperItemSelector,
+		WebScraperTitleSelector:     feed.WebScraperTitleSelector,
+		WebScraperLinkSelector:      feed.WebScraperLinkSelector,
+		WebScraperDescSelector:      feed.WebScraperDescSelector,
+		WebScraperNextPageSelector:  feed.WebScraperNextPageSelector,
+		WebScraperMaxItems:          feed.WebScraperMaxItems,
+		UseJSRender:                 feed.UseJSRender,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

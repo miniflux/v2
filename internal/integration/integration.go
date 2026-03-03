@@ -5,8 +5,10 @@ package integration // import "miniflux.app/v2/internal/integration"
 
 import (
 	"log/slog"
+	"time"
 
 	"miniflux.app/v2/internal/integration/apprise"
+	"miniflux.app/v2/internal/integration/ai"
 	"miniflux.app/v2/internal/integration/archiveorg"
 	"miniflux.app/v2/internal/integration/betula"
 	"miniflux.app/v2/internal/integration/cubox"
@@ -35,6 +37,7 @@ import (
 	"miniflux.app/v2/internal/integration/wallabag"
 	"miniflux.app/v2/internal/integration/webhook"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/storage"
 )
 
 // SendEntry sends the entry to third-party providers when the user click on "Save".
@@ -714,6 +717,56 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 					slog.Any("error", err),
 				)
 			}
+		}
+	}
+}
+
+// SummarizeEntries generates AI summaries for new entries asynchronously.
+// It skips entries that already have a summary to avoid wasting tokens.
+// This function is called in the same goroutine as PushEntries (already async).
+func SummarizeEntries(store *storage.Storage, entries model.Entries, userIntegrations *model.Integration) {
+	if !userIntegrations.AIEnabled {
+		return
+	}
+
+	if userIntegrations.AIProviderURL == "" || userIntegrations.AIAPIKey == "" || userIntegrations.AIModel == "" {
+		return
+	}
+
+	client := ai.NewClient(
+		userIntegrations.AIProviderURL,
+		userIntegrations.AIAPIKey,
+		userIntegrations.AIModel,
+	)
+
+	for _, entry := range entries {
+		result, err := client.SummarizeEntry(entry.Title, entry.Content, entry.AISummary)
+		if err != nil {
+			slog.Error("Unable to generate AI summary",
+				slog.Int64("user_id", userIntegrations.UserID),
+				slog.Int64("entry_id", entry.ID),
+				slog.String("entry_url", entry.URL),
+				slog.Any("error", err),
+			)
+			continue
+		}
+
+		// result is nil when entry already has a summary (skipped to save tokens)
+		if result == nil {
+			continue
+		}
+
+		now := time.Now()
+		entry.AISummary = result.Summary
+		entry.AIScore = result.Score
+		entry.AISummarizedAt = &now
+
+		if err := store.UpdateEntryAISummary(entry); err != nil {
+			slog.Error("Unable to save AI summary",
+				slog.Int64("user_id", userIntegrations.UserID),
+				slog.Int64("entry_id", entry.ID),
+				slog.Any("error", err),
+			)
 		}
 	}
 }

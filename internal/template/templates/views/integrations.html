@@ -15,6 +15,24 @@
         <div role="alert" class="alert alert-error">{{ .errorMessage }}</div>
     {{ end }}
 
+    <details {{ if .form.AIEnabled }}open{{ end }}>
+        <summary>AI Summarization</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="ai_enabled" value="1" {{ if .form.AIEnabled }}checked{{ end }}> {{ t "form.integration.ai_activate" }}
+            </label>
+            <label for="form-ai-provider-url">{{ t "form.integration.ai_provider_url" }}</label>
+            <input type="url" name="ai_provider_url" id="form-ai-provider-url" value="{{ .form.AIProviderURL }}" placeholder="https://api.openai.com/v1" spellcheck="false">
+            <label for="form-ai-api-key">{{ t "form.integration.ai_api_key" }}</label>
+            <input type="password" name="ai_api_key" id="form-ai-api-key" value="{{ .form.AIAPIKey }}" spellcheck="false" autocomplete="off">
+            <label for="form-ai-model">{{ t "form.integration.ai_model" }}</label>
+            <input type="text" name="ai_model" id="form-ai-model" value="{{ .form.AIModel }}" placeholder="gpt-4o-mini" spellcheck="false">
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.ArchiveorgEnabled }}open{{ end }}>
         <summary>Archive.org</summary>
         <div class="form-section">

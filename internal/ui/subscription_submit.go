@@ -71,6 +71,48 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	requestBuilder.IgnoreTLSErrors(subscriptionForm.AllowSelfSignedCertificates)
 	requestBuilder.DisableHTTP2(subscriptionForm.DisableHTTP2)
 
+	// Web scraper feeds bypass subscription discovery — the URL is used directly as the feed source.
+	if subscriptionForm.FeedSourceType == "web_scraper" {
+		feed, localizedError := feedHandler.CreateFeed(h.store, user.ID, &model.FeedCreationRequest{
+			CategoryID:                  subscriptionForm.CategoryID,
+			FeedURL:                     subscriptionForm.URL,
+			Crawler:                     subscriptionForm.Crawler,
+			IgnoreEntryUpdates:          subscriptionForm.IgnoreEntryUpdates,
+			AllowSelfSignedCertificates: subscriptionForm.AllowSelfSignedCertificates,
+			UserAgent:                   subscriptionForm.UserAgent,
+			Cookie:                      subscriptionForm.Cookie,
+			Username:                    subscriptionForm.Username,
+			Password:                    subscriptionForm.Password,
+			ScraperRules:                subscriptionForm.ScraperRules,
+			RewriteRules:                subscriptionForm.RewriteRules,
+			UrlRewriteRules:             subscriptionForm.UrlRewriteRules,
+			BlocklistRules:              subscriptionForm.BlocklistRules,
+			KeeplistRules:               subscriptionForm.KeeplistRules,
+			KeepFilterEntryRules:        subscriptionForm.KeepFilterEntryRules,
+			BlockFilterEntryRules:       subscriptionForm.BlockFilterEntryRules,
+			FetchViaProxy:               subscriptionForm.FetchViaProxy,
+			DisableHTTP2:                subscriptionForm.DisableHTTP2,
+			ProxyURL:                    subscriptionForm.ProxyURL,
+			FeedSourceType:              subscriptionForm.FeedSourceType,
+			WebScraperItemSelector:      subscriptionForm.WebScraperItemSelector,
+			WebScraperTitleSelector:     subscriptionForm.WebScraperTitleSelector,
+			WebScraperLinkSelector:      subscriptionForm.WebScraperLinkSelector,
+			WebScraperDescSelector:      subscriptionForm.WebScraperDescSelector,
+			WebScraperNextPageSelector:  subscriptionForm.WebScraperNextPageSelector,
+			WebScraperMaxItems:          subscriptionForm.WebScraperMaxItems,
+			UseJSRender:                 subscriptionForm.UseJSRender,
+		})
+		if localizedError != nil {
+			v.Set("form", subscriptionForm)
+			v.Set("errorMessage", localizedError.Translate(user.Language))
+			html.OK(w, r, v.Render("add_subscription"))
+			return
+		}
+
+		html.Redirect(w, r, route.Path(h.router, "feedEntries", "feedID", feed.ID))
+		return
+	}
+
 	subscriptionFinder := subscription.NewSubscriptionFinder(requestBuilder)
 	subscriptions, localizedError := subscriptionFinder.FindSubscriptions(
 		subscriptionForm.URL,

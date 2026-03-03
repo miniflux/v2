@@ -133,6 +133,10 @@ type IntegrationForm struct {
 	PushoverDevice                   string
 	PushoverPrefix                   string
 	ArchiveorgEnabled                bool
+	AIEnabled                        bool
+	AIProviderURL                    string
+	AIAPIKey                         string
+	AIModel                          string
 }
 
 // Merge copy form values to the model.
@@ -255,6 +259,10 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.PushoverDevice = i.PushoverDevice
 	integration.PushoverPrefix = i.PushoverPrefix
 	integration.ArchiveorgEnabled = i.ArchiveorgEnabled
+	integration.AIEnabled = i.AIEnabled
+	integration.AIProviderURL = i.AIProviderURL
+	integration.AIAPIKey = i.AIAPIKey
+	integration.AIModel = i.AIModel
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -380,6 +388,10 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		PushoverDevice:                   r.FormValue("pushover_device"),
 		PushoverPrefix:                   r.FormValue("pushover_prefix"),
 		ArchiveorgEnabled:                r.FormValue("archiveorg_enabled") == "1",
+		AIEnabled:                        r.FormValue("ai_enabled") == "1",
+		AIProviderURL:                    r.FormValue("ai_provider_url"),
+		AIAPIKey:                         r.FormValue("ai_api_key"),
+		AIModel:                          r.FormValue("ai_model"),
 	}
 }
 

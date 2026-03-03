@@ -230,7 +230,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			linktaco_org_slug,
 			linktaco_tags,
 			linktaco_visibility,
-			archiveorg_enabled
+			archiveorg_enabled,
+			ai_enabled,
+			ai_provider_url,
+			ai_api_key,
+			ai_model
 		FROM
 			integrations
 		WHERE
@@ -360,6 +364,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.LinktacoTags,
 		&integration.LinktacoVisibility,
 		&integration.ArchiveorgEnabled,
+		&integration.AIEnabled,
+		&integration.AIProviderURL,
+		&integration.AIAPIKey,
+		&integration.AIModel,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -497,9 +505,13 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			linktaco_visibility=$118,
 			archiveorg_enabled=$119,
 			linkwarden_collection_id=$120,
-			readeck_push_enabled=$121
+			readeck_push_enabled=$121,
+			ai_enabled=$122,
+			ai_provider_url=$123,
+			ai_api_key=$124,
+			ai_model=$125
 		WHERE
-			user_id=$122
+			user_id=$126
 	`
 	_, err := s.db.Exec(
 		query,
@@ -624,6 +636,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.ArchiveorgEnabled,
 		integration.LinkwardenCollectionID,
 		integration.ReadeckPushEnabled,
+		integration.AIEnabled,
+		integration.AIProviderURL,
+		integration.AIAPIKey,
+		integration.AIModel,
 		integration.UserID,
 	)
 

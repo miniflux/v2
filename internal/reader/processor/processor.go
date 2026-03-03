@@ -15,6 +15,7 @@ import (
 	"miniflux.app/v2/internal/proxyrotator"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/filter"
+	"miniflux.app/v2/internal/reader/pinchtab"
 	"miniflux.app/v2/internal/reader/readingtime"
 	"miniflux.app/v2/internal/reader/rewrite"
 	"miniflux.app/v2/internal/reader/sanitizer"
@@ -106,38 +107,62 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 				slog.Bool("force_refresh", forceRefresh),
 			)
 
-			startTime := time.Now()
-
-			scrapedPageBaseURL, extractedContent, scraperErr := scraper.ScrapeWebsite(
-				requestBuilder,
-				entry.URL,
-				feed.ScraperRules,
-			)
-
-			if scrapedPageBaseURL != "" {
-				webpageBaseURL = scrapedPageBaseURL
-			}
-
-			if config.Opts.HasMetricsCollector() {
-				status := "success"
-				if scraperErr != nil {
-					status = "error"
-				}
-				metric.ScraperRequestDuration.WithLabelValues(status).Observe(time.Since(startTime).Seconds())
-			}
-
-			if scraperErr != nil {
-				slog.Warn("Unable to scrape entry",
+			// Use pinchtab JS rendering when enabled for this feed.
+			if feed.UseJSRender && config.Opts.PinchTabEnabled() {
+				slog.Debug("Rendering entry with pinchtab JS renderer",
 					slog.Int64("user_id", user.ID),
 					slog.String("entry_url", entry.URL),
 					slog.Int64("feed_id", feed.ID),
-					slog.String("feed_url", feed.FeedURL),
-					slog.Any("error", scraperErr),
 				)
-			} else if extractedContent != "" {
-				// We replace the entry content only if the scraper doesn't return any error.
-				entry.Content = minifyContent(extractedContent)
-				contentExtractedSuccessfully = true
+				renderedContent, renderErr := pinchtab.RenderPage(entry.URL)
+				if renderErr != nil {
+					slog.Warn("Unable to render entry with pinchtab",
+						slog.Int64("user_id", user.ID),
+						slog.String("entry_url", entry.URL),
+						slog.Any("error", renderErr),
+					)
+					// Fallback: continue with normal scraping below.
+				} else if renderedContent != "" {
+					entry.Content = minifyContent(renderedContent)
+					contentExtractedSuccessfully = true
+				}
+			}
+
+			// Only run the regular scraper if pinchtab didn't extract content.
+			if !contentExtractedSuccessfully {
+				startTime := time.Now()
+
+				scrapedPageBaseURL, extractedContent, scraperErr := scraper.ScrapeWebsite(
+					requestBuilder,
+					entry.URL,
+					feed.ScraperRules,
+				)
+
+				if scrapedPageBaseURL != "" {
+					webpageBaseURL = scrapedPageBaseURL
+				}
+
+				if config.Opts.HasMetricsCollector() {
+					status := "success"
+					if scraperErr != nil {
+						status = "error"
+					}
+					metric.ScraperRequestDuration.WithLabelValues(status).Observe(time.Since(startTime).Seconds())
+				}
+
+				if scraperErr != nil {
+					slog.Warn("Unable to scrape entry",
+						slog.Int64("user_id", user.ID),
+						slog.String("entry_url", entry.URL),
+						slog.Int64("feed_id", feed.ID),
+						slog.String("feed_url", feed.FeedURL),
+						slog.Any("error", scraperErr),
+					)
+				} else if extractedContent != "" {
+					// We replace the entry content only if the scraper doesn't return any error.
+					entry.Content = minifyContent(extractedContent)
+					contentExtractedSuccessfully = true
+				}
 			}
 		}
 
@@ -192,11 +217,36 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
 	requestBuilder.DisableHTTP2(feed.DisableHTTP2)
 
-	webpageBaseURL, extractedContent, scraperErr := scraper.ScrapeWebsite(
-		requestBuilder,
-		entry.URL,
-		feed.ScraperRules,
-	)
+	var webpageBaseURL string
+	var extractedContent string
+	var scraperErr error
+
+	// Use pinchtab JS rendering when enabled for this feed.
+	if feed.UseJSRender && config.Opts.PinchTabEnabled() {
+		slog.Debug("Rendering entry with pinchtab JS renderer",
+			slog.String("entry_url", entry.URL),
+			slog.Int64("feed_id", feed.ID),
+		)
+		renderedContent, renderErr := pinchtab.RenderPage(entry.URL)
+		if renderErr != nil {
+			slog.Warn("Unable to render entry with pinchtab",
+				slog.String("entry_url", entry.URL),
+				slog.Any("error", renderErr),
+			)
+			// Fallback: continue with normal scraping below.
+		} else if renderedContent != "" {
+			extractedContent = renderedContent
+		}
+	}
+
+	// Only run the regular scraper if pinchtab didn't extract content.
+	if extractedContent == "" {
+		webpageBaseURL, extractedContent, scraperErr = scraper.ScrapeWebsite(
+			requestBuilder,
+			entry.URL,
+			feed.ScraperRules,
+		)
+	}
 
 	if config.Opts.HasMetricsCollector() {
 		status := "success"

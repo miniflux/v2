@@ -236,6 +236,17 @@
 </div>
 {{ end }}
 {{ end }}
+{{ if .entry.AISummary }}
+<details class="ai-summary" open>
+    <summary>
+        {{ t "entry.ai_summary" }}
+        {{ if gt .entry.AIScore 0 }}
+        <span class="ai-score ai-score-{{ if ge .entry.AIScore 8 }}high{{ else if ge .entry.AIScore 5 }}medium{{ else }}low{{ end }}">{{ .entry.AIScore }}/10</span>
+        {{ end }}
+    </summary>
+    <p>{{ .entry.AISummary }}</p>
+</details>
+{{ end }}
 <article class="entry-content {{ if ne $.user.GestureNav "none" }}gesture-nav-{{ $.user.GestureNav }}{{ end }}" dir="auto">
     {{ if not .entry.Feed.NoMediaPlayer }}
         {{ $mediaPlayerEnclosure := .entry.Enclosures.FindMediaPlayerEnclosure }}

@@ -32,6 +32,14 @@ type SubscriptionForm struct {
 	KeepFilterEntryRules        string
 	DisableHTTP2                bool
 	ProxyURL                    string
+	FeedSourceType              string
+	WebScraperItemSelector      string
+	WebScraperTitleSelector     string
+	WebScraperLinkSelector      string
+	WebScraperDescSelector      string
+	WebScraperNextPageSelector  string
+	WebScraperMaxItems          int
+	UseJSRender                 bool
 }
 
 // Validate makes sure the form values locale.are valid.
@@ -70,6 +78,11 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		categoryID = 0
 	}
 
+	wsMaxItems, err := strconv.Atoi(r.FormValue("ws_max_items"))
+	if err != nil {
+		wsMaxItems = 25
+	}
+
 	return &SubscriptionForm{
 		URL:                         r.FormValue("url"),
 		CategoryID:                  int64(categoryID),
@@ -90,5 +103,13 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		BlockFilterEntryRules:       r.FormValue("block_filter_entry_rules"),
 		DisableHTTP2:                r.FormValue("disable_http2") == "1",
 		ProxyURL:                    r.FormValue("proxy_url"),
+		FeedSourceType:              r.FormValue("feed_source_type"),
+		WebScraperItemSelector:      r.FormValue("ws_item_selector"),
+		WebScraperTitleSelector:     r.FormValue("ws_title_selector"),
+		WebScraperLinkSelector:      r.FormValue("ws_link_selector"),
+		WebScraperDescSelector:      r.FormValue("ws_description_selector"),
+		WebScraperNextPageSelector:  r.FormValue("ws_next_page_selector"),
+		WebScraperMaxItems:          wsMaxItems,
+		UseJSRender:                 r.FormValue("use_js_render") == "1",
 	}
 }
