@@ -11,9 +11,13 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"miniflux.app/v2/internal/config"
 )
 
 func TestCreateBookmark(t *testing.T) {
+	configureIntegrationAllowPrivateNetworksOption(t)
+
 	entryURL := "https://example.com/article"
 	entryTitle := "Example Title"
 	entryContent := "<p>Some HTML content</p>"
@@ -257,4 +261,22 @@ func TestNewClient(t *testing.T) {
 	if c.onlyURL != onlyURL {
 		t.Errorf("expected onlyURL %v, got %v", onlyURL, c.onlyURL)
 	}
+}
+
+func configureIntegrationAllowPrivateNetworksOption(t *testing.T) {
+	t.Helper()
+
+	t.Setenv("INTEGRATION_ALLOW_PRIVATE_NETWORKS", "1")
+
+	configParser := config.NewConfigParser()
+	parsedOptions, err := configParser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf("Unable to configure test options: %v", err)
+	}
+
+	previousOptions := config.Opts
+	config.Opts = parsedOptions
+	t.Cleanup(func() {
+		config.Opts = previousOptions
+	})
 }

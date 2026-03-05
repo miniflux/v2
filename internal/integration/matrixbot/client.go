@@ -11,7 +11,9 @@ import (
 	"net/url"
 	"time"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -40,7 +42,7 @@ func (c *Client) DiscoverEndpoints() (*DiscoveryEndpointResponse, error) {
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("matrix: unable to send request: %v", err)
@@ -89,7 +91,7 @@ func (c *Client) Login(homeServerURL, matrixUsername, matrixPassword string) (*L
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("matrix: unable to send request: %v", err)
@@ -138,7 +140,7 @@ func (c *Client) SendFormattedTextMessage(homeServerURL, accessToken, roomID, te
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 	request.Header.Set("Authorization", "Bearer "+accessToken)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("matrix: unable to send request: %v", err)

@@ -10,9 +10,13 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"miniflux.app/v2/internal/config"
 )
 
 func TestCreateBookmark(t *testing.T) {
+	configureIntegrationAllowPrivateNetworksOption(t)
+
 	tests := []struct {
 		name           string
 		apiToken       string
@@ -323,6 +327,8 @@ func TestNewClient(t *testing.T) {
 }
 
 func TestGraphQLMutation(t *testing.T) {
+	configureIntegrationAllowPrivateNetworksOption(t)
+
 	// Test that the GraphQL mutation is properly formatted
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		body, _ := io.ReadAll(r.Body)
@@ -437,4 +443,22 @@ func BenchmarkTagProcessing(b *testing.B) {
 		}
 		_ = strings.Join(splitTags, ",")
 	}
+}
+
+func configureIntegrationAllowPrivateNetworksOption(t *testing.T) {
+	t.Helper()
+
+	t.Setenv("INTEGRATION_ALLOW_PRIVATE_NETWORKS", "1")
+
+	configParser := config.NewConfigParser()
+	parsedOptions, err := configParser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf("Unable to configure test options: %v", err)
+	}
+
+	previousOptions := config.Opts
+	config.Opts = parsedOptions
+	t.Cleanup(func() {
+		config.Opts = previousOptions
+	})
 }

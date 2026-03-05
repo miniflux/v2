@@ -6,20 +6,29 @@ package fetcher // import "miniflux.app/v2/internal/reader/fetcher"
 import (
 	"crypto/tls"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
 	"net/url"
 	"slices"
+	"syscall"
 	"time"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/proxyrotator"
+	"miniflux.app/v2/internal/urllib"
 )
 
 const (
 	defaultHTTPClientTimeout = 20 * time.Second
 	defaultAcceptHeader      = "application/xml, application/atom+xml, application/rss+xml, application/rdf+xml, application/feed+json, text/html, */*;q=0.9"
+)
+
+var (
+	ErrHostnameResolution = errors.New("fetcher: unable to resolve request hostname")
+	ErrPrivateNetworkHost = errors.New("fetcher: refusing to access private network host")
 )
 
 type RequestBuilder struct {
@@ -130,16 +139,39 @@ func (r *RequestBuilder) WithoutCompression() *RequestBuilder {
 }
 
 func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, error) {
+	dialer := &net.Dialer{
+		Timeout:   10 * time.Second, // Default is 30s.
+		KeepAlive: 15 * time.Second, // Default is 30s.
+	}
+
+	// Perform the private-network check inside the dialer's Control callback,
+	// which fires after DNS resolution but before the TCP connection is made.
+	// This eliminates TOCTOU / DNS-rebinding vulnerabilities: the resolved IP
+	// that is checked is exactly the IP that will be connected to.
+	allowPrivateNetworks := config.Opts == nil || config.Opts.FetcherAllowPrivateNetworks()
+	if !allowPrivateNetworks {
+		dialer.Control = func(network, address string, c syscall.RawConn) error {
+			host, _, err := net.SplitHostPort(address)
+			if err != nil {
+				return err
+			}
+
+			ip := net.ParseIP(host)
+			if urllib.IsNonPublicIP(ip) {
+				return fmt.Errorf("%w %q", ErrPrivateNetworkHost, host)
+			}
+
+			return nil
+		}
+	}
+
 	transport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		// Setting `DialContext` disables HTTP/2, this option forces the transport to try HTTP/2 regardless.
 		ForceAttemptHTTP2: true,
-		DialContext: (&net.Dialer{
-			Timeout:   10 * time.Second, // Default is 30s.
-			KeepAlive: 15 * time.Second, // Default is 30s.
-		}).DialContext,
-		MaxIdleConns:    50,               // Default is 100.
-		IdleConnTimeout: 10 * time.Second, // Default is 90s.
+		DialContext:       dialer.DialContext,
+		MaxIdleConns:      50,               // Default is 100.
+		IdleConnTimeout:   10 * time.Second, // Default is 90s.
 	}
 
 	if r.ignoreTLSErrors {

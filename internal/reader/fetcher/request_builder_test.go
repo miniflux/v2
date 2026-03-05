@@ -7,8 +7,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 	"testing"
 	"time"
+
+	"miniflux.app/v2/internal/config"
 )
 
 func TestNewRequestBuilder(t *testing.T) {
@@ -398,6 +401,69 @@ func TestRequestBuilder_InvalidURL(t *testing.T) {
 	}
 }
 
+func TestRequestBuilder_RefusePrivateNetworkByDefault(t *testing.T) {
+	configureFetcherAllowPrivateNetworksOption(t, "0")
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	builder := NewRequestBuilder()
+	_, err := builder.ExecuteRequest(server.URL)
+	if err == nil {
+		t.Fatal("Expected private network request to be rejected")
+	}
+
+	if !strings.Contains(err.Error(), "refusing to access private network host") {
+		t.Fatalf("Unexpected error for private network request: %v", err)
+	}
+}
+
+func TestRequestBuilder_AllowPrivateNetworkWhenEnabled(t *testing.T) {
+	configureFetcherAllowPrivateNetworksOption(t, "1")
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	builder := NewRequestBuilder()
+	resp, err := builder.ExecuteRequest(server.URL)
+	if err != nil {
+		t.Fatalf("Expected private network request to succeed when enabled: %v", err)
+	}
+	defer resp.Body.Close()
+}
+
+func TestRequestBuilder_RefusePrivateNetworkOnRedirect(t *testing.T) {
+	configureFetcherAllowPrivateNetworksOption(t, "0")
+
+	// Target server on a loopback address (private).
+	privateServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer privateServer.Close()
+
+	// Redirector that sends the client to the private server.
+	// Because the Control callback checks the IP at connection time, the
+	// redirect target is also validated (unlike a pre-flight DNS check).
+	redirectServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, privateServer.URL, http.StatusFound)
+	}))
+	defer redirectServer.Close()
+
+	builder := NewRequestBuilder()
+	_, err := builder.ExecuteRequest(redirectServer.URL)
+	if err == nil {
+		t.Fatal("Expected redirect to private network to be rejected")
+	}
+
+	if !strings.Contains(err.Error(), "refusing to access private network host") {
+		t.Fatalf("Unexpected error for redirected private network request: %v", err)
+	}
+}
+
 func TestRequestBuilder_TimeoutConfiguration(t *testing.T) {
 	// Create a slow server
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -419,4 +485,22 @@ func TestRequestBuilder_TimeoutConfiguration(t *testing.T) {
 	if duration > 1500*time.Millisecond {
 		t.Errorf("Expected timeout around 1s, took %v", duration)
 	}
+}
+
+func configureFetcherAllowPrivateNetworksOption(t *testing.T, value string) {
+	t.Helper()
+
+	t.Setenv("FETCHER_ALLOW_PRIVATE_NETWORKS", value)
+
+	configParser := config.NewConfigParser()
+	parsedOptions, err := configParser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf("Unable to configure test options: %v", err)
+	}
+
+	previousOptions := config.Opts
+	config.Opts = parsedOptions
+	t.Cleanup(func() {
+		config.Opts = previousOptions
+	})
 }

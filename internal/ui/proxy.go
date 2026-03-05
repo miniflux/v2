@@ -22,7 +22,6 @@ import (
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/rewrite"
-	"miniflux.app/v2/internal/urllib"
 )
 
 func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
@@ -83,23 +82,6 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 
 	mediaURL := string(decodedURL)
 
-	if !config.Opts.MediaProxyAllowPrivateNetworks() {
-		if isPrivate, err := urllib.ResolvesToPrivateIP(parsedMediaURL.Hostname()); err != nil {
-			slog.Warn("MediaProxy: Unable to resolve hostname",
-				slog.String("media_url", mediaURL),
-				slog.Any("error", err),
-			)
-			html.Forbidden(w, r)
-			return
-		} else if isPrivate {
-			slog.Warn("MediaProxy: Refusing to access private IP address",
-				slog.String("media_url", mediaURL),
-			)
-			html.Forbidden(w, r)
-			return
-		}
-	}
-
 	slog.Debug("MediaProxy: Fetching remote resource",
 		slog.String("media_url", mediaURL),
 	)
@@ -123,6 +105,15 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := requestBuilder.ExecuteRequest(mediaURL)
 	if err != nil {
+		if errors.Is(err, fetcher.ErrPrivateNetworkHost) || errors.Is(err, fetcher.ErrHostnameResolution) {
+			slog.Warn("MediaProxy: Refused remote resource",
+				slog.String("media_url", mediaURL),
+				slog.Any("error", err),
+			)
+			html.Forbidden(w, r)
+			return
+		}
+
 		slog.Error("MediaProxy: Unable to initialize HTTP client",
 			slog.String("media_url", mediaURL),
 			slog.Any("error", err),

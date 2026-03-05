@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"time"
 
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -50,7 +51,7 @@ func (c *Client) GetMe() (*User, error) {
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("telegram: unable to send request: %v", err)
@@ -90,7 +91,7 @@ func (c *Client) SendMessage(message *MessageRequest) (*Message, error) {
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("telegram: unable to send request: %v", err)

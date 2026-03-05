@@ -13,6 +13,8 @@ import (
 	"strings"
 	"time"
 
+	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -48,7 +50,7 @@ type errorResponse struct {
 }
 
 func NewClient(apiToken string, apiEndpoint string, tags string) *Client {
-	return &Client{wrapped: &http.Client{Timeout: defaultClientTimeout}, apiEndpoint: apiEndpoint, apiToken: apiToken, tags: tags}
+	return &Client{wrapped: client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()}), apiEndpoint: apiEndpoint, apiToken: apiToken, tags: tags}
 }
 
 func (c *Client) attachTags(entryID string) error {

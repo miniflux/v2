@@ -11,6 +11,8 @@ import (
 	"net/http"
 	"time"
 
+	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/version"
 )
@@ -38,7 +40,7 @@ func (c *Client) CreateLink(entryURL, entryTitle, espialTags string) error {
 
 	requestBody, err := json.Marshal(&espialDocument{
 		Title:  entryTitle,
-		Url:    entryURL,
+		URL:    entryURL,
 		ToRead: true,
 		Tags:   espialTags,
 	})
@@ -56,7 +58,7 @@ func (c *Client) CreateLink(entryURL, entryTitle, espialTags string) error {
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 	request.Header.Set("Authorization", "ApiKey "+c.apiKey)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return fmt.Errorf("espial: unable to send request: %v", err)
@@ -75,7 +77,7 @@ func (c *Client) CreateLink(entryURL, entryTitle, espialTags string) error {
 
 type espialDocument struct {
 	Title  string `json:"title,omitempty"`
-	Url    string `json:"url,omitempty"`
+	URL    string `json:"url,omitempty"`
 	ToRead bool   `json:"toread,omitempty"`
 	Tags   string `json:"tags,omitempty"`
 }

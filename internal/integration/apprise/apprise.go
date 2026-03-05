@@ -12,6 +12,8 @@ import (
 	"net/http"
 	"time"
 
+	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/version"
@@ -25,7 +27,7 @@ type Client struct {
 }
 
 func NewClient(serviceURL, baseURL string) *Client {
-	return &Client{serviceURL, baseURL}
+	return &Client{servicesURL: serviceURL, baseURL: baseURL}
 }
 
 func (c *Client) SendNotification(feed *model.Feed, entries model.Entries) error {
@@ -65,12 +67,12 @@ func (c *Client) SendNotification(feed *model.Feed, entries model.Entries) error
 			slog.String("entry_url", entry.URL),
 		)
 
-		httpClient := &http.Client{Timeout: defaultClientTimeout}
+		httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
 		response, err := httpClient.Do(request)
 		if err != nil {
 			return fmt.Errorf("apprise: unable to send request: %v", err)
 		}
-		response.Body.Close()
+		defer response.Body.Close()
 
 		if response.StatusCode >= 400 {
 			return fmt.Errorf("apprise: unable to send a notification: url=%s status=%d", apiEndpoint, response.StatusCode)

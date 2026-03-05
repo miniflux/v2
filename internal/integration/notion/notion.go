@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"time"
 
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -57,7 +58,7 @@ func (c *Client) UpdateDocument(entryURL string, entryTitle string) error {
 	request.Header.Set("Notion-Version", "2022-06-28")
 	request.Header.Set("Authorization", "Bearer "+c.apiToken)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return fmt.Errorf("notion: unable to send request: %v", err)

@@ -13,6 +13,8 @@ import (
 	"strings"
 	"time"
 
+	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/version"
 )
@@ -30,7 +32,15 @@ type Client struct {
 }
 
 func NewClient(baseURL, clientID, clientSecret, username, password, tags string, onlyURL bool) *Client {
-	return &Client{baseURL, clientID, clientSecret, username, password, tags, onlyURL}
+	return &Client{
+		baseURL:      baseURL,
+		clientID:     clientID,
+		clientSecret: clientSecret,
+		username:     username,
+		password:     password,
+		tags:         tags,
+		onlyURL:      onlyURL,
+	}
 }
 
 func (c *Client) CreateEntry(entryURL, entryTitle, entryContent string) error {
@@ -49,7 +59,7 @@ func (c *Client) CreateEntry(entryURL, entryTitle, entryContent string) error {
 func (c *Client) createEntry(accessToken, entryURL, entryTitle, entryContent, tags string) error {
 	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/entries.json")
 	if err != nil {
-		return fmt.Errorf("wallbag: unable to generate entries endpoint: %v", err)
+		return fmt.Errorf("wallabag: unable to generate entries endpoint: %v", err)
 	}
 
 	if c.onlyURL {
@@ -63,12 +73,12 @@ func (c *Client) createEntry(accessToken, entryURL, entryTitle, entryContent, ta
 		Tags:    tags,
 	})
 	if err != nil {
-		return fmt.Errorf("wallbag: unable to encode request body: %v", err)
+		return fmt.Errorf("wallabag: unable to encode request body: %v", err)
 	}
 
 	request, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBody))
 	if err != nil {
-		return fmt.Errorf("wallbag: unable to create request: %v", err)
+		return fmt.Errorf("wallabag: unable to create request: %v", err)
 	}
 
 	request.Header.Set("Content-Type", "application/json")
@@ -76,7 +86,7 @@ func (c *Client) createEntry(accessToken, entryURL, entryTitle, entryContent, ta
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 	request.Header.Set("Authorization", "Bearer "+accessToken)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return fmt.Errorf("wallabag: unable to send request: %v", err)
@@ -100,19 +110,19 @@ func (c *Client) getAccessToken() (string, error) {
 
 	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/oauth/v2/token")
 	if err != nil {
-		return "", fmt.Errorf("wallbag: unable to generate token endpoint: %v", err)
+		return "", fmt.Errorf("wallabag: unable to generate token endpoint: %v", err)
 	}
 
 	request, err := http.NewRequest(http.MethodPost, apiEndpoint, strings.NewReader(values.Encode()))
 	if err != nil {
-		return "", fmt.Errorf("wallbag: unable to create request: %v", err)
+		return "", fmt.Errorf("wallabag: unable to create request: %v", err)
 	}
 
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
-	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
 	response, err := httpClient.Do(request)
 	if err != nil {
 		return "", fmt.Errorf("wallabag: unable to send request: %v", err)

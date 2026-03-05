@@ -113,6 +113,8 @@ integration-test:
 	CREATE_ADMIN=1 \
 	RUN_MIGRATIONS=1 \
 	LOG_LEVEL=debug \
+	FETCHER_ALLOW_PRIVATE_NETWORKS=1 \
+	INTEGRATION_ALLOW_PRIVATE_NETWORKS=1 \
 	go run main.go >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 
 	while ! nc -z localhost 8080; do sleep 1; done
