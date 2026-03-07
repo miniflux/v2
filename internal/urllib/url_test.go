@@ -252,37 +252,3 @@ func TestIsNonPublicIP(t *testing.T) {
 		})
 	}
 }
-
-func TestResolvesToPrivateIP(t *testing.T) {
-	testCases := []struct {
-		name string
-		host string
-		want bool
-	}{
-		{"localhost", "localhost", true},
-		{"example.org", "example.org", false},
-		{"loopback IPv4 literal", "127.0.0.1", true},
-		{"loopback IPv6 literal", "::1", true},
-		{"private IPv4 literal", "192.168.1.1", true},
-		{"public IPv4 literal", "93.184.216.34", false},
-		{"public IPv6 literal", "2001:4860:4860::8888", false},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			got, err := ResolvesToPrivateIP(tc.host)
-			if err != nil {
-				t.Fatalf("unexpected error for %s: %v", tc.host, err)
-			}
-			if got != tc.want {
-				t.Fatalf("unexpected result for %s: got %v want %v", tc.name, got, tc.want)
-			}
-		})
-	}
-}
-
-func TestResolvesToPrivateIPError(t *testing.T) {
-	if _, err := ResolvesToPrivateIP(""); err == nil {
-		t.Fatalf("expected an error for empty host")
-	}
-}

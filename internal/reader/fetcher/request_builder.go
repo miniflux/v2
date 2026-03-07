@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"syscall"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -138,16 +139,39 @@ func (r *RequestBuilder) WithoutCompression() *RequestBuilder {
 }
 
 func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, error) {
+	dialer := &net.Dialer{
+		Timeout:   10 * time.Second, // Default is 30s.
+		KeepAlive: 15 * time.Second, // Default is 30s.
+	}
+
+	// Perform the private-network check inside the dialer's Control callback,
+	// which fires after DNS resolution but before the TCP connection is made.
+	// This eliminates TOCTOU / DNS-rebinding vulnerabilities: the resolved IP
+	// that is checked is exactly the IP that will be connected to.
+	allowPrivateNetworks := config.Opts == nil || config.Opts.FetcherAllowPrivateNetworks()
+	if !allowPrivateNetworks {
+		dialer.Control = func(network, address string, c syscall.RawConn) error {
+			host, _, err := net.SplitHostPort(address)
+			if err != nil {
+				return err
+			}
+
+			ip := net.ParseIP(host)
+			if urllib.IsNonPublicIP(ip) {
+				return fmt.Errorf("%w %q", ErrPrivateNetworkHost, host)
+			}
+
+			return nil
+		}
+	}
+
 	transport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		// Setting `DialContext` disables HTTP/2, this option forces the transport to try HTTP/2 regardless.
 		ForceAttemptHTTP2: true,
-		DialContext: (&net.Dialer{
-			Timeout:   10 * time.Second, // Default is 30s.
-			KeepAlive: 15 * time.Second, // Default is 30s.
-		}).DialContext,
-		MaxIdleConns:    50,               // Default is 100.
-		IdleConnTimeout: 10 * time.Second, // Default is 90s.
+		DialContext:       dialer.DialContext,
+		MaxIdleConns:      50,               // Default is 100.
+		IdleConnTimeout:   10 * time.Second, // Default is 90s.
 	}
 
 	if r.ignoreTLSErrors {
@@ -207,19 +231,6 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	allowPrivateNetworks := config.Opts == nil || config.Opts.FetcherAllowPrivateNetworks()
-	if !allowPrivateNetworks {
-		hostname := req.URL.Hostname()
-		isPrivate, err := urllib.ResolvesToPrivateIP(hostname)
-		if err != nil {
-			return nil, fmt.Errorf("%w %q: %w", ErrHostnameResolution, hostname, err)
-		}
-
-		if isPrivate {
-			return nil, fmt.Errorf("%w %q", ErrPrivateNetworkHost, hostname)
-		}
 	}
 
 	req.Header = r.headers

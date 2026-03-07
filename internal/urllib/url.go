@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"net"
 	"net/url"
-	"slices"
 	"strings"
 )
 
@@ -153,20 +152,6 @@ func JoinBaseURLAndPath(baseURL, path string) (string, error) {
 	}
 
 	return finalURL, nil
-}
-
-// ResolvesToPrivateIP resolves a hostname and reports whether any resolved IP address is non-public.
-func ResolvesToPrivateIP(host string) (bool, error) {
-	ips, err := net.LookupIP(host)
-	if err != nil {
-		return false, err
-	}
-
-	if slices.ContainsFunc(ips, IsNonPublicIP) {
-		return true, nil
-	}
-
-	return false, nil
 }
 
 // IsNonPublicIP returns true if the given IP is private, loopback,
