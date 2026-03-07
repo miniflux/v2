@@ -5,6 +5,7 @@ package integration // import "miniflux.app/v2/internal/integration"
 
 import (
 	"log/slog"
+	"sync"
 	"time"
 
 	"miniflux.app/v2/internal/integration/apprise"
@@ -771,10 +772,24 @@ func SummarizeEntries(store *storage.Storage, entries model.Entries, userIntegra
 	}
 }
 
+// activeBackfills tracks which users have a backfill goroutine running to prevent duplicate execution.
+var activeBackfills sync.Map
+
+// IsBackfillRunning returns true if a backfill is already in progress for this user.
+func IsBackfillRunning(userID int64) bool {
+	_, running := activeBackfills.Load(userID)
+	return running
+}
+
 // BackfillAISummaries scans entries without AI summaries and generates them in the background.
 // This is triggered manually when a user configures AI after articles already exist.
 // It runs as a goroutine to avoid blocking the UI — progress is logged.
+// On persistent errors (e.g. 401 invalid key), it aborts early to avoid infinite loops.
+// Callers must check IsBackfillRunning() before launching to avoid duplicate goroutines.
 func BackfillAISummaries(store *storage.Storage, userID int64, userIntegrations *model.Integration) {
+	// Mark this user's backfill as active; clear on exit.
+	activeBackfills.Store(userID, true)
+	defer activeBackfills.Delete(userID)
 	if !userIntegrations.AIEnabled {
 		return
 	}
@@ -783,18 +798,39 @@ func BackfillAISummaries(store *storage.Storage, userID int64, userIntegrations 
 		return
 	}
 
-	client := ai.NewClient(
-		userIntegrations.AIProviderURL,
-		userIntegrations.AIAPIKey,
-		userIntegrations.AIModel,
-	)
-
+	// Re-read integration config each batch to pick up key changes made while backfill is running.
 	// Process in batches of 50 to avoid memory pressure on large backlogs.
 	const batchSize = 50
+	const maxConsecutiveErrors = 3 // Abort after N consecutive failures (e.g. bad API key) to prevent infinite retry loops.
 	totalProcessed := 0
+	consecutiveErrors := 0
 
 	for {
+		// Re-read integration config to pick up any key/URL changes made during backfill.
+		freshIntegrations, err := store.Integration(userID)
+		if err != nil {
+			slog.Error("AI backfill: failed to reload integration config",
+				slog.Int64("user_id", userID),
+				slog.Any("error", err),
+			)
+			return
+		}
+
+		if !freshIntegrations.AIEnabled || freshIntegrations.AIProviderURL == "" || freshIntegrations.AIAPIKey == "" || freshIntegrations.AIModel == "" {
+			slog.Info("AI backfill: AI integration disabled or incomplete, stopping",
+				slog.Int64("user_id", userID),
+			)
+			return
+		}
+
+		client := ai.NewClient(
+			freshIntegrations.AIProviderURL,
+			freshIntegrations.AIAPIKey,
+			freshIntegrations.AIModel,
+		)
+
 		entryBuilder := store.NewEntryQueryBuilder(userID)
+		entryBuilder.WithStatus(model.EntryStatusUnread)
 		entryBuilder.WithoutAISummary()
 		entryBuilder.WithSorting("published_at", "desc")
 		entryBuilder.WithLimit(batchSize)
@@ -814,18 +850,31 @@ func BackfillAISummaries(store *storage.Storage, userID int64, userIntegrations 
 		for _, entry := range entries {
 			result, err := client.SummarizeEntry(entry.Title, entry.Content, entry.AISummary)
 			if err != nil {
+				consecutiveErrors++
 				slog.Warn("AI backfill: failed to summarize entry",
 					slog.Int64("user_id", userID),
 					slog.Int64("entry_id", entry.ID),
 					slog.String("entry_url", entry.URL),
+					slog.Int("consecutive_errors", consecutiveErrors),
 					slog.Any("error", err),
 				)
+
+				if consecutiveErrors >= maxConsecutiveErrors {
+					slog.Error("AI backfill: aborting after too many consecutive errors (check API key/URL)",
+						slog.Int64("user_id", userID),
+						slog.Int("consecutive_errors", consecutiveErrors),
+					)
+					return
+				}
 				continue
 			}
 
 			if result == nil {
 				continue
 			}
+
+			// Reset consecutive error counter on success.
+			consecutiveErrors = 0
 
 			now := time.Now()
 			entry.AISummary = result.Summary

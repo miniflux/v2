@@ -12,10 +12,16 @@ import (
 	"miniflux.app/v2/internal/integration"
 )
 
-// aiBackfill triggers background AI summarization for all unsummarized entries.
-// It launches a goroutine and immediately redirects back to the integrations page.
+// aiBackfill triggers background AI summarization for unsummarized unread entries.
+// If a backfill is already running for this user, it silently redirects without starting another.
 func (h *handler) aiBackfill(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
+
+	// Skip if a backfill goroutine is already running for this user.
+	if integration.IsBackfillRunning(userID) {
+		html.Redirect(w, r, route.Path(h.router, "integrations"))
+		return
+	}
 
 	userIntegrations, err := h.store.Integration(userID)
 	if err != nil {
@@ -23,7 +29,6 @@ func (h *handler) aiBackfill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Run in background to avoid blocking the UI — summarization may take minutes.
 	go integration.BackfillAISummaries(h.store, userID, userIntegrations)
 
 	html.Redirect(w, r, route.Path(h.router, "integrations"))

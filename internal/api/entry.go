@@ -575,6 +575,12 @@ func (h *handler) summarizeEntry(w http.ResponseWriter, r *http.Request) {
 func (h *handler) backfillAISummaries(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 
+	// Return 204 if a backfill is already running for this user — no duplicate work.
+	if integration.IsBackfillRunning(userID) {
+		json.NoContent(w, r)
+		return
+	}
+
 	userIntegrations, err := h.store.Integration(userID)
 	if err != nil {
 		json.ServerError(w, r, err)
@@ -586,7 +592,6 @@ func (h *handler) backfillAISummaries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Run in background — this may take a long time for large backlogs.
 	go integration.BackfillAISummaries(h.store, userID, userIntegrations)
 
 	json.Accepted(w, r)
