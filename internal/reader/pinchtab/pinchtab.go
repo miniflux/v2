@@ -9,33 +9,21 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
-	"sync"
+	"strconv"
 	"time"
 
 	"miniflux.app/v2/internal/config"
 )
 
-var (
-	instance *subprocess
-	once     sync.Once
-)
-
 const (
 	httpRequestTimeout  = 30 * time.Second
-	healthCheckInterval = 1 * time.Second
+	healthCheckInterval = 500 * time.Millisecond
 	healthCheckMaxWait  = 30 * time.Second
 )
-
-type subprocess struct {
-	cmd *exec.Cmd
-	mu  sync.Mutex
-	// running tracks whether the subprocess is alive to prevent
-	// use-after-exit calls to the pinchtab API.
-	running bool
-}
 
 type createInstanceResponse struct {
 	ID string `json:"id"`
@@ -46,23 +34,41 @@ type createTabResponse struct {
 	Text string `json:"text"`
 }
 
-// RenderPage creates a browser instance, opens a tab with the given URL,
-// extracts the text content, and cleans up the instance.
-func RenderPage(pageURL string) (string, error) {
-	if instance == nil || !instance.isRunning() {
-		return "", fmt.Errorf("pinchtab: subprocess is not running")
+// RenderPage starts an ephemeral pinchtab subprocess, renders the given URL
+// through a headless Chrome instance, extracts the text content, and tears
+// down both the Chrome instance and the subprocess.
+//
+// proxyURL is optional: when non-empty it is forwarded to Chrome via
+// --proxy-server so that the page fetch goes through the specified proxy.
+// This supports per-feed proxy_url, the global HTTP_CLIENT_PROXY, and
+// the proxy rotator — whichever the caller resolves.
+//
+// feedID isolates browser state (cookies, localStorage) per feed so that
+// login sessions are preserved across fetches but different feeds cannot
+// leak state to each other.
+func RenderPage(pageURL, proxyURL string, feedID int64) (string, error) {
+	port, err := findFreePort()
+	if err != nil {
+		return "", fmt.Errorf("pinchtab: %w", err)
 	}
 
-	baseURL := config.Opts.PinchTabURL()
+	cmd, err := startSubprocess(port, proxyURL, feedID)
+	if err != nil {
+		return "", fmt.Errorf("pinchtab: %w", err)
+	}
+	defer killSubprocess(cmd)
+
+	baseURL := fmt.Sprintf("http://127.0.0.1:%d", port)
+	if err := waitForReady(baseURL); err != nil {
+		return "", fmt.Errorf("pinchtab: %w", err)
+	}
+
 	client := &http.Client{Timeout: httpRequestTimeout}
 
-	// Step 1: Create a browser instance.
 	instanceID, err := createInstance(client, baseURL)
 	if err != nil {
 		return "", fmt.Errorf("pinchtab: failed to create instance: %w", err)
 	}
-
-	// Always clean up the instance after use.
 	defer func() {
 		if deleteErr := deleteInstance(client, baseURL, instanceID); deleteErr != nil {
 			slog.Warn("pinchtab: failed to delete instance",
@@ -72,7 +78,6 @@ func RenderPage(pageURL string) (string, error) {
 		}
 	}()
 
-	// Step 2: Create a tab and get the rendered text content.
 	text, err := createTab(client, baseURL, instanceID, pageURL)
 	if err != nil {
 		return "", fmt.Errorf("pinchtab: failed to create tab for %q: %w", pageURL, err)
@@ -81,100 +86,54 @@ func RenderPage(pageURL string) (string, error) {
 	return text, nil
 }
 
-// StartIfEnabled starts the pinchtab subprocess if PINCHTAB_ENABLED is true.
-// This function is safe to call multiple times; only the first call takes effect.
-func StartIfEnabled() {
-	if !config.Opts.PinchTabEnabled() {
-		return
-	}
-
-	once.Do(func() {
-		instance = &subprocess{}
-		if err := instance.start(); err != nil {
-			slog.Error("pinchtab: failed to start subprocess", slog.Any("error", err))
-			instance = nil
-		}
-	})
-}
-
-// Stop gracefully stops the pinchtab subprocess.
-func Stop() {
-	if instance == nil {
-		return
-	}
-	instance.stop()
-}
-
-func (s *subprocess) start() error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
+func startSubprocess(port int, proxyURL string, feedID int64) (*exec.Cmd, error) {
 	binaryPath := config.Opts.PinchTabBinaryPath()
-	s.cmd = exec.Command(binaryPath)
-	// Inherit the current environment and force full stealth mode to maximize
-	// bot-detection bypass when fetching pages via the headless browser.
-	s.cmd.Env = append(os.Environ(), "BRIDGE_STEALTH=full")
-	s.cmd.Stdout = os.Stdout
-	s.cmd.Stderr = os.Stderr
+	cmd := exec.Command(binaryPath)
 
-	slog.Info("pinchtab: starting subprocess", slog.String("binary", binaryPath))
+	profileName := fmt.Sprintf("miniflux-feed-%d", feedID)
+	env := append(os.Environ(),
+		"BRIDGE_STEALTH=full",
+		"BRIDGE_PORT="+strconv.Itoa(port),
+		"BRIDGE_NO_DASHBOARD=true",
+		"BRIDGE_PROFILE="+profileName,
+	)
+	if proxyURL != "" {
+		env = append(env, "CHROME_FLAGS=--proxy-server="+proxyURL)
+	}
+	cmd.Env = env
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
-	if err := s.cmd.Start(); err != nil {
-		return fmt.Errorf("pinchtab: failed to start %q: %w", binaryPath, err)
+	slog.Debug("pinchtab: starting ephemeral subprocess",
+		slog.String("binary", binaryPath),
+		slog.Int("port", port),
+		slog.String("proxy_url", proxyURL),
+	)
+
+	if err := cmd.Start(); err != nil {
+		return nil, fmt.Errorf("failed to start %q: %w", binaryPath, err)
 	}
 
-	s.running = true
-
-	// Monitor the subprocess in a goroutine to detect unexpected exits.
-	go func() {
-		if err := s.cmd.Wait(); err != nil {
-			slog.Error("pinchtab: subprocess exited with error", slog.Any("error", err))
-		} else {
-			slog.Info("pinchtab: subprocess exited normally")
-		}
-		s.mu.Lock()
-		s.running = false
-		s.mu.Unlock()
-	}()
-
-	// Wait for pinchtab to be ready by polling the health endpoint.
-	if err := s.waitForReady(); err != nil {
-		s.stop()
-		return err
-	}
-
-	slog.Info("pinchtab: subprocess is ready")
-	return nil
+	return cmd, nil
 }
 
-func (s *subprocess) stop() {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	if !s.running || s.cmd == nil || s.cmd.Process == nil {
+func killSubprocess(cmd *exec.Cmd) {
+	if cmd == nil || cmd.Process == nil {
 		return
 	}
-
-	slog.Info("pinchtab: stopping subprocess")
-
-	if err := s.cmd.Process.Signal(os.Interrupt); err != nil {
-		slog.Warn("pinchtab: failed to send interrupt, killing process", slog.Any("error", err))
-		_ = s.cmd.Process.Kill()
+	if err := cmd.Process.Kill(); err != nil && !isProcessDone(err) {
+		slog.Warn("pinchtab: failed to kill subprocess", slog.Any("error", err))
 	}
-
-	s.running = false
+	// Reap zombie process.
+	_ = cmd.Wait()
 }
 
-func (s *subprocess) isRunning() bool {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.running
+func isProcessDone(err error) bool {
+	return err != nil && err.Error() == os.ErrProcessDone.Error()
 }
 
-// waitForReady polls the pinchtab health endpoint until it responds or
-// the maximum wait time is exceeded.
-func (s *subprocess) waitForReady() error {
-	healthURL := config.Opts.PinchTabURL() + "/api/health"
+func waitForReady(baseURL string) error {
+	healthURL := baseURL + "/api/health"
 	client := &http.Client{Timeout: 2 * time.Second}
 	deadline := time.Now().Add(healthCheckMaxWait)
 
@@ -189,7 +148,17 @@ func (s *subprocess) waitForReady() error {
 		time.Sleep(healthCheckInterval)
 	}
 
-	return fmt.Errorf("pinchtab: health check timed out after %s", healthCheckMaxWait)
+	return fmt.Errorf("health check timed out after %s", healthCheckMaxWait)
+}
+
+func findFreePort() (int, error) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		return 0, fmt.Errorf("unable to find free port: %w", err)
+	}
+	port := listener.Addr().(*net.TCPAddr).Port
+	listener.Close()
+	return port, nil
 }
 
 func createInstance(client *http.Client, baseURL string) (string, error) {

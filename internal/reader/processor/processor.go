@@ -114,7 +114,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 					slog.String("entry_url", entry.URL),
 					slog.Int64("feed_id", feed.ID),
 				)
-				renderedContent, renderErr := pinchtab.RenderPage(entry.URL)
+				renderedContent, renderErr := pinchtab.RenderPage(entry.URL, resolveProxyURLForPinchtab(feed), feed.ID)
 				if renderErr != nil {
 					slog.Warn("Unable to render entry with pinchtab",
 						slog.Int64("user_id", user.ID),
@@ -227,7 +227,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 			slog.String("entry_url", entry.URL),
 			slog.Int64("feed_id", feed.ID),
 		)
-		renderedContent, renderErr := pinchtab.RenderPage(entry.URL)
+		renderedContent, renderErr := pinchtab.RenderPage(entry.URL, resolveProxyURLForPinchtab(feed), feed.ID)
 		if renderErr != nil {
 			slog.Warn("Unable to render entry with pinchtab",
 				slog.String("entry_url", entry.URL),
@@ -271,4 +271,24 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	entry.Content = sanitizer.SanitizeHTML(webpageBaseURL, entry.Content, &sanitizer.SanitizerOptions{OpenLinksInNewTab: user.OpenExternalLinksInNewTab})
 
 	return nil
+}
+
+// resolveProxyURLForPinchtab determines the proxy URL to use when rendering a
+// page via pinchtab's headless Chrome. The priority matches the fetcher's
+// RequestBuilder logic (request_builder.go):
+//   - feed-level proxy_url (highest)
+//   - application-level HTTP_CLIENT_PROXY (when FetchViaProxy is enabled)
+//   - proxy rotator pool
+//   - no proxy (empty string)
+func resolveProxyURLForPinchtab(feed *model.Feed) string {
+	switch {
+	case feed.ProxyURL != "":
+		return feed.ProxyURL
+	case feed.FetchViaProxy && config.Opts.HasHTTPClientProxyURLConfigured():
+		return config.Opts.HTTPClientProxyURL().String()
+	case proxyrotator.ProxyRotatorInstance != nil && proxyrotator.ProxyRotatorInstance.HasProxies():
+		return proxyrotator.ProxyRotatorInstance.GetNextProxy().String()
+	default:
+		return ""
+	}
 }
