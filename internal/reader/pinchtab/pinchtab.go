@@ -111,6 +111,9 @@ func (s *subprocess) start() error {
 
 	binaryPath := config.Opts.PinchTabBinaryPath()
 	s.cmd = exec.Command(binaryPath)
+	// Inherit the current environment and force full stealth mode to maximize
+	// bot-detection bypass when fetching pages via the headless browser.
+	s.cmd.Env = append(os.Environ(), "BRIDGE_STEALTH=full")
 	s.cmd.Stdout = os.Stdout
 	s.cmd.Stderr = os.Stderr
 
