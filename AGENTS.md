@@ -23,7 +23,7 @@
 
 ## CI/CD
 - `test.yml`: push main/tags + PR → go vet + build + unit test + integration test (PostgreSQL 17)
-- `release.yml`: Test 通过 + tag `2.*` → per-arch native runner Docker 构建 (amd64/arm64) → merge manifest → GitHub Release
+- `release.yml`: Test 通过 + tag `v*` → per-arch native runner Docker 构建 (amd64/arm64) → merge manifest → GitHub Release
 - 镜像推送到 `ghcr.io/naiba-forks/miniflux`
 
 ## 关键约定
