@@ -21,6 +21,10 @@ const (
 
 var htmlTagRegexp = regexp.MustCompile("<[^>]*>")
 
+// thinkingTagRegexp matches <think>...</think> blocks that some AI models (e.g. DeepSeek, QWen) include
+// in their responses. These contain internal reasoning that must be stripped before using the content.
+var thinkingTagRegexp = regexp.MustCompile(`(?s)<think>.*?</think>`)
+
 // Client communicates with an OpenAI-compatible chat completions API.
 type Client struct {
 	providerURL string // e.g. "https://api.openai.com/v1"
@@ -157,7 +161,7 @@ func (c *Client) callSummarize(title, content, language string) (*SummarizeResul
 		return nil, fmt.Errorf("ai: response contains no choices")
 	}
 
-	messageContent := strings.TrimSpace(completionResp.Choices[0].Message.Content)
+	messageContent := stripThinkingContent(strings.TrimSpace(completionResp.Choices[0].Message.Content))
 	if messageContent == "" {
 		return nil, fmt.Errorf("ai: response message content is empty")
 	}
@@ -266,7 +270,7 @@ func (c *Client) GeneratePageSummary(combinedSummaries, language string) (string
 		return "", fmt.Errorf("ai: response contains no choices")
 	}
 
-	messageContent := strings.TrimSpace(completionResp.Choices[0].Message.Content)
+	messageContent := stripThinkingContent(strings.TrimSpace(completionResp.Choices[0].Message.Content))
 	if messageContent == "" {
 		return "", fmt.Errorf("ai: response message content is empty")
 	}
@@ -281,6 +285,13 @@ func stripHTMLTags(s string) string {
 	// Collapse multiple whitespace into single space.
 	spaceRegexp := regexp.MustCompile(`\s+`)
 	return strings.TrimSpace(spaceRegexp.ReplaceAllString(cleaned, " "))
+}
+
+// stripThinkingContent removes <think>...</think> blocks from AI model responses.
+// Some models (e.g. DeepSeek, QWen) include internal chain-of-thought reasoning in their output.
+// This reasoning must be stripped to avoid leaking raw thinking content into user-visible summaries.
+func stripThinkingContent(s string) string {
+	return strings.TrimSpace(thinkingTagRegexp.ReplaceAllString(s, ""))
 }
 
 // truncateContent limits content to maxLen characters to control token usage.
