@@ -236,7 +236,7 @@ func (c *Client) GeneratePageSummary(combinedSummaries, language string) (string
 	request.Header.Set("Authorization", "Bearer "+c.apiKey)
 
 	httpClient := &http.Client{
-		Timeout: defaultClientTimeout * 2, // Page summaries can be longer, allow more time.
+		Timeout: defaultClientTimeout * 4,
 		Transport: &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
 		},

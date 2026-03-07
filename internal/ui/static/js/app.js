@@ -1241,32 +1241,51 @@ function initializeAIDigestPageSummary() {
     const summaryText = document.getElementById("ai-page-summary-text");
 
     generateBtn.addEventListener("click", () => {
-        // Collect all entry IDs on the current page.
         const items = document.querySelectorAll("article.entry-item[data-id]");
         if (items.length === 0) return;
 
         const entryIDs = Array.from(items).map(el => parseInt(el.dataset.id, 10));
-
-        // Set button to loading state.
         const defaultLabel = generateBtn.dataset.labelDefault;
         const loadingLabel = generateBtn.dataset.labelLoading;
         generateBtn.textContent = loadingLabel;
         generateBtn.disabled = true;
 
-        const url = document.body.dataset.aiPageSummaryUrl;
-        sendPOSTRequest(url, { entry_ids: entryIDs }).then(resp => {
+        const submitUrl = document.body.dataset.aiPageSummaryUrl;
+        const statusUrl = document.body.dataset.aiPageSummaryStatusUrl;
+
+        sendPOSTRequest(submitUrl, { entry_ids: entryIDs }).then(resp => {
             if (!resp.ok) {
                 generateBtn.textContent = defaultLabel;
                 generateBtn.disabled = false;
                 return;
             }
-            return resp.json();
-        }).then(data => {
-            if (!data) return;
-            summaryText.textContent = data.summary;
-            summaryContent.style.display = "block";
-            generateBtn.textContent = defaultLabel;
-            generateBtn.disabled = false;
+            // Poll for result every 2 seconds.
+            const pollInterval = setInterval(() => {
+                fetch(statusUrl, {
+                    headers: { "X-Csrf-Token": document.body.dataset.csrfToken || "" }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === "done") {
+                        clearInterval(pollInterval);
+                        summaryText.textContent = data.summary;
+                        summaryContent.style.display = "block";
+                        generateBtn.textContent = defaultLabel;
+                        generateBtn.disabled = false;
+                    } else if (data.status === "error") {
+                        clearInterval(pollInterval);
+                        summaryText.textContent = data.error;
+                        summaryContent.style.display = "block";
+                        generateBtn.textContent = defaultLabel;
+                        generateBtn.disabled = false;
+                    }
+                })
+                .catch(() => {
+                    clearInterval(pollInterval);
+                    generateBtn.textContent = defaultLabel;
+                    generateBtn.disabled = false;
+                });
+            }, 2000);
         });
     });
 }

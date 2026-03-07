@@ -53,6 +53,7 @@
     {{ end }}
     {{ if .showAIDigest }}
     data-ai-page-summary-url="{{ route "aiPageSummary" }}"
+    data-ai-page-summary-status-url="{{ route "aiPageSummaryStatus" }}"
     data-ai-backfill-status-url="{{ route "aiBackfillStatus" }}"
     data-ai-stop-backfill-url="{{ route "aiStopBackfill" }}"
     {{ end }}
@@ -93,7 +94,7 @@
                 </li>
                 {{ if .showAIDigest }}
                 <li {{ if eq .menu "ai-digest" }}class="active"{{ end }}>
-                    <a href="{{ route "aiDigest" }}" data-page="ai-digest">{{ icon "star" }}{{ t "menu.ai_digest" }}
+                    <a href="{{ route "aiDigest" }}" data-page="ai-digest">{{ icon "brain" }}{{ t "menu.ai_digest" }}
                         {{ if gt .countAIDigest 0 }}
                         <span class="ai-digest-counter-wrapper" aria-hidden="true">(<span class="ai-digest-counter">{{ .countAIDigest }}</span>)</span>
                         {{ end }}

@@ -7,6 +7,7 @@ import (
 	json_parser "encoding/json"
 	"errors"
 	"net/http"
+	"sync"
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
@@ -89,13 +90,24 @@ func (h *handler) aiStopBackfill(w http.ResponseWriter, r *http.Request) {
 	json.NoContent(w, r)
 }
 
+// pageSummaryResult stores the async result of a page summary generation task.
+type pageSummaryResult struct {
+	Status  string `json:"status"`            // "running", "done", "error"
+	Summary string `json:"summary,omitempty"` // The generated digest text.
+	Error   string `json:"error,omitempty"`   // Error message if generation failed.
+}
+
+// activePageSummaries stores in-progress and completed page summary results per user.
+// Each user can only have one page summary task at a time.
+var activePageSummaries sync.Map
+
 // aiPageSummaryRequest holds entry IDs for generating a combined page summary.
 type aiPageSummaryRequest struct {
 	EntryIDs []int64 `json:"entry_ids"`
 }
 
-// aiPageSummary generates a combined digest summary from a list of entry IDs.
-// It collects individual AI summaries and sends them to the AI provider for a combined digest.
+// aiPageSummary starts an async page summary generation task.
+// Returns 202 Accepted immediately; the client polls aiPageSummaryStatus for the result.
 func (h *handler) aiPageSummary(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 
@@ -147,26 +159,56 @@ func (h *handler) aiPageSummary(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Build a combined input and send to AI for a digest summary.
-	client := ai.NewClient(
-		userIntegrations.AIProviderURL,
-		userIntegrations.AIAPIKey,
-		userIntegrations.AIModel,
-	)
-
 	combinedInput := ""
 	for _, part := range summaryParts {
 		combinedInput += part + "\n\n"
 	}
 
-	result, err := client.GeneratePageSummary(combinedInput, user.Language)
-	if err != nil {
-		json.ServerError(w, r, err)
+	// Mark as running and launch async generation.
+	activePageSummaries.Store(userID, &pageSummaryResult{Status: "running"})
+
+	go func() {
+		client := ai.NewClient(
+			userIntegrations.AIProviderURL,
+			userIntegrations.AIAPIKey,
+			userIntegrations.AIModel,
+		)
+
+		result, err := client.GeneratePageSummary(combinedInput, user.Language)
+		if err != nil {
+			activePageSummaries.Store(userID, &pageSummaryResult{
+				Status: "error",
+				Error:  err.Error(),
+			})
+			return
+		}
+
+		activePageSummaries.Store(userID, &pageSummaryResult{
+			Status:  "done",
+			Summary: result,
+		})
+	}()
+
+	json.Accepted(w, r)
+}
+
+// aiPageSummaryStatus returns the current status of the async page summary task.
+// JS polls this endpoint until status is "done" or "error".
+func (h *handler) aiPageSummaryStatus(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+
+	val, ok := activePageSummaries.Load(userID)
+	if !ok {
+		json.OK(w, r, &pageSummaryResult{Status: "idle"})
 		return
 	}
 
-	json.OK(w, r, map[string]interface{}{
-		"summary":   result,
-		"entry_ids": req.EntryIDs,
-	})
+	result := val.(*pageSummaryResult)
+	json.OK(w, r, result)
+
+	// Clean up completed/failed results after client retrieves them.
+	// This avoids stale results showing up on future page loads.
+	if result.Status == "done" || result.Status == "error" {
+		activePageSummaries.Delete(userID)
+	}
 }
