@@ -51,6 +51,11 @@
     data-webauthn-login-finish-url="{{ route "webauthnLoginFinish" }}"
     data-webauthn-delete-all-url="{{ route "webauthnDeleteAll" }}"
     {{ end }}
+    {{ if .showAIDigest }}
+    data-ai-page-summary-url="{{ route "aiPageSummary" }}"
+    data-ai-backfill-status-url="{{ route "aiBackfillStatus" }}"
+    data-ai-stop-backfill-url="{{ route "aiStopBackfill" }}"
+    {{ end }}
     {{ if .user }}
         {{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}
         data-mark-as-read-on-view="{{ if .user.MarkReadOnView }}true{{ else }}false{{ end }}"
@@ -86,9 +91,15 @@
                 <li {{ if eq .menu "history" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g h" }}">
                     <a href="{{ route "history" }}" data-page="history">{{ icon "history" }}{{ t "menu.history" }}</a>
                 </li>
+                {{ if .showAIDigest }}
                 <li {{ if eq .menu "ai-digest" }}class="active"{{ end }}>
-                    <a href="{{ route "aiDigest" }}" data-page="ai-digest">{{ icon "star" }}{{ t "menu.ai_digest" }}</a>
+                    <a href="{{ route "aiDigest" }}" data-page="ai-digest">{{ icon "star" }}{{ t "menu.ai_digest" }}
+                        {{ if gt .countAIDigest 0 }}
+                        <span class="ai-digest-counter-wrapper" aria-hidden="true">(<span class="ai-digest-counter">{{ .countAIDigest }}</span>)</span>
+                        {{ end }}
+                    </a>
                 </li>
+                {{ end }}
                 <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g f" }}">
                     <a href="{{ route "feeds" }}" data-page="feeds">{{ icon "feeds" }}{{ t "menu.feeds" }}
                       {{ if gt .countErrorFeeds 0 }}

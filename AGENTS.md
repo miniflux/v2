@@ -6,7 +6,14 @@
 - OpenAI-compatible API，用户级配置（integrations 表）
 - 去重：仅对新 entry 调用，已有 `ai_summary` 的跳过
 - DB: migration #73, entries 表 `ai_summary/ai_score/ai_summarized_at`, integrations 表 `ai_enabled/ai_provider_url/ai_api_key/ai_model`
-- UI: entry 详情页摘要折叠、列表页评分 badge、`/ai-digest` 页面
+- UI: entry 详情页摘要折叠、列表页评分 badge、`/ai-digest` 分页页面
+- 导航栏仅在 AI 启用时显示 AI Digest 菜单 + 未读计数（`showAIDigest`/`countAIDigest` 在 50+ handler 中设置）
+- AI Digest 页面顶部：一键生成本页整体总结 → 一键标记已读（`GeneratePageSummary` + JS fetch）
+- 语言感知：`buildSystemPrompt(language)` 根据 `user.Language` 生成对应语言摘要
+- 回填：`BackfillAISummaries` + `ForceBackfillAISummaries`，batch 50，`maxConsecutiveErrors=3`
+- 回填可停止：`StopBackfill()` 通过 `backfillStopSignals` sync.Map 通知 goroutine 退出
+- 回填按钮状态同步：`GET /ai-backfill-status` + JS 轮询 3s + 终止按钮
+- `storage/entry.go`: `IsAIEnabled()` 直查 integrations 表，`CountUnreadAIDigestEntries()` 用于导航计数
 
 ### 2. Web Scraper 引擎 (`internal/reader/webscraper/`)
 - 替代 RSS 解析：CSS 选择器 (goquery) + JSON gjson 路径提取
@@ -30,3 +37,4 @@
 - 参数编号：`storage/feed.go` UpdateFeed 用到 $1-$49, CreateFeed 用到 $1-$39
 - 参数编号：`storage/integration.go` UpdateIntegration AI 字段在 $122-$126
 - gjson 依赖：`github.com/tidwall/gjson`（新增，goquery 是上游已有）
+- 导航栏 AI 数据：所有 50+ UI handler 必须设置 `showAIDigest` 和 `countAIDigest`（sed 批量添加，后新增 handler 需手动加）

@@ -45,6 +45,8 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+	view.Set("showAIDigest", h.store.IsAIEnabled(user.ID))
+	view.Set("countAIDigest", h.store.CountUnreadAIDigestEntries(user.ID))
 
 	categoryRequest := &model.CategoryModificationRequest{
 		Title:        new(categoryForm.Title),

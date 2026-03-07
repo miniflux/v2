@@ -62,6 +62,37 @@ func (s *Storage) CountUnreadEntries(userID int64) int {
 	return n
 }
 
+// CountUnreadAIDigestEntries returns the number of unread entries that have AI summaries (score >= 1).
+// Used for the AI Digest navigation counter.
+func (s *Storage) CountUnreadAIDigestEntries(userID int64) int {
+	builder := s.NewEntryQueryBuilder(userID)
+	builder.WithStatus(model.EntryStatusUnread)
+	builder.WithMinAIScore(1)
+
+	n, err := builder.CountEntries()
+	if err != nil {
+		slog.Error("Unable to count unread AI digest entries",
+			slog.Int64("user_id", userID),
+			slog.Any("error", err),
+		)
+		return 0
+	}
+
+	return n
+}
+
+// IsAIEnabled checks whether the user has AI summarization configured and enabled.
+// This avoids loading the full Integration struct just to check a boolean.
+func (s *Storage) IsAIEnabled(userID int64) bool {
+	var enabled bool
+	query := `SELECT ai_enabled FROM integrations WHERE user_id = $1`
+	err := s.db.QueryRow(query, userID).Scan(&enabled)
+	if err != nil {
+		return false
+	}
+	return enabled
+}
+
 // NewEntryQueryBuilder returns a new EntryQueryBuilder
 func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 	return NewEntryQueryBuilder(s, userID)

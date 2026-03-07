@@ -179,6 +179,101 @@ func (c *Client) callSummarize(title, content, language string) (*SummarizeResul
 	return &result, nil
 }
 
+// buildPageSummaryPrompt constructs the system prompt for generating a combined digest summary.
+func buildPageSummaryPrompt(language string) string {
+	langName := "the same language as the articles"
+	switch {
+	case strings.HasPrefix(language, "zh"):
+		langName = "Simplified Chinese (中文)"
+	case strings.HasPrefix(language, "ja"):
+		langName = "Japanese"
+	case strings.HasPrefix(language, "ko"):
+		langName = "Korean"
+	case strings.HasPrefix(language, "de"):
+		langName = "German"
+	case strings.HasPrefix(language, "fr"):
+		langName = "French"
+	case strings.HasPrefix(language, "es"):
+		langName = "Spanish"
+	case strings.HasPrefix(language, "pt"):
+		langName = "Portuguese"
+	case strings.HasPrefix(language, "ru"):
+		langName = "Russian"
+	case strings.HasPrefix(language, "ar"):
+		langName = "Arabic"
+	case strings.HasPrefix(language, "en"):
+		langName = "English"
+	}
+
+	return "You are a news digest writer. Given a list of article summaries, produce a cohesive overall digest in " + langName + ".\n" +
+		"Group related topics together. Highlight the most important items. Keep it concise (3-5 paragraphs).\n" +
+		"Respond with the digest text only, no JSON wrapper."
+}
+
+// GeneratePageSummary takes concatenated article summaries and produces a combined digest.
+func (c *Client) GeneratePageSummary(combinedSummaries, language string) (string, error) {
+	requestPayload := chatCompletionRequest{
+		Model: c.model,
+		Messages: []chatMessage{
+			{Role: "system", Content: buildPageSummaryPrompt(language)},
+			{Role: "user", Content: truncateContent(combinedSummaries, maxContentLength*2)},
+		},
+		Temperature: 0.3,
+	}
+
+	requestBody, err := json.Marshal(requestPayload)
+	if err != nil {
+		return "", fmt.Errorf("ai: unable to encode request body: %v", err)
+	}
+
+	apiEndpoint := strings.TrimRight(c.providerURL, "/") + "/chat/completions"
+	request, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBody))
+	if err != nil {
+		return "", fmt.Errorf("ai: unable to create request: %v", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer "+c.apiKey)
+
+	httpClient := &http.Client{
+		Timeout: defaultClientTimeout * 2, // Page summaries can be longer, allow more time.
+		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+		},
+	}
+
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return "", fmt.Errorf("ai: unable to send request: %v", err)
+	}
+	defer response.Body.Close()
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return "", fmt.Errorf("ai: unable to read response body: %v", err)
+	}
+
+	if response.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("ai: provider returned status %d: %s", response.StatusCode, truncateContent(string(responseBody), 512))
+	}
+
+	var completionResp chatCompletionResponse
+	if err := json.Unmarshal(responseBody, &completionResp); err != nil {
+		return "", fmt.Errorf("ai: unable to parse response JSON: %v", err)
+	}
+
+	if len(completionResp.Choices) == 0 {
+		return "", fmt.Errorf("ai: response contains no choices")
+	}
+
+	messageContent := strings.TrimSpace(completionResp.Choices[0].Message.Content)
+	if messageContent == "" {
+		return "", fmt.Errorf("ai: response message content is empty")
+	}
+
+	return messageContent, nil
+}
+
 // stripHTMLTags removes HTML tags from content for AI consumption.
 // This is a simple approach — not a full sanitizer, just for truncation purposes.
 func stripHTMLTags(s string) string {

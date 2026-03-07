@@ -29,6 +29,31 @@
 {{ if not .entries }}
     <p role="alert" class="alert alert-info">{{ t "alert.no_ai_digest_entry" }}</p>
 {{ else }}
+    <!-- AI page summary area: generate a combined summary of all entries on this page -->
+    <div class="ai-page-summary-section" id="ai-page-summary-section">
+        <div class="ai-page-summary-actions">
+            <button
+                class="button button-primary"
+                id="ai-generate-page-summary"
+                data-ai-digest-url="{{ route "aiDigest" }}"
+                data-label-loading="{{ t "page.ai_digest.generating_summary" }}"
+                data-label-default="{{ t "page.ai_digest.generate_summary" }}"
+            >{{ t "page.ai_digest.generate_summary" }}</button>
+            <button
+                class="button button-primary"
+                id="ai-mark-summarized-read"
+                style="display:none"
+                data-label-loading="{{ t "confirm.loading" }}"
+            >{{ t "page.ai_digest.mark_summarized_read" }}</button>
+        </div>
+        <div class="ai-page-summary-content" id="ai-page-summary-content" style="display:none">
+            <div class="ai-page-summary-text" id="ai-page-summary-text"></div>
+        </div>
+    </div>
+
+    <div class="pagination-top">
+        {{ template "pagination" .pagination -}}
+    </div>
     <div class="items hide-read-items">
         {{ range .entries }}
         <article
@@ -61,6 +86,27 @@
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
         </article>
         {{ end }}
+    </div>
+    <section class="page-footer">
+        {{ if .entries }}
+        <ul>
+            <li>
+                <button
+                    class="page-button"
+                    data-action="markPageAsRead"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}"
+                >
+                    {{ icon "mark-page-as-read" }}{{ t "page.ai_digest.mark_all_read" }}
+                </button>
+            </li>
+        </ul>
+        {{ end }}
+    </section>
+    <div class="pagination-bottom">
+        {{ template "pagination" .pagination }}
     </div>
 {{ end }}
 

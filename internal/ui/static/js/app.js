@@ -1227,6 +1227,144 @@ function initializeTouchHandler() {
     }
 }
 
+
+/**
+ * Initialize AI Digest page summary functionality.
+ * Handles the "Generate Page Summary" button and "Mark Summarized as Read" button.
+ */
+function initializeAIDigestPageSummary() {
+    const generateBtn = document.getElementById("ai-generate-page-summary");
+    if (!generateBtn) return;
+
+    const summaryContent = document.getElementById("ai-page-summary-content");
+    const summaryText = document.getElementById("ai-page-summary-text");
+    const markReadBtn = document.getElementById("ai-mark-summarized-read");
+
+    generateBtn.addEventListener("click", () => {
+        // Collect all entry IDs on the current page.
+        const items = document.querySelectorAll("article.entry-item[data-id]");
+        if (items.length === 0) return;
+
+        const entryIDs = Array.from(items).map(el => parseInt(el.dataset.id, 10));
+
+        // Set button to loading state.
+        const defaultLabel = generateBtn.dataset.labelDefault;
+        const loadingLabel = generateBtn.dataset.labelLoading;
+        generateBtn.textContent = loadingLabel;
+        generateBtn.disabled = true;
+
+        const url = document.body.dataset.aiPageSummaryUrl;
+        sendPOSTRequest(url, { entry_ids: entryIDs }).then(resp => {
+            if (!resp.ok) {
+                generateBtn.textContent = defaultLabel;
+                generateBtn.disabled = false;
+                return;
+            }
+            return resp.json();
+        }).then(data => {
+            if (!data) return;
+            summaryText.textContent = data.summary;
+            summaryContent.style.display = "block";
+            markReadBtn.style.display = "inline-block";
+            generateBtn.textContent = defaultLabel;
+            generateBtn.disabled = false;
+
+            // Store entry IDs for mark-as-read.
+            markReadBtn.dataset.entryIds = JSON.stringify(data.entry_ids);
+        });
+    });
+
+    markReadBtn.addEventListener("click", () => {
+        const entryIDs = JSON.parse(markReadBtn.dataset.entryIds || "[]");
+        if (entryIDs.length === 0) return;
+
+        markReadBtn.disabled = true;
+        markReadBtn.textContent = markReadBtn.dataset.labelLoading;
+
+        updateEntriesStatus(entryIDs, "read", () => {
+            window.location.reload();
+        });
+    });
+}
+
+/**
+ * Initialize backfill status polling and stop button on the integrations page.
+ * Polls the backfill status endpoint and updates button states accordingly.
+ */
+function initializeBackfillStatusPolling() {
+    const backfillBtn = document.querySelector("a[href*='ai-backfill']");
+    const forceBackfillBtn = document.querySelector("a[href*='ai-force-backfill']");
+    const stopBtn = document.getElementById("ai-stop-backfill");
+    const statusUrl = document.body.dataset.aiBackfillStatusUrl;
+    const stopUrl = document.body.dataset.aiStopBackfillUrl;
+
+    if (!statusUrl) return;
+
+    let pollingInterval = null;
+
+    function setButtonsLoading(loading) {
+        if (backfillBtn) {
+            if (loading) {
+                backfillBtn.textContent = backfillBtn.dataset.labelLoading || "Backfilling...";
+                backfillBtn.style.pointerEvents = "none";
+                backfillBtn.classList.add("disabled");
+            } else {
+                backfillBtn.textContent = backfillBtn.dataset.labelDefault || backfillBtn.textContent;
+                backfillBtn.style.pointerEvents = "";
+                backfillBtn.classList.remove("disabled");
+            }
+        }
+        if (forceBackfillBtn) {
+            if (loading) {
+                forceBackfillBtn.textContent = forceBackfillBtn.dataset.labelLoading || "Regenerating...";
+                forceBackfillBtn.style.pointerEvents = "none";
+                forceBackfillBtn.classList.add("disabled");
+            } else {
+                forceBackfillBtn.textContent = forceBackfillBtn.dataset.labelDefault || forceBackfillBtn.textContent;
+                forceBackfillBtn.style.pointerEvents = "";
+                forceBackfillBtn.classList.remove("disabled");
+            }
+        }
+        if (stopBtn) {
+            stopBtn.style.display = loading ? "inline-block" : "none";
+        }
+    }
+
+    function checkStatus() {
+        fetch(statusUrl, {
+            headers: { "X-Csrf-Token": document.body.dataset.csrfToken || "" }
+        })
+        .then(resp => resp.json())
+        .then(data => {
+            setButtonsLoading(data.running);
+            // Stop polling if backfill finished.
+            if (!data.running && pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+        })
+        .catch(() => {});
+    }
+
+    if (stopBtn) {
+        stopBtn.addEventListener("click", () => {
+            sendPOSTRequest(stopUrl).then(() => {
+                setButtonsLoading(false);
+                if (pollingInterval) {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                }
+            });
+        });
+    }
+
+    // Initial check.
+    checkStatus();
+    // Poll every 3 seconds while backfill might be running.
+    pollingInterval = setInterval(() => {
+        checkStatus();
+    }, 3000);
+}
 /**
  * Initialize click handlers for various UI elements.
  */
@@ -1276,6 +1414,8 @@ initializeKeyboardShortcuts();
 initializeTouchHandler();
 initializeClickHandlers();
 initializeServiceWorker();
+initializeAIDigestPageSummary();
+initializeBackfillStatusPolling();
 
 // Reload the page if it was restored from the back-forward cache and mark entries as read is enabled.
 window.addEventListener("pageshow", (event) => {

@@ -775,10 +775,25 @@ func SummarizeEntries(store *storage.Storage, entries model.Entries, userIntegra
 // activeBackfills tracks which users have a backfill goroutine running to prevent duplicate execution.
 var activeBackfills sync.Map
 
+// backfillStopSignals tracks stop requests for backfill goroutines.
+// When a user requests to stop, we store true here; the goroutine checks and exits.
+var backfillStopSignals sync.Map
+
 // IsBackfillRunning returns true if a backfill is already in progress for this user.
 func IsBackfillRunning(userID int64) bool {
 	_, running := activeBackfills.Load(userID)
 	return running
+}
+
+// StopBackfill signals a running backfill goroutine to stop for this user.
+func StopBackfill(userID int64) {
+	backfillStopSignals.Store(userID, true)
+}
+
+// isBackfillStopped checks and clears the stop signal for a user.
+func isBackfillStopped(userID int64) bool {
+	_, stopped := backfillStopSignals.LoadAndDelete(userID)
+	return stopped
 }
 
 // BackfillAISummaries scans entries without AI summaries and generates them in the background.
@@ -806,6 +821,14 @@ func BackfillAISummaries(store *storage.Storage, userID int64, userIntegrations 
 	consecutiveErrors := 0
 
 	for {
+		// Check if a stop signal has been received.
+		if isBackfillStopped(userID) {
+			slog.Info("AI backfill: stopped by user request",
+				slog.Int64("user_id", userID),
+				slog.Int("total_processed", totalProcessed),
+			)
+			return
+		}
 		// Re-read integration config to pick up any key/URL changes made during backfill.
 		freshIntegrations, err := store.Integration(userID)
 		if err != nil {
@@ -920,6 +943,14 @@ func ForceBackfillAISummaries(store *storage.Storage, userID int64, userIntegrat
 	consecutiveErrors := 0
 
 	for {
+		// Check if a stop signal has been received.
+		if isBackfillStopped(userID) {
+			slog.Info("AI force-backfill: stopped by user request",
+				slog.Int64("user_id", userID),
+				slog.Int("total_processed", totalProcessed),
+			)
+			return
+		}
 		freshIntegrations, err := store.Integration(userID)
 		if err != nil {
 			slog.Error("AI force-backfill: failed to reload integration config",

@@ -34,10 +34,11 @@
             <div class="buttons">
                 <a href="{{ route "aiBackfill" }}" class="button button-primary"
                     data-label-loading="{{ t "form.integration.ai_backfill_loading" }}"
-                    onclick="this.textContent='{{ t "form.integration.ai_backfill_loading" }}'; this.style.pointerEvents='none'">{{ t "form.integration.ai_backfill" }}</a>
+                    data-label-default="{{ t "form.integration.ai_backfill" }}">{{ t "form.integration.ai_backfill" }}</a>
                 <a href="{{ route "aiForceBackfill" }}" class="button button-primary"
                     data-label-loading="{{ t "form.integration.ai_force_backfill_loading" }}"
-                    onclick="this.textContent='{{ t "form.integration.ai_force_backfill_loading" }}'; this.style.pointerEvents='none'">{{ t "form.integration.ai_force_backfill" }}</a>
+                    data-label-default="{{ t "form.integration.ai_force_backfill" }}">{{ t "form.integration.ai_force_backfill" }}</a>
+                <button type="button" class="button button-primary" id="ai-stop-backfill" style="display:none">{{ t "form.integration.ai_stop_backfill" }}</button>
             </div>
             {{ end }}
         </div>
