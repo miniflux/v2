@@ -1230,7 +1230,8 @@ function initializeTouchHandler() {
 
 /**
  * Initialize AI Digest page summary functionality.
- * Handles the "Generate Page Summary" button and "Mark Summarized as Read" button.
+ * Collects all entry IDs on the page, sends them to the backend to generate
+ * a combined digest from their existing AI summaries, and displays the result.
  */
 function initializeAIDigestPageSummary() {
     const generateBtn = document.getElementById("ai-generate-page-summary");
@@ -1238,7 +1239,6 @@ function initializeAIDigestPageSummary() {
 
     const summaryContent = document.getElementById("ai-page-summary-content");
     const summaryText = document.getElementById("ai-page-summary-text");
-    const markReadBtn = document.getElementById("ai-mark-summarized-read");
 
     generateBtn.addEventListener("click", () => {
         // Collect all entry IDs on the current page.
@@ -1265,24 +1265,8 @@ function initializeAIDigestPageSummary() {
             if (!data) return;
             summaryText.textContent = data.summary;
             summaryContent.style.display = "block";
-            markReadBtn.style.display = "inline-block";
             generateBtn.textContent = defaultLabel;
             generateBtn.disabled = false;
-
-            // Store entry IDs for mark-as-read.
-            markReadBtn.dataset.entryIds = JSON.stringify(data.entry_ids);
-        });
-    });
-
-    markReadBtn.addEventListener("click", () => {
-        const entryIDs = JSON.parse(markReadBtn.dataset.entryIds || "[]");
-        if (entryIDs.length === 0) return;
-
-        markReadBtn.disabled = true;
-        markReadBtn.textContent = markReadBtn.dataset.labelLoading;
-
-        updateEntriesStatus(entryIDs, "read", () => {
-            window.location.reload();
         });
     });
 }

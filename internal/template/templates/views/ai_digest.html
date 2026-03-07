@@ -17,7 +17,26 @@
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
-                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-page-as-read" }}{{ t "page.ai_digest.mark_all_read" }}</button>
+                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</button>
+            </li>
+            <li>
+                <button
+                    class="page-button"
+                    data-confirm="true"
+                    data-url="{{ route "markAllAsRead" }}"
+                    data-redirect-url="{{ route "aiDigest" }}"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</button>
+            </li>
+            <li>
+                <button
+                    class="page-button"
+                    id="ai-generate-page-summary"
+                    data-label-loading="{{ t "page.ai_digest.generating_summary" }}"
+                    data-label-default="{{ t "page.ai_digest.generate_summary" }}"
+                >{{ t "page.ai_digest.generate_summary" }}</button>
             </li>
         </ul>
     </nav>
@@ -29,26 +48,9 @@
 {{ if not .entries }}
     <p role="alert" class="alert alert-info">{{ t "alert.no_ai_digest_entry" }}</p>
 {{ else }}
-    <!-- AI page summary area: generate a combined summary of all entries on this page -->
-    <div class="ai-page-summary-section" id="ai-page-summary-section">
-        <div class="ai-page-summary-actions">
-            <button
-                class="button button-primary"
-                id="ai-generate-page-summary"
-                data-ai-digest-url="{{ route "aiDigest" }}"
-                data-label-loading="{{ t "page.ai_digest.generating_summary" }}"
-                data-label-default="{{ t "page.ai_digest.generate_summary" }}"
-            >{{ t "page.ai_digest.generate_summary" }}</button>
-            <button
-                class="button button-primary"
-                id="ai-mark-summarized-read"
-                style="display:none"
-                data-label-loading="{{ t "confirm.loading" }}"
-            >{{ t "page.ai_digest.mark_summarized_read" }}</button>
-        </div>
-        <div class="ai-page-summary-content" id="ai-page-summary-content" style="display:none">
-            <div class="ai-page-summary-text" id="ai-page-summary-text"></div>
-        </div>
+    <!-- AI page summary result area (populated by JS after generation) -->
+    <div class="ai-page-summary-content" id="ai-page-summary-content" style="display:none">
+        <div class="ai-page-summary-text" id="ai-page-summary-text"></div>
     </div>
 
     <div class="pagination-top">
@@ -99,7 +101,7 @@
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
                 >
-                    {{ icon "mark-page-as-read" }}{{ t "page.ai_digest.mark_all_read" }}
+                    {{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}
                 </button>
             </li>
         </ul>
