@@ -226,6 +226,8 @@
     "form.integration.ai_api_key": "API Key",
     "form.integration.ai_backfill": "Backfill AI Summaries",
     "form.integration.ai_backfill_loading": "Backfilling...",
+    "form.integration.ai_force_backfill": "すべての要約を強制再生成",
+    "form.integration.ai_force_backfill_loading": "再生成中...",
     "form.integration.ai_model": "Model",
     "form.integration.ai_provider_url": "OpenAI-compatible API URL",
     "form.integration.apprise_activate": "エントリを Apprise に送信",

@@ -308,12 +308,17 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 				slog.Int64("feed_id", feedID),
 				slog.Any("error", intErr),
 			)
-		} else if userIntegrations != nil && len(newEntries) > 0 {
-			go func() {
-				integration.PushEntries(originalFeed, newEntries, userIntegrations)
-				integration.SummarizeEntries(store, newEntries, userIntegrations)
-			}()
-		}
+        } else if userIntegrations != nil && len(newEntries) > 0 {
+            // Load user language for AI summary generation in the user's preferred language.
+            userLanguage := ""
+            if user, userErr := store.UserByID(userID); userErr == nil && user != nil {
+                userLanguage = user.Language
+            }
+            go func() {
+                integration.PushEntries(originalFeed, newEntries, userIntegrations)
+                integration.SummarizeEntries(store, newEntries, userIntegrations, userLanguage)
+            }()
+        }
 
 		originalFeed.ResetErrorCounter()
 		if storeErr := store.UpdateFeed(originalFeed); storeErr != nil {
@@ -418,12 +423,17 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 				slog.Int64("feed_id", feedID),
 				slog.Any("error", intErr),
 			)
-		} else if userIntegrations != nil && len(newEntries) > 0 {
-			go func() {
-				integration.PushEntries(originalFeed, newEntries, userIntegrations)
-				integration.SummarizeEntries(store, newEntries, userIntegrations)
-			}()
-		}
+        } else if userIntegrations != nil && len(newEntries) > 0 {
+            // Load user language for AI summary generation in the user's preferred language.
+            userLanguage := ""
+            if user, userErr := store.UserByID(userID); userErr == nil && user != nil {
+                userLanguage = user.Language
+            }
+            go func() {
+                integration.PushEntries(originalFeed, newEntries, userIntegrations)
+                integration.SummarizeEntries(store, newEntries, userIntegrations, userLanguage)
+            }()
+        }
 
 		originalFeed.EtagHeader = responseHandler.ETag()
 		originalFeed.LastModifiedHeader = responseHandler.LastModified()

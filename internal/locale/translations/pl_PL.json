@@ -232,6 +232,8 @@
     "form.integration.ai_api_key": "API Key",
     "form.integration.ai_backfill": "Backfill AI Summaries",
     "form.integration.ai_backfill_loading": "Backfilling...",
+    "form.integration.ai_force_backfill": "Wymuś ponowne generowanie wszystkich podsumowań",
+    "form.integration.ai_force_backfill_loading": "Ponowne generowanie...",
     "form.integration.ai_model": "Model",
     "form.integration.ai_provider_url": "OpenAI-compatible API URL",
     "form.integration.apprise_activate": "Przesyłaj wpisy do Apprise",

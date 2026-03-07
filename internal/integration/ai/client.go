@@ -17,13 +17,6 @@ import (
 const (
 	defaultClientTimeout = 30 * time.Second
 	maxContentLength     = 4000
-
-	// systemPrompt instructs the AI to return a JSON object with summary and score.
-	// Do NOT make this user-configurable — it is intentionally hardcoded.
-	systemPrompt = "You are a content analyzer. For the given article, provide:\n" +
-		"1. A concise summary in 2-3 sentences in the same language as the article\n" +
-		"2. A relevance/quality score from 1 to 10 (10=must-read, 1=skip)\n" +
-		"Respond ONLY with JSON: {\"summary\": \"...\", \"score\": N}"
 )
 
 var htmlTagRegexp = regexp.MustCompile("<[^>]*>")
@@ -54,19 +47,65 @@ type SummarizeResult struct {
 // It calls the OpenAI-compatible /chat/completions endpoint.
 // The content is truncated to ~4000 chars to control token usage.
 // If the entry already has a summary (non-empty aiSummary), it returns nil to avoid wasting tokens.
-func (c *Client) SummarizeEntry(title, content, aiSummary string) (*SummarizeResult, error) {
+// The language parameter controls the summary output language (e.g. "en_US", "zh_CN").
+func (c *Client) SummarizeEntry(title, content, aiSummary, language string) (*SummarizeResult, error) {
 	// Skip if already summarized — avoid duplicate API calls and wasted tokens.
 	if aiSummary != "" {
 		return nil, nil
 	}
 
+	return c.callSummarize(title, content, language)
+}
+
+// ForceSummarizeEntry always calls the AI provider, ignoring any existing summary.
+// Used by the force-backfill feature to regenerate summaries with a new model or language.
+func (c *Client) ForceSummarizeEntry(title, content, language string) (*SummarizeResult, error) {
+	return c.callSummarize(title, content, language)
+}
+
+// buildSystemPrompt constructs the system prompt with the user's preferred language.
+// The language code (e.g. "zh_CN", "en_US") is mapped to a human-readable name.
+func buildSystemPrompt(language string) string {
+	// Map locale codes to language names the AI model understands.
+	langName := "the same language as the article"
+	switch {
+	case strings.HasPrefix(language, "zh"):
+		langName = "Simplified Chinese (中文)"
+	case strings.HasPrefix(language, "ja"):
+		langName = "Japanese"
+	case strings.HasPrefix(language, "ko"):
+		langName = "Korean"
+	case strings.HasPrefix(language, "de"):
+		langName = "German"
+	case strings.HasPrefix(language, "fr"):
+		langName = "French"
+	case strings.HasPrefix(language, "es"):
+		langName = "Spanish"
+	case strings.HasPrefix(language, "pt"):
+		langName = "Portuguese"
+	case strings.HasPrefix(language, "ru"):
+		langName = "Russian"
+	case strings.HasPrefix(language, "ar"):
+		langName = "Arabic"
+	case strings.HasPrefix(language, "en"):
+		langName = "English"
+	}
+
+	return "You are a content analyzer. For the given article, provide:\n" +
+		"1. A concise summary in 2-3 sentences in " + langName + "\n" +
+		"2. A relevance/quality score from 1 to 10 (10=must-read, 1=skip)\n" +
+		"Respond ONLY with JSON: {\"summary\": \"...\", \"score\": N}"
+}
+
+// callSummarize is the shared implementation for SummarizeEntry and ForceSummarizeEntry.
+func (c *Client) callSummarize(title, content, language string) (*SummarizeResult, error) {
 	cleanContent := truncateContent(stripHTMLTags(content), maxContentLength)
 	userMessage := title + "\n\n" + cleanContent
 
 	requestPayload := chatCompletionRequest{
 		Model: c.model,
 		Messages: []chatMessage{
-			{Role: "system", Content: systemPrompt},
+			{Role: "system", Content: buildSystemPrompt(language)},
 			{Role: "user", Content: userMessage},
 		},
 		Temperature: 0.3,

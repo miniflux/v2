@@ -549,8 +549,14 @@ func (h *handler) summarizeEntry(w http.ResponseWriter, r *http.Request) {
 		userIntegrations.AIModel,
 	)
 
-	// Skip if already summarized — pass existing summary to let client decide
-	result, err := client.SummarizeEntry(entry.Title, entry.Content, entry.AISummary)
+    // Load user language for AI summary generation in the user's preferred language.
+    user, err := h.store.UserByID(userID)
+    if err != nil {
+        json.ServerError(w, r, err)
+        return
+    }
+    // Skip if already summarized — pass existing summary to let client decide
+    result, err := client.SummarizeEntry(entry.Title, entry.Content, entry.AISummary, user.Language)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -592,7 +598,46 @@ func (h *handler) backfillAISummaries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go integration.BackfillAISummaries(h.store, userID, userIntegrations)
+    // Load user language for AI summary generation in the user's preferred language.
+    user, err := h.store.UserByID(userID)
+    if err != nil {
+        json.ServerError(w, r, err)
+        return
+    }
 
-	json.Accepted(w, r)
+    go integration.BackfillAISummaries(h.store, userID, userIntegrations, user.Language)
+
+    json.Accepted(w, r)
+}
+
+func (h *handler) forceBackfillAISummaries(w http.ResponseWriter, r *http.Request) {
+    userID := request.UserID(r)
+
+    // Return 204 if a backfill is already running for this user — no duplicate work.
+    if integration.IsBackfillRunning(userID) {
+        json.NoContent(w, r)
+        return
+    }
+
+    userIntegrations, err := h.store.Integration(userID)
+    if err != nil {
+        json.ServerError(w, r, err)
+        return
+    }
+
+    if !userIntegrations.AIEnabled || userIntegrations.AIProviderURL == "" || userIntegrations.AIAPIKey == "" || userIntegrations.AIModel == "" {
+        json.BadRequest(w, r, errors.New("AI integration is not configured"))
+        return
+    }
+
+    // Load user language for AI summary generation in the user's preferred language.
+    user, err := h.store.UserByID(userID)
+    if err != nil {
+        json.ServerError(w, r, err)
+        return
+    }
+
+    go integration.ForceBackfillAISummaries(h.store, userID, userIntegrations, user.Language)
+
+    json.Accepted(w, r)
 }
