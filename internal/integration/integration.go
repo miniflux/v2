@@ -770,3 +770,83 @@ func SummarizeEntries(store *storage.Storage, entries model.Entries, userIntegra
 		}
 	}
 }
+
+// BackfillAISummaries scans entries without AI summaries and generates them in the background.
+// This is triggered manually when a user configures AI after articles already exist.
+// It runs as a goroutine to avoid blocking the UI — progress is logged.
+func BackfillAISummaries(store *storage.Storage, userID int64, userIntegrations *model.Integration) {
+	if !userIntegrations.AIEnabled {
+		return
+	}
+
+	if userIntegrations.AIProviderURL == "" || userIntegrations.AIAPIKey == "" || userIntegrations.AIModel == "" {
+		return
+	}
+
+	client := ai.NewClient(
+		userIntegrations.AIProviderURL,
+		userIntegrations.AIAPIKey,
+		userIntegrations.AIModel,
+	)
+
+	// Process in batches of 50 to avoid memory pressure on large backlogs.
+	const batchSize = 50
+	totalProcessed := 0
+
+	for {
+		entryBuilder := store.NewEntryQueryBuilder(userID)
+		entryBuilder.WithoutAISummary()
+		entryBuilder.WithSorting("published_at", "desc")
+		entryBuilder.WithLimit(batchSize)
+		entries, err := entryBuilder.GetEntries()
+		if err != nil {
+			slog.Error("AI backfill: failed to query unsummarized entries",
+				slog.Int64("user_id", userID),
+				slog.Any("error", err),
+			)
+			return
+		}
+
+		if len(entries) == 0 {
+			break
+		}
+
+		for _, entry := range entries {
+			result, err := client.SummarizeEntry(entry.Title, entry.Content, entry.AISummary)
+			if err != nil {
+				slog.Warn("AI backfill: failed to summarize entry",
+					slog.Int64("user_id", userID),
+					slog.Int64("entry_id", entry.ID),
+					slog.String("entry_url", entry.URL),
+					slog.Any("error", err),
+				)
+				continue
+			}
+
+			if result == nil {
+				continue
+			}
+
+			now := time.Now()
+			entry.AISummary = result.Summary
+			entry.AIScore = result.Score
+			entry.AISummarizedAt = &now
+
+			if err := store.UpdateEntryAISummary(entry); err != nil {
+				slog.Warn("AI backfill: failed to save summary",
+					slog.Int64("user_id", userID),
+					slog.Int64("entry_id", entry.ID),
+					slog.Any("error", err),
+				)
+				continue
+			}
+
+			totalProcessed++
+		}
+	}
+
+	slog.Info("AI backfill completed",
+		slog.Int64("user_id", userID),
+		slog.Int("total_processed", totalProcessed),
+	)
+}

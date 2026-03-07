@@ -571,3 +571,23 @@ func (h *handler) summarizeEntry(w http.ResponseWriter, r *http.Request) {
 
 	json.OK(w, r, entry)
 }
+
+func (h *handler) backfillAISummaries(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+
+	userIntegrations, err := h.store.Integration(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if !userIntegrations.AIEnabled || userIntegrations.AIProviderURL == "" || userIntegrations.AIAPIKey == "" || userIntegrations.AIModel == "" {
+		json.BadRequest(w, r, errors.New("AI integration is not configured"))
+		return
+	}
+
+	// Run in background — this may take a long time for large backlogs.
+	go integration.BackfillAISummaries(h.store, userID, userIntegrations)
+
+	json.Accepted(w, r)
+}

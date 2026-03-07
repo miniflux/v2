@@ -226,6 +226,12 @@ func (e *EntryQueryBuilder) WithMinAIScore(minScore int) *EntryQueryBuilder {
 	return e
 }
 
+// WithoutAISummary filters entries that have not been summarized by AI yet.
+func (e *EntryQueryBuilder) WithoutAISummary() *EntryQueryBuilder {
+	e.conditions = append(e.conditions, "e.ai_summary = ''")
+	return e
+}
+
 // CountEntries count the number of entries that match the condition.
 func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
 	query := `
