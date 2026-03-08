@@ -96,8 +96,13 @@ func buildSystemPrompt(language string) string {
 	}
 
 	return "You are a content analyzer. For the given article, provide:\n" +
-		"1. A concise summary in 2-3 sentences in " + langName + "\n" +
-		"2. A relevance/quality score from 1 to 10 (10=must-read, 1=skip)\n" +
+		"1. A concise summary (2-3 sentences) in " + langName + ". Adapt style to content type: for news, state the key facts and impact; for product reviews, highlight standout specs and verdict; for tutorials, state what is taught and key takeaway.\n" +
+		"2. An importance score from 1 to 10 based on real-world significance, NOT article writing quality:\n" +
+		"   - 9-10: Historic breakthroughs, critical zero-day vulnerabilities, major policy changes affecting millions\n" +
+		"   - 7-8: Significant industry developments, important scientific findings, notable security incidents\n" +
+		"   - 5-6: Routine industry news, standard product launches, minor updates\n" +
+		"   - 3-4: Product reviews, tutorials, opinion pieces, promotional content\n" +
+		"   - 1-2: Listicles, roundups, minor announcements, reposts of known information\n" +
 		"Respond ONLY with JSON: {\"summary\": \"...\", \"score\": N}"
 }
 
@@ -210,7 +215,8 @@ func buildPageSummaryPrompt(language string) string {
 	}
 
 	return "You are a news digest writer. Given a list of article summaries, produce a cohesive overall digest in " + langName + ".\n" +
-		"Group related topics together. Highlight the most important items. Keep it concise (3-5 paragraphs).\n" +
+		"Group related topics together. Lead with the most significant items (score 8+). " +
+		"Mention lower-scored items only briefly or skip them. Keep it to 2-3 short paragraphs.\n" +
 		"Respond with the digest text only, no JSON wrapper."
 }
 
@@ -294,12 +300,15 @@ func stripThinkingContent(s string) string {
 	return strings.TrimSpace(thinkingTagRegexp.ReplaceAllString(s, ""))
 }
 
-// truncateContent limits content to maxLen characters to control token usage.
+// truncateContent limits content to maxLen runes (not bytes) to control token usage.
+// Using rune-based truncation avoids splitting multi-byte UTF-8 characters (e.g. Chinese),
+// which would produce invalid/garbled strings and cause model errors.
 func truncateContent(s string, maxLen int) string {
-	if len(s) <= maxLen {
+	runes := []rune(s)
+	if len(runes) <= maxLen {
 		return s
 	}
-	return s[:maxLen]
+	return string(runes[:maxLen])
 }
 
 // chatMessage represents a single message in the chat completions request.

@@ -4,174 +4,154 @@
 package pinchtab // import "miniflux.app/v2/internal/reader/pinchtab"
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
-	"sync"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"sync/atomic"
 	"time"
 
 	"miniflux.app/v2/internal/config"
 )
 
-var (
-	instance *subprocess
-	once     sync.Once
-)
-
 const (
-	httpRequestTimeout  = 30 * time.Second
-	healthCheckInterval = 1 * time.Second
+	httpRequestTimeout  = 60 * time.Second
+	healthCheckInterval = 500 * time.Millisecond
 	healthCheckMaxWait  = 30 * time.Second
+	shutdownTimeout     = 5 * time.Second
 )
 
-type subprocess struct {
-	cmd *exec.Cmd
-	mu  sync.Mutex
-	// running tracks whether the subprocess is alive to prevent
-	// use-after-exit calls to the pinchtab API.
-	running bool
+var activeProcessCount atomic.Int64
+
+func ActiveProcessCount() int64 {
+	return activeProcessCount.Load()
 }
 
-type createInstanceResponse struct {
-	ID string `json:"id"`
-}
-
-type createTabResponse struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-}
-
-// RenderPage creates a browser instance, opens a tab with the given URL,
-// extracts the text content, and cleans up the instance.
-func RenderPage(pageURL string) (string, error) {
-	if instance == nil || !instance.isRunning() {
-		return "", fmt.Errorf("pinchtab: subprocess is not running")
+// RenderPage starts an ephemeral pinchtab subprocess in Dashboard mode,
+// navigates to the given URL (Chrome is auto-started on the first navigate),
+// extracts the rendered text content, and gracefully shuts down everything.
+//
+// proxyURL is optional: when non-empty it is forwarded to Chrome via
+// --proxy-server so that the page fetch goes through the specified proxy.
+//
+// feedID isolates browser state (cookies, localStorage) per feed so that
+// login sessions are preserved across fetches but different feeds cannot
+// leak state to each other.
+func RenderPage(pageURL, proxyURL string, feedID int64) (string, error) {
+	port, err := findFreePort()
+	if err != nil {
+		return "", fmt.Errorf("pinchtab: %w", err)
 	}
 
-	baseURL := config.Opts.PinchTabURL()
+	cmd, err := startSubprocess(port, proxyURL, feedID)
+	if err != nil {
+		return "", fmt.Errorf("pinchtab: %w", err)
+	}
+	// Always ensure cleanup: graceful shutdown first, force kill as fallback.
+	defer stopSubprocess(cmd, port)
+
+	baseURL := fmt.Sprintf("http://127.0.0.1:%d", port)
+	if err := waitForReady(baseURL); err != nil {
+		return "", fmt.Errorf("pinchtab: %w", err)
+	}
+
 	client := &http.Client{Timeout: httpRequestTimeout}
 
-	// Step 1: Create a browser instance.
-	instanceID, err := createInstance(client, baseURL)
-	if err != nil {
-		return "", fmt.Errorf("pinchtab: failed to create instance: %w", err)
-	}
-
-	// Always clean up the instance after use.
-	defer func() {
-		if deleteErr := deleteInstance(client, baseURL, instanceID); deleteErr != nil {
-			slog.Warn("pinchtab: failed to delete instance",
-				slog.String("instance_id", instanceID),
-				slog.Any("error", deleteErr),
-			)
-		}
-	}()
-
-	// Step 2: Create a tab and get the rendered text content.
-	text, err := createTab(client, baseURL, instanceID, pageURL)
+	// Dashboard mode: POST /tab with url triggers automatic Chrome startup
+	// and tab creation in one call. No manual instance management needed.
+	tabID, err := createTab(client, baseURL, pageURL)
 	if err != nil {
 		return "", fmt.Errorf("pinchtab: failed to create tab for %q: %w", pageURL, err)
+	}
+
+	text, err := getTabText(client, baseURL, tabID)
+	if err != nil {
+		return "", fmt.Errorf("pinchtab: failed to get text for %q: %w", pageURL, err)
 	}
 
 	return text, nil
 }
 
-// StartIfEnabled starts the pinchtab subprocess if PINCHTAB_ENABLED is true.
-// This function is safe to call multiple times; only the first call takes effect.
-func StartIfEnabled() {
-	if !config.Opts.PinchTabEnabled() {
-		return
-	}
-
-	once.Do(func() {
-		instance = &subprocess{}
-		if err := instance.start(); err != nil {
-			slog.Error("pinchtab: failed to start subprocess", slog.Any("error", err))
-			instance = nil
-		}
-	})
-}
-
-// Stop gracefully stops the pinchtab subprocess.
-func Stop() {
-	if instance == nil {
-		return
-	}
-	instance.stop()
-}
-
-func (s *subprocess) start() error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
+func startSubprocess(port int, proxyURL string, feedID int64) (*exec.Cmd, error) {
 	binaryPath := config.Opts.PinchTabBinaryPath()
-	s.cmd = exec.Command(binaryPath)
-	s.cmd.Stdout = os.Stdout
-	s.cmd.Stderr = os.Stderr
+	cmd := exec.Command(binaryPath)
 
-	slog.Info("pinchtab: starting subprocess", slog.String("binary", binaryPath))
+	// Per-feed state directory provides browser state isolation (cookies,
+	// localStorage) between feeds. Each feed gets its own Chrome profile
+	// under {stateDir}/profiles/default/.
+	stateDir := filepath.Join(os.TempDir(), "miniflux-pinchtab-state", fmt.Sprintf("feed-%d", feedID))
 
-	if err := s.cmd.Start(); err != nil {
-		return fmt.Errorf("pinchtab: failed to start %q: %w", binaryPath, err)
+	// Container environments require --no-sandbox and --disable-dev-shm-usage
+	// for Chrome to start. These are always included, with --proxy-server
+	// appended when a proxy is configured.
+	chromeFlags := "--no-sandbox --disable-dev-shm-usage"
+	if proxyURL != "" {
+		chromeFlags += " --proxy-server=" + proxyURL
 	}
 
-	s.running = true
+	env := append(os.Environ(),
+		"PINCHTAB_STEALTH=full",
+		"PINCHTAB_PORT="+strconv.Itoa(port),
+		"PINCHTAB_STATE_DIR="+stateDir,
+		"PINCHTAB_HEADLESS=true",
+		"CHROME_FLAGS="+chromeFlags,
+	)
+	cmd.Env = env
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
-	// Monitor the subprocess in a goroutine to detect unexpected exits.
-	go func() {
-		if err := s.cmd.Wait(); err != nil {
-			slog.Error("pinchtab: subprocess exited with error", slog.Any("error", err))
-		} else {
-			slog.Info("pinchtab: subprocess exited normally")
-		}
-		s.mu.Lock()
-		s.running = false
-		s.mu.Unlock()
-	}()
+	slog.Debug("pinchtab: starting ephemeral subprocess",
+		slog.String("binary", binaryPath),
+		slog.Int("port", port),
+		slog.String("proxy_url", proxyURL),
+	)
 
-	// Wait for pinchtab to be ready by polling the health endpoint.
-	if err := s.waitForReady(); err != nil {
-		s.stop()
-		return err
+	if err := cmd.Start(); err != nil {
+		return nil, fmt.Errorf("failed to start %q: %w", binaryPath, err)
 	}
+	activeProcessCount.Add(1)
 
-	slog.Info("pinchtab: subprocess is ready")
-	return nil
+	return cmd, nil
 }
 
-func (s *subprocess) stop() {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	if !s.running || s.cmd == nil || s.cmd.Process == nil {
+// stopSubprocess gracefully shuts down pinchtab via POST /shutdown so it can
+// clean up Chrome child processes. Falls back to Kill if shutdown fails.
+func stopSubprocess(cmd *exec.Cmd, port int) {
+	if cmd == nil || cmd.Process == nil {
 		return
 	}
+	defer activeProcessCount.Add(-1)
 
-	slog.Info("pinchtab: stopping subprocess")
-
-	if err := s.cmd.Process.Signal(os.Interrupt); err != nil {
-		slog.Warn("pinchtab: failed to send interrupt, killing process", slog.Any("error", err))
-		_ = s.cmd.Process.Kill()
+	shutdownURL := fmt.Sprintf("http://127.0.0.1:%d/shutdown", port)
+	client := &http.Client{Timeout: shutdownTimeout}
+	resp, err := client.Post(shutdownURL, "application/json", nil)
+	if err == nil {
+		resp.Body.Close()
 	}
 
-	s.running = false
+	done := make(chan error, 1)
+	go func() { done <- cmd.Wait() }()
+
+	select {
+	case <-done:
+		return
+	case <-time.After(shutdownTimeout):
+		slog.Warn("pinchtab: shutdown timed out, force killing")
+		_ = cmd.Process.Kill()
+		// Reap zombie process.
+		<-done
+	}
 }
 
-func (s *subprocess) isRunning() bool {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.running
-}
-
-// waitForReady polls the pinchtab health endpoint until it responds or
-// the maximum wait time is exceeded.
-func (s *subprocess) waitForReady() error {
-	healthURL := config.Opts.PinchTabURL() + "/api/health"
+func waitForReady(baseURL string) error {
+	healthURL := baseURL + "/health"
 	client := &http.Client{Timeout: 2 * time.Second}
 	deadline := time.Now().Add(healthCheckMaxWait)
 
@@ -186,11 +166,32 @@ func (s *subprocess) waitForReady() error {
 		time.Sleep(healthCheckInterval)
 	}
 
-	return fmt.Errorf("pinchtab: health check timed out after %s", healthCheckMaxWait)
+	return fmt.Errorf("health check timed out after %s", healthCheckMaxWait)
 }
 
-func createInstance(client *http.Client, baseURL string) (string, error) {
-	resp, err := client.Post(baseURL+"/api/instances", "application/json", nil)
+func findFreePort() (int, error) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		return 0, fmt.Errorf("unable to find free port: %w", err)
+	}
+	port := listener.Addr().(*net.TCPAddr).Port
+	listener.Close()
+	return port, nil
+}
+
+type tabResponse struct {
+	TabID string `json:"tabId"`
+}
+
+type textResponse struct {
+	Text string `json:"text"`
+}
+
+// createTab uses the Dashboard-mode shortcut: POST /tab with {"action":"new","url":"..."}
+// triggers automatic Chrome startup and tab creation.
+func createTab(client *http.Client, baseURL, pageURL string) (string, error) {
+	payload := fmt.Sprintf(`{"action":"new","url":%s}`, quote(pageURL))
+	resp, err := client.Post(baseURL+"/tab", "application/json", strings.NewReader(payload))
 	if err != nil {
 		return "", err
 	}
@@ -201,57 +202,68 @@ func createInstance(client *http.Client, baseURL string) (string, error) {
 		return "", fmt.Errorf("unexpected status %d: %s", resp.StatusCode, body)
 	}
 
-	var result createInstanceResponse
+	var result tabResponse
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return "", fmt.Errorf("failed to decode response: %w", err)
+		return "", fmt.Errorf("failed to decode tab response: %w", err)
 	}
 
-	return result.ID, nil
+	return result.TabID, nil
 }
 
-func createTab(client *http.Client, baseURL, instanceID, pageURL string) (string, error) {
-	payload, err := json.Marshal(map[string]string{"url": pageURL})
-	if err != nil {
-		return "", err
-	}
-
-	url := fmt.Sprintf("%s/api/instances/%s/tabs", baseURL, instanceID)
-	resp, err := client.Post(url, "application/json", bytes.NewReader(payload))
+func getTabText(client *http.Client, baseURL, tabID string) (string, error) {
+	url := fmt.Sprintf("%s/text?tabId=%s", baseURL, tabID)
+	resp, err := client.Get(url)
 	if err != nil {
 		return "", err
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
 		return "", fmt.Errorf("unexpected status %d: %s", resp.StatusCode, body)
 	}
 
-	var result createTabResponse
+	var result textResponse
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return "", fmt.Errorf("failed to decode response: %w", err)
+		return "", fmt.Errorf("failed to decode text response: %w", err)
 	}
 
 	return result.Text, nil
 }
 
-func deleteInstance(client *http.Client, baseURL, instanceID string) error {
-	url := fmt.Sprintf("%s/api/instances/%s", baseURL, instanceID)
-	req, err := http.NewRequest(http.MethodDelete, url, nil)
+func quote(s string) string {
+	b, _ := json.Marshal(s)
+	return string(b)
+}
+
+// ChromiumProcessCount scans /proc to count running chromium-browser processes.
+// Returns 0 on non-Linux systems or if /proc is unavailable.
+func ChromiumProcessCount() int {
+	entries, err := os.ReadDir("/proc")
 	if err != nil {
-		return err
+		return 0
 	}
 
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
+	count := 0
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+		pid := entry.Name()
+		if len(pid) == 0 || pid[0] < '1' || pid[0] > '9' {
+			continue
+		}
+		cmdline, err := os.ReadFile("/proc/" + pid + "/cmdline")
+		if err != nil {
+			continue
+		}
+		// /proc/PID/cmdline uses null bytes as separators; the executable is the first field.
+		if nullIdx := strings.IndexByte(string(cmdline), 0); nullIdx > 0 {
+			exe := string(cmdline[:nullIdx])
+			if strings.Contains(exe, "chromium") || strings.Contains(exe, "chrome") {
+				count++
+			}
+		}
 	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent {
-		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("unexpected status %d: %s", resp.StatusCode, body)
-	}
-
-	return nil
+	return count
 }
