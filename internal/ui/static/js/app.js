@@ -1250,6 +1250,9 @@ function initializeAIDigestPageSummary() {
         generateBtn.textContent = loadingLabel;
         generateBtn.disabled = true;
 
+        // Stop any ongoing TTS when regenerating.
+        stopReadAloud();
+
         const submitUrl = document.body.dataset.aiPageSummaryUrl;
         const statusUrl = document.body.dataset.aiPageSummaryStatusUrl;
 
@@ -1287,6 +1290,44 @@ function initializeAIDigestPageSummary() {
                 });
             }, 2000);
         });
+    });
+}
+
+function stopReadAloud() {
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+    const readAloudBtn = document.getElementById("ai-read-aloud-btn");
+    if (readAloudBtn) {
+        readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
+    }
+}
+
+function initializeReadAloudButton() {
+    const readAloudBtn = document.getElementById("ai-read-aloud-btn");
+    if (!readAloudBtn) return;
+
+    readAloudBtn.addEventListener("click", () => {
+        if (!window.speechSynthesis) return;
+
+        if (window.speechSynthesis.speaking) {
+            stopReadAloud();
+            return;
+        }
+
+        const summaryText = document.getElementById("ai-page-summary-text");
+        if (!summaryText || !summaryText.textContent.trim()) return;
+
+        const utterance = new SpeechSynthesisUtterance(summaryText.textContent);
+        utterance.onend = () => {
+            readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
+        };
+        utterance.onerror = () => {
+            readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
+        };
+
+        readAloudBtn.textContent = readAloudBtn.dataset.labelStop;
+        window.speechSynthesis.speak(utterance);
     });
 }
 
@@ -1418,6 +1459,7 @@ initializeTouchHandler();
 initializeClickHandlers();
 initializeServiceWorker();
 initializeAIDigestPageSummary();
+initializeReadAloudButton();
 initializeBackfillStatusPolling();
 
 // Reload the page if it was restored from the back-forward cache and mark entries as read is enabled.

@@ -1386,6 +1386,23 @@ footer .elevator {
     background: var(--body-background, #fff);
 }
 
+.ai-page-summary-content {
+    margin: 0 0 1.5em;
+    padding: 0.8em 1em;
+    border: 1px solid var(--entry-header-border-color, #ddd);
+    border-radius: 4px;
+    background: var(--body-background, #fff);
+}
+
+.ai-page-summary-content #ai-read-aloud-btn {
+    margin-bottom: 0.5em;
+}
+
+.ai-page-summary-text {
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
 .ai-summary summary {
     cursor: pointer;
     font-weight: bold;
