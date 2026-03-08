@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"strings"
 	"syscall"
 	"time"
 
@@ -24,6 +25,7 @@ import (
 const (
 	defaultHTTPClientTimeout = 20 * time.Second
 	defaultAcceptHeader      = "application/xml, application/atom+xml, application/rss+xml, application/rdf+xml, application/feed+json, text/html, */*;q=0.9"
+	maxProxyRetries          = 3
 )
 
 var (
@@ -259,5 +261,42 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		slog.Bool("disable_http2", r.disableHTTP2),
 	))
 
-	return client.Do(req)
+	// Proxy pools may rotate through unreliable upstream nodes that reject
+	// HTTPS CONNECT tunnels (returning 502 / connection reset / timeout).
+	// Retry only when a proxy is configured and the error originates from
+	// the proxy layer itself, not from the target server.
+	resp, err := client.Do(req)
+	if clientProxyURL != nil && isProxyError(err) {
+		for retry := 1; retry <= maxProxyRetries; retry++ {
+			slog.Warn("Retrying request due to proxy error",
+				slog.Int("retry", retry),
+				slog.Int("max_retries", maxProxyRetries),
+				slog.String("url", requestURL),
+				slog.String("client_proxy_url", clientProxyURLRedacted),
+				slog.Any("previous_error", err),
+			)
+			resp, err = client.Do(req)
+			if !isProxyError(err) {
+				break
+			}
+		}
+	}
+
+	return resp, err
+}
+
+// isProxyError returns true when the error indicates a failure in the proxy
+// CONNECT tunnel rather than a problem with the target server. This covers
+// three common failure modes from rotating proxy pools:
+//   - "proxyconnect": Go's stdlib wraps proxy-layer errors with this prefix
+//   - "Bad Gateway":  the proxy returns HTTP 502 (upstream node unreachable)
+//   - "tunnel":       CONNECT tunnel establishment failures
+func isProxyError(err error) bool {
+	if err == nil {
+		return false
+	}
+	msg := err.Error()
+	return strings.Contains(msg, "proxyconnect") ||
+		strings.Contains(msg, "Bad Gateway") ||
+		strings.Contains(msg, "tunnel")
 }
