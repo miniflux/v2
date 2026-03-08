@@ -1272,13 +1272,15 @@ function initializeAIDigestPageSummary() {
                     if (data.status === "done") {
                         clearInterval(pollInterval);
                         summaryText.textContent = data.summary;
-                        summaryContent.style.display = "block";
+                        summaryContent.classList.remove("initially-hidden");
+                        const readAloudBtn = document.getElementById("ai-read-aloud-btn");
+                        if (readAloudBtn) readAloudBtn.classList.remove("initially-hidden");
                         generateBtn.textContent = defaultLabel;
                         generateBtn.disabled = false;
                     } else if (data.status === "error") {
                         clearInterval(pollInterval);
                         summaryText.textContent = data.error;
-                        summaryContent.style.display = "block";
+                        summaryContent.classList.remove("initially-hidden");
                         generateBtn.textContent = defaultLabel;
                         generateBtn.disabled = false;
                     }
@@ -1300,16 +1302,19 @@ function stopReadAloud() {
     const readAloudBtn = document.getElementById("ai-read-aloud-btn");
     if (readAloudBtn) {
         readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
+        readAloudBtn.disabled = false;
     }
 }
 
 function initializeReadAloudButton() {
     const readAloudBtn = document.getElementById("ai-read-aloud-btn");
     if (!readAloudBtn) return;
+    if (!window.speechSynthesis) {
+        readAloudBtn.remove();
+        return;
+    }
 
     readAloudBtn.addEventListener("click", () => {
-        if (!window.speechSynthesis) return;
-
         if (window.speechSynthesis.speaking) {
             stopReadAloud();
             return;
@@ -1318,7 +1323,11 @@ function initializeReadAloudButton() {
         const summaryText = document.getElementById("ai-page-summary-text");
         if (!summaryText || !summaryText.textContent.trim()) return;
 
-        const utterance = new SpeechSynthesisUtterance(summaryText.textContent);
+        const userLang = (document.body.dataset.userLanguage || "en_US").replace("_", "-");
+
+        const utterance = new SpeechSynthesisUtterance(summaryText.textContent.trim());
+        utterance.lang = userLang;
+
         utterance.onend = () => {
             readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
         };
@@ -1370,7 +1379,7 @@ function initializeBackfillStatusPolling() {
             }
         }
         if (stopBtn) {
-            stopBtn.style.display = loading ? "inline-block" : "none";
+            stopBtn.classList.toggle("initially-hidden", !loading);
         }
     }
 

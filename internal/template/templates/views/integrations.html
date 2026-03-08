@@ -38,7 +38,7 @@
                 <a href="{{ route "aiForceBackfill" }}" class="button button-primary"
                     data-label-loading="{{ t "form.integration.ai_force_backfill_loading" }}"
                     data-label-default="{{ t "form.integration.ai_force_backfill" }}">{{ t "form.integration.ai_force_backfill" }}</a>
-                <button type="button" class="button button-primary" id="ai-stop-backfill" style="display:none">{{ t "form.integration.ai_stop_backfill" }}</button>
+                <button type="button" class="button button-primary initially-hidden" id="ai-stop-backfill">{{ t "form.integration.ai_stop_backfill" }}</button>
             </div>
             {{ end }}
         </div>

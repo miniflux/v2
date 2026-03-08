@@ -1386,6 +1386,12 @@ footer .elevator {
     background: var(--body-background, #fff);
 }
 
+/* CSP nonce-based style-src blocks inline style attributes (style="display:none"),
+   so we use a CSS class for initial visibility control instead. */
+.initially-hidden {
+    display: none;
+}
+
 .ai-page-summary-content {
     margin: 0 0 1.5em;
     padding: 0.8em 1em;
