@@ -1296,8 +1296,11 @@ function initializeAIDigestPageSummary() {
 }
 
 function stopReadAloud() {
-    if (window.speechSynthesis) {
-        window.speechSynthesis.cancel();
+    const audio = document.getElementById("ai-tts-audio");
+    if (audio) {
+        audio.pause();
+        audio.removeAttribute("src");
+        audio.load();
     }
     const readAloudBtn = document.getElementById("ai-read-aloud-btn");
     if (readAloudBtn) {
@@ -1310,9 +1313,9 @@ function initializeReadAloudButton() {
     if (!readAloudBtn) return;
 
     readAloudBtn.addEventListener("click", () => {
-        if (!window.speechSynthesis) return;
+        const audio = document.getElementById("ai-tts-audio");
 
-        if (window.speechSynthesis.speaking) {
+        if (audio && !audio.paused) {
             stopReadAloud();
             return;
         }
@@ -1320,20 +1323,54 @@ function initializeReadAloudButton() {
         const summaryText = document.getElementById("ai-page-summary-text");
         if (!summaryText || !summaryText.textContent.trim()) return;
 
-        const utterance = new SpeechSynthesisUtterance(summaryText.textContent);
-        // 将用户语言偏好（如 zh_CN）转为 BCP 47 格式（如 zh-CN）供 TTS 引擎使用，
-        // 避免系统语言与内容语言不一致导致朗读发音错误。
-        const userLang = (document.body.dataset.userLanguage || "").replace("_", "-");
-        if (userLang) utterance.lang = userLang;
-        utterance.onend = () => {
-            readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
-        };
-        utterance.onerror = () => {
-            readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
-        };
+        const ttsUrl = document.body.dataset.aiTtsUrl;
+        if (!ttsUrl) return;
+
+        const userLang = document.body.dataset.userLanguage || "en_US";
 
         readAloudBtn.textContent = readAloudBtn.dataset.labelStop;
-        window.speechSynthesis.speak(utterance);
+        readAloudBtn.disabled = true;
+
+        fetch(ttsUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Csrf-Token": document.body.dataset.csrfToken || ""
+            },
+            body: JSON.stringify({
+                text: summaryText.textContent.trim(),
+                language: userLang
+            })
+        })
+        .then(resp => {
+            if (!resp.ok) throw new Error("TTS request failed");
+            return resp.blob();
+        })
+        .then(blob => {
+            const url = URL.createObjectURL(blob);
+            let audioEl = document.getElementById("ai-tts-audio");
+            if (!audioEl) {
+                audioEl = document.createElement("audio");
+                audioEl.id = "ai-tts-audio";
+                audioEl.style.display = "none";
+                document.body.appendChild(audioEl);
+            }
+            audioEl.src = url;
+            audioEl.onended = () => {
+                readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
+                URL.revokeObjectURL(url);
+            };
+            audioEl.onerror = () => {
+                readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
+                URL.revokeObjectURL(url);
+            };
+            readAloudBtn.disabled = false;
+            audioEl.play();
+        })
+        .catch(() => {
+            readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
+            readAloudBtn.disabled = false;
+        });
     });
 }
 
