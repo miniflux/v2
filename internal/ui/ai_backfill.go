@@ -4,14 +4,10 @@
 package ui // import "miniflux.app/v2/internal/ui"
 
 import (
-	"bytes"
 	json_parser "encoding/json"
 	"errors"
-	"io"
 	"net/http"
-	"strings"
 	"sync"
-	"time"
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
@@ -215,110 +211,4 @@ func (h *handler) aiPageSummaryStatus(w http.ResponseWriter, r *http.Request) {
 	if result.Status == "done" || result.Status == "error" {
 		activePageSummaries.Delete(userID)
 	}
-}
-
-type ttsRequest struct {
-	Text     string `json:"text"`
-	Language string `json:"language"`
-}
-
-// puterTTSMaxTextLength is Puter.com's TTS API character limit.
-const puterTTSMaxTextLength = 3000
-
-// puterTTSVoiceMapping maps user language prefixes to AWS Polly language codes and voice names.
-var puterTTSVoiceMapping = map[string]struct{ language, voice string }{
-	"zh": {language: "cmn-CN", voice: "Zhiyu"},
-	"ja": {language: "ja-JP", voice: "Mizuki"},
-	"ko": {language: "ko-KR", voice: "Seoyeon"},
-	"de": {language: "de-DE", voice: "Marlene"},
-	"fr": {language: "fr-FR", voice: "Celine"},
-	"es": {language: "es-ES", voice: "Lucia"},
-	"pt": {language: "pt-BR", voice: "Vitoria"},
-	"ru": {language: "ru-RU", voice: "Tatyana"},
-	"ar": {language: "arb", voice: "Zeina"},
-	"en": {language: "en-US", voice: "Joanna"},
-}
-
-// aiTextToSpeech proxies TTS requests to Puter.com's AWS Polly driver and streams audio back.
-func (h *handler) aiTextToSpeech(w http.ResponseWriter, r *http.Request) {
-	var req ttsRequest
-	if err := json_parser.NewDecoder(r.Body).Decode(&req); err != nil {
-		json.BadRequest(w, r, err)
-		return
-	}
-
-	if req.Text == "" {
-		json.BadRequest(w, r, errors.New("text is required"))
-		return
-	}
-
-	if len([]rune(req.Text)) > puterTTSMaxTextLength {
-		req.Text = string([]rune(req.Text)[:puterTTSMaxTextLength])
-	}
-
-	langPrefix := "en"
-	if req.Language != "" {
-		prefix := strings.SplitN(req.Language, "_", 2)[0]
-		if prefix != "" {
-			langPrefix = strings.ToLower(prefix)
-		}
-	}
-
-	voiceConfig, ok := puterTTSVoiceMapping[langPrefix]
-	if !ok {
-		voiceConfig = puterTTSVoiceMapping["en"]
-	}
-
-	puterPayload := map[string]interface{}{
-		"interface": "puter-tts",
-		"driver":    "aws-polly",
-		"method":    "synthesize",
-		"args": map[string]string{
-			"text":     req.Text,
-			"voice":    voiceConfig.voice,
-			"engine":   "neural",
-			"language": voiceConfig.language,
-		},
-	}
-
-	payloadBytes, err := json_parser.Marshal(puterPayload)
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
-
-	httpClient := &http.Client{
-		Timeout: 30 * time.Second,
-		Transport: &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-		},
-	}
-
-	puterReq, err := http.NewRequestWithContext(r.Context(), http.MethodPost, "https://api.puter.com/drivers/call", bytes.NewReader(payloadBytes))
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
-	puterReq.Header.Set("Content-Type", "application/json")
-
-	resp, err := httpClient.Do(puterReq)
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		json.ServerError(w, r, errors.New("Puter TTS API returned status "+resp.Status))
-		return
-	}
-
-	// Puter returns binary audio; default to audio/mpeg if Content-Type is missing or generic.
-	contentType := resp.Header.Get("Content-Type")
-	if contentType == "" || contentType == "application/octet-stream" {
-		contentType = "audio/mpeg"
-	}
-	w.Header().Set("Content-Type", contentType)
-	w.WriteHeader(http.StatusOK)
-	io.Copy(w, resp.Body)
 }

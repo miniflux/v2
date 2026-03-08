@@ -1272,15 +1272,15 @@ function initializeAIDigestPageSummary() {
                     if (data.status === "done") {
                         clearInterval(pollInterval);
                         summaryText.textContent = data.summary;
-                        summaryContent.style.display = "block";
+                        summaryContent.classList.remove("initially-hidden");
                         const readAloudBtn = document.getElementById("ai-read-aloud-btn");
-                        if (readAloudBtn) readAloudBtn.style.display = "";
+                        if (readAloudBtn) readAloudBtn.classList.remove("initially-hidden");
                         generateBtn.textContent = defaultLabel;
                         generateBtn.disabled = false;
                     } else if (data.status === "error") {
                         clearInterval(pollInterval);
                         summaryText.textContent = data.error;
-                        summaryContent.style.display = "block";
+                        summaryContent.classList.remove("initially-hidden");
                         generateBtn.textContent = defaultLabel;
                         generateBtn.disabled = false;
                     }
@@ -1296,26 +1296,26 @@ function initializeAIDigestPageSummary() {
 }
 
 function stopReadAloud() {
-    const audio = document.getElementById("ai-tts-audio");
-    if (audio) {
-        audio.pause();
-        audio.removeAttribute("src");
-        audio.load();
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
     }
     const readAloudBtn = document.getElementById("ai-read-aloud-btn");
     if (readAloudBtn) {
         readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
+        readAloudBtn.disabled = false;
     }
 }
 
 function initializeReadAloudButton() {
     const readAloudBtn = document.getElementById("ai-read-aloud-btn");
     if (!readAloudBtn) return;
+    if (!window.speechSynthesis) {
+        readAloudBtn.remove();
+        return;
+    }
 
     readAloudBtn.addEventListener("click", () => {
-        const audio = document.getElementById("ai-tts-audio");
-
-        if (audio && !audio.paused) {
+        if (window.speechSynthesis.speaking) {
             stopReadAloud();
             return;
         }
@@ -1323,54 +1323,20 @@ function initializeReadAloudButton() {
         const summaryText = document.getElementById("ai-page-summary-text");
         if (!summaryText || !summaryText.textContent.trim()) return;
 
-        const ttsUrl = document.body.dataset.aiTtsUrl;
-        if (!ttsUrl) return;
+        const userLang = (document.body.dataset.userLanguage || "en_US").replace("_", "-");
 
-        const userLang = document.body.dataset.userLanguage || "en_US";
+        const utterance = new SpeechSynthesisUtterance(summaryText.textContent.trim());
+        utterance.lang = userLang;
+
+        utterance.onend = () => {
+            readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
+        };
+        utterance.onerror = () => {
+            readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
+        };
 
         readAloudBtn.textContent = readAloudBtn.dataset.labelStop;
-        readAloudBtn.disabled = true;
-
-        fetch(ttsUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Csrf-Token": document.body.dataset.csrfToken || ""
-            },
-            body: JSON.stringify({
-                text: summaryText.textContent.trim(),
-                language: userLang
-            })
-        })
-        .then(resp => {
-            if (!resp.ok) throw new Error("TTS request failed");
-            return resp.blob();
-        })
-        .then(blob => {
-            const url = URL.createObjectURL(blob);
-            let audioEl = document.getElementById("ai-tts-audio");
-            if (!audioEl) {
-                audioEl = document.createElement("audio");
-                audioEl.id = "ai-tts-audio";
-                audioEl.style.display = "none";
-                document.body.appendChild(audioEl);
-            }
-            audioEl.src = url;
-            audioEl.onended = () => {
-                readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
-                URL.revokeObjectURL(url);
-            };
-            audioEl.onerror = () => {
-                readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
-                URL.revokeObjectURL(url);
-            };
-            readAloudBtn.disabled = false;
-            audioEl.play();
-        })
-        .catch(() => {
-            readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
-            readAloudBtn.disabled = false;
-        });
+        window.speechSynthesis.speak(utterance);
     });
 }
 
@@ -1413,7 +1379,7 @@ function initializeBackfillStatusPolling() {
             }
         }
         if (stopBtn) {
-            stopBtn.style.display = loading ? "inline-block" : "none";
+            stopBtn.classList.toggle("initially-hidden", !loading);
         }
     }
 

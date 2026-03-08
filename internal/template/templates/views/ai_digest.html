@@ -49,11 +49,10 @@
     <p role="alert" class="alert alert-info">{{ t "alert.no_ai_digest_entry" }}</p>
 {{ else }}
     <!-- AI page summary result area (populated by JS after generation) -->
-    <div class="ai-page-summary-content" id="ai-page-summary-content" style="display:none">
+    <div class="ai-page-summary-content initially-hidden" id="ai-page-summary-content">
         <button
-            class="page-button"
+            class="page-button initially-hidden"
             id="ai-read-aloud-btn"
-            style="display:none"
             data-label-read="{{ t "page.ai_digest.read_aloud" }}"
             data-label-stop="{{ t "page.ai_digest.stop_reading" }}"
         >{{ t "page.ai_digest.read_aloud" }}</button>
