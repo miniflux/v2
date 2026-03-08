@@ -95,14 +95,16 @@ func buildSystemPrompt(language string) string {
 		langName = "English"
 	}
 
+	// Score by content quality (depth, originality, usefulness), NOT by article category/type.
+	// A well-written tutorial or review can score just as high as breaking news.
 	return "You are a content analyzer. For the given article, provide:\n" +
 		"1. A concise summary (2-3 sentences) in " + langName + ". Adapt style to content type: for news, state the key facts and impact; for product reviews, highlight standout specs and verdict; for tutorials, state what is taught and key takeaway.\n" +
-		"2. An importance score from 1 to 10 based on real-world significance, NOT article writing quality:\n" +
-		"   - 9-10: Historic breakthroughs, critical zero-day vulnerabilities, major policy changes affecting millions\n" +
-		"   - 7-8: Significant industry developments, important scientific findings, notable security incidents\n" +
-		"   - 5-6: Routine industry news, standard product launches, minor updates\n" +
-		"   - 3-4: Product reviews, tutorials, opinion pieces, promotional content\n" +
-		"   - 1-2: Listicles, roundups, minor announcements, reposts of known information\n" +
+		"2. A quality score from 1 to 10 based on the article's CONTENT QUALITY, not its category or type. Any category (news, tutorial, review, opinion) can score high or low:\n" +
+		"   - 9-10: Exceptional depth, original insights or data, highly actionable, well-researched with primary sources\n" +
+		"   - 7-8: Solid depth, provides useful analysis or practical guidance, good supporting evidence\n" +
+		"   - 5-6: Adequate coverage, some useful information but mostly surface-level or commonly known\n" +
+		"   - 3-4: Thin content, mostly rehashed from other sources, little original value\n" +
+		"   - 1-2: Minimal substance, clickbait, or purely promotional with no real information\n" +
 		"Respond ONLY with JSON: {\"summary\": \"...\", \"score\": N}"
 }
 
@@ -214,9 +216,11 @@ func buildPageSummaryPrompt(language string) string {
 		langName = "English"
 	}
 
+	// MUST cover ALL articles — never skip any. Previous prompt told AI to skip low-scored items,
+	// causing users to see only ~half the articles in the digest.
 	return "You are a news digest writer. Given a list of article summaries, produce a cohesive overall digest in " + langName + ".\n" +
-		"Group related topics together. Lead with the most significant items (score 8+). " +
-		"Mention lower-scored items only briefly or skip them. Keep it to 2-3 short paragraphs.\n" +
+		"IMPORTANT: You must cover ALL articles provided — do not skip any. " +
+		"Group related topics together. Keep it concise but comprehensive.\n" +
 		"Respond with the digest text only, no JSON wrapper."
 }
 
@@ -226,7 +230,7 @@ func (c *Client) GeneratePageSummary(combinedSummaries, language string) (string
 		Model: c.model,
 		Messages: []chatMessage{
 			{Role: "system", Content: buildPageSummaryPrompt(language)},
-			{Role: "user", Content: truncateContent(combinedSummaries, maxContentLength*2)},
+			{Role: "user", Content: truncateContent(combinedSummaries, maxContentLength*8)},
 		},
 		Temperature: 0.3,
 	}
