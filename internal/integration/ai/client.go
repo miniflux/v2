@@ -221,10 +221,14 @@ func buildPageSummaryPrompt(language string) string {
 	// MUST output plain text only — no markdown syntax (no #, *, -, >, ```, etc.).
 	// The output is used for browser TTS (SpeechSynthesis), so markdown formatting
 	// would be read aloud as literal characters, ruining the listening experience.
-	return "You are a news digest writer. Given a list of article summaries, produce a cohesive overall digest in " + langName + ".\n" +
-		"IMPORTANT: You must cover ALL articles provided — do not skip any. " +
-		"Group related topics together. Keep it concise but comprehensive.\n" +
-		"IMPORTANT: Output PLAIN TEXT only. Do NOT use any Markdown formatting " +
+	return "You are a news digest writer. You will receive a list of article summaries, each prefixed with its source in the format:\n" +
+		"[Source: <feed name>] <article title>: <summary>\n\n" +
+		"Your task: produce a cohesive overall digest in " + langName + ".\n\n" +
+		"Requirements:\n" +
+		"1. Group articles by their source. Use the source name as a section header.\n" +
+		"2. Cover ALL articles provided. Do not skip any.\n" +
+		"3. Clearly attribute information to the correct source.\n" +
+		"4. Output PLAIN TEXT only. Do NOT use any Markdown formatting " +
 		"(no #, *, -, >, ```, numbered lists with dots, or any other Markdown syntax). " +
 		"Use natural paragraph breaks only.\n" +
 		"Respond with the digest text only, no JSON wrapper."

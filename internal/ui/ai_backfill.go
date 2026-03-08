@@ -6,6 +6,7 @@ package ui // import "miniflux.app/v2/internal/ui"
 import (
 	json_parser "encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"sync"
 
@@ -140,7 +141,8 @@ func (h *handler) aiPageSummary(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Collect individual AI summaries from entries to build a combined input.
+	// Collect individual AI summaries from entries to build a structured combined input.
+	// Each entry is formatted with source (feed title) to help AI distinguish different authors/sources.
 	var summaryParts []string
 	for _, entryID := range req.EntryIDs {
 		builder := h.store.NewEntryQueryBuilder(userID)
@@ -150,7 +152,11 @@ func (h *handler) aiPageSummary(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 		if entry.AISummary != "" {
-			summaryParts = append(summaryParts, entry.Title+": "+entry.AISummary)
+			feedTitle := ""
+			if entry.Feed != nil {
+				feedTitle = entry.Feed.Title
+			}
+			summaryParts = append(summaryParts, fmt.Sprintf("[Source: %s] %s: %s", feedTitle, entry.Title, entry.AISummary))
 		}
 	}
 
