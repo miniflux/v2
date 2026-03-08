@@ -218,9 +218,15 @@ func buildPageSummaryPrompt(language string) string {
 
 	// MUST cover ALL articles — never skip any. Previous prompt told AI to skip low-scored items,
 	// causing users to see only ~half the articles in the digest.
+	// MUST output plain text only — no markdown syntax (no #, *, -, >, ```, etc.).
+	// The output is used for browser TTS (SpeechSynthesis), so markdown formatting
+	// would be read aloud as literal characters, ruining the listening experience.
 	return "You are a news digest writer. Given a list of article summaries, produce a cohesive overall digest in " + langName + ".\n" +
 		"IMPORTANT: You must cover ALL articles provided — do not skip any. " +
 		"Group related topics together. Keep it concise but comprehensive.\n" +
+		"IMPORTANT: Output PLAIN TEXT only. Do NOT use any Markdown formatting " +
+		"(no #, *, -, >, ```, numbered lists with dots, or any other Markdown syntax). " +
+		"Use natural paragraph breaks only.\n" +
 		"Respond with the digest text only, no JSON wrapper."
 }
 

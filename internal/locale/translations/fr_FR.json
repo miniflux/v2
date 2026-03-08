@@ -233,6 +233,8 @@
     "form.integration.ai_force_backfill_loading": "Régénération en cours...",
     "page.ai_digest.generate_summary": "Générer le résumé de la page",
     "page.ai_digest.generating_summary": "Génération en cours...",
+    "page.ai_digest.read_aloud": "🔊 Lire à voix haute",
+    "page.ai_digest.stop_reading": "⏹ Arrêter la lecture",
     "page.ai_digest.mark_summarized_read": "Tout marquer comme lu",
     "form.integration.ai_stop_backfill": "Arrêter le remplissage",
     "form.integration.ai_model": "Model",

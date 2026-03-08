@@ -236,6 +236,8 @@
     "form.integration.ai_force_backfill_loading": "Пересоздание...",
     "page.ai_digest.generate_summary": "Создать сводку страницы",
     "page.ai_digest.generating_summary": "Создание...",
+    "page.ai_digest.read_aloud": "🔊 Прочитать вслух",
+    "page.ai_digest.stop_reading": "⏹ Остановить",
     "page.ai_digest.mark_summarized_read": "Отметить все как прочитанное",
     "form.integration.ai_stop_backfill": "Остановить заполнение",
     "form.integration.ai_model": "Model",

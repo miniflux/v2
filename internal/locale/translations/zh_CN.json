@@ -230,6 +230,8 @@
     "form.integration.ai_force_backfill_loading": "正在重新生成...",
     "page.ai_digest.generate_summary": "生成本页总结",
     "page.ai_digest.generating_summary": "正在生成...",
+    "page.ai_digest.read_aloud": "🔊 朗读",
+    "page.ai_digest.stop_reading": "⏹ 停止朗读",
     "page.ai_digest.mark_summarized_read": "一键已读",
     "form.integration.ai_stop_backfill": "终止回填",
     "form.integration.ai_model": "模型",
