@@ -135,6 +135,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	uiRouter.HandleFunc("/ai-stop-backfill", handler.aiStopBackfill).Name("aiStopBackfill").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/ai-page-summary", handler.aiPageSummary).Name("aiPageSummary").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/ai-page-summary-status", handler.aiPageSummaryStatus).Name("aiPageSummaryStatus").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/ai-tts", handler.aiTextToSpeech).Name("aiTextToSpeech").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/about", handler.showAboutPage).Name("about").Methods(http.MethodGet)
 
 	// Session pages.
