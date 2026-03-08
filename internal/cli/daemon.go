@@ -14,6 +14,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/server"
+	"miniflux.app/v2/internal/integration"
 	"miniflux.app/v2/internal/metric"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/systemd"
@@ -32,6 +33,9 @@ func startDaemon(store *storage.Storage) {
 	if config.Opts.HasSchedulerService() && !config.Opts.HasMaintenanceMode() {
 		runScheduler(store, pool)
 	}
+
+	stopAISummaryWorker := make(chan struct{})
+	go integration.StartAISummaryWorker(store, stopAISummaryWorker)
 
 	var httpServers []*http.Server
 	if config.Opts.HasHTTPService() {
@@ -75,6 +79,7 @@ func startDaemon(store *storage.Storage) {
 
 	<-stop
 	slog.Debug("Shutting down the process")
+	close(stopAISummaryWorker)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

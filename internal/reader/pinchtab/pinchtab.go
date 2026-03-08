@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -26,6 +27,12 @@ const (
 	healthCheckMaxWait  = 30 * time.Second
 	shutdownTimeout     = 5 * time.Second
 )
+
+var activeProcessCount atomic.Int64
+
+func ActiveProcessCount() int64 {
+	return activeProcessCount.Load()
+}
 
 // RenderPage starts an ephemeral pinchtab subprocess in Dashboard mode,
 // navigates to the given URL (Chrome is auto-started on the first navigate),
@@ -109,6 +116,7 @@ func startSubprocess(port int, proxyURL string, feedID int64) (*exec.Cmd, error)
 	if err := cmd.Start(); err != nil {
 		return nil, fmt.Errorf("failed to start %q: %w", binaryPath, err)
 	}
+	activeProcessCount.Add(1)
 
 	return cmd, nil
 }
@@ -119,6 +127,7 @@ func stopSubprocess(cmd *exec.Cmd, port int) {
 	if cmd == nil || cmd.Process == nil {
 		return
 	}
+	defer activeProcessCount.Add(-1)
 
 	shutdownURL := fmt.Sprintf("http://127.0.0.1:%d/shutdown", port)
 	client := &http.Client{Timeout: shutdownTimeout}
@@ -225,4 +234,36 @@ func getTabText(client *http.Client, baseURL, tabID string) (string, error) {
 func quote(s string) string {
 	b, _ := json.Marshal(s)
 	return string(b)
+}
+
+// ChromiumProcessCount scans /proc to count running chromium-browser processes.
+// Returns 0 on non-Linux systems or if /proc is unavailable.
+func ChromiumProcessCount() int {
+	entries, err := os.ReadDir("/proc")
+	if err != nil {
+		return 0
+	}
+
+	count := 0
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+		pid := entry.Name()
+		if len(pid) == 0 || pid[0] < '1' || pid[0] > '9' {
+			continue
+		}
+		cmdline, err := os.ReadFile("/proc/" + pid + "/cmdline")
+		if err != nil {
+			continue
+		}
+		// /proc/PID/cmdline uses null bytes as separators; the executable is the first field.
+		if nullIdx := strings.IndexByte(string(cmdline), 0); nullIdx > 0 {
+			exe := string(cmdline[:nullIdx])
+			if strings.Contains(exe, "chromium") || strings.Contains(exe, "chrome") {
+				count++
+			}
+		}
+	}
+	return count
 }
