@@ -4,10 +4,13 @@
 package fetcher // import "miniflux.app/v2/internal/reader/fetcher"
 
 import (
+	"fmt"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -503,4 +506,126 @@ func configureFetcherAllowPrivateNetworksOption(t *testing.T, value string) {
 	t.Cleanup(func() {
 		config.Opts = previousOptions
 	})
+}
+
+func TestIsProxyError(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      error
+		expected bool
+	}{
+		{"nil error", nil, false},
+		{"proxyconnect error", fmt.Errorf(`Get "https://example.com": proxyconnect tcp: dial tcp 1.2.3.4:8080: connection refused`), true},
+		{"bad gateway error", fmt.Errorf(`Get "https://example.com": Bad Gateway`), true},
+		{"tunnel error", fmt.Errorf(`CONNECT tunnel failed, response 502`), true},
+		{"target server 500", fmt.Errorf(`Get "https://example.com": 500 Internal Server Error`), false},
+		{"dns resolution error", fmt.Errorf(`Get "https://example.com": dial tcp: lookup example.com: no such host`), false},
+		{"tls certificate error", fmt.Errorf(`tls: failed to verify certificate: x509: certificate signed by unknown authority`), false},
+		{"connection refused without proxy", fmt.Errorf(`dial tcp 1.2.3.4:443: connection refused`), false},
+		{"context deadline exceeded", fmt.Errorf(`context deadline exceeded`), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := isProxyError(tt.err); got != tt.expected {
+				t.Errorf("isProxyError(%v) = %v, want %v", tt.err, got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestRequestBuilder_ProxyRetryOnBadGateway(t *testing.T) {
+	configureFetcherAllowPrivateNetworksOption(t, "1")
+
+	var connectCount atomic.Int32
+
+	fakeProxy := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		n := connectCount.Add(1)
+		if r.Method == http.MethodConnect {
+			if n <= 2 {
+				http.Error(w, "Bad Gateway", http.StatusBadGateway)
+				return
+			}
+			hijacker, ok := w.(http.Hijacker)
+			if !ok {
+				http.Error(w, "hijack not supported", http.StatusInternalServerError)
+				return
+			}
+			targetConn, err := net.DialTimeout("tcp", r.Host, 5*time.Second)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadGateway)
+				return
+			}
+			clientConn, buf, err := hijacker.Hijack()
+			if err != nil {
+				targetConn.Close()
+				return
+			}
+			buf.WriteString("HTTP/1.1 200 Connection Established\r\n\r\n")
+			buf.Flush()
+			go func() { _, _ = buf.ReadFrom(targetConn); clientConn.Close() }()
+			go func() {
+				buf2 := make([]byte, 4096)
+				for {
+					n, err := clientConn.Read(buf2)
+					if n > 0 {
+						targetConn.Write(buf2[:n])
+					}
+					if err != nil {
+						break
+					}
+				}
+				targetConn.Close()
+			}()
+			return
+		}
+		http.Error(w, "only CONNECT supported", http.StatusMethodNotAllowed)
+	}))
+	defer fakeProxy.Close()
+
+	targetServer := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer targetServer.Close()
+
+	proxyURL, _ := url.Parse(fakeProxy.URL)
+	builder := NewRequestBuilder()
+	builder.clientProxyURL = proxyURL
+	builder.useClientProxy = true
+	builder.ignoreTLSErrors = true
+
+	resp, err := builder.ExecuteRequest(targetServer.URL + "/test")
+	if err != nil {
+		t.Fatalf("Expected request to eventually succeed after retries, got error: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("Expected status 200, got %d", resp.StatusCode)
+	}
+	if got := connectCount.Load(); got <= 1 {
+		t.Errorf("Expected retries to occur, but only %d CONNECT attempt(s) made", got)
+	}
+}
+
+func TestRequestBuilder_NoRetryWithoutProxy(t *testing.T) {
+	configureFetcherAllowPrivateNetworksOption(t, "1")
+
+	var requestCount atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requestCount.Add(1)
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	builder := NewRequestBuilder()
+	resp, err := builder.ExecuteRequest(server.URL)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	defer resp.Body.Close()
+
+	if got := requestCount.Load(); got != 1 {
+		t.Errorf("Expected exactly 1 request without proxy, got %d", got)
+	}
 }
