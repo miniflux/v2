@@ -34,7 +34,7 @@
 - 镜像推送到 `ghcr.io/naiba-forks/miniflux`
 
 ## 关键约定
-- **版本号**：fork 独立版本从 `v0.8.0` 起步（上游 v0 最后是 `v0.7.2`），CI 只触发 `v*` 前缀 tag（上游 release 无 `v` 前缀，不冲突）
+- **版本号**：fork 独立版本线 `v0.x`（当前最新 `v0.8.0`，上游 v0 最后是 `v0.7.2`），发版创建 `v*` tag 触发 CI（上游 release 无 `v` 前缀，不冲突）
 - **CSP 限制**：`style-src 'nonce-xxx'` 会阻止 HTML 内联 `style=""` 属性，必须用 CSS class（如 `.initially-hidden`）控制初始可见性
 - 参数编号：`storage/feed.go` UpdateFeed 用到 $1-$49, CreateFeed 用到 $1-$39
 - 参数编号：`storage/integration.go` UpdateIntegration AI 字段在 $122-$126
