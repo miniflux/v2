@@ -1273,6 +1273,8 @@ function initializeAIDigestPageSummary() {
                         clearInterval(pollInterval);
                         summaryText.textContent = data.summary;
                         summaryContent.style.display = "block";
+                        const readAloudBtn = document.getElementById("ai-read-aloud-btn");
+                        if (readAloudBtn) readAloudBtn.style.display = "";
                         generateBtn.textContent = defaultLabel;
                         generateBtn.disabled = false;
                     } else if (data.status === "error") {
@@ -1319,6 +1321,10 @@ function initializeReadAloudButton() {
         if (!summaryText || !summaryText.textContent.trim()) return;
 
         const utterance = new SpeechSynthesisUtterance(summaryText.textContent);
+        // 将用户语言偏好（如 zh_CN）转为 BCP 47 格式（如 zh-CN）供 TTS 引擎使用，
+        // 避免系统语言与内容语言不一致导致朗读发音错误。
+        const userLang = (document.body.dataset.userLanguage || "").replace("_", "-");
+        if (userLang) utterance.lang = userLang;
         utterance.onend = () => {
             readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
         };

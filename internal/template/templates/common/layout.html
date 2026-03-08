@@ -57,6 +57,7 @@
     data-ai-backfill-status-url="{{ route "aiBackfillStatus" }}"
     data-ai-stop-backfill-url="{{ route "aiStopBackfill" }}"
     {{ end }}
+    {{ if .user }}data-user-language="{{ .user.Language }}"{{ end }}
     {{ if .user }}
         {{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}
         data-mark-as-read-on-view="{{ if .user.MarkReadOnView }}true{{ else }}false{{ end }}"
