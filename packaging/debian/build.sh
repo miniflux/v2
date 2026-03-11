@@ -10,7 +10,7 @@ echo "PKG_DATE=$PKG_DATE"
 
 cd /src
 
-if [ "$PKG_ARCH" = "armhf" ]; then
+if [ "$PKG_ARCH" = "armhf" ] || [ "$PKG_ARCH" = "riscv64" ]; then
     make miniflux-no-pie
 else
     CGO_ENABLED=0 make miniflux

@@ -103,7 +103,7 @@ You can also use an existing PostgreSQL instance. Make sure to set the `DATABASE
 ### Cross-Platform Support
 
 Miniflux supports multiple architectures. When making changes, ensure compatibility across:
-- Linux (amd64, arm64, armv7, armv6, armv5)
+- Linux (amd64, arm64, armv7, armv6, armv5, riscv64)
 - macOS (amd64, arm64)
 - FreeBSD, OpenBSD, Windows (amd64)
 

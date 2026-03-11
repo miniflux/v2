@@ -103,7 +103,7 @@ Features
 - Compatible only with modern browsers.
 - Adheres to the [Twelve-Factor App](https://12factor.net/) methodology.
 - Provides official Debian/RPM packages and pre-built binaries.
-- Publishes a Docker image to Docker Hub, GitHub Registry, and Quay.io Registry, with ARM architecture support.
+- Publishes a Docker image to Docker Hub, GitHub Registry, and Quay.io Registry, with ARM and RISC-V architecture support.
 - Uses a limited amount of third-party go dependencies
 - Has a comprehensive testsuite, with both unit tests and integration tests.
 - Only uses a couple of MB of memory and a negligible amount of CPU, even with several hundreds of feeds.

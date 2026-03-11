@@ -16,6 +16,7 @@ export PGPASSWORD := postgres
 	linux-armv7 \
 	linux-armv6 \
 	linux-armv5 \
+	linux-riscv64 \
 	darwin-amd64 \
 	darwin-arm64 \
 	freebsd-amd64 \
@@ -61,6 +62,10 @@ linux-armv5:
 	@ CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=5 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@
 	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
 
+linux-riscv64:
+	@ CGO_ENABLED=0 GOOS=linux GOARCH=riscv64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@
+	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
+
 darwin-amd64:
 	@ GOOS=darwin GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@
 	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
@@ -77,7 +82,7 @@ openbsd-amd64:
 	@ GOOS=openbsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@
 	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
 
-build: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 darwin-arm64 freebsd-amd64 openbsd-amd64
+build: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 linux-riscv64 darwin-amd64 darwin-arm64 freebsd-amd64 openbsd-amd64
 
 run:
 	@ LOG_DATE_TIME=1 LOG_LEVEL=debug RUN_MIGRATIONS=1 CREATE_ADMIN=1 ADMIN_USERNAME=admin ADMIN_PASSWORD=test123 go run main.go
@@ -135,7 +140,7 @@ docker-image-distroless:
 
 docker-images:
 	docker buildx build \
-		--platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6 \
+		--platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6,linux/riscv64 \
 		--file packaging/docker/alpine/Dockerfile \
 		--tag $(DOCKER_IMAGE):$(VERSION) \
 		--push .
@@ -162,3 +167,4 @@ debian-packages: clean
 	$(MAKE) debian DOCKER_PLATFORM=amd64
 	$(MAKE) debian DOCKER_PLATFORM=arm64
 	$(MAKE) debian DOCKER_PLATFORM=arm/v7
+	$(MAKE) debian DOCKER_PLATFORM=riscv64
