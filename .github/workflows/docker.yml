@@ -24,7 +24,7 @@ jobs:
 
       - name: Generate Alpine Docker tags
         id: docker_alpine_tags
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: |
             docker.io/${{ github.repository_owner }}/miniflux
@@ -37,7 +37,7 @@ jobs:
 
       - name: Generate Distroless Docker tags
         id: docker_distroless_tags
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: |
             docker.io/${{ github.repository_owner }}/miniflux
@@ -51,21 +51,21 @@ jobs:
             suffix=-distroless,onlatest=true
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to DockerHub
         if: ${{ github.event_name != 'pull_request' && vars.PUBLISH_DOCKER_IMAGES == 'true' }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && vars.PUBLISH_DOCKER_IMAGES == 'true' }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -73,14 +73,14 @@ jobs:
 
       - name: Login to Quay Container Registry
         if: ${{ github.event_name != 'pull_request' && vars.PUBLISH_DOCKER_IMAGES == 'true' }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
 
       - name: Build and Push Alpine images
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         if: ${{ vars.PUBLISH_DOCKER_IMAGES == 'true' }}
         with:
           context: .
@@ -90,7 +90,7 @@ jobs:
           tags: ${{ steps.docker_alpine_tags.outputs.tags }}
 
       - name: Build and Push Distroless images
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         if: ${{ vars.PUBLISH_DOCKER_IMAGES == 'true' }}
         with:
           context: .
