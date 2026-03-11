@@ -23,7 +23,7 @@ import (
 
 const (
 	defaultHTTPClientTimeout = 20 * time.Second
-	defaultAcceptHeader      = "application/xml, application/atom+xml, application/rss+xml, application/rdf+xml, application/feed+json, text/html, */*;q=0.9"
+	defaultAcceptHeader      = "application/xml,application/atom+xml,application/rss+xml,application/rdf+xml,application/feed+json,text/html,*/*;q=0.9"
 )
 
 var (
@@ -237,7 +237,7 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	if r.disableCompression {
 		req.Header.Set("Accept-Encoding", "identity")
 	} else {
-		req.Header.Set("Accept-Encoding", "br, gzip")
+		req.Header.Set("Accept-Encoding", "br,gzip")
 	}
 
 	// Set default Accept header if not already set.
