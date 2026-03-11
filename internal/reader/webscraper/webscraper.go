@@ -161,11 +161,32 @@ func processHTMLResponse(
 	}
 	htmlBody := string(htmlBytes)
 
-	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlBody))
+	extracted, err := extractItemsFromHTML(htmlBody, pageURL, scrapeConfig, maxItems-len(accumulated))
 	if err != nil {
-		return accumulated, fmt.Errorf("webscraper: unable to parse HTML: %w", err)
+		return accumulated, err
+	}
+	accumulated = append(accumulated, extracted...)
+
+	// HTML pagination: use regex to match next page URL from raw HTML.
+	if len(accumulated) < maxItems && scrapeConfig.NextPageSelector != "" {
+		matcher := regexp.MustCompile(scrapeConfig.NextPageSelector)
+		matches := matcher.FindStringSubmatch(htmlBody)
+		if len(matches) > 1 && matches[1] != "" {
+			nextURL := mergeURL(pageURL, matches[1])
+			return scrapeWithAccumulator(requestBuilder, nextURL, scrapeConfig, accumulated)
+		}
 	}
 
+	return accumulated, nil
+}
+
+func extractItemsFromHTML(htmlBody, pageURL string, scrapeConfig *ScrapeConfig, limit int) ([]*ScrapeResult, error) {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlBody))
+	if err != nil {
+		return nil, fmt.Errorf("webscraper: unable to parse HTML: %w", err)
+	}
+
+	var results []*ScrapeResult
 	doc.Find(scrapeConfig.ItemSelector).EachWithBreak(func(i int, s *goquery.Selection) bool {
 		var result ScrapeResult
 
@@ -179,29 +200,28 @@ func processHTMLResponse(
 			result.Description = strings.TrimSpace(s.Find(scrapeConfig.DescriptionSelector).First().Text())
 		}
 
-		// Skip items where both Title and Link are empty.
 		if result.Title == "" && result.Link == "" {
 			return true
 		}
 
-		// Resolve relative URLs to absolute using the page URL as base.
 		result.Link = mergeURL(pageURL, result.Link)
 
-		accumulated = append(accumulated, &result)
-		return len(accumulated) < maxItems
+		results = append(results, &result)
+		return len(results) < limit
 	})
 
-	// HTML pagination: use regex to match next page URL from raw HTML.
-	if len(accumulated) < maxItems && scrapeConfig.NextPageSelector != "" {
-		matcher := regexp.MustCompile(scrapeConfig.NextPageSelector)
-		matches := matcher.FindStringSubmatch(htmlBody)
-		if len(matches) > 1 && matches[1] != "" {
-			nextURL := mergeURL(pageURL, matches[1])
-			return scrapeWithAccumulator(requestBuilder, nextURL, scrapeConfig, accumulated)
-		}
-	}
+	return results, nil
+}
 
-	return accumulated, nil
+// ScrapeRenderedHTML extracts items from pre-rendered HTML (e.g. from pinchtab
+// JS rendering) without making HTTP requests. Pagination is not supported since
+// the HTML is already fully rendered.
+func ScrapeRenderedHTML(htmlBody, pageURL string, scrapeConfig *ScrapeConfig) ([]*ScrapeResult, error) {
+	maxItems := scrapeConfig.MaxItems
+	if maxItems <= 0 {
+		maxItems = defaultMaxItems
+	}
+	return extractItemsFromHTML(htmlBody, pageURL, scrapeConfig, maxItems)
 }
 
 // mergeURL resolves a potentially relative target URL against a base URL.
