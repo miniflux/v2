@@ -104,6 +104,7 @@
             <input type="text" name="cookie" id="form-cookie" value="{{ .form.Cookie }}" spellcheck="false">
 
             <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
+            <label><input type="checkbox" name="use_js_render" value="1" {{ if .form.UseJSRender }}checked{{ end }}> {{ t "form.feed.label.use_js_render" }}</label>
             <label><input type="checkbox" name="ignore_entry_updates" value="1" {{ if .form.IgnoreEntryUpdates }}checked{{ end }}> {{ t "form.feed.label.ignore_entry_updates" }}</label>
             <label><input type="checkbox" name="ignore_http_cache" value="1" {{ if .form.IgnoreHTTPCache }}checked{{ end }}> {{ t "form.feed.label.ignore_http_cache" }}</label>
             <label><input type="checkbox" name="allow_self_signed_certificates" value="1" {{ if .form.AllowSelfSignedCertificates }}checked{{ end }}> {{ t "form.feed.label.allow_self_signed_certificates" }}</label>
@@ -228,8 +229,6 @@
 
             <label for="form-ws-max-items">{{ t "form.feed.label.ws_max_items" }}</label>
             <input type="number" name="ws_max_items" id="form-ws-max-items" value="{{ .form.WebScraperMaxItems }}" min="0" max="100">
-
-            <label><input type="checkbox" name="use_js_render" value="1" {{ if .form.UseJSRender }}checked{{ end }}> {{ t "form.feed.label.use_js_render" }}</label>
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

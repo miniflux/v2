@@ -1,4 +1,4 @@
-# Miniflux Fork — AGENTS.md
+# MinifluxNg — AGENTS.md
 
 ## Fork 新增模块（非上游）
 
@@ -26,7 +26,10 @@
 - 系统级配置：`PINCHTAB_ENABLED/PINCHTAB_URL/PINCHTAB_BINARY_PATH`
 - 子进程生命周期：`daemon.go` 启动时 `StartIfEnabled()`，关闭时 `Stop()`
 - 每次渲染创建独立 instance（Chrome 进程），支持并发
-- 在 `processor.go` 中 `UseJSRender && PinchTabEnabled` 时优先用 pinchtab，失败 fallback 到内置 scraper
+- `RenderPage` 返回 Readability 纯文本（全文抓取），`RenderPageHTML` 返回完整 DOM HTML（web_scraper 列表页解析）
+- RSS feed：`processor.go` 中 `UseJSRender && PinchTabEnabled` 时优先用 pinchtab，失败 fallback 到内置 scraper
+- Web Scraper feed：`handler.go` 中列表页渲染用 `RenderPageHTML` + `ScrapeRenderedHTML`；条目全文抓取在 `processor.go` 中 `FeedSourceType=="web_scraper" && UseJSRender` 时也进入抓取分支（无需额外勾选 Crawler）
+- UI：`UseJSRender` checkbox 在 Network Settings 区域（紧跟 Crawler），对 RSS 和 web_scraper 都生效
 
 ## CI/CD
 - `test.yml`: push main/tags + PR → go vet + build + unit test + integration test (PostgreSQL 17)

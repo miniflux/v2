@@ -95,7 +95,12 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 		entry.URL = rewrite.RewriteEntryURL(feed, entry)
 		entryIsNew := store.IsNewEntry(feed.ID, entry.Hash)
 		contentExtractedSuccessfully := false
-		if feed.Crawler && (entryIsNew || forceRefresh) {
+		// For web_scraper feeds, UseJSRender also triggers full content fetching
+		// via pinchtab, even when Crawler is not explicitly enabled. The web
+		// scraper's listing page only provides summaries; JS rendering each
+		// entry's detail page extracts the full article content.
+		shouldFetchContent := feed.Crawler || (feed.FeedSourceType == "web_scraper" && feed.UseJSRender && config.Opts.PinchTabEnabled())
+		if shouldFetchContent && (entryIsNew || forceRefresh) {
 			slog.Debug("Scraping entry",
 				slog.Int64("user_id", user.ID),
 				slog.String("entry_url", entry.URL),
@@ -114,7 +119,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 					slog.String("entry_url", entry.URL),
 					slog.Int64("feed_id", feed.ID),
 				)
-				renderedContent, renderErr := pinchtab.RenderPage(entry.URL, resolveProxyURLForPinchtab(feed), feed.ID)
+				renderedContent, renderErr := pinchtab.RenderPage(entry.URL, ResolveProxyURLForPinchtab(feed), feed.ID)
 				if renderErr != nil {
 					slog.Warn("Unable to render entry with pinchtab",
 						slog.Int64("user_id", user.ID),
@@ -227,7 +232,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 			slog.String("entry_url", entry.URL),
 			slog.Int64("feed_id", feed.ID),
 		)
-		renderedContent, renderErr := pinchtab.RenderPage(entry.URL, resolveProxyURLForPinchtab(feed), feed.ID)
+		renderedContent, renderErr := pinchtab.RenderPage(entry.URL, ResolveProxyURLForPinchtab(feed), feed.ID)
 		if renderErr != nil {
 			slog.Warn("Unable to render entry with pinchtab",
 				slog.String("entry_url", entry.URL),
@@ -273,14 +278,14 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	return nil
 }
 
-// resolveProxyURLForPinchtab determines the proxy URL to use when rendering a
+// ResolveProxyURLForPinchtab determines the proxy URL to use when rendering a
 // page via pinchtab's headless Chrome. The priority matches the fetcher's
 // RequestBuilder logic (request_builder.go):
 //   - feed-level proxy_url (highest)
 //   - application-level HTTP_CLIENT_PROXY (when FetchViaProxy is enabled)
 //   - proxy rotator pool
 //   - no proxy (empty string)
-func resolveProxyURLForPinchtab(feed *model.Feed) string {
+func ResolveProxyURLForPinchtab(feed *model.Feed) string {
 	switch {
 	case feed.ProxyURL != "":
 		return feed.ProxyURL

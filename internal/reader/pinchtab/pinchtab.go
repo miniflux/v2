@@ -34,9 +34,9 @@ func ActiveProcessCount() int64 {
 	return activeProcessCount.Load()
 }
 
-// RenderPage starts an ephemeral pinchtab subprocess in Dashboard mode,
-// navigates to the given URL (Chrome is auto-started on the first navigate),
-// extracts the rendered text content, and gracefully shuts down everything.
+// renderPageWithExtractor starts an ephemeral pinchtab subprocess in Dashboard
+// mode, navigates to the given URL, and calls extractFn to obtain content from
+// the rendered page. This is the shared core for RenderPage and RenderPageHTML.
 //
 // proxyURL is optional: when non-empty it is forwarded to Chrome via
 // --proxy-server so that the page fetch goes through the specified proxy.
@@ -44,7 +44,7 @@ func ActiveProcessCount() int64 {
 // feedID isolates browser state (cookies, localStorage) per feed so that
 // login sessions are preserved across fetches but different feeds cannot
 // leak state to each other.
-func RenderPage(pageURL, proxyURL string, feedID int64) (string, error) {
+func renderPageWithExtractor(pageURL, proxyURL string, feedID int64, extractFn func(*http.Client, string, string) (string, error)) (string, error) {
 	port, err := findFreePort()
 	if err != nil {
 		return "", fmt.Errorf("pinchtab: %w", err)
@@ -71,12 +71,24 @@ func RenderPage(pageURL, proxyURL string, feedID int64) (string, error) {
 		return "", fmt.Errorf("pinchtab: failed to create tab for %q: %w", pageURL, err)
 	}
 
-	text, err := getTabText(client, baseURL, tabID)
+	content, err := extractFn(client, baseURL, tabID)
 	if err != nil {
-		return "", fmt.Errorf("pinchtab: failed to get text for %q: %w", pageURL, err)
+		return "", fmt.Errorf("pinchtab: failed to extract content for %q: %w", pageURL, err)
 	}
 
-	return text, nil
+	return content, nil
+}
+
+// RenderPage renders the page and extracts readable text via Readability.
+func RenderPage(pageURL, proxyURL string, feedID int64) (string, error) {
+	return renderPageWithExtractor(pageURL, proxyURL, feedID, getTabText)
+}
+
+// RenderPageHTML renders the page with JS and returns the full DOM HTML.
+// This is used by the web scraper to parse JS-rendered listing pages with
+// CSS selectors, where plain text from Readability would lose DOM structure.
+func RenderPageHTML(pageURL, proxyURL string, feedID int64) (string, error) {
+	return renderPageWithExtractor(pageURL, proxyURL, feedID, getTabHTML)
 }
 
 func startSubprocess(port int, proxyURL string, feedID int64) (*exec.Cmd, error) {
@@ -229,6 +241,53 @@ func getTabText(client *http.Client, baseURL, tabID string) (string, error) {
 	}
 
 	return result.Text, nil
+}
+
+type evaluateRequest struct {
+	Expression string `json:"expression"`
+	Await      bool   `json:"await"`
+}
+
+type evaluateResponse struct {
+	Result json.RawMessage `json:"result"`
+	Type   string          `json:"type"`
+}
+
+// getTabHTML uses the /evaluate endpoint to execute JS and extract the full
+// rendered DOM HTML. Unlike /text (Readability), this preserves DOM structure
+// needed for CSS selector parsing in the web scraper.
+func getTabHTML(client *http.Client, baseURL, tabID string) (string, error) {
+	payload := evaluateRequest{
+		Expression: "document.documentElement.outerHTML",
+	}
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal evaluate request: %w", err)
+	}
+
+	url := fmt.Sprintf("%s/evaluate?tabId=%s", baseURL, tabID)
+	resp, err := client.Post(url, "application/json", strings.NewReader(string(body)))
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		respBody, _ := io.ReadAll(resp.Body)
+		return "", fmt.Errorf("unexpected status %d: %s", resp.StatusCode, respBody)
+	}
+
+	var result evaluateResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return "", fmt.Errorf("failed to decode evaluate response: %w", err)
+	}
+
+	var html string
+	if err := json.Unmarshal(result.Result, &html); err != nil {
+		return "", fmt.Errorf("failed to unmarshal HTML result: %w", err)
+	}
+
+	return html, nil
 }
 
 func quote(s string) string {
