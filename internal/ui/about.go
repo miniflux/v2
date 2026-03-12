@@ -10,6 +10,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/reader/pinchtab"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 	"miniflux.app/v2/internal/version"
@@ -33,6 +34,8 @@ func (h *handler) showAboutPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+	view.Set("showAIDigest", h.store.IsAIEnabled(user.ID))
+	view.Set("countAIDigest", h.store.CountUnreadAIDigestEntries(user.ID))
 	view.Set("globalConfigOptions", config.Opts.ConfigMap(true))
 	view.Set("postgres_version", h.store.DatabaseVersion())
 	view.Set("go_version", runtime.Version())
@@ -42,6 +45,9 @@ func (h *handler) showAboutPage(w http.ResponseWriter, r *http.Request) {
 	} else {
 		view.Set("db_usage", dbSize)
 	}
+
+	view.Set("pinchtab_active_processes", pinchtab.ActiveProcessCount())
+	view.Set("chromium_process_count", pinchtab.ChromiumProcessCount())
 
 	html.OK(w, r, view.Render("about"))
 }

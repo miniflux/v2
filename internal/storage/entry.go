@@ -62,6 +62,37 @@ func (s *Storage) CountUnreadEntries(userID int64) int {
 	return n
 }
 
+// CountUnreadAIDigestEntries returns the number of unread entries that have AI summaries (score >= 1).
+// Used for the AI Digest navigation counter.
+func (s *Storage) CountUnreadAIDigestEntries(userID int64) int {
+	builder := s.NewEntryQueryBuilder(userID)
+	builder.WithStatus(model.EntryStatusUnread)
+	builder.WithMinAIScore(1)
+
+	n, err := builder.CountEntries()
+	if err != nil {
+		slog.Error("Unable to count unread AI digest entries",
+			slog.Int64("user_id", userID),
+			slog.Any("error", err),
+		)
+		return 0
+	}
+
+	return n
+}
+
+// IsAIEnabled checks whether the user has AI summarization configured and enabled.
+// This avoids loading the full Integration struct just to check a boolean.
+func (s *Storage) IsAIEnabled(userID int64) bool {
+	var enabled bool
+	query := `SELECT ai_enabled FROM integrations WHERE user_id = $1`
+	err := s.db.QueryRow(query, userID).Scan(&enabled)
+	if err != nil {
+		return false
+	}
+	return enabled
+}
+
 // NewEntryQueryBuilder returns a new EntryQueryBuilder
 func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 	return NewEntryQueryBuilder(s, userID)
@@ -97,6 +128,34 @@ func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 	return nil
 }
 
+// UpdateEntryAISummary updates the AI summary and score for an entry.
+// This is called asynchronously after AI summarization completes.
+// It only updates if the entry doesn't already have a summary to avoid wasting tokens.
+func (s *Storage) UpdateEntryAISummary(entry *model.Entry) error {
+	query := `
+		UPDATE
+			entries
+		SET
+			ai_summary=$1,
+			ai_score=$2,
+			ai_summarized_at=$3
+		WHERE
+			id=$4 AND user_id=$5
+	`
+	_, err := s.db.Exec(
+		query,
+		entry.AISummary,
+		entry.AIScore,
+		entry.AISummarizedAt,
+		entry.ID,
+		entry.UserID,
+	)
+	if err != nil {
+		return fmt.Errorf(`store: unable to update AI summary for entry #%d: %v`, entry.ID, err)
+	}
+	return nil
+}
+
 // createEntry add a new entry.
 func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
@@ -115,7 +174,9 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				reading_time,
 				changed_at,
 				document_vectors,
-				tags
+				tags,
+				ai_summary,
+				ai_score
 			)
 		VALUES
 			(
@@ -131,7 +192,9 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				$10,
 				now(),
 				setweight(to_tsvector($11), 'A') || setweight(to_tsvector($12), 'B'),
-				$13
+				$13,
+				$14,
+				$15
 			)
 		RETURNING
 			id, status, created_at, changed_at
@@ -151,6 +214,8 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		truncatedTitle,
 		truncatedContent,
 		pq.Array(entry.Tags),
+		entry.AISummary,
+		entry.AIScore,
 	).Scan(
 		&entry.ID,
 		&entry.Status,
@@ -189,7 +254,9 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 			author=$5,
 			reading_time=$6,
 			document_vectors = setweight(to_tsvector($7), 'A') || setweight(to_tsvector($8), 'B'),
-			tags=$12
+			tags=$12,
+			ai_summary=$13,
+			ai_score=$14
 		WHERE
 			user_id=$9 AND feed_id=$10 AND hash=$11
 		RETURNING
@@ -209,6 +276,8 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.FeedID,
 		entry.Hash,
 		pq.Array(entry.Tags),
+		entry.AISummary,
+		entry.AIScore,
 	).Scan(&entry.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to update entry %q: %v`, entry.URL, err)

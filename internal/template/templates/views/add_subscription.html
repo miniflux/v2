@@ -28,10 +28,17 @@
             {{ end }}
         </select>
 
+        <label for="form-feed-source-type">{{ t "form.feed.label.feed_source_type" }}</label>
+        <select id="form-feed-source-type" name="feed_source_type">
+            <option value="rss" {{ if eq .form.FeedSourceType "rss" }}selected{{ end }}>RSS / Atom / JSON Feed</option>
+            <option value="web_scraper" {{ if eq .form.FeedSourceType "web_scraper" }}selected{{ end }}>{{ t "form.feed.label.web_scraper" }}</option>
+        </select>
+
         <details>
             <summary>{{ t "page.add_feed.legend.advanced_options" }}</summary>
             <div class="details-content">
                 <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
+                <label><input type="checkbox" name="use_js_render" value="1" {{ if .form.UseJSRender }}checked{{ end }}> {{ t "form.feed.label.use_js_render" }}</label>
                 <label><input type="checkbox" name="ignore_entry_updates" value="1" {{ if .form.IgnoreEntryUpdates }}checked{{ end }}> {{ t "form.feed.label.ignore_entry_updates" }}</label>
                 <label><input type="checkbox" name="allow_self_signed_certificates" value="1" {{ if .form.AllowSelfSignedCertificates }}checked{{ end }}> {{ t "form.feed.label.allow_self_signed_certificates" }}</label>
                 <label><input type="checkbox" name="disable_http2" value="1" {{ if .form.DisableHTTP2 }}checked{{ end }}> {{ t "form.feed.label.disable_http2" }}</label>
@@ -138,6 +145,24 @@
                     </a>
                 </div>
                 <textarea id="form-keep-filter-rules" name="keep_filter_entry_rules" cols="40" rows="10" spellcheck="false">{{ .form.KeepFilterEntryRules }}</textarea>
+
+                <label for="form-ws-item-selector">{{ t "form.feed.label.ws_item_selector" }}</label>
+                <input type="text" name="ws_item_selector" id="form-ws-item-selector" value="{{ .form.WebScraperItemSelector }}" spellcheck="false" placeholder="div.post-list > article">
+
+                <label for="form-ws-title-selector">{{ t "form.feed.label.ws_title_selector" }}</label>
+                <input type="text" name="ws_title_selector" id="form-ws-title-selector" value="{{ .form.WebScraperTitleSelector }}" spellcheck="false" placeholder="h2.title">
+
+                <label for="form-ws-link-selector">{{ t "form.feed.label.ws_link_selector" }}</label>
+                <input type="text" name="ws_link_selector" id="form-ws-link-selector" value="{{ .form.WebScraperLinkSelector }}" spellcheck="false" placeholder="a.post-link">
+
+                <label for="form-ws-description-selector">{{ t "form.feed.label.ws_description_selector" }}</label>
+                <input type="text" name="ws_description_selector" id="form-ws-description-selector" value="{{ .form.WebScraperDescSelector }}" spellcheck="false" placeholder="div.summary">
+
+                <label for="form-ws-next-page-selector">{{ t "form.feed.label.ws_next_page_selector" }}</label>
+                <input type="text" name="ws_next_page_selector" id="form-ws-next-page-selector" value="{{ .form.WebScraperNextPageSelector }}" spellcheck="false" placeholder="class=&quot;next&quot; href=&quot;(.*)&quot;">
+
+                <label for="form-ws-max-items">{{ t "form.feed.label.ws_max_items" }}</label>
+                <input type="number" name="ws_max_items" id="form-ws-max-items" value="{{ .form.WebScraperMaxItems }}" min="0" max="100">
             </div>
         </details>
 

@@ -1,0 +1,121 @@
+{{ define "title"}}{{ t "page.ai_digest.title" }} ({{ .total }}){{ end }}
+
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">
+        {{ t "page.ai_digest.title" }}
+        <span aria-hidden="true"> ({{ .total }})</span>
+    </h1>
+    {{ if .entries }}
+    <nav aria-label="{{ t "page.ai_digest.title" }} {{ t "menu.title" }}">
+        <ul>
+            <li>
+                <button
+                    class="page-button"
+                    data-action="markPageAsRead"
+                    data-show-only-unread="1"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</button>
+            </li>
+            <li>
+                <button
+                    class="page-button"
+                    data-confirm="true"
+                    data-url="{{ route "markAllAsRead" }}"
+                    data-redirect-url="{{ route "aiDigest" }}"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</button>
+            </li>
+            <li>
+                <button
+                    class="page-button"
+                    id="ai-generate-page-summary"
+                    data-label-loading="{{ t "page.ai_digest.generating_summary" }}"
+                    data-label-default="{{ t "page.ai_digest.generate_summary" }}"
+                >{{ t "page.ai_digest.generate_summary" }}</button>
+            </li>
+        </ul>
+    </nav>
+    {{ end }}
+</section>
+{{ end }}
+
+{{ define "content"}}
+{{ if not .entries }}
+    <p role="alert" class="alert alert-info">{{ t "alert.no_ai_digest_entry" }}</p>
+{{ else }}
+    <!-- AI page summary result area (populated by JS after generation) -->
+    <div class="ai-page-summary-content initially-hidden" id="ai-page-summary-content">
+        <button
+            class="page-button initially-hidden"
+            id="ai-read-aloud-btn"
+            data-label-read="{{ t "page.ai_digest.read_aloud" }}"
+            data-label-stop="{{ t "page.ai_digest.stop_reading" }}"
+        >{{ t "page.ai_digest.read_aloud" }}</button>
+        <div class="ai-page-summary-text" id="ai-page-summary-text"></div>
+    </div>
+
+    <div class="pagination-top">
+        {{ template "pagination" .pagination -}}
+    </div>
+    <div class="items hide-read-items">
+        {{ range .entries }}
+        <article
+            class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}"
+            data-id="{{ .ID }}"
+            aria-labelledby="entry-title-{{ .ID }}"
+            tabindex="-1"
+        >
+            <header class="item-header" dir="auto">
+                <h2 id="entry-title-{{ .ID }}" class="item-title">
+                    <a href="{{ route "unreadEntry" "entryID" .ID }}">
+                        {{ if ne .Feed.Icon.IconID 0 -}}
+                        <img src="{{ route "feedIcon" "externalIconID" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
+                        {{ end -}}
+                        {{ .Title }}
+                    </a>
+                </h2>
+                <span class="category">
+                    <a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">
+                        {{ .Feed.Category.Title }}
+                    </a>
+                </span>
+            </header>
+            {{ if .AISummary }}
+            <div class="item-ai-summary" dir="auto">
+                <span class="ai-score">⚡ {{ .AIScore }}/10</span>
+                <p>{{ .AISummary }}</p>
+            </div>
+            {{ end }}
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
+        </article>
+        {{ end }}
+    </div>
+    <section class="page-footer">
+        {{ if .entries }}
+        <ul>
+            <li>
+                <button
+                    class="page-button"
+                    data-action="markPageAsRead"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}"
+                >
+                    {{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}
+                </button>
+            </li>
+        </ul>
+        {{ end }}
+    </section>
+    <div class="pagination-bottom">
+        {{ template "pagination" .pagination }}
+    </div>
+{{ end }}
+
+{{ end }}

@@ -6,6 +6,7 @@ package api // import "miniflux.app/v2/internal/api"
 import (
 	json_parser "encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -15,6 +16,7 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/integration"
+	"miniflux.app/v2/internal/integration/ai"
 	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/processor"
@@ -510,4 +512,237 @@ func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) {
 	if searchQuery := request.QueryStringParam(r, "search", ""); searchQuery != "" {
 		builder.WithSearchQuery(searchQuery)
 	}
+}
+
+func (h *handler) summarizeEntry(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	entryID := request.RouteInt64Param(r, "entryID")
+
+	entryBuilder := h.store.NewEntryQueryBuilder(userID)
+	entryBuilder.WithEntryID(entryID)
+	entryBuilder.WithoutStatus(model.EntryStatusRemoved)
+
+	entry, err := entryBuilder.GetEntry()
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if entry == nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	userIntegrations, err := h.store.Integration(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if !userIntegrations.AIEnabled || userIntegrations.AIProviderURL == "" || userIntegrations.AIAPIKey == "" || userIntegrations.AIModel == "" {
+		json.BadRequest(w, r, errors.New("AI integration is not configured"))
+		return
+	}
+
+	client := ai.NewClient(
+		userIntegrations.AIProviderURL,
+		userIntegrations.AIAPIKey,
+		userIntegrations.AIModel,
+	)
+
+	// Load user language for AI summary generation in the user's preferred language.
+	user, err := h.store.UserByID(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+	// Skip if already summarized — pass existing summary to let client decide
+	result, err := client.SummarizeEntry(entry.Title, entry.Content, entry.AISummary, user.Language)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	// result is nil when entry already has a summary
+	if result != nil {
+		now := time.Now()
+		entry.AISummary = result.Summary
+		entry.AIScore = result.Score
+		entry.AISummarizedAt = &now
+
+		if err := h.store.UpdateEntryAISummary(entry); err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+	}
+
+	json.OK(w, r, entry)
+}
+
+func (h *handler) backfillAISummaries(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+
+	// Return 204 if a backfill is already running for this user — no duplicate work.
+	if integration.IsBackfillRunning(userID) {
+		json.NoContent(w, r)
+		return
+	}
+
+	userIntegrations, err := h.store.Integration(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if !userIntegrations.AIEnabled || userIntegrations.AIProviderURL == "" || userIntegrations.AIAPIKey == "" || userIntegrations.AIModel == "" {
+		json.BadRequest(w, r, errors.New("AI integration is not configured"))
+		return
+	}
+
+	// Load user language for AI summary generation in the user's preferred language.
+	user, err := h.store.UserByID(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	go integration.BackfillAISummaries(h.store, userID, userIntegrations, user.Language)
+
+	json.Accepted(w, r)
+}
+
+func (h *handler) forceBackfillAISummaries(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+
+	// Return 204 if a backfill is already running for this user — no duplicate work.
+	if integration.IsBackfillRunning(userID) {
+		json.NoContent(w, r)
+		return
+	}
+
+	userIntegrations, err := h.store.Integration(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if !userIntegrations.AIEnabled || userIntegrations.AIProviderURL == "" || userIntegrations.AIAPIKey == "" || userIntegrations.AIModel == "" {
+		json.BadRequest(w, r, errors.New("AI integration is not configured"))
+		return
+	}
+
+	// Load user language for AI summary generation in the user's preferred language.
+	user, err := h.store.UserByID(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	go integration.ForceBackfillAISummaries(h.store, userID, userIntegrations, user.Language)
+
+	json.Accepted(w, r)
+}
+
+// aiPageSummaryRequest holds entry IDs for generating a combined page summary.
+type aiPageSummaryRequest struct {
+	EntryIDs []int64 `json:"entry_ids"`
+}
+
+// aiPageSummaryResponse returns the combined summary and the entry IDs that were summarized.
+type aiPageSummaryResponse struct {
+	Summary  string  `json:"summary"`
+	EntryIDs []int64 `json:"entry_ids"`
+}
+
+// generateAIPageSummary takes a list of entry IDs, concatenates their AI summaries,
+// and sends them to the AI provider for a combined digest summary.
+func (h *handler) generateAIPageSummary(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+
+	var req aiPageSummaryRequest
+	if err := json_parser.NewDecoder(r.Body).Decode(&req); err != nil {
+		json.BadRequest(w, r, err)
+		return
+	}
+
+	if len(req.EntryIDs) == 0 {
+		json.BadRequest(w, r, errors.New("entry_ids is required"))
+		return
+	}
+
+	userIntegrations, err := h.store.Integration(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if !userIntegrations.AIEnabled || userIntegrations.AIProviderURL == "" || userIntegrations.AIAPIKey == "" || userIntegrations.AIModel == "" {
+		json.BadRequest(w, r, errors.New("AI integration is not configured"))
+		return
+	}
+
+	// Load user language for AI summary generation in the user's preferred language.
+	user, err := h.store.UserByID(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	// Collect individual AI summaries from entries to build a structured combined input.
+	// Each entry is formatted with source (feed title) to help AI distinguish different authors/sources.
+	var summaryParts []string
+	for _, entryID := range req.EntryIDs {
+		builder := h.store.NewEntryQueryBuilder(userID)
+		builder.WithEntryID(entryID)
+		entry, entryErr := builder.GetEntry()
+		if entryErr != nil || entry == nil {
+			continue
+		}
+		if entry.AISummary != "" {
+			feedTitle := ""
+			if entry.Feed != nil {
+				feedTitle = entry.Feed.Title
+			}
+			summaryParts = append(summaryParts, fmt.Sprintf("[Source: %s] %s: %s", feedTitle, entry.Title, entry.AISummary))
+		}
+	}
+
+	if len(summaryParts) == 0 {
+		json.BadRequest(w, r, errors.New("no entries with AI summaries found"))
+		return
+	}
+
+	// Build a combined input and send to AI for a digest summary.
+	client := ai.NewClient(
+		userIntegrations.AIProviderURL,
+		userIntegrations.AIAPIKey,
+		userIntegrations.AIModel,
+	)
+
+	combinedInput := ""
+	for _, part := range summaryParts {
+		combinedInput += part + "\n\n"
+	}
+
+	result, err := client.GeneratePageSummary(combinedInput, user.Language)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	json.OK(w, r, &aiPageSummaryResponse{
+		Summary:  result,
+		EntryIDs: req.EntryIDs,
+	})
+}
+
+func (h *handler) getBackfillStatus(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	json.OK(w, r, map[string]bool{"running": integration.IsBackfillRunning(userID)})
+}
+
+func (h *handler) stopBackfill(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	integration.StopBackfill(userID)
+	json.NoContent(w, r)
 }

@@ -37,6 +37,9 @@ type Entry struct {
 	Enclosures  EnclosureList `json:"enclosures"`
 	Feed        *Feed         `json:"feed,omitempty"`
 	Tags        []string      `json:"tags"`
+	AISummary      string     `json:"ai_summary"`
+	AIScore        int        `json:"ai_score"`
+	AISummarizedAt *time.Time `json:"ai_summarized_at"`
 }
 
 func NewEntry() *Entry {

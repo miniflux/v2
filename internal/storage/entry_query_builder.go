@@ -218,6 +218,20 @@ func (e *EntryQueryBuilder) WithGloballyVisible() *EntryQueryBuilder {
 	return e
 }
 
+// WithMinAIScore filters entries that have an AI score >= the given minimum.
+func (e *EntryQueryBuilder) WithMinAIScore(minScore int) *EntryQueryBuilder {
+	if minScore > 0 {
+		e.conditions = append(e.conditions, fmt.Sprintf("e.ai_score >= %d", minScore))
+	}
+	return e
+}
+
+// WithoutAISummary filters entries that have not been summarized by AI yet.
+func (e *EntryQueryBuilder) WithoutAISummary() *EntryQueryBuilder {
+	e.conditions = append(e.conditions, "e.ai_summary = ''")
+	return e
+}
+
 // CountEntries count the number of entries that match the condition.
 func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
 	query := `
@@ -276,6 +290,9 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			e.created_at,
 			e.changed_at,
 			e.tags,
+			e.ai_summary,
+			e.ai_score,
+			e.ai_summarized_at,
 			f.title as feed_title,
 			f.feed_url,
 			f.site_url,
@@ -344,6 +361,9 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.CreatedAt,
 			&entry.ChangedAt,
 			pq.Array(&entry.Tags),
+			&entry.AISummary,
+			&entry.AIScore,
+			&entry.AISummarizedAt,
 			&entry.Feed.Title,
 			&entry.Feed.FeedURL,
 			&entry.Feed.SiteURL,

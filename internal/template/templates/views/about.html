@@ -34,6 +34,8 @@
     {{ if .user.IsAdmin }}
         <li><strong>{{ t "page.about.postgres_version" }}</strong> {{ .postgres_version }}</li>
         <li><strong>{{t "page.about.db_usage" }}</strong> {{ .db_usage }}</li>
+        <li><strong>Pinchtab Active Processes:</strong> {{ .pinchtab_active_processes }}</li>
+        <li><strong>Chromium Processes:</strong> {{ .chromium_process_count }}</li>
     {{ end }}
     </ul>
 </div>

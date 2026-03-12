@@ -146,6 +146,10 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		PushoverDevice:                   integration.PushoverDevice,
 		PushoverPrefix:                   integration.PushoverPrefix,
 		ArchiveorgEnabled:                integration.ArchiveorgEnabled,
+		AIEnabled:                        integration.AIEnabled,
+		AIProviderURL:                    integration.AIProviderURL,
+		AIAPIKey:                         integration.AIAPIKey,
+		AIModel:                          integration.AIModel,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))
@@ -155,6 +159,8 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+	view.Set("showAIDigest", h.store.IsAIEnabled(user.ID))
+	view.Set("countAIDigest", h.store.CountUnreadAIDigestEntries(user.ID))
 
 	html.OK(w, r, view.Render("integrations"))
 }

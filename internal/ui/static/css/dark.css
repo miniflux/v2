@@ -117,3 +117,8 @@
 html {
     color-scheme: dark;
 }
+
+/* AI Summary dark theme overrides */
+.ai-summary {
+    border-color: var(--entry-header-border-color, #444);
+}

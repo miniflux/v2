@@ -51,6 +51,8 @@ func (h *handler) showEditUserPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+	view.Set("showAIDigest", h.store.IsAIEnabled(user.ID))
+	view.Set("countAIDigest", h.store.CountUnreadAIDigestEntries(user.ID))
 
 	html.OK(w, r, view.Render("edit_user"))
 }

@@ -46,6 +46,14 @@ type FeedForm struct {
 	PushoverEnabled             bool
 	PushoverPriority            int
 	ProxyURL                    string
+	FeedSourceType              string
+	WebScraperItemSelector      string
+	WebScraperTitleSelector     string
+	WebScraperLinkSelector      string
+	WebScraperDescSelector      string
+	WebScraperNextPageSelector  string
+	WebScraperMaxItems          int
+	UseJSRender                 bool
 }
 
 // Merge updates the fields of the given feed.
@@ -85,6 +93,14 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.PushoverEnabled = f.PushoverEnabled
 	feed.PushoverPriority = f.PushoverPriority
 	feed.ProxyURL = f.ProxyURL
+	feed.FeedSourceType = f.FeedSourceType
+	feed.WebScraperItemSelector = f.WebScraperItemSelector
+	feed.WebScraperTitleSelector = f.WebScraperTitleSelector
+	feed.WebScraperLinkSelector = f.WebScraperLinkSelector
+	feed.WebScraperDescSelector = f.WebScraperDescSelector
+	feed.WebScraperNextPageSelector = f.WebScraperNextPageSelector
+	feed.WebScraperMaxItems = f.WebScraperMaxItems
+	feed.UseJSRender = f.UseJSRender
 	return feed
 }
 
@@ -103,6 +119,11 @@ func NewFeedForm(r *http.Request) *FeedForm {
 	pushoverPriority, err := strconv.Atoi(r.FormValue("pushover_priority"))
 	if err != nil {
 		pushoverPriority = 0
+	}
+
+	wsMaxItems, err := strconv.Atoi(r.FormValue("ws_max_items"))
+	if err != nil {
+		wsMaxItems = 25
 	}
 
 	return &FeedForm{
@@ -139,5 +160,13 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		PushoverEnabled:             r.FormValue("pushover_enabled") == "1",
 		PushoverPriority:            pushoverPriority,
 		ProxyURL:                    r.FormValue("proxy_url"),
+		FeedSourceType:              r.FormValue("feed_source_type"),
+		WebScraperItemSelector:      r.FormValue("ws_item_selector"),
+		WebScraperTitleSelector:     r.FormValue("ws_title_selector"),
+		WebScraperLinkSelector:      r.FormValue("ws_link_selector"),
+		WebScraperDescSelector:      r.FormValue("ws_description_selector"),
+		WebScraperNextPageSelector:  r.FormValue("ws_next_page_selector"),
+		WebScraperMaxItems:          wsMaxItems,
+		UseJSRender:                 r.FormValue("use_js_render") == "1",
 	}
 }

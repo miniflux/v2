@@ -37,6 +37,8 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+	view.Set("showAIDigest", h.store.IsAIEnabled(user.ID))
+	view.Set("countAIDigest", h.store.CountUnreadAIDigestEntries(user.ID))
 	view.Set("defaultUserAgent", config.Opts.HTTPClientUserAgent())
 
 	subscriptionForm := form.NewSubscriptionForm(r)

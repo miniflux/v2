@@ -1227,6 +1227,197 @@ function initializeTouchHandler() {
     }
 }
 
+
+/**
+ * Initialize AI Digest page summary functionality.
+ * Collects all entry IDs on the page, sends them to the backend to generate
+ * a combined digest from their existing AI summaries, and displays the result.
+ */
+function initializeAIDigestPageSummary() {
+    const generateBtn = document.getElementById("ai-generate-page-summary");
+    if (!generateBtn) return;
+
+    const summaryContent = document.getElementById("ai-page-summary-content");
+    const summaryText = document.getElementById("ai-page-summary-text");
+
+    generateBtn.addEventListener("click", () => {
+        const items = document.querySelectorAll("article.entry-item[data-id]");
+        if (items.length === 0) return;
+
+        const entryIDs = Array.from(items).map(el => parseInt(el.dataset.id, 10));
+        const defaultLabel = generateBtn.dataset.labelDefault;
+        const loadingLabel = generateBtn.dataset.labelLoading;
+        generateBtn.textContent = loadingLabel;
+        generateBtn.disabled = true;
+
+        // Stop any ongoing TTS when regenerating.
+        stopReadAloud();
+
+        const submitUrl = document.body.dataset.aiPageSummaryUrl;
+        const statusUrl = document.body.dataset.aiPageSummaryStatusUrl;
+
+        sendPOSTRequest(submitUrl, { entry_ids: entryIDs }).then(resp => {
+            if (!resp.ok) {
+                generateBtn.textContent = defaultLabel;
+                generateBtn.disabled = false;
+                return;
+            }
+            // Poll for result every 2 seconds.
+            const pollInterval = setInterval(() => {
+                fetch(statusUrl, {
+                    headers: { "X-Csrf-Token": document.body.dataset.csrfToken || "" }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === "done") {
+                        clearInterval(pollInterval);
+                        summaryText.textContent = data.summary;
+                        summaryContent.classList.remove("initially-hidden");
+                        const readAloudBtn = document.getElementById("ai-read-aloud-btn");
+                        if (readAloudBtn) readAloudBtn.classList.remove("initially-hidden");
+                        generateBtn.textContent = defaultLabel;
+                        generateBtn.disabled = false;
+                    } else if (data.status === "error") {
+                        clearInterval(pollInterval);
+                        summaryText.textContent = data.error;
+                        summaryContent.classList.remove("initially-hidden");
+                        generateBtn.textContent = defaultLabel;
+                        generateBtn.disabled = false;
+                    }
+                })
+                .catch(() => {
+                    clearInterval(pollInterval);
+                    generateBtn.textContent = defaultLabel;
+                    generateBtn.disabled = false;
+                });
+            }, 2000);
+        });
+    });
+}
+
+function stopReadAloud() {
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+    const readAloudBtn = document.getElementById("ai-read-aloud-btn");
+    if (readAloudBtn) {
+        readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
+        readAloudBtn.disabled = false;
+    }
+}
+
+function initializeReadAloudButton() {
+    const readAloudBtn = document.getElementById("ai-read-aloud-btn");
+    if (!readAloudBtn) return;
+    if (!window.speechSynthesis) {
+        readAloudBtn.remove();
+        return;
+    }
+
+    readAloudBtn.addEventListener("click", () => {
+        if (window.speechSynthesis.speaking) {
+            stopReadAloud();
+            return;
+        }
+
+        const summaryText = document.getElementById("ai-page-summary-text");
+        if (!summaryText || !summaryText.textContent.trim()) return;
+
+        const userLang = (document.body.dataset.userLanguage || "en_US").replace("_", "-");
+
+        const utterance = new SpeechSynthesisUtterance(summaryText.textContent.trim());
+        utterance.lang = userLang;
+
+        utterance.onend = () => {
+            readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
+        };
+        utterance.onerror = () => {
+            readAloudBtn.textContent = readAloudBtn.dataset.labelRead;
+        };
+
+        readAloudBtn.textContent = readAloudBtn.dataset.labelStop;
+        window.speechSynthesis.speak(utterance);
+    });
+}
+
+/**
+ * Initialize backfill status polling and stop button on the integrations page.
+ * Polls the backfill status endpoint and updates button states accordingly.
+ */
+function initializeBackfillStatusPolling() {
+    const backfillBtn = document.querySelector("a[href*='ai-backfill']");
+    const forceBackfillBtn = document.querySelector("a[href*='ai-force-backfill']");
+    const stopBtn = document.getElementById("ai-stop-backfill");
+    const statusUrl = document.body.dataset.aiBackfillStatusUrl;
+    const stopUrl = document.body.dataset.aiStopBackfillUrl;
+
+    if (!statusUrl) return;
+
+    let pollingInterval = null;
+
+    function setButtonsLoading(loading) {
+        if (backfillBtn) {
+            if (loading) {
+                backfillBtn.textContent = backfillBtn.dataset.labelLoading || "Backfilling...";
+                backfillBtn.style.pointerEvents = "none";
+                backfillBtn.classList.add("disabled");
+            } else {
+                backfillBtn.textContent = backfillBtn.dataset.labelDefault || backfillBtn.textContent;
+                backfillBtn.style.pointerEvents = "";
+                backfillBtn.classList.remove("disabled");
+            }
+        }
+        if (forceBackfillBtn) {
+            if (loading) {
+                forceBackfillBtn.textContent = forceBackfillBtn.dataset.labelLoading || "Regenerating...";
+                forceBackfillBtn.style.pointerEvents = "none";
+                forceBackfillBtn.classList.add("disabled");
+            } else {
+                forceBackfillBtn.textContent = forceBackfillBtn.dataset.labelDefault || forceBackfillBtn.textContent;
+                forceBackfillBtn.style.pointerEvents = "";
+                forceBackfillBtn.classList.remove("disabled");
+            }
+        }
+        if (stopBtn) {
+            stopBtn.classList.toggle("initially-hidden", !loading);
+        }
+    }
+
+    function checkStatus() {
+        fetch(statusUrl, {
+            headers: { "X-Csrf-Token": document.body.dataset.csrfToken || "" }
+        })
+        .then(resp => resp.json())
+        .then(data => {
+            setButtonsLoading(data.running);
+            // Stop polling if backfill finished.
+            if (!data.running && pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+        })
+        .catch(() => {});
+    }
+
+    if (stopBtn) {
+        stopBtn.addEventListener("click", () => {
+            sendPOSTRequest(stopUrl).then(() => {
+                setButtonsLoading(false);
+                if (pollingInterval) {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                }
+            });
+        });
+    }
+
+    // Initial check.
+    checkStatus();
+    // Poll every 3 seconds while backfill might be running.
+    pollingInterval = setInterval(() => {
+        checkStatus();
+    }, 3000);
+}
 /**
  * Initialize click handlers for various UI elements.
  */
@@ -1276,6 +1467,9 @@ initializeKeyboardShortcuts();
 initializeTouchHandler();
 initializeClickHandlers();
 initializeServiceWorker();
+initializeAIDigestPageSummary();
+initializeReadAloudButton();
+initializeBackfillStatusPolling();
 
 // Reload the page if it was restored from the back-forward cache and mark entries as read is enabled.
 window.addEventListener("pageshow", (event) => {

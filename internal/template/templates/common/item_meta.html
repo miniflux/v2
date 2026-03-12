@@ -1,4 +1,7 @@
 {{ define "item_meta" -}}
+{{ if gt .entry.AIScore 0 }}
+<span class="ai-score ai-score-{{ if ge .entry.AIScore 8 }}high{{ else if ge .entry.AIScore 5 }}medium{{ else }}low{{ end }}">{{ .entry.AIScore }}</span>
+{{ end }}
 <div class="item-meta">
     <ul class="item-meta-info">
         <li class="item-meta-info-title">

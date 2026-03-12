@@ -1431,4 +1431,74 @@ var migrations = [...]func(tx *sql.Tx) error{
 		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN ignore_entry_updates bool default 'f'`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`ALTER TABLE entries ADD COLUMN ai_summary text NOT NULL DEFAULT ''`)
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec(`ALTER TABLE entries ADD COLUMN ai_score smallint NOT NULL DEFAULT 0`)
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec(`ALTER TABLE entries ADD COLUMN ai_summarized_at timestamp with time zone`)
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec(`ALTER TABLE integrations ADD COLUMN ai_enabled bool NOT NULL DEFAULT false`)
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec(`ALTER TABLE integrations ADD COLUMN ai_provider_url text NOT NULL DEFAULT ''`)
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec(`ALTER TABLE integrations ADD COLUMN ai_api_key text NOT NULL DEFAULT ''`)
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec(`ALTER TABLE integrations ADD COLUMN ai_model text NOT NULL DEFAULT ''`)
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec(`CREATE INDEX entries_user_ai_score_idx ON entries(user_id, ai_score) WHERE ai_score > 0`)
+		return err
+	},
+	// Migration #74: Add web scraper feed type fields and JS render support for pinchtab integration.
+	func(tx *sql.Tx) (err error) {
+		// feed_source_type: 'rss' (default) or 'web_scraper' to distinguish feed types.
+		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN feed_source_type text NOT NULL DEFAULT 'rss'`)
+		if err != nil {
+			return err
+		}
+		// Web scraper CSS/gjson selectors for extracting structured items from web pages.
+		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN ws_item_selector text NOT NULL DEFAULT ''`)
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN ws_title_selector text NOT NULL DEFAULT ''`)
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN ws_link_selector text NOT NULL DEFAULT ''`)
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN ws_description_selector text NOT NULL DEFAULT ''`)
+		if err != nil {
+			return err
+		}
+		// Regex (HTML) or gjson path (JSON) for pagination next-page extraction.
+		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN ws_next_page_selector text NOT NULL DEFAULT ''`)
+		if err != nil {
+			return err
+		}
+		// Max items to extract from paginated web scraper sources.
+		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN ws_max_items int NOT NULL DEFAULT 25`)
+		if err != nil {
+			return err
+		}
+		// Enable pinchtab JS rendering for this feed (requires system-level PINCHTAB_ENABLED).
+		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN use_js_render bool NOT NULL DEFAULT false`)
+		return err
+	},
 }

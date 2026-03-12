@@ -177,7 +177,15 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			f.pushover_enabled,
 			f.pushover_priority,
 			f.proxy_url,
-			f.ignore_entry_updates
+			f.ignore_entry_updates,
+			f.feed_source_type,
+			f.ws_item_selector,
+			f.ws_title_selector,
+			f.ws_link_selector,
+			f.ws_description_selector,
+			f.ws_next_page_selector,
+			f.ws_max_items,
+			f.use_js_render
 		FROM
 			feeds f
 		LEFT JOIN
@@ -260,6 +268,14 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.PushoverPriority,
 			&feed.ProxyURL,
 			&feed.IgnoreEntryUpdates,
+			&feed.FeedSourceType,
+			&feed.WebScraperItemSelector,
+			&feed.WebScraperTitleSelector,
+			&feed.WebScraperLinkSelector,
+			&feed.WebScraperDescSelector,
+			&feed.WebScraperNextPageSelector,
+			&feed.WebScraperMaxItems,
+			&feed.UseJSRender,
 		)
 
 		if err != nil {

@@ -55,6 +55,9 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	uiRouter.HandleFunc("/starred", handler.showStarredPage).Name("starred").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/starred/entry/{entryID}", handler.showStarredEntryPage).Name("starredEntry").Methods(http.MethodGet)
 
+	// AI Digest page.
+	uiRouter.HandleFunc("/ai-digest", handler.showAIDigestPage).Name("aiDigest").Methods(http.MethodGet)
+
 	// Search pages.
 	uiRouter.HandleFunc("/search", handler.showSearchPage).Name("search").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/search/entry/{entryID}", handler.showSearchEntryPage).Name("searchEntry").Methods(http.MethodGet)
@@ -126,6 +129,12 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	uiRouter.HandleFunc("/settings", handler.updateSettings).Name("updateSettings").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/integrations", handler.showIntegrationPage).Name("integrations").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/integration", handler.updateIntegration).Name("updateIntegration").Methods(http.MethodPost)
+	uiRouter.HandleFunc("/ai-backfill", handler.aiBackfill).Name("aiBackfill").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/ai-force-backfill", handler.aiForceBackfill).Name("aiForceBackfill").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/ai-backfill-status", handler.aiBackfillStatus).Name("aiBackfillStatus").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/ai-stop-backfill", handler.aiStopBackfill).Name("aiStopBackfill").Methods(http.MethodPost)
+	uiRouter.HandleFunc("/ai-page-summary", handler.aiPageSummary).Name("aiPageSummary").Methods(http.MethodPost)
+	uiRouter.HandleFunc("/ai-page-summary-status", handler.aiPageSummaryStatus).Name("aiPageSummaryStatus").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/about", handler.showAboutPage).Name("about").Methods(http.MethodGet)
 
 	// Session pages.
