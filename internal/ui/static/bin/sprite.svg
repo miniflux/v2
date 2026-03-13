@@ -6,25 +6,25 @@ Source: https://github.com/tabler/tabler-icons
 <svg xmlns="http://www.w3.org/2000/svg">
     <symbol id="icon-chevron-down" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-        <path d="M6 9l6 6l6 -6" />
+        <path d="M6 9l6 6l6 -6"/>
     </symbol>
     <symbol id="icon-read" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M9 12l2 2l4 -4" />
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M9 12l2 2l4 -4"/>
     </symbol>
     <symbol id="icon-unread" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M10 10l4 4m0 -4l-4 4" />
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M10 10l4 4m0 -4l-4 4"/>
     </symbol>
     <symbol id="icon-star" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>
-        <path d="M12 17.75l-6.172 3.245 1.179-6.873-4.993-4.867 6.9-1.002L12 2l3.086 6.253 6.9 1.002-4.993 4.867 1.179 6.873z" />
+        <path d="M12 17.75l-6.172 3.245 1.179-6.873-4.993-4.867 6.9-1.002L12 2l3.086 6.253 6.9 1.002-4.993 4.867 1.179 6.873z"/>
     </symbol>
     <symbol id="icon-unstar" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>
-        <path fill="currentColor" d="M12 17.75l-6.172 3.245 1.179-6.873-4.993-4.867 6.9-1.002L12 2l3.086 6.253 6.9 1.002-4.993 4.867 1.179 6.873z" />
+        <path fill="currentColor" d="M12 17.75l-6.172 3.245 1.179-6.873-4.993-4.867 6.9-1.002L12 2l3.086 6.253 6.9 1.002-4.993 4.867 1.179 6.873z"/>
     </symbol>
     <symbol id="icon-save" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -34,44 +34,44 @@ Source: https://github.com/tabler/tabler-icons
     </symbol>
     <symbol id="icon-scraper" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>
-        <path d="M19 18a3.5 3.5 0 0 0 0 -7h-1a5 4.5 0 0 0 -11 -2a4.6 4.4 0 0 0 -2.1 8.4" />
-        <line x1="12" y1="13" x2="12" y2="22" />
-        <polyline points="9 19 12 22 15 19" />
+        <path d="M19 18a3.5 3.5 0 0 0 0 -7h-1a5 4.5 0 0 0 -11 -2a4.6 4.4 0 0 0 -2.1 8.4"/>
+        <line x1="12" y1="13" x2="12" y2="22"/>
+        <polyline points="9 19 12 22 15 19"/>
     </symbol>
     <symbol id="icon-share" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>
-        <circle cx="6" cy="12" r="3" />
-        <circle cx="18" cy="6" r="3" />
-        <circle cx="18" cy="18" r="3" />
-        <line x1="8.7" y1="10.7" x2="15.3" y2="7.3" />
-        <line x1="8.7" y1="13.3" x2="15.3" y2="16.7" />
+        <circle cx="6" cy="12" r="3"/>
+        <circle cx="18" cy="6" r="3"/>
+        <circle cx="18" cy="18" r="3"/>
+        <line x1="8.7" y1="10.7" x2="15.3" y2="7.3"/>
+        <line x1="8.7" y1="13.3" x2="15.3" y2="16.7"/>
     </symbol>
     <symbol id="icon-comment" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>
-        <path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1" />
-        <line x1="12" y1="12" x2="12" y2="12.01" />
-        <line x1="8" y1="12" x2="8" y2="12.01" />
-        <line x1="16" y1="12" x2="16" y2="12.01" />
+        <path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"/>
+        <line x1="12" y1="12" x2="12" y2="12.01"/>
+        <line x1="8" y1="12" x2="8" y2="12.01"/>
+        <line x1="16" y1="12" x2="16" y2="12.01"/>
     </symbol>
     <symbol id="icon-external-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>
-        <path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5" />
-        <line x1="10" y1="14" x2="20" y2="4" />
-        <polyline points="15 4 20 4 20 9" />
+        <path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5"/>
+        <line x1="10" y1="14" x2="20" y2="4"/>
+        <polyline points="15 4 20 4 20 9"/>
     </symbol>
     <symbol id="icon-delete" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>
-        <line x1="4" y1="7" x2="20" y2="7" />
-        <line x1="10" y1="11" x2="10" y2="17" />
-        <line x1="14" y1="11" x2="14" y2="17" />
-        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+        <line x1="4" y1="7" x2="20" y2="7"/>
+        <line x1="10" y1="11" x2="10" y2="17"/>
+        <line x1="14" y1="11" x2="14" y2="17"/>
+        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/>
+        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/>
     </symbol>
     <symbol id="icon-edit" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>
-        <path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
-        <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
-        <line x1="16" y1="5" x2="19" y2="8" />
+        <path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3"/>
+        <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3"/>
+        <line x1="16" y1="5" x2="19" y2="8"/>
     </symbol>
     <symbol id="icon-feeds" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -81,15 +81,15 @@ Source: https://github.com/tabler/tabler-icons
     </symbol>
     <symbol id="icon-entries" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>
-        <path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11" />
-        <line x1="8" y1="8" x2="12" y2="8" />
-        <line x1="8" y1="12" x2="12" y2="12" />
-        <line x1="8" y1="16" x2="12" y2="16" />
+        <path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11"/>
+        <line x1="8" y1="8" x2="12" y2="8"/>
+        <line x1="8" y1="12" x2="12" y2="12"/>
+        <line x1="8" y1="16" x2="12" y2="16"/>
     </symbol>
     <symbol id="icon-refresh" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>
-        <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -5v5h5" />
-        <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 5v-5h-5" />
+        <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -5v5h5"/>
+        <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 5v-5h-5"/>
     </symbol>
     <symbol id="icon-home" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -98,13 +98,13 @@ Source: https://github.com/tabler/tabler-icons
         <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
     </symbol>
     <symbol id="icon-mark-page-as-read" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-       <path d="M5 12l5 5l10 -10" />
+       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+       <path d="M5 12l5 5l10 -10"/>
     </symbol>
     <symbol id="icon-mark-all-as-read" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-       <path d="M7 12l5 5l10 -10" />
-       <path d="M2 12l5 5m5 -5l5 -5" />
+       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+       <path d="M7 12l5 5l10 -10"/>
+       <path d="M2 12l5 5m5 -5l5 -5"/>
     </symbol>
     <symbol id="icon-show-all-entries" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -163,8 +163,8 @@ Source: https://github.com/tabler/tabler-icons
     </symbol>
     <symbol id="icon-sessions" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-        <polyline points="12 8 12 12 14 14" />
-        <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
+        <polyline points="12 8 12 12 14 14"/>
+        <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/>
     </symbol>
     <symbol id="icon-api" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -184,18 +184,18 @@ Source: https://github.com/tabler/tabler-icons
     </symbol>
     <symbol id="icon-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-        <path d="M12 8l0 4l2 2" />
-        <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
+        <path d="M12 8l0 4l2 2"/>
+        <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/>
     </symbol>
     <symbol id="icon-logout" viewBox="0 0 24 24" fill="none"  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-        <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
-        <path d="M9 12h12l-3 -3" /><path d="M18 15l3 -3" />
+        <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"/>
+        <path d="M9 12h12l-3 -3"/><path d="M18 15l3 -3"/>
     </symbol>
     <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-        <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
-        <path d="M21 21l-6 -6" />
+        <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/>
+        <path d="M21 21l-6 -6"/>
     </symbol>
     <symbol id="icon-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="12" y1="4" x2="12" y2="20"/>
