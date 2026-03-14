@@ -6,6 +6,7 @@ package handler // import "miniflux.app/v2/internal/reader/handler"
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/url"
 	"time"
@@ -284,12 +285,15 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 			)
 			renderedHTML, renderErr := pinchtab.RenderPageHTML(originalFeed.FeedURL, processor.ResolveProxyURLForPinchtab(originalFeed), originalFeed.ID)
 			if renderErr != nil {
-				slog.Warn("Unable to render web scraper listing page with pinchtab, falling back to HTTP fetch",
+				slog.Warn("Unable to render web scraper listing page with pinchtab",
 					slog.Int64("user_id", userID),
 					slog.Int64("feed_id", feedID),
 					slog.String("feed_url", originalFeed.FeedURL),
 					slog.Any("error", renderErr),
 				)
+				// Don't fallback to HTTP fetch — it would hit the same network
+				// issues (e.g. expired TLS certs) and mask the real pinchtab error.
+				scrapeErr = fmt.Errorf("pinchtab JS rendering failed: %w", renderErr)
 			} else if renderedHTML != "" {
 				results, scrapeErr = webscraper.ScrapeRenderedHTML(renderedHTML, originalFeed.FeedURL, scrapeConfig)
 			}

@@ -13,9 +13,9 @@ LABEL org.opencontainers.image.source=https://github.com/naiba-forks/miniflux
 
 EXPOSE 8080
 ENV LISTEN_ADDR=0.0.0.0:8080
-# Install runtime dependencies: ca-certificates, tzdata, and chromium for pinchtab JS rendering.
-# Pinchtab binary must be provided externally (e.g. COPY from a builder stage or download).
-RUN apk --no-cache add ca-certificates tzdata chromium tini
+RUN apk --no-cache add ca-certificates tzdata chromium nodejs npm tini \
+    && npm install -g --prefix /usr pinchtab \
+    && npm cache clean --force
 COPY --from=build /go/src/app/miniflux /usr/bin/miniflux
 USER 65534
 ENTRYPOINT ["/sbin/tini", "--"]
