@@ -110,11 +110,14 @@ func startSubprocess(port int, proxyURL string, feedID int64) (*exec.Cmd, error)
 
 	// Chromium 128+ crashpad requires writable XDG directories; without them
 	// it crashes with SIGTRAP on aarch64 when running as non-root (e.g. nobody).
+	// PINCHTAB_ALLOW_EVALUATE is required for getTabHTML (RenderPageHTML) which
+	// uses the /evaluate endpoint; without it pinchtab's dashboard mode returns 404.
 	env := append(os.Environ(),
 		"PINCHTAB_STEALTH=full",
 		"PINCHTAB_PORT="+strconv.Itoa(port),
 		"PINCHTAB_STATE_DIR="+stateDir,
 		"PINCHTAB_HEADLESS=true",
+		"PINCHTAB_ALLOW_EVALUATE=true",
 		"XDG_CONFIG_HOME="+os.TempDir()+"/.chromium",
 		"XDG_CACHE_HOME="+os.TempDir()+"/.chromium",
 		"CHROME_FLAGS="+chromeFlags,
