@@ -23,7 +23,7 @@
 - 订阅时 web_scraper 类型跳过 subscription discovery，直接创建 feed
 
 ### 3. Pinchtab JS 渲染 (`internal/reader/pinchtab/`)
-- 系统级配置：`PINCHTAB_ENABLED/PINCHTAB_URL/PINCHTAB_BINARY_PATH`
+- 系统级配置：`PINCHTAB_ENABLED/PINCHTAB_BINARY_PATH`
 - 子进程生命周期：`daemon.go` 启动时 `StartIfEnabled()`，关闭时 `Stop()`
 - 每次渲染创建独立 instance（Chrome 进程），支持并发
 - `RenderPage` 返回 Readability 纯文本（全文抓取），`RenderPageHTML` 返回完整 DOM HTML（web_scraper 列表页解析）
