@@ -13,6 +13,12 @@ LABEL org.opencontainers.image.source=https://github.com/naiba-forks/miniflux
 
 EXPOSE 8080
 ENV LISTEN_ADDR=0.0.0.0:8080
+# Chromium 128+ crashpad requires writable XDG directories for its crash
+# database.  Running as nobody (UID 65534) means $HOME is not writable,
+# causing SIGTRAP on aarch64.  Point XDG dirs to /tmp so crashpad can
+# initialise without crashing.
+ENV XDG_CONFIG_HOME=/tmp/.chromium
+ENV XDG_CACHE_HOME=/tmp/.chromium
 ARG PINCHTAB_VERSION=0.7.8
 RUN apk --no-cache add ca-certificates tzdata chromium tini \
     && ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') \

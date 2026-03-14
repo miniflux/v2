@@ -103,16 +103,20 @@ func startSubprocess(port int, proxyURL string, feedID int64) (*exec.Cmd, error)
 	// Container environments require --no-sandbox and --disable-dev-shm-usage
 	// for Chrome to start. These are always included, with --proxy-server
 	// appended when a proxy is configured.
-	chromeFlags := "--no-sandbox --disable-dev-shm-usage"
+	chromeFlags := "--no-sandbox --disable-dev-shm-usage --disable-gpu"
 	if proxyURL != "" {
 		chromeFlags += " --proxy-server=" + proxyURL
 	}
 
+	// Chromium 128+ crashpad requires writable XDG directories; without them
+	// it crashes with SIGTRAP on aarch64 when running as non-root (e.g. nobody).
 	env := append(os.Environ(),
 		"PINCHTAB_STEALTH=full",
 		"PINCHTAB_PORT="+strconv.Itoa(port),
 		"PINCHTAB_STATE_DIR="+stateDir,
 		"PINCHTAB_HEADLESS=true",
+		"XDG_CONFIG_HOME="+os.TempDir()+"/.chromium",
+		"XDG_CACHE_HOME="+os.TempDir()+"/.chromium",
 		"CHROME_FLAGS="+chromeFlags,
 	)
 	cmd.Env = env
