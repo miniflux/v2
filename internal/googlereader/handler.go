@@ -38,6 +38,7 @@ var (
 	errEmptyFeedTitle   = errors.New("googlereader: empty feed title")
 	errFeedNotFound     = errors.New("googlereader: feed not found")
 	errCategoryNotFound = errors.New("googlereader: category not found")
+	errSimultaneously   = fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", keptUnreadStreamSuffix, readStreamSuffix)
 )
 
 // Serve handles Google Reader API calls.
@@ -69,12 +70,12 @@ func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType
 		switch s.Type {
 		case ReadStream:
 			if _, ok := tags[KeptUnreadStream]; ok {
-				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", keptUnreadStreamSuffix, readStreamSuffix)
+				return nil, errSimultaneously
 			}
 			tags[ReadStream] = true
 		case KeptUnreadStream:
 			if _, ok := tags[ReadStream]; ok {
-				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", keptUnreadStreamSuffix, readStreamSuffix)
+				return nil, errSimultaneously
 			}
 			tags[ReadStream] = false
 		case StarredStream:
@@ -89,12 +90,12 @@ func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType
 		switch s.Type {
 		case ReadStream:
 			if _, ok := tags[ReadStream]; ok {
-				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", keptUnreadStreamSuffix, readStreamSuffix)
+				return nil, errSimultaneously
 			}
 			tags[ReadStream] = false
 		case KeptUnreadStream:
 			if _, ok := tags[ReadStream]; ok {
-				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", keptUnreadStreamSuffix, readStreamSuffix)
+				return nil, errSimultaneously
 			}
 			tags[ReadStream] = true
 		case StarredStream:
@@ -452,7 +453,7 @@ func (h *handler) quickAddHandler(w http.ResponseWriter, r *http.Request) {
 	json.OK(w, r, quickAddResponse{
 		NumResults: 1,
 		Query:      newFeed.FeedURL,
-		StreamID:   fmt.Sprintf(feedPrefix+"%d", newFeed.ID),
+		StreamID:   feedPrefix + strconv.FormatInt(newFeed.ID, 10),
 		StreamName: newFeed.Title,
 	})
 }
@@ -584,9 +585,8 @@ func move(feedStream Stream, labelStream Stream, store *storage.Storage, userID 
 func (h *handler) feedIconURL(f *model.Feed) string {
 	if f.Icon != nil && f.Icon.ExternalIconID != "" {
 		return config.Opts.RootURL() + route.Path(h.router, "feedIcon", "externalIconID", f.Icon.ExternalIconID)
-	} else {
-		return ""
 	}
+	return ""
 }
 
 func (h *handler) editSubscriptionHandler(w http.ResponseWriter, r *http.Request) {
@@ -697,9 +697,10 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	userReadingList := fmt.Sprintf(userStreamPrefix, userID) + readingListStreamSuffix
-	userRead := fmt.Sprintf(userStreamPrefix, userID) + readStreamSuffix
-	userStarred := fmt.Sprintf(userStreamPrefix, userID) + starredStreamSuffix
+	streamPrefix := fmt.Sprintf(userStreamPrefix, userID)
+	userReadingList := streamPrefix + readingListStreamSuffix
+	userRead := streamPrefix + readStreamSuffix
+	userStarred := streamPrefix + starredStreamSuffix
 
 	itemIDs, err := parseItemIDsFromRequest(r)
 	if err != nil {
@@ -739,6 +740,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		Items:  make([]contentItem, len(entries)),
 	}
 
+	labelPrefix := fmt.Sprintf(userLabelPrefix, userID)
 	for i, entry := range entries {
 		enclosures := make([]contentItemEnclosure, 0, len(entry.Enclosures))
 		for _, enclosure := range entry.Enclosures {
@@ -747,7 +749,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		categories := make([]string, 0)
 		categories = append(categories, userReadingList)
 		if entry.Feed.Category.Title != "" {
-			categories = append(categories, fmt.Sprintf(userLabelPrefix, userID)+entry.Feed.Category.Title)
+			categories = append(categories, labelPrefix+entry.Feed.Category.Title)
 		}
 		if entry.Status == model.EntryStatusRead {
 			categories = append(categories, userRead)
@@ -789,7 +791,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 				Content:   entry.Content,
 			},
 			Origin: contentItemOrigin{
-				StreamID: fmt.Sprintf(feedPrefix+"%d", entry.FeedID),
+				StreamID: feedPrefix + strconv.FormatInt(entry.FeedID, 10),
 				Title:    entry.Feed.Title,
 				HTMLUrl:  entry.Feed.SiteURL,
 			},
@@ -933,9 +935,10 @@ func (h *handler) tagListHandler(w http.ResponseWriter, r *http.Request) {
 	result.Tags = append(result.Tags, subscriptionCategoryResponse{
 		ID: fmt.Sprintf(userStreamPrefix, userID) + starredStreamSuffix,
 	})
+	labelPrefix := fmt.Sprintf(userLabelPrefix, userID)
 	for _, category := range categories {
 		result.Tags = append(result.Tags, subscriptionCategoryResponse{
-			ID:    fmt.Sprintf(userLabelPrefix, userID) + category.Title,
+			ID:    labelPrefix + category.Title,
 			Label: category.Title,
 			Type:  "folder",
 		})
@@ -965,13 +968,14 @@ func (h *handler) subscriptionListHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	labelPrefix := fmt.Sprintf(userLabelPrefix, userID)
 	result.Subscriptions = make([]subscriptionResponse, 0)
 	for _, feed := range feeds {
 		result.Subscriptions = append(result.Subscriptions, subscriptionResponse{
-			ID:         fmt.Sprintf(feedPrefix+"%d", feed.ID),
+			ID:         feedPrefix + strconv.FormatInt(feed.ID, 10),
 			Title:      feed.Title,
 			URL:        feed.FeedURL,
-			Categories: []subscriptionCategoryResponse{{fmt.Sprintf(userLabelPrefix, userID) + feed.Category.Title, feed.Category.Title, "folder"}},
+			Categories: []subscriptionCategoryResponse{{labelPrefix + feed.Category.Title, feed.Category.Title, "folder"}},
 			HTMLURL:    feed.SiteURL,
 			IconURL:    h.feedIconURL(feed),
 		})
@@ -1102,27 +1106,11 @@ func (h *handler) handleReadingListStreamHandler(w http.ResponseWriter, r *http.
 		builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
 	}
 
-	rawEntryIDs, err := builder.GetEntryIDs()
+	itemRefs, continuation, err := getItemRefsAndContinuation(*builder, rm)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
-	var itemRefs = make([]itemRef, 0)
-	for _, entryID := range rawEntryIDs {
-		formattedID := strconv.FormatInt(entryID, 10)
-		itemRefs = append(itemRefs, itemRef{ID: formattedID})
-	}
-
-	totalEntries, err := builder.CountEntries()
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
-	continuation := 0
-	if len(itemRefs)+rm.Offset < totalEntries {
-		continuation = len(itemRefs) + rm.Offset
-	}
-
 	json.OK(w, r, streamIDResponse{itemRefs, continuation})
 }
 
@@ -1139,28 +1127,11 @@ func (h *handler) handleStarredStreamHandler(w http.ResponseWriter, r *http.Requ
 	if rm.StopTime > 0 {
 		builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
 	}
-
-	rawEntryIDs, err := builder.GetEntryIDs()
+	itemRefs, continuation, err := getItemRefsAndContinuation(*builder, rm)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
-	var itemRefs = make([]itemRef, 0)
-	for _, entryID := range rawEntryIDs {
-		formattedID := strconv.FormatInt(entryID, 10)
-		itemRefs = append(itemRefs, itemRef{ID: formattedID})
-	}
-
-	totalEntries, err := builder.CountEntries()
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
-	continuation := 0
-	if len(itemRefs)+rm.Offset < totalEntries {
-		continuation = len(itemRefs) + rm.Offset
-	}
-
 	json.OK(w, r, streamIDResponse{itemRefs, continuation})
 }
 
@@ -1178,12 +1149,20 @@ func (h *handler) handleReadStreamHandler(w http.ResponseWriter, r *http.Request
 		builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
 	}
 
-	rawEntryIDs, err := builder.GetEntryIDs()
+	itemRefs, continuation, err := getItemRefsAndContinuation(*builder, rm)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
-	var itemRefs = make([]itemRef, 0)
+	json.OK(w, r, streamIDResponse{itemRefs, continuation})
+}
+
+func getItemRefsAndContinuation(builder storage.EntryQueryBuilder, rm requestModifiers) ([]itemRef, int, error) {
+	rawEntryIDs, err := builder.GetEntryIDs()
+	if err != nil {
+		return nil, 0, err
+	}
+	var itemRefs = make([]itemRef, 0, len(rawEntryIDs))
 	for _, entryID := range rawEntryIDs {
 		formattedID := strconv.FormatInt(entryID, 10)
 		itemRefs = append(itemRefs, itemRef{ID: formattedID})
@@ -1191,15 +1170,13 @@ func (h *handler) handleReadStreamHandler(w http.ResponseWriter, r *http.Request
 
 	totalEntries, err := builder.CountEntries()
 	if err != nil {
-		json.ServerError(w, r, err)
-		return
+		return nil, 0, err
 	}
 	continuation := 0
 	if len(itemRefs)+rm.Offset < totalEntries {
 		continuation = len(itemRefs) + rm.Offset
 	}
-
-	json.OK(w, r, streamIDResponse{itemRefs, continuation})
+	return itemRefs, continuation, nil
 }
 
 func (h *handler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request, rm requestModifiers) {
@@ -1231,30 +1208,11 @@ func (h *handler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request
 			}
 		}
 	}
-
-	rawEntryIDs, err := builder.GetEntryIDs()
+	itemRefs, continuation, err := getItemRefsAndContinuation(*builder, rm)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
-
-	var itemRefs = make([]itemRef, 0)
-	for _, entryID := range rawEntryIDs {
-		formattedID := strconv.FormatInt(entryID, 10)
-		itemRefs = append(itemRefs, itemRef{ID: formattedID})
-	}
-
-	totalEntries, err := builder.CountEntries()
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
-
-	continuation := 0
-	if len(itemRefs)+rm.Offset < totalEntries {
-		continuation = len(itemRefs) + rm.Offset
-	}
-
 	json.OK(w, r, streamIDResponse{itemRefs, continuation})
 }
 
