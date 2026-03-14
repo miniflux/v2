@@ -135,13 +135,20 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithFeedID(feedID)
 	builder.WithCategoryID(categoryID)
-	builder.WithStatuses(statuses)
 	builder.WithSorting(order, direction)
 	builder.WithOffset(offset)
 	builder.WithLimit(limit)
 	builder.WithTags(tags)
 	builder.WithEnclosures()
-	builder.WithoutStatus(model.EntryStatusRemoved)
+
+	switch len(statuses) {
+	case 0:
+		builder.WithoutStatus(model.EntryStatusRemoved)
+	case 1:
+		builder.WithStatus(statuses[0])
+	default:
+		builder.WithStatuses(statuses)
+	}
 
 	if request.HasQueryParam(r, "globally_visible") {
 		globallyVisible := request.QueryBoolParam(r, "globally_visible", true)
