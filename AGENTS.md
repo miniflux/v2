@@ -37,7 +37,8 @@
 - 镜像推送到 `ghcr.io/naiba-forks/miniflux`
 
 ## 关键约定
-- **版本号**：fork 独立版本线 `v0.x`，发版创建 `v*` tag 触发 CI（上游 release 无 `v` 前缀，不冲突）
+- **版本号**：fork 版本线 `v2.2.x`，发版前先 `git tag --sort=-v:refname -l 'v*' | head` 确认最新版本号再递增，创建 `v*` tag 触发 CI（上游 release 无 `v` 前缀，不冲突）
+- **Chromium crashpad**：容器以 nobody 运行时必须设置 `XDG_CONFIG_HOME`/`XDG_CACHE_HOME` 指向可写目录（如 `/tmp/.chromium`），否则 Chromium 128+ 在 aarch64 上 SIGTRAP 崩溃
 - **CSP 限制**：`style-src 'nonce-xxx'` 会阻止 HTML 内联 `style=""` 属性，必须用 CSS class（如 `.initially-hidden`）控制初始可见性
 - 参数编号：`storage/feed.go` UpdateFeed 用到 $1-$49, CreateFeed 用到 $1-$39
 - 参数编号：`storage/integration.go` UpdateIntegration AI 字段在 $122-$126
