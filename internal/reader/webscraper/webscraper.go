@@ -224,14 +224,12 @@ func ScrapeRenderedHTML(htmlBody, pageURL string, scrapeConfig *ScrapeConfig) ([
 	return extractItemsFromHTML(htmlBody, pageURL, scrapeConfig, maxItems)
 }
 
-// mergeURL resolves a potentially relative target URL against a base URL.
+// mergeURL resolves a potentially relative target URL against a base URL
+// following RFC 3986. For example, resolving "blog/post.html" against
+// "https://example.com/archives.html" correctly yields
+// "https://example.com/blog/post.html" (not ".../archives.html/blog/post.html").
 func mergeURL(base, target string) string {
 	if target == "" {
-		return target
-	}
-
-	// Already absolute.
-	if strings.HasPrefix(target, "http://") || strings.HasPrefix(target, "https://") {
 		return target
 	}
 
@@ -240,21 +238,12 @@ func mergeURL(base, target string) string {
 		return target
 	}
 
-	// Protocol-relative URL (e.g. "//example.com/path").
-	if strings.HasPrefix(target, "//") {
-		return baseURL.Scheme + ":" + target
+	targetURL, err := url.Parse(target)
+	if err != nil {
+		return target
 	}
 
-	// Absolute path (e.g. "/path/to/page").
-	if strings.HasPrefix(target, "/") {
-		return baseURL.Scheme + "://" + baseURL.Host + target
-	}
-
-	// Relative path — append to base directory.
-	if strings.HasSuffix(base, "/") {
-		return base + target
-	}
-	return base + "/" + target
+	return baseURL.ResolveReference(targetURL).String()
 }
 
 func isJSONContentType(contentType string) bool {
