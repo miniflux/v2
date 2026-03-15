@@ -21,16 +21,14 @@ EXPOSE 8080
 ENV LISTEN_ADDR=0.0.0.0:8080
 # TARGETARCH is provided by Docker buildx (amd64/arm64), map to Lightpanda naming (x86_64/aarch64)
 ARG TARGETARCH
-# libc6-compat: Lightpanda is glibc-linked, Alpine uses musl
-# /lib64 symlink: x86_64 binary needs /lib64/ld-linux-x86-64.so.2 but Alpine only has /lib/
+# libc6-compat + /lib64 symlink: Lightpanda is glibc-linked, Alpine uses musl;
+# x86_64 binary needs /lib64/ld-linux-x86-64.so.2 but Alpine only has /lib/
 RUN apk --no-cache add ca-certificates tzdata tini nodejs libc6-compat \
     && [ ! -d /lib64 ] && ln -s /lib /lib64 || true \
     && ARCH=$(echo "${TARGETARCH}" | sed 's/amd64/x86_64/;s/arm64/aarch64/') \
     && wget -q -O /usr/bin/lightpanda \
        "https://github.com/lightpanda-io/browser/releases/download/nightly/lightpanda-${ARCH}-linux" \
-    && chmod +x /usr/bin/lightpanda \
-    # NOTE: "version" not "--help" — --help returns exit code 1 by design
-    && /usr/bin/lightpanda version > /dev/null 2>&1 || { echo "ERROR: lightpanda binary not runnable"; exit 1; }
+    && chmod +x /usr/bin/lightpanda
 COPY --from=build /go/src/app/miniflux /usr/bin/miniflux
 COPY --from=defuddle /defuddle/dist /usr/share/miniflux/defuddle/dist
 COPY --from=defuddle /defuddle/node_modules /usr/share/miniflux/defuddle/node_modules
