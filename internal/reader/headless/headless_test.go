@@ -312,8 +312,6 @@ func TestMultipleSequentialRenders(t *testing.T) {
 		t.Errorf("Process leak: ActiveProcessCount before=%d after=%d", before, after)
 	}
 
-	lightpandaCount := LightpandaProcessCount()
-	t.Logf("LightpandaProcessCount via /proc: %d", lightpandaCount)
 }
 
 func TestNoZombieProcesses(t *testing.T) {
@@ -331,5 +329,28 @@ func TestNoZombieProcesses(t *testing.T) {
 		if isProcessAlive(pid) {
 			t.Errorf("Zombie process detected: pid %d", pid)
 		}
+	}
+}
+
+func TestLightpandaProcessCount(t *testing.T) {
+	before := LightpandaProcessCount()
+
+	port := findTestPort()
+	cmd := startLightpanda(t, port)
+	activeProcessCount.Add(1)
+
+	during := LightpandaProcessCount()
+	t.Logf("LightpandaProcessCount: before=%d during=%d", before, during)
+	if during <= before {
+		t.Errorf("LightpandaProcessCount did not increase while process running: before=%d during=%d", before, during)
+	}
+
+	stopSubprocess(cmd)
+	time.Sleep(500 * time.Millisecond)
+
+	after := LightpandaProcessCount()
+	t.Logf("LightpandaProcessCount after stop: %d", after)
+	if after != before {
+		t.Errorf("LightpandaProcessCount not back to baseline: before=%d after=%d", before, after)
 	}
 }

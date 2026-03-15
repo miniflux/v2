@@ -288,11 +288,12 @@ func findFreePort() (int, error) {
 	return port, nil
 }
 
-// LightpandaProcessCount scans /proc to count running lightpanda processes.
-// Returns 0 on non-Linux systems or if /proc is unavailable.
+// LightpandaProcessCount scans /proc for running lightpanda processes.
+// Non-zero after all renders complete indicates a resource leak.
 func LightpandaProcessCount() int {
 	entries, err := os.ReadDir("/proc")
 	if err != nil {
+		slog.Warn("headless: unable to scan /proc for lightpanda processes", slog.Any("error", err))
 		return 0
 	}
 
@@ -309,10 +310,8 @@ func LightpandaProcessCount() int {
 		if err != nil {
 			continue
 		}
-		// /proc/PID/cmdline uses null bytes as separators; the executable is the first field.
 		if nullIdx := strings.IndexByte(string(cmdline), 0); nullIdx > 0 {
-			exe := string(cmdline[:nullIdx])
-			if strings.Contains(exe, "lightpanda") {
+			if strings.Contains(string(cmdline[:nullIdx]), "lightpanda") {
 				count++
 			}
 		}

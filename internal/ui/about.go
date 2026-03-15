@@ -46,7 +46,6 @@ func (h *handler) showAboutPage(w http.ResponseWriter, r *http.Request) {
 		view.Set("db_usage", dbSize)
 	}
 
-	view.Set("lightpanda_active_processes", headless.ActiveProcessCount())
 	view.Set("lightpanda_process_count", headless.LightpandaProcessCount())
 
 	html.OK(w, r, view.Render("about"))
