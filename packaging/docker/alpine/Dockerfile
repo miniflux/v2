@@ -30,8 +30,7 @@ RUN apt-get update \
     && ARCH=$(echo "${TARGETARCH}" | sed 's/amd64/x86_64/;s/arm64/aarch64/') \
     && curl -fsSL -o /usr/bin/lightpanda \
        "https://github.com/lightpanda-io/browser/releases/download/nightly/lightpanda-${ARCH}-linux" \
-    && chmod +x /usr/bin/lightpanda \
-    && mkdir -p /usr/local/share/lightpanda && chown 65534:65534 /usr/local/share/lightpanda
+    && chmod +x /usr/bin/lightpanda
 COPY --from=build /go/src/app/miniflux /usr/bin/miniflux
 COPY --from=defuddle /defuddle/dist /usr/share/miniflux/defuddle/dist
 COPY --from=defuddle /defuddle/node_modules /usr/share/miniflux/defuddle/node_modules
