@@ -76,8 +76,8 @@
             <ul id="header-menu">
                 {{ if .showAIDigest }}
                 <li {{ if or (eq .menu "unread") (eq .menu "ai-digest") }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
-                    <a href="{{ route "aiDigest" }}"
-                        data-page="ai-digest"
+                    <a href="{{ route "unread" }}"
+                        data-page="unread"
                         {{ if gt .countAIDigest 0 }}
                         aria-label="{{ t "menu.unread" }}, {{ plural "page.unread_entry_count" .countAIDigest .countAIDigest }}"
                         {{ end }}

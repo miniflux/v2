@@ -1,13 +1,13 @@
-{{ define "title"}}{{ t "page.ai_digest.title" }} ({{ .total }}){{ end }}
+{{ define "title"}}{{ t "menu.unread" }} ({{ .total }}){{ end }}
 
 {{ define "page_header"}}
 <section class="page-header" aria-labelledby="page-header-title">
     <h1 id="page-header-title">
-        {{ t "page.ai_digest.title" }}
+        {{ t "menu.unread" }}
         <span aria-hidden="true"> ({{ .total }})</span>
     </h1>
     {{ if .entries }}
-    <nav aria-label="{{ t "page.ai_digest.title" }} {{ t "menu.title" }}">
+    <nav aria-label="{{ t "menu.unread" }} {{ t "menu.title" }}">
         <ul>
             <li>
                 <button
@@ -24,7 +24,7 @@
                     class="page-button"
                     data-confirm="true"
                     data-url="{{ route "markAllAsRead" }}"
-                    data-redirect-url="{{ route "aiDigest" }}"
+                    data-redirect-url="{{ route "unread" }}"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
