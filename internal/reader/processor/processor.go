@@ -4,6 +4,7 @@
 package processor // import "miniflux.app/v2/internal/reader/processor"
 
 import (
+	"fmt"
 	"log/slog"
 	"net/url"
 	"slices"
@@ -113,6 +114,8 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 			)
 
 			// Use Lightpanda headless JS rendering when enabled for this feed.
+			// Don't fallback to HTTP scraper — it would hit the same network
+			// issues and mask the real headless rendering error.
 			if feed.UseJSRender && config.Opts.LightpandaEnabled() {
 				slog.Debug("Rendering entry with Lightpanda headless browser",
 					slog.Int64("user_id", user.ID),
@@ -138,8 +141,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 				}
 			}
 
-			// Only run the regular scraper if headless browser didn't extract content.
-			if !contentExtractedSuccessfully {
+			if !contentExtractedSuccessfully && !(feed.UseJSRender && config.Opts.LightpandaEnabled()) {
 				startTime := time.Now()
 
 				scrapedPageBaseURL, extractedContent, scraperErr := scraper.ScrapeWebsite(
@@ -231,18 +233,16 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	var extractedContent string
 	var scraperErr error
 
-	// Use Lightpanda headless JS rendering when enabled for this feed.
-	if feed.UseJSRender && config.Opts.LightpandaEnabled() {
+	useHeadless := feed.UseJSRender && config.Opts.LightpandaEnabled()
+
+	if useHeadless {
 		slog.Debug("Rendering entry with Lightpanda headless browser",
 			slog.String("entry_url", entry.URL),
 			slog.Int64("feed_id", feed.ID),
 		)
 		renderedContent, renderErr := headless.RenderPage(entry.URL, ResolveProxyURLForHeadless(feed), feed.ID)
 		if renderErr != nil {
-			slog.Warn("Unable to render entry with headless browser",
-				slog.String("entry_url", entry.URL),
-				slog.Any("error", renderErr),
-			)
+			return fmt.Errorf("headless JS rendering failed: %w", renderErr)
 		} else if renderedContent == "" {
 			slog.Warn("Headless browser returned empty content",
 				slog.String("entry_url", entry.URL),
@@ -253,8 +253,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 		}
 	}
 
-	// Only run the regular scraper if headless browser didn't extract content.
-	if extractedContent == "" {
+	if extractedContent == "" && !useHeadless {
 		webpageBaseURL, extractedContent, scraperErr = scraper.ScrapeWebsite(
 			requestBuilder,
 			entry.URL,
