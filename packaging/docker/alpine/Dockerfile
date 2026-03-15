@@ -19,11 +19,13 @@ LABEL org.opencontainers.image.source=https://github.com/naiba-forks/miniflux
 
 EXPOSE 8080
 ENV LISTEN_ADDR=0.0.0.0:8080
-RUN apk --no-cache add ca-certificates tzdata tini nodejs \
+# libc6-compat: Lightpanda is glibc-linked (needs ld-linux, libc.so.6, libm.so.6), Alpine uses musl
+RUN apk --no-cache add ca-certificates tzdata tini nodejs libc6-compat \
     && ARCH=$(uname -m | sed 's/aarch64/aarch64/;s/x86_64/x86_64/') \
     && wget -q -O /usr/bin/lightpanda \
        "https://github.com/lightpanda-io/browser/releases/download/nightly/lightpanda-${ARCH}-linux" \
-    && chmod +x /usr/bin/lightpanda
+    && chmod +x /usr/bin/lightpanda \
+    && /usr/bin/lightpanda --help > /dev/null 2>&1 || { echo "ERROR: lightpanda binary not runnable"; exit 1; }
 COPY --from=build /go/src/app/miniflux /usr/bin/miniflux
 COPY --from=defuddle /defuddle/dist /usr/share/miniflux/defuddle/dist
 COPY --from=defuddle /defuddle/node_modules /usr/share/miniflux/defuddle/node_modules
