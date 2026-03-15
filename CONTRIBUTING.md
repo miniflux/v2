@@ -2,7 +2,7 @@
 
 MinifluxNg is a fork of [Miniflux](https://github.com/miniflux/v2). Contributions that belong to upstream (bug fixes, core improvements) should go to the upstream project first.
 
-Fork-specific contributions (AI summary, web scraper, Pinchtab JS rendering) are welcome here.
+Fork-specific contributions (AI summary, web scraper, Lightpanda JS rendering) are welcome here.
 
 ## Development Setup
 
@@ -11,6 +11,8 @@ Fork-specific contributions (AI summary, web scraper, Pinchtab JS rendering) are
 - **Git**
 - **Go >= 1.24**
 - **PostgreSQL**
+- **Node.js >= 18** (for Defuddle content extraction in JS rendering)
+- **Lightpanda** binary (optional, for JS rendering tests)
 
 ### Getting Started
 
@@ -25,7 +27,14 @@ Fork-specific contributions (AI summary, web scraper, Pinchtab JS rendering) are
    make miniflux
    ```
 
-3. **Run locally in debug mode:**
+3. **Set up Defuddle** (needed for JS rendering):
+   ```bash
+   git clone --depth 1 https://github.com/kepano/defuddle /tmp/defuddle
+   cd /tmp/defuddle && npm ci && npm run build
+   ln -s /tmp/defuddle /usr/share/miniflux/defuddle
+   ```
+
+4. **Run locally in debug mode:**
    ```bash
    make run
    ```

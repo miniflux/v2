@@ -21,12 +21,13 @@ Fork Features
 - Pagination support for both HTML (regex) and JSON (gjson path) sources.
 - Feed source type selector: choose between RSS/Atom/JSON Feed or Web Scraper per subscription.
 
-### JavaScript Rendering (Pinchtab)
+### JavaScript Rendering (Lightpanda)
 
-- Optional headless Chrome rendering via [Pinchtab](https://pinchtab.com) for JavaScript-heavy websites.
+- Optional headless browser rendering via [Lightpanda](https://lightpanda.io) for JavaScript-heavy websites.
+- Ultra-low memory footprint (9x less than Chrome) with instant startup.
+- Two-stage content extraction: Lightpanda renders the page, then [Defuddle](https://github.com/kepano/defuddle) extracts the article content server-side.
 - Works with both RSS feeds (fetch original content) and Web Scraper feeds (render listing pages + article detail pages).
-- Per-feed toggle with automatic fallback to standard HTTP fetching on failure.
-- Per-feed browser state isolation (cookies, localStorage) for sites requiring login.
+- Per-feed proxy support (`--http_proxy`) with automatic fallback to standard HTTP fetching on failure.
 
 Upstream Features
 -----------------
