@@ -479,12 +479,12 @@ func NewConfigOptions() *configOptions {
 				rawValue:        "0",
 				valueType:       boolType,
 			},
-			"PINCHTAB_BINARY_PATH": {
-				parsedStringValue: "/usr/bin/pinchtab",
-				rawValue:          "/usr/bin/pinchtab",
+			"LIGHTPANDA_BINARY_PATH": {
+				parsedStringValue: "/usr/bin/lightpanda",
+				rawValue:          "/usr/bin/lightpanda",
 				valueType:         stringType,
 			},
-			"PINCHTAB_ENABLED": {
+			"LIGHTPANDA_ENABLED": {
 				parsedBoolValue: false,
 				rawValue:        "0",
 				valueType:       boolType,
@@ -901,12 +901,12 @@ func (c *configOptions) MetricsUsername() string {
 	return c.options["METRICS_USERNAME"].parsedStringValue
 }
 
-func (c *configOptions) PinchTabBinaryPath() string {
-	return c.options["PINCHTAB_BINARY_PATH"].parsedStringValue
+func (c *configOptions) LightpandaBinaryPath() string {
+	return c.options["LIGHTPANDA_BINARY_PATH"].parsedStringValue
 }
 
-func (c *configOptions) PinchTabEnabled() bool {
-	return c.options["PINCHTAB_ENABLED"].parsedBoolValue
+func (c *configOptions) LightpandaEnabled() bool {
+	return c.options["LIGHTPANDA_ENABLED"].parsedBoolValue
 }
 
 func (c *configOptions) OAuth2ClientID() string {
