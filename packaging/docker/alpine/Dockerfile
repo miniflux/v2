@@ -1,7 +1,8 @@
-FROM docker.io/library/golang:alpine3.23 AS build
-RUN apk add --no-cache build-base git make
+FROM docker.io/library/golang:bookworm AS build
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential git make && rm -rf /var/lib/apt/lists/*
 ADD . /go/src/app
 WORKDIR /go/src/app
+# PIE build dynamically links libc — must compile on glibc (Debian) to match runtime.
 RUN make miniflux
 
 FROM docker.io/library/node:22-alpine AS defuddle
