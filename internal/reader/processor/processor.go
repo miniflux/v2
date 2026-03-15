@@ -126,7 +126,13 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 						slog.String("entry_url", entry.URL),
 						slog.Any("error", renderErr),
 					)
-				} else if renderedContent != "" {
+				} else if renderedContent == "" {
+					slog.Warn("Headless browser returned empty content",
+						slog.Int64("user_id", user.ID),
+						slog.String("entry_url", entry.URL),
+						slog.Int64("feed_id", feed.ID),
+					)
+				} else {
 					entry.Content = minifyContent(renderedContent)
 					contentExtractedSuccessfully = true
 				}
@@ -237,7 +243,12 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 				slog.String("entry_url", entry.URL),
 				slog.Any("error", renderErr),
 			)
-		} else if renderedContent != "" {
+		} else if renderedContent == "" {
+			slog.Warn("Headless browser returned empty content",
+				slog.String("entry_url", entry.URL),
+				slog.Int64("feed_id", feed.ID),
+			)
+		} else {
 			extractedContent = renderedContent
 		}
 	}
