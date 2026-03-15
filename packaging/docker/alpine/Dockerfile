@@ -4,6 +4,11 @@ ADD . /go/src/app
 WORKDIR /go/src/app
 RUN make miniflux
 
+FROM docker.io/library/node:22-alpine AS defuddle
+RUN git clone --depth 1 https://github.com/kepano/defuddle /defuddle
+WORKDIR /defuddle
+RUN npm ci && npm run build
+
 FROM docker.io/library/alpine:3.23
 
 LABEL org.opencontainers.image.title=Miniflux
@@ -13,19 +18,15 @@ LABEL org.opencontainers.image.source=https://github.com/naiba-forks/miniflux
 
 EXPOSE 8080
 ENV LISTEN_ADDR=0.0.0.0:8080
-# Chromium 128+ crashpad requires writable XDG directories for its crash
-# database.  Running as nobody (UID 65534) means $HOME is not writable,
-# causing SIGTRAP on aarch64.  Point XDG dirs to /tmp so crashpad can
-# initialise without crashing.
-ENV XDG_CONFIG_HOME=/tmp/.chromium
-ENV XDG_CACHE_HOME=/tmp/.chromium
-ARG PINCHTAB_VERSION=0.7.8
-RUN apk --no-cache add ca-certificates tzdata chromium tini \
-    && ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') \
-    && wget -q -O /usr/bin/pinchtab \
-       "https://github.com/pinchtab/pinchtab/releases/download/v${PINCHTAB_VERSION}/pinchtab-linux-${ARCH}" \
-    && chmod +x /usr/bin/pinchtab
+RUN apk --no-cache add ca-certificates tzdata tini nodejs \
+    && ARCH=$(uname -m | sed 's/aarch64/aarch64/;s/x86_64/x86_64/') \
+    && wget -q -O /usr/bin/lightpanda \
+       "https://github.com/lightpanda-io/browser/releases/download/nightly/lightpanda-${ARCH}-linux" \
+    && chmod +x /usr/bin/lightpanda
 COPY --from=build /go/src/app/miniflux /usr/bin/miniflux
+COPY --from=defuddle /defuddle/dist /usr/share/miniflux/defuddle/dist
+COPY --from=defuddle /defuddle/node_modules /usr/share/miniflux/defuddle/node_modules
+COPY --from=defuddle /defuddle/package.json /usr/share/miniflux/defuddle/package.json
 USER 65534
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["/usr/bin/miniflux"]
