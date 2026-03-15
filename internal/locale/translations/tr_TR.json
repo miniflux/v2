@@ -213,7 +213,7 @@
     "form.feed.label.site_url": "Site URL'si",
     "form.feed.label.title": "Başlık",
     "form.feed.label.urlrewrite_rules": "URL Yeniden Yazma Kuralları",
-    "form.feed.label.use_js_render": "Enable JavaScript rendering (requires Pinchtab)",
+    "form.feed.label.use_js_render": "Enable JavaScript rendering (requires Lightpanda)",
     "form.feed.label.user_agent": "Varsayılan User Agent'i Geçersiz Kıl",
     "form.feed.label.web_scraper": "Web Scraper",
     "form.feed.label.webhook_url": "Webhook URL'sini geçersiz kıl",

@@ -213,7 +213,7 @@
     "form.feed.label.site_url": "Διεύθυνση URL ιστότοπου",
     "form.feed.label.title": "Τίτλος",
     "form.feed.label.urlrewrite_rules": "κανόνες επανεγγραφής για τη διεύθυνση URL.",
-    "form.feed.label.use_js_render": "Enable JavaScript rendering (requires Pinchtab)",
+    "form.feed.label.use_js_render": "Enable JavaScript rendering (requires Lightpanda)",
     "form.feed.label.user_agent": "Παράκαμψη Προεπιλεγμένου User Agent Χρήστη",
     "form.feed.label.web_scraper": "Web Scraper",
     "form.feed.label.webhook_url": "Παράκαμψη διεύθυνσης URL webhook",

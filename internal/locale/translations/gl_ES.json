@@ -213,7 +213,7 @@
     "form.feed.label.site_url": "URL do sitio",
     "form.feed.label.title": "Título",
     "form.feed.label.urlrewrite_rules": "Regras de rescritura URL",
-    "form.feed.label.use_js_render": "Enable JavaScript rendering (requires Pinchtab)",
+    "form.feed.label.use_js_render": "Enable JavaScript rendering (requires Lightpanda)",
     "form.feed.label.user_agent": "Sobrescribir User Agent predeterminado",
     "form.feed.label.web_scraper": "Web Scraper",
     "form.feed.label.webhook_url": "Override webhook url",

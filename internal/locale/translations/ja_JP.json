@@ -210,7 +210,7 @@
     "form.feed.label.site_url": "サイト URL",
     "form.feed.label.title": "タイトル",
     "form.feed.label.urlrewrite_rules": "Rewrite URL ルール",
-    "form.feed.label.use_js_render": "Enable JavaScript rendering (requires Pinchtab)",
+    "form.feed.label.use_js_render": "Enable JavaScript rendering (requires Lightpanda)",
     "form.feed.label.user_agent": "デフォルトの User Agent を上書きする",
     "form.feed.label.web_scraper": "Web Scraper",
     "form.feed.label.webhook_url": "Webhook の URL を上書き",

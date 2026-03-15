@@ -210,7 +210,7 @@
     "form.feed.label.site_url": "網站網址",
     "form.feed.label.title": "標題",
     "form.feed.label.urlrewrite_rules": "網址重寫規則",
-    "form.feed.label.use_js_render": "Enable JavaScript rendering (requires Pinchtab)",
+    "form.feed.label.use_js_render": "Enable JavaScript rendering (requires Lightpanda)",
     "form.feed.label.user_agent": "覆蓋預設的使用者代理",
     "form.feed.label.web_scraper": "Web Scraper",
     "form.feed.label.webhook_url": "覆蓋webhook URL",

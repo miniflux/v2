@@ -213,7 +213,7 @@
     "form.feed.label.site_url": "Website URL",
     "form.feed.label.title": "Titel",
     "form.feed.label.urlrewrite_rules": "Herschrijfregels voor URL's",
-    "form.feed.label.use_js_render": "Enable JavaScript rendering (requires Pinchtab)",
+    "form.feed.label.use_js_render": "Enable JavaScript rendering (requires Lightpanda)",
     "form.feed.label.user_agent": "Standaard User-agent overschrijven",
     "form.feed.label.web_scraper": "Web Scraper",
     "form.feed.label.webhook_url": "Overschrijf webhook URL",
