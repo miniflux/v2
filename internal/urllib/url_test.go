@@ -226,6 +226,7 @@ func TestIsNonPublicIP(t *testing.T) {
 	}{
 		{"nil", "", true},
 		{"private IPv4", "192.168.1.10", true},
+		{"shared address space IPv4", "100.64.0.1", true},
 		{"loopback IPv4", "127.0.0.1", true},
 		{"link-local IPv4", "169.254.42.1", true},
 		{"multicast IPv4", "224.0.0.1", true},
