@@ -2,10 +2,10 @@
 
 ## Supported Versions
 
-Only the latest release is supported.
+Only the latest stable version is supported.
 
 ## Reporting a Vulnerability
 
-For vulnerabilities in **upstream Miniflux** code, report to the [upstream project](https://github.com/miniflux/v2/security/advisories/new).
+Preferably, [report the vulnerability privately using GitHub](https://github.com/miniflux/v2/security/advisories/new) ([documentation](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability)).
 
-For vulnerabilities specific to **MinifluxNg fork features** (AI summary, web scraper, Lightpanda), [report privately via GitHub](https://github.com/naiba-forks/miniflux/security/advisories/new) or email `hi@nai.ba`.
+If you do not want to use GitHub, send an email to `security AT miniflux DOT net` with all the steps to reproduce the problem.
