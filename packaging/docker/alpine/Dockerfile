@@ -5,6 +5,7 @@ WORKDIR /go/src/app
 RUN make miniflux
 
 FROM docker.io/library/node:22-alpine AS defuddle
+RUN apk add --no-cache git
 RUN git clone --depth 1 https://github.com/kepano/defuddle /defuddle
 WORKDIR /defuddle
 RUN npm ci && npm run build
