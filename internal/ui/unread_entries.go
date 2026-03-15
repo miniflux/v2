@@ -21,6 +21,11 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if h.store.IsAIEnabled(user.ID) {
+		h.showAIDigestPage(w, r)
+		return
+	}
+
 	offset := request.QueryIntParam(r, "offset", 0)
 	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStatus(model.EntryStatusUnread)

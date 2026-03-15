@@ -74,6 +74,21 @@
                 {{ icon "chevron-down"}}
             </div>
             <ul id="header-menu">
+                {{ if .showAIDigest }}
+                <li {{ if or (eq .menu "unread") (eq .menu "ai-digest") }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
+                    <a href="{{ route "unread" }}"
+                        data-page="unread"
+                        {{ if gt .countAIDigest 0 }}
+                        aria-label="{{ t "menu.unread" }}, {{ plural "page.unread_entry_count" .countAIDigest .countAIDigest }}"
+                        {{ end }}
+                    >
+                        {{ icon "brain" }}{{ t "menu.unread" }}
+                        {{ if gt .countAIDigest 0 }}
+                        <span class="ai-digest-counter-wrapper" aria-hidden="true">(<span class="ai-digest-counter">{{ .countAIDigest }}</span>)</span>
+                        {{ end }}
+                    </a>
+                </li>
+                {{ else }}
                 <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
                     <a href="{{ route "unread" }}"
                         data-page="unread"
@@ -84,20 +99,6 @@
                         {{ icon "entries" }}{{ t "menu.unread" }}
                         {{ if gt .countUnread 0 }}
                         <span class="unread-counter-wrapper" aria-hidden="true">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
-                        {{ end }}
-                    </a>
-                </li>
-                <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g b" }}">
-                    <a href="{{ route "starred" }}" data-page="starred">{{ icon "star" }}{{ t "menu.starred" }}</a>
-                </li>
-                <li {{ if eq .menu "history" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g h" }}">
-                    <a href="{{ route "history" }}" data-page="history">{{ icon "history" }}{{ t "menu.history" }}</a>
-                </li>
-                {{ if .showAIDigest }}
-                <li {{ if eq .menu "ai-digest" }}class="active"{{ end }}>
-                    <a href="{{ route "aiDigest" }}" data-page="ai-digest">{{ icon "brain" }}{{ t "menu.ai_digest" }}
-                        {{ if gt .countAIDigest 0 }}
-                        <span class="ai-digest-counter-wrapper" aria-hidden="true">(<span class="ai-digest-counter">{{ .countAIDigest }}</span>)</span>
                         {{ end }}
                     </a>
                 </li>

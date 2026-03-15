@@ -10,7 +10,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/reader/pinchtab"
+	"miniflux.app/v2/internal/reader/headless"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 	"miniflux.app/v2/internal/version"
@@ -46,8 +46,7 @@ func (h *handler) showAboutPage(w http.ResponseWriter, r *http.Request) {
 		view.Set("db_usage", dbSize)
 	}
 
-	view.Set("pinchtab_active_processes", pinchtab.ActiveProcessCount())
-	view.Set("chromium_process_count", pinchtab.ChromiumProcessCount())
+	view.Set("lightpanda_process_count", headless.LightpandaProcessCount())
 
 	html.OK(w, r, view.Render("about"))
 }
