@@ -218,8 +218,13 @@ func startSubprocess(port int, proxyURL string) (*exec.Cmd, error) {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	// Lightpanda respects LIGHTPANDA_DISABLE_TELEMETRY to suppress telemetry.
-	cmd.Env = append(os.Environ(), "LIGHTPANDA_DISABLE_TELEMETRY=true")
+	cmd.Env = append(os.Environ(),
+		"LIGHTPANDA_DISABLE_TELEMETRY=true",
+		// Lightpanda calls std.fs.getAppDataDir("lightpanda") which resolves to
+		// $XDG_DATA_HOME/lightpanda. Without this, non-root users (e.g. UID 65534
+		// in Docker) lack a writable home directory and get AccessDenied.
+		"XDG_DATA_HOME=/tmp",
+	)
 
 	slog.Debug("headless: starting ephemeral Lightpanda subprocess",
 		slog.String("binary", binaryPath),
