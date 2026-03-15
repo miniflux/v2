@@ -213,9 +213,9 @@ func extractItemsFromHTML(htmlBody, pageURL string, scrapeConfig *ScrapeConfig, 
 	return results, nil
 }
 
-// ScrapeRenderedHTML extracts items from pre-rendered HTML (e.g. from pinchtab
-// JS rendering) without making HTTP requests. Pagination is not supported since
-// the HTML is already fully rendered.
+// ScrapeRenderedHTML extracts items from pre-rendered HTML (e.g. from headless
+// browser JS rendering) without making HTTP requests. Pagination is not
+// supported since the HTML is already fully rendered.
 func ScrapeRenderedHTML(htmlBody, pageURL string, scrapeConfig *ScrapeConfig) ([]*ScrapeResult, error) {
 	maxItems := scrapeConfig.MaxItems
 	if maxItems <= 0 {

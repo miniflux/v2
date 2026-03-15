@@ -15,7 +15,7 @@ import (
 	"miniflux.app/v2/internal/proxyrotator"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/filter"
-	"miniflux.app/v2/internal/reader/pinchtab"
+	"miniflux.app/v2/internal/reader/headless"
 	"miniflux.app/v2/internal/reader/readingtime"
 	"miniflux.app/v2/internal/reader/rewrite"
 	"miniflux.app/v2/internal/reader/sanitizer"
@@ -96,10 +96,10 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 		entryIsNew := store.IsNewEntry(feed.ID, entry.Hash)
 		contentExtractedSuccessfully := false
 		// For web_scraper feeds, UseJSRender also triggers full content fetching
-		// via pinchtab, even when Crawler is not explicitly enabled. The web
-		// scraper's listing page only provides summaries; JS rendering each
-		// entry's detail page extracts the full article content.
-		shouldFetchContent := feed.Crawler || (feed.FeedSourceType == "web_scraper" && feed.UseJSRender && config.Opts.PinchTabEnabled())
+		// via Lightpanda headless browser, even when Crawler is not explicitly
+		// enabled. The web scraper's listing page only provides summaries; JS
+		// rendering each entry's detail page extracts the full article content.
+		shouldFetchContent := feed.Crawler || (feed.FeedSourceType == "web_scraper" && feed.UseJSRender && config.Opts.LightpandaEnabled())
 		if shouldFetchContent && (entryIsNew || forceRefresh) {
 			slog.Debug("Scraping entry",
 				slog.Int64("user_id", user.ID),
@@ -112,28 +112,27 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 				slog.Bool("force_refresh", forceRefresh),
 			)
 
-			// Use pinchtab JS rendering when enabled for this feed.
-			if feed.UseJSRender && config.Opts.PinchTabEnabled() {
-				slog.Debug("Rendering entry with pinchtab JS renderer",
+			// Use Lightpanda headless JS rendering when enabled for this feed.
+			if feed.UseJSRender && config.Opts.LightpandaEnabled() {
+				slog.Debug("Rendering entry with Lightpanda headless browser",
 					slog.Int64("user_id", user.ID),
 					slog.String("entry_url", entry.URL),
 					slog.Int64("feed_id", feed.ID),
 				)
-				renderedContent, renderErr := pinchtab.RenderPage(entry.URL, ResolveProxyURLForPinchtab(feed), feed.ID)
+				renderedContent, renderErr := headless.RenderPage(entry.URL, ResolveProxyURLForHeadless(feed), feed.ID)
 				if renderErr != nil {
-					slog.Warn("Unable to render entry with pinchtab",
+					slog.Warn("Unable to render entry with headless browser",
 						slog.Int64("user_id", user.ID),
 						slog.String("entry_url", entry.URL),
 						slog.Any("error", renderErr),
 					)
-					// Fallback: continue with normal scraping below.
 				} else if renderedContent != "" {
 					entry.Content = minifyContent(renderedContent)
 					contentExtractedSuccessfully = true
 				}
 			}
 
-			// Only run the regular scraper if pinchtab didn't extract content.
+			// Only run the regular scraper if headless browser didn't extract content.
 			if !contentExtractedSuccessfully {
 				startTime := time.Now()
 
@@ -226,25 +225,24 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	var extractedContent string
 	var scraperErr error
 
-	// Use pinchtab JS rendering when enabled for this feed.
-	if feed.UseJSRender && config.Opts.PinchTabEnabled() {
-		slog.Debug("Rendering entry with pinchtab JS renderer",
+	// Use Lightpanda headless JS rendering when enabled for this feed.
+	if feed.UseJSRender && config.Opts.LightpandaEnabled() {
+		slog.Debug("Rendering entry with Lightpanda headless browser",
 			slog.String("entry_url", entry.URL),
 			slog.Int64("feed_id", feed.ID),
 		)
-		renderedContent, renderErr := pinchtab.RenderPage(entry.URL, ResolveProxyURLForPinchtab(feed), feed.ID)
+		renderedContent, renderErr := headless.RenderPage(entry.URL, ResolveProxyURLForHeadless(feed), feed.ID)
 		if renderErr != nil {
-			slog.Warn("Unable to render entry with pinchtab",
+			slog.Warn("Unable to render entry with headless browser",
 				slog.String("entry_url", entry.URL),
 				slog.Any("error", renderErr),
 			)
-			// Fallback: continue with normal scraping below.
 		} else if renderedContent != "" {
 			extractedContent = renderedContent
 		}
 	}
 
-	// Only run the regular scraper if pinchtab didn't extract content.
+	// Only run the regular scraper if headless browser didn't extract content.
 	if extractedContent == "" {
 		webpageBaseURL, extractedContent, scraperErr = scraper.ScrapeWebsite(
 			requestBuilder,
@@ -278,14 +276,14 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	return nil
 }
 
-// ResolveProxyURLForPinchtab determines the proxy URL to use when rendering a
-// page via pinchtab's headless Chrome. The priority matches the fetcher's
+// ResolveProxyURLForHeadless determines the proxy URL to use when rendering a
+// page via Lightpanda headless browser. The priority matches the fetcher's
 // RequestBuilder logic (request_builder.go):
 //   - feed-level proxy_url (highest)
 //   - application-level HTTP_CLIENT_PROXY (when FetchViaProxy is enabled)
 //   - proxy rotator pool
 //   - no proxy (empty string)
-func ResolveProxyURLForPinchtab(feed *model.Feed) string {
+func ResolveProxyURLForHeadless(feed *model.Feed) string {
 	switch {
 	case feed.ProxyURL != "":
 		return feed.ProxyURL
