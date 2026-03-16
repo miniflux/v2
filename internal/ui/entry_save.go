@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/json"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/integration"
 	"miniflux.app/v2/internal/model"
 )
@@ -20,22 +20,22 @@ func (h *handler) saveEntry(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	if entry == nil {
-		json.NotFound(w, r)
+		response.JSONNotFound(w, r)
 		return
 	}
 
 	userIntegrations, err := h.store.Integration(request.UserID(r))
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	go integration.SendEntry(entry, userIntegrations)
 
-	json.Created(w, r, map[string]string{"message": "saved"})
+	response.JSONCreated(w, r, map[string]string{"message": "saved"})
 }

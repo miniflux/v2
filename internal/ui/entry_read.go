@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
@@ -18,7 +18,7 @@ import (
 func (h *handler) showReadEntryPage(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -29,17 +29,17 @@ func (h *handler) showReadEntryPage(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if entry == nil {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 
 	if user.AlwaysOpenExternalLinks {
-		html.Redirect(w, r, entry.URL)
+		response.HTMLRedirect(w, r, entry.URL)
 		return
 	}
 
@@ -47,7 +47,7 @@ func (h *handler) showReadEntryPage(w http.ResponseWriter, r *http.Request) {
 	entryPaginationBuilder.WithStatus(model.EntryStatusRead)
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -74,5 +74,5 @@ func (h *handler) showReadEntryPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 
-	html.OK(w, r, view.Render("entry"))
+	response.HTML(w, r, view.Render("entry"))
 }

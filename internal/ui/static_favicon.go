@@ -8,14 +8,14 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/response/html"
+
 	"miniflux.app/v2/internal/ui/static"
 )
 
 func (h *handler) showFavicon(w http.ResponseWriter, r *http.Request) {
 	value, ok := static.BinaryBundles["favicon.ico"]
 	if !ok {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 

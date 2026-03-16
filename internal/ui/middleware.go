@@ -14,7 +14,7 @@ import (
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/cookie"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
@@ -47,7 +47,7 @@ func (m *middleware) handleUserSession(next http.Handler) http.Handler {
 				values := loginURL.Query()
 				values.Set("redirect_url", r.RequestURI)
 				loginURL.RawQuery = values.Encode()
-				html.Redirect(w, r, loginURL.String())
+				response.HTMLRedirect(w, r, loginURL.String())
 			}
 		} else {
 			slog.Debug("User session found",
@@ -86,14 +86,14 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 				)
 				session, err = m.store.CreateAppSessionWithUserPrefs(userID)
 				if err != nil {
-					html.ServerError(w, r, err)
+					response.HTMLServerError(w, r, err)
 					return
 				}
 			} else {
 				slog.Debug("App session not found, creating a new one")
 				session, err = m.store.CreateAppSession()
 				if err != nil {
-					html.ServerError(w, r, err)
+					response.HTMLServerError(w, r, err)
 					return
 				}
 			}
@@ -113,11 +113,11 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 				)
 
 				if mux.CurrentRoute(r).GetName() == "checkLogin" {
-					html.Redirect(w, r, route.Path(m.router, "login"))
+					response.HTMLRedirect(w, r, route.Path(m.router, "login"))
 					return
 				}
 
-				html.BadRequest(w, r, errors.New("invalid or missing CSRF"))
+				response.HTMLBadRequest(w, r, errors.New("invalid or missing CSRF"))
 				return
 			}
 		}
@@ -235,7 +235,7 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 
 		user, err := m.store.UserByUsername(username)
 		if err != nil {
-			html.ServerError(w, r, err)
+			response.HTMLServerError(w, r, err)
 			return
 		}
 
@@ -248,19 +248,19 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 					slog.String("user_agent", r.UserAgent()),
 					slog.String("username", username),
 				)
-				html.Forbidden(w, r)
+				response.HTMLForbidden(w, r)
 				return
 			}
 
 			if user, err = m.store.CreateUser(&model.UserCreationRequest{Username: username}); err != nil {
-				html.ServerError(w, r, err)
+				response.HTMLServerError(w, r, err)
 				return
 			}
 		}
 
 		sessionToken, _, err := m.store.CreateUserSessionFromUsername(user.Username, r.UserAgent(), clientIP)
 		if err != nil {
-			html.ServerError(w, r, err)
+			response.HTMLServerError(w, r, err)
 			return
 		}
 
@@ -286,6 +286,6 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 			config.Opts.BasePath(),
 		))
 
-		html.Redirect(w, r, route.Path(m.router, user.DefaultHomePage))
+		response.HTMLRedirect(w, r, route.Path(m.router, user.DefaultHomePage))
 	})
 }

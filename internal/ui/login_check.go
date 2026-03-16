@@ -10,7 +10,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/cookie"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/ui/form"
@@ -31,7 +31,7 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 			slog.String("client_ip", clientIP),
 			slog.String("user_agent", r.UserAgent()),
 		)
-		html.OK(w, r, view.Render("login"))
+		response.HTML(w, r, view.Render("login"))
 		return
 	}
 
@@ -48,7 +48,7 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 			slog.String("username", authForm.Username),
 			slog.Any("error", translatedErrorMessage),
 		)
-		html.OK(w, r, view.Render("login"))
+		response.HTML(w, r, view.Render("login"))
 		return
 	}
 
@@ -60,13 +60,13 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 			slog.String("username", authForm.Username),
 			slog.Any("error", err),
 		)
-		html.OK(w, r, view.Render("login"))
+		response.HTML(w, r, view.Render("login"))
 		return
 	}
 
 	sessionToken, userID, err := h.store.CreateUserSessionFromUsername(authForm.Username, r.UserAgent(), clientIP)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -82,7 +82,7 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.store.UserByID(userID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -97,9 +97,9 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 	))
 
 	if redirectURL != "" && urllib.IsRelativePath(redirectURL) {
-		html.Redirect(w, r, redirectURL)
+		response.HTMLRedirect(w, r, redirectURL)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, user.DefaultHomePage))
+	response.HTMLRedirect(w, r, route.Path(h.router, user.DefaultHomePage))
 }

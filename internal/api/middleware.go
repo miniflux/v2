@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/json"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/storage"
 )
 
@@ -51,7 +51,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 
 		user, err := m.store.UserByAPIKey(token)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 
@@ -62,7 +62,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 				slog.String("user_agent", r.UserAgent()),
 				slog.String("request_uri", r.RequestURI),
 			)
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 
@@ -105,7 +105,7 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 				slog.String("user_agent", r.UserAgent()),
 				slog.String("request_uri", r.RequestURI),
 			)
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 
@@ -116,7 +116,7 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 				slog.String("user_agent", r.UserAgent()),
 				slog.String("request_uri", r.RequestURI),
 			)
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 
@@ -128,13 +128,13 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 				slog.String("username", username),
 				slog.String("request_uri", r.RequestURI),
 			)
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 
 		user, err := m.store.UserByUsername(username)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 
@@ -146,7 +146,7 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 				slog.String("username", username),
 				slog.String("request_uri", r.RequestURI),
 			)
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 

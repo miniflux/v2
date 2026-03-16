@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/json"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/integration"
 	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
@@ -55,7 +55,7 @@ func (h *handler) serve(w http.ResponseWriter, r *http.Request) {
 	case r.FormValue("mark") == "group":
 		h.handleWriteGroups(w, r)
 	default:
-		json.OK(w, r, newBaseResponse())
+		response.JSON(w, r, newBaseResponse())
 	}
 }
 
@@ -86,13 +86,13 @@ func (h *handler) handleGroups(w http.ResponseWriter, r *http.Request) {
 
 	categories, err := h.store.Categories(userID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	feeds, err := h.store.Feeds(userID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -103,7 +103,7 @@ func (h *handler) handleGroups(w http.ResponseWriter, r *http.Request) {
 
 	result.FeedsGroups = h.buildFeedGroups(feeds)
 	result.SetCommonValues()
-	json.OK(w, r, result)
+	response.JSON(w, r, result)
 }
 
 /*
@@ -138,7 +138,7 @@ func (h *handler) handleFeeds(w http.ResponseWriter, r *http.Request) {
 
 	feeds, err := h.store.Feeds(userID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -163,7 +163,7 @@ func (h *handler) handleFeeds(w http.ResponseWriter, r *http.Request) {
 
 	result.FeedsGroups = h.buildFeedGroups(feeds)
 	result.SetCommonValues()
-	json.OK(w, r, result)
+	response.JSON(w, r, result)
 }
 
 /*
@@ -193,7 +193,7 @@ func (h *handler) handleFavicons(w http.ResponseWriter, r *http.Request) {
 
 	icons, err := h.store.Icons(userID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -206,7 +206,7 @@ func (h *handler) handleFavicons(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result.SetCommonValues()
-	json.OK(w, r, result)
+	response.JSON(w, r, result)
 }
 
 /*
@@ -295,7 +295,7 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -303,7 +303,7 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	result.Total, err = builder.CountEntries()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -333,7 +333,7 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result.SetCommonValues()
-	json.OK(w, r, result)
+	response.JSON(w, r, result)
 }
 
 /*
@@ -354,7 +354,7 @@ func (h *handler) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
 	builder.WithStatus(model.EntryStatusUnread)
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -366,7 +366,7 @@ func (h *handler) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
 	var result unreadResponse
 	result.ItemIDs = strings.Join(itemIDs, ",")
 	result.SetCommonValues()
-	json.OK(w, r, result)
+	response.JSON(w, r, result)
 }
 
 /*
@@ -388,7 +388,7 @@ func (h *handler) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 
 	entryIDs, err := builder.GetEntryIDs()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -399,7 +399,7 @@ func (h *handler) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 
 	result := &savedResponse{ItemIDs: strings.Join(itemsIDs, ",")}
 	result.SetCommonValues()
-	json.OK(w, r, result)
+	response.JSON(w, r, result)
 }
 
 /*
@@ -424,7 +424,7 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -433,7 +433,7 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 			slog.Int64("user_id", userID),
 			slog.Int64("entry_id", entryID),
 		)
-		json.OK(w, r, newBaseResponse())
+		response.JSON(w, r, newBaseResponse())
 		return
 	}
 
@@ -456,13 +456,13 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 			slog.Int64("entry_id", entryID),
 		)
 		if err := h.store.ToggleStarred(userID, entryID); err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 
 		settings, err := h.store.Integration(userID)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 
@@ -475,12 +475,12 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 			slog.Int64("entry_id", entryID),
 		)
 		if err := h.store.ToggleStarred(userID, entryID); err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 	}
 
-	json.OK(w, r, newBaseResponse())
+	response.JSON(w, r, newBaseResponse())
 }
 
 /*
@@ -515,7 +515,7 @@ func (h *handler) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	json.OK(w, r, newBaseResponse())
+	response.JSON(w, r, newBaseResponse())
 }
 
 /*
@@ -558,7 +558,7 @@ func (h *handler) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	json.OK(w, r, newBaseResponse())
+	response.JSON(w, r, newBaseResponse())
 }
 
 /*

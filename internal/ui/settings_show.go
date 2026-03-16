@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/timezone"
@@ -19,7 +19,7 @@ import (
 func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -53,7 +53,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 
 	creds, err := h.store.WebAuthnCredentialsByUserID(user.ID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -78,5 +78,5 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countWebAuthnCerts", h.store.CountWebAuthnCredentialsByUserID(user.ID))
 	view.Set("webAuthnCerts", creds)
 
-	html.OK(w, r, view.Render("settings"))
+	response.HTML(w, r, view.Render("settings"))
 }

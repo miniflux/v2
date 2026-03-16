@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/json"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
@@ -63,7 +63,7 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 	if request.IsAuthenticated(r) {
 		user, err := h.store.UserByID(request.UserID(r))
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 		displayMode = user.DisplayMode
@@ -111,5 +111,5 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	json.OK(w, r, manifest)
+	response.JSON(w, r, manifest)
 }

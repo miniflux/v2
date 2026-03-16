@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/json"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/validator"
@@ -20,32 +20,32 @@ func (h *handler) createAPIKey(w http.ResponseWriter, r *http.Request) {
 
 	var apiKeyCreationRequest model.APIKeyCreationRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&apiKeyCreationRequest); err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	if validationErr := validator.ValidateAPIKeyCreation(h.store, userID, &apiKeyCreationRequest); validationErr != nil {
-		json.BadRequest(w, r, validationErr.Error())
+		response.JSONBadRequest(w, r, validationErr.Error())
 		return
 	}
 
 	apiKey, err := h.store.CreateAPIKey(userID, apiKeyCreationRequest.Description)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
-	json.Created(w, r, apiKey)
+	response.JSONCreated(w, r, apiKey)
 }
 
 func (h *handler) getAPIKeys(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	apiKeys, err := h.store.APIKeys(userID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
-	json.OK(w, r, apiKeys)
+	response.JSON(w, r, apiKeys)
 }
 
 func (h *handler) deleteAPIKey(w http.ResponseWriter, r *http.Request) {
@@ -54,11 +54,11 @@ func (h *handler) deleteAPIKey(w http.ResponseWriter, r *http.Request) {
 
 	if err := h.store.DeleteAPIKey(userID, apiKeyID); err != nil {
 		if errors.Is(err, storage.ErrAPIKeyNotFound) {
-			json.NotFound(w, r)
+			response.JSONNotFound(w, r)
 			return
 		}
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
-	json.NoContent(w, r)
+	response.JSONNoContent(w, r)
 }

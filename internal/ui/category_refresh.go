@@ -10,7 +10,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/ui/session"
@@ -18,12 +18,12 @@ import (
 
 func (h *handler) refreshCategoryEntriesPage(w http.ResponseWriter, r *http.Request) {
 	categoryID := h.refreshCategory(w, r)
-	html.Redirect(w, r, route.Path(h.router, "categoryEntries", "categoryID", categoryID))
+	response.HTMLRedirect(w, r, route.Path(h.router, "categoryEntries", "categoryID", categoryID))
 }
 
 func (h *handler) refreshCategoryFeedsPage(w http.ResponseWriter, r *http.Request) {
 	categoryID := h.refreshCategory(w, r)
-	html.Redirect(w, r, route.Path(h.router, "categoryFeeds", "categoryID", categoryID))
+	response.HTMLRedirect(w, r, route.Path(h.router, "categoryFeeds", "categoryID", categoryID))
 }
 
 func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) int64 {
@@ -47,7 +47,7 @@ func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) int64 
 
 		jobs, err := batchBuilder.FetchJobs()
 		if err != nil {
-			html.ServerError(w, r, err)
+			response.HTMLServerError(w, r, err)
 			return 0
 		}
 

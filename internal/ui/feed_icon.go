@@ -9,19 +9,18 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/response/html"
 )
 
 func (h *handler) showFeedIcon(w http.ResponseWriter, r *http.Request) {
 	externalIconID := request.RouteStringParam(r, "externalIconID")
 	icon, err := h.store.IconByExternalID(externalIconID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if icon == nil {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 

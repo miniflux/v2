@@ -9,7 +9,7 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/response/html"
+
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/session"
@@ -20,27 +20,27 @@ func (h *handler) createSharedEntry(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
 	shareCode, err := h.store.EntryShareCode(request.UserID(r), entryID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "sharedEntry", "shareCode", shareCode))
+	response.HTMLRedirect(w, r, route.Path(h.router, "sharedEntry", "shareCode", shareCode))
 }
 
 func (h *handler) unshareEntry(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
 	if err := h.store.UnshareEntry(request.UserID(r), entryID); err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "sharedEntries"))
+	response.HTMLRedirect(w, r, route.Path(h.router, "sharedEntries"))
 }
 
 func (h *handler) sharedEntry(w http.ResponseWriter, r *http.Request) {
 	shareCode := request.RouteStringParam(r, "shareCode")
 	if shareCode == "" {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 
@@ -51,7 +51,7 @@ func (h *handler) sharedEntry(w http.ResponseWriter, r *http.Request) {
 
 		entry, err := builder.GetEntry()
 		if err != nil || entry == nil {
-			html.NotFound(w, r)
+			response.HTMLNotFound(w, r)
 			return
 		}
 

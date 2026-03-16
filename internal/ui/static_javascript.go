@@ -11,7 +11,7 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/response/html"
+
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/ui/static"
 )
@@ -23,7 +23,7 @@ func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "name")
 	js, found := static.JavascriptBundles[filename]
 	if !found {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 

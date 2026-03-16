@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
@@ -19,7 +19,7 @@ import (
 func (h *handler) saveAPIKey(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -37,14 +37,14 @@ func (h *handler) saveAPIKey(w http.ResponseWriter, r *http.Request) {
 		view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 		view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		html.OK(w, r, view.Render("create_api_key"))
+		response.HTML(w, r, view.Render("create_api_key"))
 		return
 	}
 
 	if _, err = h.store.CreateAPIKey(user.ID, apiKeyCreationRequest.Description); err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "apiKeys"))
+	response.HTMLRedirect(w, r, route.Path(h.router, "apiKeys"))
 }
