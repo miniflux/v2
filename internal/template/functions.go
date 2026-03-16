@@ -211,9 +211,21 @@ func dict(values ...any) (map[string]any, error) {
 }
 
 func truncate(str string, max int) string {
-	if runes := []rune(str); len(runes) > max {
-		return string(runes[:max]) + "…"
+	if max <= 0 {
+		panic("truncate: max must be greater than zero")
 	}
+
+	// Template callers pass feed titles from remote content. Scanning and
+	// allocating the entire untrusted input just to truncate it could create a
+	// denial-of-service risk, so stop as soon as we reach the requested limit.
+	runeCount := 0
+	for i := range str {
+		if runeCount == max {
+			return str[:i] + "…"
+		}
+		runeCount++
+	}
+
 	return str
 }
 
