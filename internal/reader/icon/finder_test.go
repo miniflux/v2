@@ -6,6 +6,8 @@ package icon // import "miniflux.app/v2/internal/reader/icon"
 import (
 	"bytes"
 	"encoding/base64"
+	"encoding/binary"
+	"hash/crc32"
 	"image"
 	"strings"
 	"testing"
@@ -408,6 +410,28 @@ func TestResizeInvalidImage(t *testing.T) {
 	}
 }
 
+func TestResizeIconTooLargeDimensions(t *testing.T) {
+	icon := model.Icon{
+		Content:  mustMinimalPNG(t, 4097, 7),
+		MimeType: "image/png",
+	}
+
+	if resizeIcon(&icon) != nil {
+		t.Fatalf("Should reject images with too large dimensions")
+	}
+}
+
+func TestResizeIconTooLargePixelCount(t *testing.T) {
+	icon := model.Icon{
+		Content:  mustMinimalPNG(t, 4096, 4097),
+		MimeType: "image/png",
+	}
+
+	if resizeIcon(&icon) != nil {
+		t.Fatalf("Should reject images with too many pixels")
+	}
+}
+
 func TestMinifySvg(t *testing.T) {
 	data := []byte(`<svg path d=" M1 4h-.001 V1h2v.001 M1 2.6 h1v.001"/></svg>`)
 	want := []byte(`<svg path="" d="M1 4H.999V1h2v.001M1 2.6h1v.001"/></svg>`)
@@ -439,5 +463,58 @@ func TestMinifySvgWithError(t *testing.T) {
 	// MimeType should remain unchanged
 	if result.MimeType != "image/svg+xml" {
 		t.Fatalf("Expected MimeType to remain image/svg+xml, got %s", result.MimeType)
+	}
+}
+
+func mustMinimalPNG(t *testing.T, width, height uint32) []byte {
+	t.Helper()
+
+	var b bytes.Buffer
+	b.Write([]byte{137, 80, 78, 71, 13, 10, 26, 10})
+	writePNGChunk(t, &b, "IHDR", func(data []byte) {
+		binary.BigEndian.PutUint32(data[0:4], width)
+		binary.BigEndian.PutUint32(data[4:8], height)
+		data[8] = 8
+		data[9] = 2
+	})
+	writePNGChunk(t, &b, "IEND", nil)
+
+	return b.Bytes()
+}
+
+func writePNGChunk(t *testing.T, b *bytes.Buffer, chunkType string, fill func([]byte)) {
+	t.Helper()
+
+	dataLen := 0
+	if chunkType == "IHDR" {
+		dataLen = 13
+	}
+
+	if err := binary.Write(b, binary.BigEndian, uint32(dataLen)); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := b.WriteString(chunkType); err != nil {
+		t.Fatal(err)
+	}
+
+	data := make([]byte, dataLen)
+	if fill != nil {
+		fill(data)
+	}
+	if _, err := b.Write(data); err != nil {
+		t.Fatal(err)
+	}
+
+	crc := crc32.NewIEEE()
+	if _, err := crc.Write([]byte(chunkType)); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := crc.Write(data); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := binary.Write(b, binary.BigEndian, crc.Sum32()); err != nil {
+		t.Fatal(err)
 	}
 }
