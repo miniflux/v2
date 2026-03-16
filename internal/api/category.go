@@ -11,7 +11,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/json"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/validator"
 )
@@ -21,22 +21,22 @@ func (h *handler) createCategory(w http.ResponseWriter, r *http.Request) {
 
 	var categoryCreationRequest model.CategoryCreationRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&categoryCreationRequest); err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	if validationErr := validator.ValidateCategoryCreation(h.store, userID, &categoryCreationRequest); validationErr != nil {
-		json.BadRequest(w, r, validationErr.Error())
+		response.JSONBadRequest(w, r, validationErr.Error())
 		return
 	}
 
 	category, err := h.store.CreateCategory(userID, &categoryCreationRequest)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
-	json.Created(w, r, category)
+	response.JSONCreated(w, r, category)
 }
 
 func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
@@ -45,34 +45,34 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 
 	category, err := h.store.Category(userID, categoryID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	if category == nil {
-		json.NotFound(w, r)
+		response.JSONNotFound(w, r)
 		return
 	}
 
 	var categoryModificationRequest model.CategoryModificationRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&categoryModificationRequest); err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	if validationErr := validator.ValidateCategoryModification(h.store, userID, category.ID, &categoryModificationRequest); validationErr != nil {
-		json.BadRequest(w, r, validationErr.Error())
+		response.JSONBadRequest(w, r, validationErr.Error())
 		return
 	}
 
 	categoryModificationRequest.Patch(category)
 
 	if err := h.store.UpdateCategory(category); err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
-	json.Created(w, r, category)
+	response.JSONCreated(w, r, category)
 }
 
 func (h *handler) markCategoryAsRead(w http.ResponseWriter, r *http.Request) {
@@ -81,21 +81,21 @@ func (h *handler) markCategoryAsRead(w http.ResponseWriter, r *http.Request) {
 
 	category, err := h.store.Category(userID, categoryID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	if category == nil {
-		json.NotFound(w, r)
+		response.JSONNotFound(w, r)
 		return
 	}
 
 	if err = h.store.MarkCategoryAsRead(userID, categoryID, time.Now()); err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
-	json.NoContent(w, r)
+	response.JSONNoContent(w, r)
 }
 
 func (h *handler) getCategories(w http.ResponseWriter, r *http.Request) {
@@ -110,10 +110,10 @@ func (h *handler) getCategories(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
-	json.OK(w, r, categories)
+	response.JSON(w, r, categories)
 }
 
 func (h *handler) removeCategory(w http.ResponseWriter, r *http.Request) {
@@ -121,16 +121,16 @@ func (h *handler) removeCategory(w http.ResponseWriter, r *http.Request) {
 	categoryID := request.RouteInt64Param(r, "categoryID")
 
 	if !h.store.CategoryIDExists(userID, categoryID) {
-		json.NotFound(w, r)
+		response.JSONNotFound(w, r)
 		return
 	}
 
 	if err := h.store.RemoveCategory(userID, categoryID); err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
-	json.NoContent(w, r)
+	response.JSONNoContent(w, r)
 }
 
 func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) {
@@ -147,7 +147,7 @@ func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) {
 
 	jobs, err := batchBuilder.FetchJobs()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -160,5 +160,5 @@ func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) {
 
 	go h.pool.Push(jobs)
 
-	json.NoContent(w, r)
+	response.JSONNoContent(w, r)
 }

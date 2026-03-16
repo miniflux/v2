@@ -9,7 +9,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
@@ -21,13 +21,13 @@ var urlRe = regexp.MustCompile(`(?i)(?:https?://)?[0-9a-z.]+[.][a-z]+(?::[0-9]+)
 func (h *handler) bookmarklet(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	categories, err := h.store.Categories(user.ID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -55,5 +55,5 @@ func (h *handler) bookmarklet(w http.ResponseWriter, r *http.Request) {
 	view.Set("defaultUserAgent", config.Opts.HTTPClientUserAgent())
 	view.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyURLConfigured())
 
-	html.OK(w, r, view.Render("add_subscription"))
+	response.HTML(w, r, view.Render("add_subscription"))
 }

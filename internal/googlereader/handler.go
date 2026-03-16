@@ -14,7 +14,6 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/integration"
 	"miniflux.app/v2/internal/mediaproxy"
@@ -147,7 +146,7 @@ func (h *handler) clientLoginHandler(w http.ResponseWriter, r *http.Request) {
 			slog.String("user_agent", r.UserAgent()),
 			slog.Any("error", err),
 		)
-		json.Unauthorized(w, r)
+		response.JSONUnauthorized(w, r)
 		return
 	}
 
@@ -161,7 +160,7 @@ func (h *handler) clientLoginHandler(w http.ResponseWriter, r *http.Request) {
 			slog.String("client_ip", clientIP),
 			slog.String("user_agent", r.UserAgent()),
 		)
-		json.Unauthorized(w, r)
+		response.JSONUnauthorized(w, r)
 		return
 	}
 
@@ -173,7 +172,7 @@ func (h *handler) clientLoginHandler(w http.ResponseWriter, r *http.Request) {
 			slog.String("username", username),
 			slog.Any("error", err),
 		)
-		json.Unauthorized(w, r)
+		response.JSONUnauthorized(w, r)
 		return
 	}
 
@@ -186,7 +185,7 @@ func (h *handler) clientLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	integration, err := h.store.GoogleReaderUserGetIntegration(username)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -201,7 +200,7 @@ func (h *handler) clientLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	result := loginResponse{SID: token, LSID: token, Auth: token}
 	if output == "json" {
-		json.OK(w, r, result)
+		response.JSON(w, r, result)
 		return
 	}
 
@@ -225,7 +224,7 @@ func (h *handler) tokenHandler(w http.ResponseWriter, r *http.Request) {
 			slog.String("client_ip", clientIP),
 			slog.String("user_agent", r.UserAgent()),
 		)
-		json.Unauthorized(w, r)
+		response.JSONUnauthorized(w, r)
 		return
 	}
 
@@ -236,7 +235,7 @@ func (h *handler) tokenHandler(w http.ResponseWriter, r *http.Request) {
 			slog.String("user_agent", r.UserAgent()),
 			slog.Int64("user_id", request.UserID(r)),
 		)
-		json.Unauthorized(w, r)
+		response.JSONUnauthorized(w, r)
 		return
 	}
 
@@ -263,34 +262,34 @@ func (h *handler) editTagHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err := r.ParseForm(); err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	addTags, err := getStreams(r.PostForm[paramTagsAdd], userID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 	removeTags, err := getStreams(r.PostForm[paramTagsRemove], userID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 	if len(addTags) == 0 && len(removeTags) == 0 {
 		err = errors.New("googlreader: add or/and remove tags should be supplied")
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 	tags, err := checkAndSimplifyTags(addTags, removeTags)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	itemIDs, err := parseItemIDsFromRequest(r)
 	if err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
@@ -309,7 +308,7 @@ func (h *handler) editTagHandler(w http.ResponseWriter, r *http.Request) {
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -341,7 +340,7 @@ func (h *handler) editTagHandler(w http.ResponseWriter, r *http.Request) {
 	if len(readEntryIDs) > 0 {
 		err = h.store.SetEntriesStatus(userID, readEntryIDs, model.EntryStatusRead)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 	}
@@ -349,7 +348,7 @@ func (h *handler) editTagHandler(w http.ResponseWriter, r *http.Request) {
 	if len(unreadEntryIDs) > 0 {
 		err = h.store.SetEntriesStatus(userID, unreadEntryIDs, model.EntryStatusUnread)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 	}
@@ -357,7 +356,7 @@ func (h *handler) editTagHandler(w http.ResponseWriter, r *http.Request) {
 	if len(unstarredEntryIDs) > 0 {
 		err = h.store.SetEntriesStarredState(userID, unstarredEntryIDs, false)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 	}
@@ -365,7 +364,7 @@ func (h *handler) editTagHandler(w http.ResponseWriter, r *http.Request) {
 	if len(starredEntryIDs) > 0 {
 		err = h.store.SetEntriesStarredState(userID, starredEntryIDs, true)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 	}
@@ -373,7 +372,7 @@ func (h *handler) editTagHandler(w http.ResponseWriter, r *http.Request) {
 	if len(entries) > 0 {
 		settings, err := h.store.Integration(userID)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 
@@ -401,13 +400,13 @@ func (h *handler) quickAddHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 	if err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	feedURL := r.Form.Get(paramQuickAdd)
 	if !urllib.IsAbsoluteURL(feedURL) {
-		json.BadRequest(w, r, fmt.Errorf("googlereader: invalid URL: %s", feedURL))
+		response.JSONBadRequest(w, r, fmt.Errorf("googlereader: invalid URL: %s", feedURL))
 		return
 	}
 
@@ -424,12 +423,12 @@ func (h *handler) quickAddHandler(w http.ResponseWriter, r *http.Request) {
 
 	subscriptions, localizedError := mfs.NewSubscriptionFinder(requestBuilder).FindSubscriptions(feedURL, rssBridgeURL, rssBridgeToken)
 	if localizedError != nil {
-		json.ServerError(w, r, localizedError.Error())
+		response.JSONServerError(w, r, localizedError.Error())
 		return
 	}
 
 	if len(subscriptions) == 0 {
-		json.OK(w, r, quickAddResponse{
+		response.JSON(w, r, quickAddResponse{
 			NumResults: 0,
 		})
 		return
@@ -439,7 +438,7 @@ func (h *handler) quickAddHandler(w http.ResponseWriter, r *http.Request) {
 	category := Stream{NoStream, ""}
 	newFeed, err := subscribe(toSubscribe, category, "", h.store, userID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -451,7 +450,7 @@ func (h *handler) quickAddHandler(w http.ResponseWriter, r *http.Request) {
 		slog.String("feed_url", newFeed.FeedURL),
 	)
 
-	json.OK(w, r, quickAddResponse{
+	response.JSON(w, r, quickAddResponse{
 		NumResults: 1,
 		Query:      newFeed.FeedURL,
 		StreamID:   feedPrefix + strconv.FormatInt(newFeed.ID, 10),
@@ -602,19 +601,19 @@ func (h *handler) editSubscriptionHandler(w http.ResponseWriter, r *http.Request
 	)
 
 	if err := r.ParseForm(); err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	streamIds, err := getStreams(r.Form[paramStreamID], userID)
 	if err != nil || len(streamIds) == 0 {
-		json.BadRequest(w, r, errors.New("googlereader: no valid stream IDs provided"))
+		response.JSONBadRequest(w, r, errors.New("googlereader: no valid stream IDs provided"))
 		return
 	}
 
 	newLabel, err := getStream(r.Form.Get(paramTagsAdd), userID)
 	if err != nil {
-		json.BadRequest(w, r, fmt.Errorf("googlereader: invalid data in %s", paramTagsAdd))
+		response.JSONBadRequest(w, r, fmt.Errorf("googlereader: invalid data in %s", paramTagsAdd))
 		return
 	}
 
@@ -625,22 +624,22 @@ func (h *handler) editSubscriptionHandler(w http.ResponseWriter, r *http.Request
 	case "subscribe":
 		_, err := subscribe(streamIds[0], newLabel, title, h.store, userID)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 	case "unsubscribe":
 		err := unsubscribe(streamIds, h.store, userID)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 	case "edit":
 		if title != "" {
 			if err := rename(streamIds[0], title, h.store, userID); err != nil {
 				if errors.Is(err, errFeedNotFound) || errors.Is(err, errEmptyFeedTitle) {
-					json.BadRequest(w, r, err)
+					response.JSONBadRequest(w, r, err)
 				} else {
-					json.ServerError(w, r, err)
+					response.JSONServerError(w, r, err)
 				}
 				return
 			}
@@ -648,21 +647,21 @@ func (h *handler) editSubscriptionHandler(w http.ResponseWriter, r *http.Request
 
 		if r.Form.Has(paramTagsAdd) {
 			if newLabel.Type != LabelStream {
-				json.BadRequest(w, r, errors.New("destination must be a label"))
+				response.JSONBadRequest(w, r, errors.New("destination must be a label"))
 				return
 			}
 
 			if err := move(streamIds[0], newLabel, h.store, userID); err != nil {
 				if errors.Is(err, errFeedNotFound) || errors.Is(err, errCategoryNotFound) {
-					json.BadRequest(w, r, err)
+					response.JSONBadRequest(w, r, err)
 				} else {
-					json.ServerError(w, r, err)
+					response.JSONServerError(w, r, err)
 				}
 				return
 			}
 		}
 	default:
-		json.BadRequest(w, r, fmt.Errorf("googlereader: unrecognized action %s", action))
+		response.JSONBadRequest(w, r, fmt.Errorf("googlereader: unrecognized action %s", action))
 		return
 	}
 
@@ -682,19 +681,19 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 	)
 
 	if err := checkOutputFormat(r); err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	err := r.ParseForm()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	requestModifiers, err := parseStreamFilterFromRequest(r)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -705,7 +704,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 
 	itemIDs, err := parseItemIDsFromRequest(r)
 	if err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
@@ -725,7 +724,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -800,7 +799,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		}
 	}
 
-	json.OK(w, r, result)
+	response.JSON(w, r, result)
 }
 
 func (h *handler) disableTagHandler(w http.ResponseWriter, r *http.Request) {
@@ -816,20 +815,20 @@ func (h *handler) disableTagHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 	if err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	streams, err := getStreams(r.Form[paramStreamID], userID)
 	if err != nil {
-		json.BadRequest(w, r, fmt.Errorf("googlereader: invalid data in %s", paramStreamID))
+		response.JSONBadRequest(w, r, fmt.Errorf("googlereader: invalid data in %s", paramStreamID))
 		return
 	}
 
 	titles := make([]string, len(streams))
 	for i, stream := range streams {
 		if stream.Type != LabelStream {
-			json.BadRequest(w, r, errors.New("googlereader: only labels are supported"))
+			response.JSONBadRequest(w, r, errors.New("googlereader: only labels are supported"))
 			return
 		}
 		titles[i] = stream.ID
@@ -837,7 +836,7 @@ func (h *handler) disableTagHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = h.store.RemoveAndReplaceCategoriesByName(userID, titles)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -856,39 +855,39 @@ func (h *handler) renameTagHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 	if err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	source, err := getStream(r.Form.Get(paramStreamID), userID)
 	if err != nil {
-		json.BadRequest(w, r, fmt.Errorf("googlereader: invalid data in %s", paramStreamID))
+		response.JSONBadRequest(w, r, fmt.Errorf("googlereader: invalid data in %s", paramStreamID))
 		return
 	}
 
 	destination, err := getStream(r.Form.Get(paramDestination), userID)
 	if err != nil {
-		json.BadRequest(w, r, fmt.Errorf("googlereader: invalid data in %s", paramDestination))
+		response.JSONBadRequest(w, r, fmt.Errorf("googlereader: invalid data in %s", paramDestination))
 		return
 	}
 
 	if source.Type != LabelStream || destination.Type != LabelStream {
-		json.BadRequest(w, r, errors.New("googlereader: only labels supported"))
+		response.JSONBadRequest(w, r, errors.New("googlereader: only labels supported"))
 		return
 	}
 
 	if destination.ID == "" {
-		json.BadRequest(w, r, errors.New("googlereader: empty destination name"))
+		response.JSONBadRequest(w, r, errors.New("googlereader: empty destination name"))
 		return
 	}
 
 	category, err := h.store.CategoryByTitle(userID, source.ID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 	if category == nil {
-		json.NotFound(w, r)
+		response.JSONNotFound(w, r)
 		return
 	}
 
@@ -897,14 +896,14 @@ func (h *handler) renameTagHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if validationError := validator.ValidateCategoryModification(h.store, userID, category.ID, &categoryModificationRequest); validationError != nil {
-		json.BadRequest(w, r, validationError.Error())
+		response.JSONBadRequest(w, r, validationError.Error())
 		return
 	}
 
 	categoryModificationRequest.Patch(category)
 
 	if err := h.store.UpdateCategory(category); err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -922,14 +921,14 @@ func (h *handler) tagListHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err := checkOutputFormat(r); err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	var result tagsResponse
 	categories, err := h.store.Categories(userID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 	result.Tags = make([]subscriptionCategoryResponse, 0)
@@ -944,7 +943,7 @@ func (h *handler) tagListHandler(w http.ResponseWriter, r *http.Request) {
 			Type:  "folder",
 		})
 	}
-	json.OK(w, r, result)
+	response.JSON(w, r, result)
 }
 
 func (h *handler) subscriptionListHandler(w http.ResponseWriter, r *http.Request) {
@@ -958,14 +957,14 @@ func (h *handler) subscriptionListHandler(w http.ResponseWriter, r *http.Request
 	)
 
 	if err := checkOutputFormat(r); err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	var result subscriptionsResponse
 	feeds, err := h.store.Feeds(userID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -981,7 +980,7 @@ func (h *handler) subscriptionListHandler(w http.ResponseWriter, r *http.Request
 			IconURL:    h.feedIconURL(feed),
 		})
 	}
-	json.OK(w, r, result)
+	response.JSON(w, r, result)
 }
 
 func (h *handler) serveHandler(w http.ResponseWriter, r *http.Request) {
@@ -993,7 +992,7 @@ func (h *handler) serveHandler(w http.ResponseWriter, r *http.Request) {
 		slog.String("user_agent", r.UserAgent()),
 	)
 
-	json.OK(w, r, []string{})
+	response.JSON(w, r, []string{})
 }
 
 func (h *handler) userInfoHandler(w http.ResponseWriter, r *http.Request) {
@@ -1007,16 +1006,16 @@ func (h *handler) userInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 	if user == nil {
-		json.NotFound(w, r)
+		response.JSONNotFound(w, r)
 		return
 	}
 
 	userInfo := userInfoResponse{UserID: strconv.FormatInt(user.ID, 10), UserName: user.Username, UserProfileID: strconv.FormatInt(user.ID, 10), UserEmail: user.Username}
-	json.OK(w, r, userInfo)
+	response.JSON(w, r, userInfo)
 }
 
 func (h *handler) streamItemIDsHandler(w http.ResponseWriter, r *http.Request) {
@@ -1031,13 +1030,13 @@ func (h *handler) streamItemIDsHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err := checkOutputFormat(r); err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	rm, err := parseStreamFilterFromRequest(r)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -1049,7 +1048,7 @@ func (h *handler) streamItemIDsHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if len(rm.Streams) != 1 {
-		json.ServerError(w, r, errors.New("googlereader: only one stream type expected"))
+		response.JSONServerError(w, r, errors.New("googlereader: only one stream type expected"))
 		return
 	}
 	switch rm.Streams[0].Type {
@@ -1068,7 +1067,7 @@ func (h *handler) streamItemIDsHandler(w http.ResponseWriter, r *http.Request) {
 			slog.String("user_agent", r.UserAgent()),
 			slog.Any("stream_type", rm.Streams[0].Type),
 		)
-		json.ServerError(w, r, fmt.Errorf("googlereader: unknown stream type %s", rm.Streams[0].Type))
+		response.JSONServerError(w, r, fmt.Errorf("googlereader: unknown stream type %s", rm.Streams[0].Type))
 	}
 }
 
@@ -1109,10 +1108,10 @@ func (h *handler) handleReadingListStreamHandler(w http.ResponseWriter, r *http.
 
 	itemRefs, continuation, err := getItemRefsAndContinuation(*builder, rm)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
-	json.OK(w, r, streamIDResponse{itemRefs, continuation})
+	response.JSON(w, r, streamIDResponse{itemRefs, continuation})
 }
 
 func (h *handler) handleStarredStreamHandler(w http.ResponseWriter, r *http.Request, rm requestModifiers) {
@@ -1130,10 +1129,10 @@ func (h *handler) handleStarredStreamHandler(w http.ResponseWriter, r *http.Requ
 	}
 	itemRefs, continuation, err := getItemRefsAndContinuation(*builder, rm)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
-	json.OK(w, r, streamIDResponse{itemRefs, continuation})
+	response.JSON(w, r, streamIDResponse{itemRefs, continuation})
 }
 
 func (h *handler) handleReadStreamHandler(w http.ResponseWriter, r *http.Request, rm requestModifiers) {
@@ -1152,10 +1151,10 @@ func (h *handler) handleReadStreamHandler(w http.ResponseWriter, r *http.Request
 
 	itemRefs, continuation, err := getItemRefsAndContinuation(*builder, rm)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
-	json.OK(w, r, streamIDResponse{itemRefs, continuation})
+	response.JSON(w, r, streamIDResponse{itemRefs, continuation})
 }
 
 func getItemRefsAndContinuation(builder storage.EntryQueryBuilder, rm requestModifiers) ([]itemRef, int, error) {
@@ -1183,7 +1182,7 @@ func getItemRefsAndContinuation(builder storage.EntryQueryBuilder, rm requestMod
 func (h *handler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request, rm requestModifiers) {
 	feedID, err := strconv.ParseInt(rm.Streams[0].ID, 10, 64)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -1211,10 +1210,10 @@ func (h *handler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request
 	}
 	itemRefs, continuation, err := getItemRefsAndContinuation(*builder, rm)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
-	json.OK(w, r, streamIDResponse{itemRefs, continuation})
+	response.JSON(w, r, streamIDResponse{itemRefs, continuation})
 }
 
 func (h *handler) markAllAsReadHandler(w http.ResponseWriter, r *http.Request) {
@@ -1228,13 +1227,13 @@ func (h *handler) markAllAsReadHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err := r.ParseForm(); err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	stream, err := getStream(r.Form.Get(paramStreamID), userID)
 	if err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
@@ -1242,7 +1241,7 @@ func (h *handler) markAllAsReadHandler(w http.ResponseWriter, r *http.Request) {
 	if timestampParamValue := r.Form.Get(paramTimestamp); timestampParamValue != "" {
 		timestampParsedValue, err := strconv.ParseInt(timestampParamValue, 10, 64)
 		if err != nil {
-			json.BadRequest(w, r, err)
+			response.JSONBadRequest(w, r, err)
 			return
 		}
 
@@ -1264,31 +1263,31 @@ func (h *handler) markAllAsReadHandler(w http.ResponseWriter, r *http.Request) {
 	case FeedStream:
 		feedID, err := strconv.ParseInt(stream.ID, 10, 64)
 		if err != nil {
-			json.BadRequest(w, r, err)
+			response.JSONBadRequest(w, r, err)
 			return
 		}
 		err = h.store.MarkFeedAsRead(userID, feedID, before)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 	case LabelStream:
 		category, err := h.store.CategoryByTitle(userID, stream.ID)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 		if category == nil {
-			json.NotFound(w, r)
+			response.JSONNotFound(w, r)
 			return
 		}
 		if err := h.store.MarkCategoryAsRead(userID, category.ID, before); err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 	case ReadingListStream:
 		if err = h.store.MarkAllAsReadBeforeDate(userID, before); err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 	}

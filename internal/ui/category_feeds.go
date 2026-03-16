@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 )
@@ -15,25 +15,25 @@ import (
 func (h *handler) showCategoryFeedsPage(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	categoryID := request.RouteInt64Param(r, "categoryID")
 	category, err := h.store.Category(request.UserID(r), categoryID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if category == nil {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 
 	feeds, err := h.store.FeedsByCategoryWithCounters(user.ID, categoryID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -47,5 +47,5 @@ func (h *handler) showCategoryFeedsPage(w http.ResponseWriter, r *http.Request) 
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 
-	html.OK(w, r, view.Render("category_feeds"))
+	response.HTML(w, r, view.Render("category_feeds"))
 }

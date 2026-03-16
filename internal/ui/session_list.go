@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 )
@@ -15,13 +15,13 @@ import (
 func (h *handler) showSessionsPage(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	sessions, err := h.store.UserSessions(user.ID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -38,5 +38,5 @@ func (h *handler) showSessionsPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 
-	html.OK(w, r, view.Render("sessions"))
+	response.HTML(w, r, view.Render("sessions"))
 }

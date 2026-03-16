@@ -18,8 +18,8 @@ import (
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/cookie"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/response/json"
+	"miniflux.app/v2/internal/http/response"
+
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
@@ -72,24 +72,24 @@ func newWebAuthn() (*webauthn.WebAuthn, error) {
 func (h *handler) beginRegistration(w http.ResponseWriter, r *http.Request) {
 	web, err := newWebAuthn()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 	uid := request.UserID(r)
 	if uid == 0 {
-		json.Unauthorized(w, r)
+		response.JSONUnauthorized(w, r)
 		return
 	}
 	user, err := h.store.UserByID(uid)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 	var creds []model.WebAuthnCredential
 
 	creds, err = h.store.WebAuthnCredentialsByUserID(user.ID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -110,53 +110,53 @@ func (h *handler) beginRegistration(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 	s := session.New(h.store, request.SessionID(r))
 	s.SetWebAuthnSessionData(&model.WebAuthnSession{SessionData: sessionData})
-	json.OK(w, r, options)
+	response.JSON(w, r, options)
 }
 
 func (h *handler) finishRegistration(w http.ResponseWriter, r *http.Request) {
 	web, err := newWebAuthn()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 	uid := request.UserID(r)
 	if uid == 0 {
-		json.Unauthorized(w, r)
+		response.JSONUnauthorized(w, r)
 		return
 	}
 	user, err := h.store.UserByID(uid)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 	sessionData := request.WebAuthnSessionData(r)
 	webAuthnUser := WebAuthnUser{user, sessionData.UserID, nil}
 	cred, err := web.FinishRegistration(webAuthnUser, *sessionData.SessionData, r)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	err = h.store.AddWebAuthnCredential(uid, sessionData.UserID, cred)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	handleEncoded := model.WebAuthnCredential{Handle: sessionData.UserID}.HandleEncoded()
 	redirect := route.Path(h.router, "webauthnRename", "credentialHandle", handleEncoded)
-	json.OK(w, r, map[string]string{"redirect": redirect})
+	response.JSON(w, r, map[string]string{"redirect": redirect})
 }
 
 func (h *handler) beginLogin(w http.ResponseWriter, r *http.Request) {
 	web, err := newWebAuthn()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -165,7 +165,7 @@ func (h *handler) beginLogin(w http.ResponseWriter, r *http.Request) {
 	if username != "" {
 		user, err = h.store.UserByUsername(username)
 		if err != nil {
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 	}
@@ -175,37 +175,37 @@ func (h *handler) beginLogin(w http.ResponseWriter, r *http.Request) {
 	if user != nil {
 		creds, err := h.store.WebAuthnCredentialsByUserID(user.ID)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 		assertion, sessionData, err = web.BeginLogin(WebAuthnUser{user, nil, creds})
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 	} else {
 		assertion, sessionData, err = web.BeginDiscoverableLogin()
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 	}
 
 	s := session.New(h.store, request.SessionID(r))
 	s.SetWebAuthnSessionData(&model.WebAuthnSession{SessionData: sessionData})
-	json.OK(w, r, assertion)
+	response.JSON(w, r, assertion)
 }
 
 func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 	web, err := newWebAuthn()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	parsedResponse, err := protocol.ParseCredentialRequestResponseBody(r.Body)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -224,7 +224,7 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 	if username != "" {
 		user, err = h.store.UserByUsername(username)
 		if err != nil {
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 	}
@@ -233,7 +233,7 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 	if user != nil {
 		storedCredentials, err := h.store.WebAuthnCredentialsByUserID(user.ID)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 
@@ -259,7 +259,7 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 		credCredential, err := web.ValidateLogin(webAuthUser, *sessionData.SessionData, parsedResponse)
 		if err != nil {
 			slog.Warn("WebAuthn: ValidateLogin failed", slog.Any("error", err))
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 
@@ -270,7 +270,7 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if matchingCredential == nil {
-			json.ServerError(w, r, fmt.Errorf("no matching credential for %v", credCredential))
+			response.JSONServerError(w, r, fmt.Errorf("no matching credential for %v", credCredential))
 			return
 		}
 	} else {
@@ -302,14 +302,14 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 		_, err = web.ValidateDiscoverableLogin(userByHandle, *sessionData.SessionData, parsedResponse)
 		if err != nil {
 			slog.Warn("WebAuthn: ValidateDiscoverableLogin failed", slog.Any("error", err))
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 	}
 
 	sessionToken, _, err := h.store.CreateUserSessionFromUsername(user.Username, r.UserAgent(), request.ClientIP(r))
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -335,7 +335,7 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 		config.Opts.BasePath(),
 	))
 
-	json.NoContent(w, r)
+	response.JSONNoContent(w, r)
 }
 
 func (h *handler) renameCredential(w http.ResponseWriter, r *http.Request) {
@@ -344,24 +344,24 @@ func (h *handler) renameCredential(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	credentialHandleEncoded := request.RouteStringParam(r, "credentialHandle")
 	credentialHandle, err := hex.DecodeString(credentialHandleEncoded)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 	cred_uid, cred, err := h.store.WebAuthnCredentialByHandle(credentialHandle)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if cred_uid != user.ID {
-		html.Forbidden(w, r)
+		response.HTMLForbidden(w, r)
 		return
 	}
 
@@ -374,61 +374,61 @@ func (h *handler) renameCredential(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 
-	html.OK(w, r, view.Render("webauthn_rename"))
+	response.HTML(w, r, view.Render("webauthn_rename"))
 }
 
 func (h *handler) saveCredential(w http.ResponseWriter, r *http.Request) {
 	_, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	credentialHandleEncoded := request.RouteStringParam(r, "credentialHandle")
 	credentialHandle, err := hex.DecodeString(credentialHandleEncoded)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	newName := r.FormValue("name")
 	err = h.store.WebAuthnUpdateName(credentialHandle, newName)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "settings"))
+	response.HTMLRedirect(w, r, route.Path(h.router, "settings"))
 }
 
 func (h *handler) deleteCredential(w http.ResponseWriter, r *http.Request) {
 	uid := request.UserID(r)
 	if uid == 0 {
-		json.Unauthorized(w, r)
+		response.JSONUnauthorized(w, r)
 		return
 	}
 
 	credentialHandleEncoded := request.RouteStringParam(r, "credentialHandle")
 	credentialHandle, err := hex.DecodeString(credentialHandleEncoded)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	err = h.store.DeleteCredentialByHandle(uid, credentialHandle)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
-	json.NoContent(w, r)
+	response.JSONNoContent(w, r)
 }
 
 func (h *handler) deleteAllCredentials(w http.ResponseWriter, r *http.Request) {
 	err := h.store.DeleteAllWebAuthnCredentialsByUserID(request.UserID(r))
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
-	json.NoContent(w, r)
+	response.JSONNoContent(w, r)
 }

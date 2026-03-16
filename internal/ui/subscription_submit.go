@@ -8,7 +8,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
@@ -24,13 +24,13 @@ import (
 func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	categories, err := h.store.Categories(user.ID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -48,7 +48,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	if validationErr := subscriptionForm.Validate(); validationErr != nil {
 		v.Set("form", subscriptionForm)
 		v.Set("errorMessage", validationErr.Translate(user.Language))
-		html.OK(w, r, v.Render("add_subscription"))
+		response.HTML(w, r, v.Render("add_subscription"))
 		return
 	}
 
@@ -80,7 +80,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	if localizedError != nil {
 		v.Set("form", subscriptionForm)
 		v.Set("errorMessage", localizedError.Translate(user.Language))
-		html.OK(w, r, v.Render("add_subscription"))
+		response.HTML(w, r, v.Render("add_subscription"))
 		return
 	}
 
@@ -89,7 +89,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	case n == 0:
 		v.Set("form", subscriptionForm)
 		v.Set("errorMessage", locale.NewLocalizedError("error.subscription_not_found").Translate(user.Language))
-		html.OK(w, r, v.Render("add_subscription"))
+		response.HTML(w, r, v.Render("add_subscription"))
 	case n == 1 && subscriptionFinder.IsFeedAlreadyDownloaded():
 		feed, localizedError := feedHandler.CreateFeedFromSubscriptionDiscovery(h.store, user.ID, &model.FeedCreationRequestFromSubscriptionDiscovery{
 			Content:      subscriptionFinder.FeedResponseInfo().Content,
@@ -120,11 +120,11 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		if localizedError != nil {
 			v.Set("form", subscriptionForm)
 			v.Set("errorMessage", localizedError.Translate(user.Language))
-			html.OK(w, r, v.Render("add_subscription"))
+			response.HTML(w, r, v.Render("add_subscription"))
 			return
 		}
 
-		html.Redirect(w, r, route.Path(h.router, "feedEntries", "feedID", feed.ID))
+		response.HTMLRedirect(w, r, route.Path(h.router, "feedEntries", "feedID", feed.ID))
 	case n == 1 && !subscriptionFinder.IsFeedAlreadyDownloaded():
 		feed, localizedError := feedHandler.CreateFeed(h.store, user.ID, &model.FeedCreationRequest{
 			CategoryID:                  subscriptionForm.CategoryID,
@@ -150,11 +150,11 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		if localizedError != nil {
 			v.Set("form", subscriptionForm)
 			v.Set("errorMessage", localizedError.Translate(user.Language))
-			html.OK(w, r, v.Render("add_subscription"))
+			response.HTML(w, r, v.Render("add_subscription"))
 			return
 		}
 
-		html.Redirect(w, r, route.Path(h.router, "feedEntries", "feedID", feed.ID))
+		response.HTMLRedirect(w, r, route.Path(h.router, "feedEntries", "feedID", feed.ID))
 	case n > 1:
 		view := view.New(h.tpl, r, sess)
 		view.Set("subscriptions", subscriptions)
@@ -165,6 +165,6 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 		view.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyURLConfigured())
 
-		html.OK(w, r, view.Render("choose_subscription"))
+		response.HTML(w, r, view.Render("choose_subscription"))
 	}
 }

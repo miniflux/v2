@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"miniflux.app/v2/internal/http/response/json"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/version"
 	"miniflux.app/v2/internal/worker"
@@ -84,7 +84,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 }
 
 func (h *handler) versionHandler(w http.ResponseWriter, r *http.Request) {
-	json.OK(w, r, &versionResponse{
+	response.JSON(w, r, &versionResponse{
 		Version:   version.Version,
 		Commit:    version.Commit,
 		BuildDate: version.BuildDate,

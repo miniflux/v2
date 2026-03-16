@@ -9,7 +9,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 	"miniflux.app/v2/internal/version"
@@ -18,7 +18,7 @@ import (
 func (h *handler) showAboutPage(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -43,5 +43,5 @@ func (h *handler) showAboutPage(w http.ResponseWriter, r *http.Request) {
 		view.Set("db_usage", dbSize)
 	}
 
-	html.OK(w, r, view.Render("about"))
+	response.HTML(w, r, view.Render("about"))
 }

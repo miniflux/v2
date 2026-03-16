@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/json"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/storage"
 )
 
@@ -31,7 +31,7 @@ func (m *middleware) serve(next http.Handler) http.Handler {
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
 			)
-			json.OK(w, r, newAuthFailureResponse())
+			response.JSON(w, r, newAuthFailureResponse())
 			return
 		}
 
@@ -43,7 +43,7 @@ func (m *middleware) serve(next http.Handler) http.Handler {
 				slog.String("user_agent", r.UserAgent()),
 				slog.Any("error", err),
 			)
-			json.OK(w, r, newAuthFailureResponse())
+			response.JSON(w, r, newAuthFailureResponse())
 			return
 		}
 
@@ -53,7 +53,7 @@ func (m *middleware) serve(next http.Handler) http.Handler {
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
 			)
-			json.OK(w, r, newAuthFailureResponse())
+			response.JSON(w, r, newAuthFailureResponse())
 			return
 		}
 

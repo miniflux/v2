@@ -9,7 +9,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/cookie"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/ui/session"
 )
@@ -18,7 +18,7 @@ func (h *handler) logout(w http.ResponseWriter, r *http.Request) {
 	sess := session.New(h.store, request.SessionID(r))
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -26,7 +26,7 @@ func (h *handler) logout(w http.ResponseWriter, r *http.Request) {
 	sess.SetTheme(user.Theme)
 
 	if err := h.store.RemoveUserSessionByToken(user.ID, request.UserSessionToken(r)); err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -36,5 +36,5 @@ func (h *handler) logout(w http.ResponseWriter, r *http.Request) {
 		config.Opts.BasePath(),
 	))
 
-	html.Redirect(w, r, route.Path(h.router, "login"))
+	response.HTMLRedirect(w, r, route.Path(h.router, "login"))
 }

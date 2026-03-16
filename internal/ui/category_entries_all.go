@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/session"
@@ -17,19 +17,19 @@ import (
 func (h *handler) showCategoryEntriesAllPage(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	categoryID := request.RouteInt64Param(r, "categoryID")
 	category, err := h.store.Category(request.UserID(r), categoryID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if category == nil {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 
@@ -44,13 +44,13 @@ func (h *handler) showCategoryEntriesAllPage(w http.ResponseWriter, r *http.Requ
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	count, err := builder.CountEntries()
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -67,5 +67,5 @@ func (h *handler) showCategoryEntriesAllPage(w http.ResponseWriter, r *http.Requ
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 	view.Set("showOnlyUnreadEntries", false)
 
-	html.OK(w, r, view.Render("category_entries"))
+	response.HTML(w, r, view.Render("category_entries"))
 }

@@ -7,14 +7,14 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/json"
+	"miniflux.app/v2/internal/http/response"
 )
 
 func (h *handler) markAllAsRead(w http.ResponseWriter, r *http.Request) {
 	if err := h.store.MarkGloballyVisibleFeedsAsRead(request.UserID(r)); err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
-	json.OK(w, r, "OK")
+	response.JSON(w, r, "OK")
 }
