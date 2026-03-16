@@ -16,12 +16,10 @@ export PGPASSWORD := postgres
 	linux-armv7 \
 	linux-armv6 \
 	linux-armv5 \
-	linux-x86 \
 	darwin-amd64 \
 	darwin-arm64 \
 	freebsd-amd64 \
 	openbsd-amd64 \
-	netbsd-amd64 \
 	build \
 	run \
 	clean \
@@ -100,7 +98,7 @@ test:
 
 lint:
 	go vet ./...
-	gofmt -d -e .
+	test -z "$$(gofmt -l .)"
 	golangci-lint run
 
 integration-test:
