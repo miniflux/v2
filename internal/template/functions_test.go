@@ -45,33 +45,74 @@ func TestDictWithInvalidMap(t *testing.T) {
 	}
 }
 
-func TestTruncateWithShortTexts(t *testing.T) {
-	scenarios := []string{"Short text", "Короткий текст"}
+func TestTruncate(t *testing.T) {
+	scenarios := []struct {
+		name     string
+		input    string
+		max      int
+		expected string
+	}{
+		{
+			name:     "short ascii",
+			input:    "Short text",
+			max:      25,
+			expected: "Short text",
+		},
+		{
+			name:     "short unicode",
+			input:    "Короткий текст",
+			max:      25,
+			expected: "Короткий текст",
+		},
+		{
+			name:     "exact ascii length",
+			input:    "Short text",
+			max:      len("Short text"),
+			expected: "Short text",
+		},
+		{
+			name:     "long ascii",
+			input:    "This is a really pretty long English text",
+			max:      25,
+			expected: "This is a really pretty l…",
+		},
+		{
+			name:     "long unicode",
+			input:    "Это реально очень длинный русский текст",
+			max:      25,
+			expected: "Это реально очень длинный…",
+		},
+	}
 
-	for _, input := range scenarios {
-		result := truncate(input, 25)
-		if result != input {
-			t.Fatalf(`Unexpected output, got %q instead of %q`, result, input)
-		}
-
-		result = truncate(input, len(input))
-		if result != input {
-			t.Fatalf(`Unexpected output, got %q instead of %q`, result, input)
-		}
+	for _, scenario := range scenarios {
+		t.Run(scenario.name, func(t *testing.T) {
+			result := truncate(scenario.input, scenario.max)
+			if result != scenario.expected {
+				t.Fatalf(`Unexpected output, got %q instead of %q`, result, scenario.expected)
+			}
+		})
 	}
 }
 
-func TestTruncateWithLongTexts(t *testing.T) {
-	scenarios := map[string]string{
-		"This is a really pretty long English text": "This is a really pretty l…",
-		"Это реально очень длинный русский текст":   "Это реально очень длинный…",
+func TestTruncateInvalidMax(t *testing.T) {
+	scenarios := []struct {
+		name string
+		max  int
+	}{
+		{name: "zero", max: 0},
+		{name: "negative", max: -1},
 	}
 
-	for input, expected := range scenarios {
-		result := truncate(input, 25)
-		if result != expected {
-			t.Fatalf(`Unexpected output, got %q instead of %q`, result, expected)
-		}
+	for _, scenario := range scenarios {
+		t.Run(scenario.name, func(t *testing.T) {
+			defer func() {
+				if recover() == nil {
+					t.Fatal("Expected panic for non-positive max")
+				}
+			}()
+
+			_ = truncate("Short text", scenario.max)
+		})
 	}
 }
 
