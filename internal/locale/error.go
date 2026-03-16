@@ -25,6 +25,9 @@ func (l *LocalizedErrorWrapper) Error() error {
 
 func (l *LocalizedErrorWrapper) Translate(language string) string {
 	if l.translationKey == "" {
+		if l.originalErr == nil {
+			return ""
+		}
 		return l.originalErr.Error()
 	}
 	return NewPrinter(language).Printf(l.translationKey, l.translationArgs...)
