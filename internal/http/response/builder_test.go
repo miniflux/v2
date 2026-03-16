@@ -4,6 +4,7 @@
 package response // import "miniflux.app/v2/internal/http/response"
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -113,7 +114,7 @@ func TestBuildResponseWithByteBody(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBody([]byte("body")).Write()
+		New(w, r).WithBodyAsBytes([]byte("body")).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -135,7 +136,7 @@ func TestBuildResponseWithCachingEnabled(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		New(w, r).WithCaching("etag", 1*time.Minute, func(b *Builder) {
-			b.WithBody("cached body")
+			b.WithBodyAsString("cached body")
 			b.Write()
 		})
 	})
@@ -176,7 +177,7 @@ func TestBuildResponseWithCachingAndEtag(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		New(w, r).WithCaching("etag", 1*time.Minute, func(b *Builder) {
-			b.WithBody("cached body")
+			b.WithBodyAsString("cached body")
 			b.Write()
 		})
 	})
@@ -217,7 +218,7 @@ func TestBuildResponseWithBrotliCompression(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBody(body).Write()
+		New(w, r).WithBodyAsString(body).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -241,7 +242,7 @@ func TestBuildResponseWithGzipCompression(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBody(body).Write()
+		New(w, r).WithBodyAsString(body).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -265,7 +266,7 @@ func TestBuildResponseWithDeflateCompression(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBody(body).Write()
+		New(w, r).WithBodyAsString(body).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -289,7 +290,7 @@ func TestBuildResponseWithCompressionDisabled(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBody(body).WithoutCompression().Write()
+		New(w, r).WithBodyAsString(body).WithoutCompression().Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -313,7 +314,7 @@ func TestBuildResponseWithDeflateCompressionAndSmallPayload(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBody(body).Write()
+		New(w, r).WithBodyAsString(body).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -336,7 +337,7 @@ func TestBuildResponseWithoutCompressionHeader(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBody(body).Write()
+		New(w, r).WithBodyAsString(body).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -346,5 +347,24 @@ func TestBuildResponseWithoutCompressionHeader(t *testing.T) {
 	actual := resp.Header.Get("Content-Encoding")
 	if actual != expected {
 		t.Fatalf(`Unexpected header value, got %q instead of %q`, actual, expected)
+	}
+}
+
+func TestBuildResponseWithReaderBody(t *testing.T) {
+	r, err := http.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	w := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		New(w, r).WithBodyAsReader(bytes.NewBufferString("body")).Write()
+	})
+
+	handler.ServeHTTP(w, r)
+
+	if actualBody := w.Body.String(); actualBody != "body" {
+		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, "body")
 	}
 }

@@ -22,7 +22,7 @@ func (h *handler) showFavicon(w http.ResponseWriter, r *http.Request) {
 	response.New(w, r).WithCaching(value.Checksum, 48*time.Hour, func(b *response.Builder) {
 		b.WithHeader("Content-Type", "image/x-icon")
 		b.WithoutCompression()
-		b.WithBody(value.Data)
+		b.WithBodyAsBytes(value.Data)
 		b.Write()
 	})
 }

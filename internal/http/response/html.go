@@ -16,7 +16,12 @@ func HTML[T []byte | string](w http.ResponseWriter, r *http.Request, body T) {
 	builder := New(w, r)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBody(body)
+	switch v := any(body).(type) {
+	case []byte:
+		builder.WithBodyAsBytes(v)
+	case string:
+		builder.WithBodyAsString(v)
+	}
 	builder.Write()
 }
 
@@ -40,7 +45,7 @@ func HTMLServerError(w http.ResponseWriter, r *http.Request, err error) {
 	builder.WithHeader("Content-Security-Policy", ContentSecurityPolicyForUntrustedContent)
 	builder.WithHeader("Content-Type", "text/plain; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBody(html.EscapeString(err.Error()))
+	builder.WithBodyAsString(html.EscapeString(err.Error()))
 	builder.Write()
 }
 
@@ -64,7 +69,7 @@ func HTMLBadRequest(w http.ResponseWriter, r *http.Request, err error) {
 	builder.WithHeader("Content-Security-Policy", ContentSecurityPolicyForUntrustedContent)
 	builder.WithHeader("Content-Type", "text/plain; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBody(html.EscapeString(err.Error()))
+	builder.WithBodyAsString(html.EscapeString(err.Error()))
 	builder.Write()
 }
 
@@ -86,7 +91,7 @@ func HTMLForbidden(w http.ResponseWriter, r *http.Request) {
 	builder.WithStatus(http.StatusForbidden)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBody("Access Forbidden")
+	builder.WithBodyAsString("Access Forbidden")
 	builder.Write()
 }
 
@@ -108,7 +113,7 @@ func HTMLNotFound(w http.ResponseWriter, r *http.Request) {
 	builder.WithStatus(http.StatusNotFound)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBody("Page Not Found")
+	builder.WithBodyAsString("Page Not Found")
 	builder.Write()
 }
 
@@ -136,6 +141,6 @@ func HTMLRequestedRangeNotSatisfiable(w http.ResponseWriter, r *http.Request, co
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
 	builder.WithHeader("Content-Range", contentRange)
-	builder.WithBody("Range Not Satisfiable")
+	builder.WithBodyAsString("Range Not Satisfiable")
 	builder.Write()
 }

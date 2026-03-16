@@ -60,7 +60,7 @@ func (h *handler) sharedEntry(w http.ResponseWriter, r *http.Request) {
 		view.Set("entry", entry)
 
 		b.WithHeader("Content-Type", "text/html; charset=utf-8")
-		b.WithBody(view.Render("entry"))
+		b.WithBodyAsBytes(view.Render("entry"))
 		b.Write()
 	})
 }

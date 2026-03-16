@@ -39,8 +39,20 @@ func (b *Builder) WithHeader(key, value string) *Builder {
 	return b
 }
 
-// WithBody uses the given body to build the response.
-func (b *Builder) WithBody(body any) *Builder {
+// WithBodyAsBytes uses the given bytes to build the response.
+func (b *Builder) WithBodyAsBytes(body []byte) *Builder {
+	b.body = body
+	return b
+}
+
+// WithBodyAsString uses the given string to build the response.
+func (b *Builder) WithBodyAsString(body string) *Builder {
+	b.body = body
+	return b
+}
+
+// WithBodyAsReader uses the given reader to build the response.
+func (b *Builder) WithBodyAsReader(body io.Reader) *Builder {
 	b.body = body
 	return b
 }

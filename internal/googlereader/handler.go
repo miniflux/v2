@@ -206,7 +206,7 @@ func (h *handler) clientLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	builder := response.New(w, r)
 	builder.WithHeader("Content-Type", "text/plain; charset=UTF-8")
-	builder.WithBody(result.String())
+	builder.WithBodyAsString(result.String())
 	builder.Write()
 }
 
