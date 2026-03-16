@@ -24,7 +24,7 @@ func JSON(w http.ResponseWriter, r *http.Request, body any) {
 
 	builder := New(w, r)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBody(responseBody)
+	builder.WithBodyAsBytes(responseBody)
 	builder.Write()
 }
 
@@ -39,7 +39,7 @@ func JSONCreated(w http.ResponseWriter, r *http.Request, body any) {
 	builder := New(w, r)
 	builder.WithStatus(http.StatusCreated)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBody(responseBody)
+	builder.WithBodyAsBytes(responseBody)
 	builder.Write()
 }
 
@@ -77,7 +77,7 @@ func JSONServerError(w http.ResponseWriter, r *http.Request, err error) {
 	builder := New(w, r)
 	builder.WithStatus(http.StatusInternalServerError)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBody(generateJSONError(err))
+	builder.WithBodyAsBytes(generateJSONError(err))
 	builder.Write()
 }
 
@@ -99,7 +99,7 @@ func JSONBadRequest(w http.ResponseWriter, r *http.Request, err error) {
 	builder := New(w, r)
 	builder.WithStatus(http.StatusBadRequest)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBody(generateJSONError(err))
+	builder.WithBodyAsBytes(generateJSONError(err))
 	builder.Write()
 }
 
@@ -120,7 +120,7 @@ func JSONUnauthorized(w http.ResponseWriter, r *http.Request) {
 	builder := New(w, r)
 	builder.WithStatus(http.StatusUnauthorized)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBody(generateJSONError(errors.New("access unauthorized")))
+	builder.WithBodyAsBytes(generateJSONError(errors.New("access unauthorized")))
 	builder.Write()
 }
 
@@ -141,7 +141,7 @@ func JSONForbidden(w http.ResponseWriter, r *http.Request) {
 	builder := New(w, r)
 	builder.WithStatus(http.StatusForbidden)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBody(generateJSONError(errors.New("access forbidden")))
+	builder.WithBodyAsBytes(generateJSONError(errors.New("access forbidden")))
 	builder.Write()
 }
 
@@ -162,7 +162,7 @@ func JSONNotFound(w http.ResponseWriter, r *http.Request) {
 	builder := New(w, r)
 	builder.WithStatus(http.StatusNotFound)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBody(generateJSONError(errors.New("resource not found")))
+	builder.WithBodyAsBytes(generateJSONError(errors.New("resource not found")))
 	builder.Write()
 }
 

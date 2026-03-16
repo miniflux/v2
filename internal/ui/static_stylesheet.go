@@ -23,7 +23,7 @@ func (h *handler) showStylesheet(w http.ResponseWriter, r *http.Request) {
 
 	response.New(w, r).WithCaching(m.Checksum, 48*time.Hour, func(b *response.Builder) {
 		b.WithHeader("Content-Type", "text/css; charset=utf-8")
-		b.WithBody(m.Data)
+		b.WithBodyAsBytes(m.Data)
 		b.Write()
 	})
 }

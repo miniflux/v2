@@ -40,7 +40,7 @@ func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
 		contents = append(contents, []byte(licenseSuffix)...)
 
 		b.WithHeader("Content-Type", "text/javascript; charset=utf-8")
-		b.WithBody(contents)
+		b.WithBodyAsBytes(contents)
 		b.Write()
 	})
 }

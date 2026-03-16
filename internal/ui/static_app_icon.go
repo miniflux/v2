@@ -30,7 +30,7 @@ func (h *handler) showAppIcon(w http.ResponseWriter, r *http.Request) {
 		case ".svg":
 			b.WithHeader("Content-Type", "image/svg+xml")
 		}
-		b.WithBody(value.Data)
+		b.WithBodyAsBytes(value.Data)
 		b.Write()
 	})
 }

@@ -159,7 +159,7 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 				b.WithHeader(responseHeaderName, resp.Header.Get(responseHeaderName))
 			}
 		}
-		b.WithBody(resp.Body)
+		b.WithBodyAsReader(resp.Body)
 		b.WithoutCompression()
 		b.Write()
 	})
