@@ -129,14 +129,18 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 	}
 
 	if changes.BlockFilterEntryRules != nil {
-		if err := isValidFilterRules(*changes.BlockFilterEntryRules, "block"); err != nil {
-			return err
+		if *changes.BlockFilterEntryRules != "" {
+			if err := isValidFilterRules(*changes.BlockFilterEntryRules, "block"); err != nil {
+				return err
+			}
 		}
 	}
 
 	if changes.KeepFilterEntryRules != nil {
-		if err := isValidFilterRules(*changes.KeepFilterEntryRules, "keep"); err != nil {
-			return err
+		if *changes.KeepFilterEntryRules != "" {
+			if err := isValidFilterRules(*changes.KeepFilterEntryRules, "keep"); err != nil {
+				return err
+			}
 		}
 	}
 
