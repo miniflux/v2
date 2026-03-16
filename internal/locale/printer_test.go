@@ -305,7 +305,7 @@ func TestPluralWithIndexOutOfBounds(t *testing.T) {
 
 func TestPluralWithVariousLanguageRules(t *testing.T) {
 	defaultCatalog = catalog{
-		"ar_AR": translationDict{
+		"ar_SA": translationDict{
 			plurals: map[string][]string{
 				"items": {"no items", "one item", "two items", "few items", "many items", "other items"},
 			},
@@ -329,11 +329,11 @@ func TestPluralWithVariousLanguageRules(t *testing.T) {
 		expected string
 	}{
 		// Arabic tests
-		{"ar_AR", "items", 0, "no items"},
-		{"ar_AR", "items", 1, "one item"},
-		{"ar_AR", "items", 2, "two items"},
-		{"ar_AR", "items", 5, "few items"},   // n%100 >= 3 && n%100 <= 10
-		{"ar_AR", "items", 15, "many items"}, // n%100 >= 11
+		{"ar_SA", "items", 0, "no items"},
+		{"ar_SA", "items", 1, "one item"},
+		{"ar_SA", "items", 2, "two items"},
+		{"ar_SA", "items", 5, "few items"},   // n%100 >= 3 && n%100 <= 10
+		{"ar_SA", "items", 15, "many items"}, // n%100 >= 11
 
 		// Polish tests
 		{"pl_PL", "files", 1, "one file"},
