@@ -45,10 +45,16 @@ func TestIsRelativePath(t *testing.T) {
 
 func TestIsAbsoluteURL(t *testing.T) {
 	scenarios := map[string]bool{
-		"https://example.org/file.pdf": true,
-		"magnet:?xt.1=urn:sha1:YNCKHTQCWBTRNJIV4WNAE52SJUQCZO5C&xt.2=urn:sha1:TXGCZQTH26NL6OUQAJJPFALHG2LTGBC7": true,
-		"invalid url":    false,
-		"/relative/path": false,
+		"https://example.org/file.pdf":                   true,
+		"https://example.org/file.pdf?download=1#page=2": true,
+		"mailto:user@example.org":                        false,
+		"data:text/plain,hello":                          false,
+		"magnet:?xt.1=urn:sha1:YNCKHTQCWBTRNJIV4WNAE52SJUQCZO5C&xt.2=urn:sha1:TXGCZQTH26NL6OUQAJJPFALHG2LTGBC7": false,
+		"invalid url":                false,
+		"/relative/path":             false,
+		"//example.org/path":         false,
+		" https://example.org/path":  false,
+		"\thttps://example.org/path": false,
 	}
 
 	for input, expected := range scenarios {

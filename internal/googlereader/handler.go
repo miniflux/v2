@@ -24,6 +24,7 @@ import (
 	mff "miniflux.app/v2/internal/reader/handler"
 	mfs "miniflux.app/v2/internal/reader/subscription"
 	"miniflux.app/v2/internal/storage"
+	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/validator"
 
 	"github.com/gorilla/mux"
@@ -405,7 +406,7 @@ func (h *handler) quickAddHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	feedURL := r.Form.Get(paramQuickAdd)
-	if !validator.IsValidURL(feedURL) {
+	if !urllib.IsAbsoluteURL(feedURL) {
 		json.BadRequest(w, r, fmt.Errorf("googlereader: invalid URL: %s", feedURL))
 		return
 	}

@@ -6,15 +6,16 @@ package validator // import "miniflux.app/v2/internal/validator"
 import (
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/urllib"
 )
 
 // ValidateSubscriptionDiscovery validates subscription discovery requests.
 func ValidateSubscriptionDiscovery(request *model.SubscriptionDiscoveryRequest) *locale.LocalizedError {
-	if !IsValidURL(request.URL) {
+	if !urllib.IsAbsoluteURL(request.URL) {
 		return locale.NewLocalizedError("error.invalid_site_url")
 	}
 
-	if request.ProxyURL != "" && !IsValidURL(request.ProxyURL) {
+	if request.ProxyURL != "" && !urllib.IsAbsoluteURL(request.ProxyURL) {
 		return locale.NewLocalizedError("error.invalid_proxy_url")
 	}
 
