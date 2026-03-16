@@ -129,6 +129,8 @@ func ShouldProxifyURLWithMimeType(mediaURL, mediaMimeType, mediaProxyOption stri
 		return false
 	}
 
+	mediaMimeType = strings.ToLower(mediaMimeType)
+
 	for _, mediaType := range mediaProxyResourceTypes {
 		if strings.HasPrefix(mediaMimeType, mediaType+"/") {
 			return true
