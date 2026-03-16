@@ -120,6 +120,16 @@ func Parse() {
 		return
 	}
 
+	if flagInfo {
+		info()
+		return
+	}
+
+	if flagVersion {
+		fmt.Println(version.Version)
+		return
+	}
+
 	if flagDebugMode {
 		config.Opts.SetLogLevel("debug")
 	}
@@ -145,16 +155,6 @@ func Parse() {
 
 	if flagHealthCheck != "" {
 		doHealthCheck(flagHealthCheck)
-		return
-	}
-
-	if flagInfo {
-		info()
-		return
-	}
-
-	if flagVersion {
-		fmt.Println(version.Version)
 		return
 	}
 
