@@ -4,12 +4,12 @@
 package mediaproxy // import "miniflux.app/v2/internal/mediaproxy"
 
 import (
+	"net/url"
 	"slices"
 	"strings"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/reader/sanitizer"
-	"miniflux.app/v2/internal/urllib"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/mux"
@@ -109,14 +109,19 @@ func proxifySourceSet(element *goquery.Selection, router *mux.Router, proxifyFun
 
 // shouldProxifyURL checks if the media URL should be proxified based on the media proxy option and URL scheme.
 func shouldProxifyURL(mediaURL, mediaProxyOption string) bool {
+	parsedURL, err := url.Parse(mediaURL)
+	if err != nil || !parsedURL.IsAbs() || parsedURL.Host == "" {
+		return false
+	}
+
 	switch {
 	case mediaURL == "":
 		return false
 	case strings.HasPrefix(mediaURL, "data:"):
 		return false
-	case mediaProxyOption == "all":
+	case mediaProxyOption == "all" && (strings.EqualFold(parsedURL.Scheme, "http") || strings.EqualFold(parsedURL.Scheme, "https")):
 		return true
-	case mediaProxyOption != "none" && !urllib.IsHTTPS(mediaURL):
+	case mediaProxyOption != "none" && strings.EqualFold(parsedURL.Scheme, "http"):
 		return true
 	default:
 		return false
