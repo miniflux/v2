@@ -5,7 +5,6 @@ package validator // import "miniflux.app/v2/internal/validator"
 
 import (
 	"errors"
-	"net/url"
 	"regexp"
 	"strings"
 )
@@ -38,12 +37,6 @@ func ValidateDirection(direction string) error {
 // IsValidRegex verifies if the regex can be compiled.
 func IsValidRegex(expr string) bool {
 	_, err := regexp.Compile(expr)
-	return err == nil
-}
-
-// IsValidURL verifies if the provided value is a valid absolute URL.
-func IsValidURL(absoluteURL string) bool {
-	_, err := url.ParseRequestURI(absoluteURL)
 	return err == nil
 }
 
