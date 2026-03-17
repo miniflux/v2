@@ -120,6 +120,7 @@ func (b *Builder) writeHeaders() {
 
 func (b *Builder) compress(data []byte) {
 	if b.enableCompression && len(data) > compressionThreshold {
+		b.headers["Vary"] = "Accept-Encoding"
 		acceptEncoding := b.r.Header.Get("Accept-Encoding")
 		switch {
 		case strings.Contains(acceptEncoding, "br"):

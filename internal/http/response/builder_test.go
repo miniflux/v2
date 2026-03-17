@@ -277,6 +277,12 @@ func TestBuildResponseWithDeflateCompression(t *testing.T) {
 	if actual != expected {
 		t.Fatalf(`Unexpected header value, got %q instead of %q`, actual, expected)
 	}
+
+	expectedVary := "Accept-Encoding"
+	actualVary := resp.Header.Get("Vary")
+	if actualVary != expectedVary {
+		t.Fatalf(`Unexpected vary header value, got %q instead of %q`, actualVary, expectedVary)
+	}
 }
 
 func TestBuildResponseWithCompressionDisabled(t *testing.T) {
@@ -300,6 +306,12 @@ func TestBuildResponseWithCompressionDisabled(t *testing.T) {
 	actual := resp.Header.Get("Content-Encoding")
 	if actual != expected {
 		t.Fatalf(`Unexpected header value, got %q instead of %q`, actual, expected)
+	}
+
+	expectedVary := ""
+	actualVary := resp.Header.Get("Vary")
+	if actualVary != expectedVary {
+		t.Fatalf(`Unexpected vary header value, got %q instead of %q`, actualVary, expectedVary)
 	}
 }
 
@@ -325,6 +337,12 @@ func TestBuildResponseWithDeflateCompressionAndSmallPayload(t *testing.T) {
 	if actual != expected {
 		t.Fatalf(`Unexpected header value, got %q instead of %q`, actual, expected)
 	}
+
+	expectedVary := ""
+	actualVary := resp.Header.Get("Vary")
+	if actualVary != expectedVary {
+		t.Fatalf(`Unexpected vary header value, got %q instead of %q`, actualVary, expectedVary)
+	}
 }
 
 func TestBuildResponseWithoutCompressionHeader(t *testing.T) {
@@ -347,6 +365,12 @@ func TestBuildResponseWithoutCompressionHeader(t *testing.T) {
 	actual := resp.Header.Get("Content-Encoding")
 	if actual != expected {
 		t.Fatalf(`Unexpected header value, got %q instead of %q`, actual, expected)
+	}
+
+	expectedVary := "Accept-Encoding"
+	actualVary := resp.Header.Get("Vary")
+	if actualVary != expectedVary {
+		t.Fatalf(`Unexpected vary header value, got %q instead of %q`, actualVary, expectedVary)
 	}
 }
 
