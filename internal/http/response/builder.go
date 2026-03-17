@@ -71,11 +71,12 @@ func (b *Builder) WithoutCompression() *Builder {
 
 // WithCaching adds caching headers to the response.
 func (b *Builder) WithCaching(etag string, duration time.Duration, callback func(*Builder)) {
+	etag = normalizeETag(etag)
 	b.headers["ETag"] = etag
 	b.headers["Cache-Control"] = "public"
 	b.headers["Expires"] = time.Now().Add(duration).UTC().Format(http.TimeFormat)
 
-	if etag == b.r.Header.Get("If-None-Match") {
+	if ifNoneMatch(b.r.Header.Get("If-None-Match"), etag) {
 		b.statusCode = http.StatusNotModified
 		b.body = nil
 		b.Write()
@@ -152,6 +153,28 @@ func (b *Builder) compress(data []byte) {
 
 	b.writeHeaders()
 	b.w.Write(data)
+}
+
+func normalizeETag(etag string) string {
+	etag = strings.TrimSpace(etag)
+	if etag == "" {
+		return ""
+	}
+	if strings.HasPrefix(etag, `"`) || strings.HasPrefix(etag, `W/"`) {
+		return etag
+	}
+	return `"` + etag + `"`
+}
+
+func ifNoneMatch(headerValue, etag string) bool {
+	if headerValue == "" || etag == "" {
+		return false
+	}
+	if strings.TrimSpace(headerValue) == "*" {
+		return true
+	}
+	// Weak ETag comparison: the opaque-tag (quoted string without W/ prefix) must match.
+	return strings.Contains(headerValue, strings.TrimPrefix(etag, `W/`))
 }
 
 // New creates a new response builder.
