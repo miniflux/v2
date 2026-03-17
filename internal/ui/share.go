@@ -45,7 +45,7 @@ func (h *handler) sharedEntry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	etag := shareCode
-	response.New(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
+	response.NewBuilder(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
 		builder := storage.NewAnonymousQueryBuilder(h.store)
 		builder.WithShareCode(shareCode)
 

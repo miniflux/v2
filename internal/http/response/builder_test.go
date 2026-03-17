@@ -21,7 +21,7 @@ func TestResponseHasCommonHeaders(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).Write()
+		NewBuilder(w, r).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -49,7 +49,7 @@ func TestBuildResponseWithCustomStatusCode(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithStatus(http.StatusNotAcceptable).Write()
+		NewBuilder(w, r).WithStatus(http.StatusNotAcceptable).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -70,7 +70,7 @@ func TestBuildResponseWithCustomHeader(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithHeader("X-My-Header", "Value").Write()
+		NewBuilder(w, r).WithHeader("X-My-Header", "Value").Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -92,7 +92,7 @@ func TestBuildResponseWithAttachment(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithAttachment("my_file.pdf").Write()
+		NewBuilder(w, r).WithAttachment("my_file.pdf").Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -114,7 +114,7 @@ func TestBuildResponseWithByteBody(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBodyAsBytes([]byte("body")).Write()
+		NewBuilder(w, r).WithBodyAsBytes([]byte("body")).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -135,7 +135,7 @@ func TestBuildResponseWithCachingEnabled(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithCaching("etag", 1*time.Minute, func(b *Builder) {
+		NewBuilder(w, r).WithCaching("etag", 1*time.Minute, func(b *Builder) {
 			b.WithBodyAsString("cached body")
 			b.Write()
 		})
@@ -195,7 +195,7 @@ func TestBuildResponseWithCachingAndIfNoneMatch(t *testing.T) {
 			w := httptest.NewRecorder()
 
 			handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				New(w, r).WithCaching("etag", 1*time.Minute, func(b *Builder) {
+				NewBuilder(w, r).WithCaching("etag", 1*time.Minute, func(b *Builder) {
 					b.WithBodyAsString("cached body")
 					b.Write()
 				})
@@ -281,7 +281,7 @@ func TestBuildResponseWithBrotliCompression(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBodyAsString(body).Write()
+		NewBuilder(w, r).WithBodyAsString(body).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -305,7 +305,7 @@ func TestBuildResponseWithGzipCompression(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBodyAsString(body).Write()
+		NewBuilder(w, r).WithBodyAsString(body).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -329,7 +329,7 @@ func TestBuildResponseWithDeflateCompression(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBodyAsString(body).Write()
+		NewBuilder(w, r).WithBodyAsString(body).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -359,7 +359,7 @@ func TestBuildResponseWithCompressionDisabled(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBodyAsString(body).WithoutCompression().Write()
+		NewBuilder(w, r).WithBodyAsString(body).WithoutCompression().Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -389,7 +389,7 @@ func TestBuildResponseWithDeflateCompressionAndSmallPayload(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBodyAsString(body).Write()
+		NewBuilder(w, r).WithBodyAsString(body).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -418,7 +418,7 @@ func TestBuildResponseWithoutCompressionHeader(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBodyAsString(body).Write()
+		NewBuilder(w, r).WithBodyAsString(body).Write()
 	})
 
 	handler.ServeHTTP(w, r)
@@ -446,7 +446,7 @@ func TestBuildResponseWithReaderBody(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		New(w, r).WithBodyAsReader(bytes.NewBufferString("body")).Write()
+		NewBuilder(w, r).WithBodyAsReader(bytes.NewBufferString("body")).Write()
 	})
 
 	handler.ServeHTTP(w, r)
