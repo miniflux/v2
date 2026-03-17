@@ -22,7 +22,7 @@ func (h *handler) showAppIcon(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.New(w, r).WithCaching(value.Checksum, 72*time.Hour, func(b *response.Builder) {
+	response.NewBuilder(w, r).WithCaching(value.Checksum, 72*time.Hour, func(b *response.Builder) {
 		switch filepath.Ext(filename) {
 		case ".png":
 			b.WithoutCompression()

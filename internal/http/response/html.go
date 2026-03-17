@@ -13,7 +13,7 @@ import (
 
 // HTML creates a new HTML response with a 200 status code.
 func HTML[T []byte | string](w http.ResponseWriter, r *http.Request, body T) {
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
 	switch v := any(body).(type) {
@@ -40,7 +40,7 @@ func HTMLServerError(w http.ResponseWriter, r *http.Request, err error) {
 		),
 	)
 
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusInternalServerError)
 	builder.WithHeader("Content-Security-Policy", ContentSecurityPolicyForUntrustedContent)
 	builder.WithHeader("Content-Type", "text/plain; charset=utf-8")
@@ -64,7 +64,7 @@ func HTMLBadRequest(w http.ResponseWriter, r *http.Request, err error) {
 		),
 	)
 
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusBadRequest)
 	builder.WithHeader("Content-Security-Policy", ContentSecurityPolicyForUntrustedContent)
 	builder.WithHeader("Content-Type", "text/plain; charset=utf-8")
@@ -87,7 +87,7 @@ func HTMLForbidden(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusForbidden)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
@@ -109,7 +109,7 @@ func HTMLNotFound(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusNotFound)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
@@ -136,7 +136,7 @@ func HTMLRequestedRangeNotSatisfiable(w http.ResponseWriter, r *http.Request, co
 		),
 	)
 
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusRequestedRangeNotSatisfiable)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")

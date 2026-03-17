@@ -27,7 +27,7 @@ func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.New(w, r).WithCaching(js.Checksum, 48*time.Hour, func(b *response.Builder) {
+	response.NewBuilder(w, r).WithCaching(js.Checksum, 48*time.Hour, func(b *response.Builder) {
 		contents := js.Data
 
 		if filename == "service-worker" {

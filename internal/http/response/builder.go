@@ -27,6 +27,11 @@ type Builder struct {
 	body              any
 }
 
+// NewBuilder creates a new response builder.
+func NewBuilder(w http.ResponseWriter, r *http.Request) *Builder {
+	return &Builder{w: w, r: r, statusCode: http.StatusOK, headers: make(map[string]string), enableCompression: true}
+}
+
 // WithStatus uses the given status code to build the response.
 func (b *Builder) WithStatus(statusCode int) *Builder {
 	b.statusCode = statusCode
@@ -175,9 +180,4 @@ func ifNoneMatch(headerValue, etag string) bool {
 	}
 	// Weak ETag comparison: the opaque-tag (quoted string without W/ prefix) must match.
 	return strings.Contains(headerValue, strings.TrimPrefix(etag, `W/`))
-}
-
-// New creates a new response builder.
-func New(w http.ResponseWriter, r *http.Request) *Builder {
-	return &Builder{w: w, r: r, statusCode: http.StatusOK, headers: make(map[string]string), enableCompression: true}
 }

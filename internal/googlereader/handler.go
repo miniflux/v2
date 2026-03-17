@@ -204,10 +204,7 @@ func (h *handler) clientLoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := response.New(w, r)
-	builder.WithHeader("Content-Type", "text/plain; charset=UTF-8")
-	builder.WithBodyAsString(result.String())
-	builder.Write()
+	response.Text(w, r, result.String())
 }
 
 func (h *handler) tokenHandler(w http.ResponseWriter, r *http.Request) {
@@ -245,9 +242,7 @@ func (h *handler) tokenHandler(w http.ResponseWriter, r *http.Request) {
 		slog.Int64("user_id", request.UserID(r)),
 	)
 
-	w.Header().Add("Content-Type", "text/plain; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(token))
+	response.Text(w, r, token)
 }
 
 func (h *handler) editTagHandler(w http.ResponseWriter, r *http.Request) {
@@ -384,7 +379,7 @@ func (h *handler) editTagHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	sendOkayResponse(w)
+	response.Text(w, r, "OK")
 }
 
 func (h *handler) quickAddHandler(w http.ResponseWriter, r *http.Request) {
@@ -665,7 +660,7 @@ func (h *handler) editSubscriptionHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	sendOkayResponse(w)
+	response.Text(w, r, "OK")
 }
 
 func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Request) {
@@ -840,7 +835,7 @@ func (h *handler) disableTagHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendOkayResponse(w)
+	response.Text(w, r, "OK")
 }
 
 func (h *handler) renameTagHandler(w http.ResponseWriter, r *http.Request) {
@@ -907,7 +902,7 @@ func (h *handler) renameTagHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendOkayResponse(w)
+	response.Text(w, r, "OK")
 }
 
 func (h *handler) tagListHandler(w http.ResponseWriter, r *http.Request) {
@@ -1292,5 +1287,5 @@ func (h *handler) markAllAsReadHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	sendOkayResponse(w)
+	response.Text(w, r, "OK")
 }

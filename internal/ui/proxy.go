@@ -144,7 +144,7 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 
 	etag := crypto.HashFromBytes(decodedURL)
 
-	response.New(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
+	response.NewBuilder(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
 		b.WithStatus(resp.StatusCode)
 		b.WithHeader("Content-Security-Policy", response.ContentSecurityPolicyForUntrustedContent)
 		b.WithHeader("Content-Type", resp.Header.Get("Content-Type"))

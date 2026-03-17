@@ -22,7 +22,7 @@ func JSON(w http.ResponseWriter, r *http.Request, body any) {
 		return
 	}
 
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
 	builder.WithBodyAsBytes(responseBody)
 	builder.Write()
@@ -36,7 +36,7 @@ func JSONCreated(w http.ResponseWriter, r *http.Request, body any) {
 		return
 	}
 
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusCreated)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
 	builder.WithBodyAsBytes(responseBody)
@@ -45,7 +45,7 @@ func JSONCreated(w http.ResponseWriter, r *http.Request, body any) {
 
 // JSONNoContent sends a no content response to the client.
 func JSONNoContent(w http.ResponseWriter, r *http.Request) {
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusNoContent)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
 	builder.Write()
@@ -53,7 +53,7 @@ func JSONNoContent(w http.ResponseWriter, r *http.Request) {
 
 // JSONAccepted sends an accepted response to the client.
 func JSONAccepted(w http.ResponseWriter, r *http.Request) {
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusAccepted)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
 	builder.Write()
@@ -74,7 +74,7 @@ func JSONServerError(w http.ResponseWriter, r *http.Request, err error) {
 		),
 	)
 
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusInternalServerError)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
 	builder.WithBodyAsBytes(generateJSONError(err))
@@ -96,7 +96,7 @@ func JSONBadRequest(w http.ResponseWriter, r *http.Request, err error) {
 		),
 	)
 
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusBadRequest)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
 	builder.WithBodyAsBytes(generateJSONError(err))
@@ -117,7 +117,7 @@ func JSONUnauthorized(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusUnauthorized)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
 	builder.WithBodyAsBytes(generateJSONError(errors.New("access unauthorized")))
@@ -138,7 +138,7 @@ func JSONForbidden(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusForbidden)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
 	builder.WithBodyAsBytes(generateJSONError(errors.New("access forbidden")))
@@ -159,7 +159,7 @@ func JSONNotFound(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	builder := New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusNotFound)
 	builder.WithHeader("Content-Type", jsonContentTypeHeader)
 	builder.WithBodyAsBytes(generateJSONError(errors.New("resource not found")))
