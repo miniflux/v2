@@ -18,6 +18,7 @@ import (
 	"miniflux.app/v2/internal/fever"
 	"miniflux.app/v2/internal/googlereader"
 	"miniflux.app/v2/internal/http/request"
+	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui"
 	"miniflux.app/v2/internal/worker"
@@ -239,7 +240,11 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 
 	subrouter.Use(middleware)
 
-	fever.Serve(subrouter, store)
+	feverSubrouter := subrouter.PathPrefix("/fever").Subrouter()
+	feverSubrouter.Use(fever.Middleware(store))
+	feverSubrouter.Handle("/", fever.NewHandler(store, func(content string) string {
+		return mediaproxy.RewriteDocumentWithAbsoluteProxyURL(subrouter, content)
+	})).Name("feverEndpoint")
 	googlereader.Serve(subrouter, store)
 	if config.Opts.HasAPI() {
 		api.Serve(subrouter, store, pool)
