@@ -741,7 +741,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		for _, enclosure := range entry.Enclosures {
 			enclosures = append(enclosures, contentItemEnclosure{URL: enclosure.URL, Type: enclosure.MimeType})
 		}
-		categories := make([]string, 0)
+		categories := make([]string, 0, 4)
 		categories = append(categories, userReadingList)
 		if entry.Feed.Category.Title != "" {
 			categories = append(categories, labelPrefix+entry.Feed.Category.Title)
@@ -926,7 +926,7 @@ func (h *handler) tagListHandler(w http.ResponseWriter, r *http.Request) {
 		response.JSONServerError(w, r, err)
 		return
 	}
-	result.Tags = make([]subscriptionCategoryResponse, 0)
+	result.Tags = make([]subscriptionCategoryResponse, 0, 1+len(categories))
 	result.Tags = append(result.Tags, subscriptionCategoryResponse{
 		ID: fmt.Sprintf(userStreamPrefix, userID) + starredStreamSuffix,
 	})
@@ -964,7 +964,7 @@ func (h *handler) subscriptionListHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	labelPrefix := fmt.Sprintf(userLabelPrefix, userID)
-	result.Subscriptions = make([]subscriptionResponse, 0)
+	result.Subscriptions = make([]subscriptionResponse, 0, len(feeds))
 	for _, feed := range feeds {
 		result.Subscriptions = append(result.Subscriptions, subscriptionResponse{
 			ID:         feedPrefix + strconv.FormatInt(feed.ID, 10),
