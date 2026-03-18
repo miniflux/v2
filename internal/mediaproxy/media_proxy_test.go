@@ -12,7 +12,193 @@ import (
 	"miniflux.app/v2/internal/config"
 )
 
-func TestProxyFilterWithHttpDefault(t *testing.T) {
+func TestMediaProxyWithInvalidMode(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "invalid")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	if _, err := config.NewConfigParser().ParseEnvironmentVariables(); err == nil {
+		t.Fatalf(`Parsing should have failed (MEDIA_PROXY_MODE=%q): %q`, os.Getenv("MEDIA_PROXY_MODE"), config.Opts.MediaProxyMode())
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_None_Image(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "none")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><img src="http://website/folder/image.png" alt="Test"/></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><img src="http://website/folder/image.png" alt="Test"/></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_None_Audio(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "none")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "audio")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><audio src="http://website/folder/audio.mp3"></audio></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><audio src="http://website/folder/audio.mp3"></audio></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_None_Video(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "none")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="http://website/folder/video.mp4"></video></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><video src="http://website/folder/video.mp4"></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_None_VideoPoster(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "none")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="http://website/folder/video.mp4" poster="http://website/folder/poster.png"></video></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><video src="http://website/folder/video.mp4" poster="http://website/folder/poster.png"></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithAbsoluteProxyURL_None_Image(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "none")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><img src="http://website/folder/image.png" alt="Test"/></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><img src="http://website/folder/image.png" alt="Test"/></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithAbsoluteProxyURL_None_Audio(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "none")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "audio")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><audio src="http://website/folder/audio.mp3"></audio></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><audio src="http://website/folder/audio.mp3"></audio></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithAbsoluteProxyURL_None_Video(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "none")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="http://website/folder/video.mp4"></video></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><video src="http://website/folder/video.mp4"></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithAbsoluteProxyURL_None_VideoPoster(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "none")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="http://website/folder/video.mp4" poster="http://website/folder/poster.png"></video></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><video src="http://website/folder/video.mp4" poster="http://website/folder/poster.png"></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_HttpOnly_Image(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("MEDIA_PROXY_MODE", "http-only")
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
@@ -22,14 +208,11 @@ func TestProxyFilterWithHttpDefault(t *testing.T) {
 	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
+		t.Fatalf(`Config parsing failure: %v`, err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
 	input := `<p><img src="http://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
+	output := RewriteDocumentWithRelativeProxyURL(input)
 	expected := `<p><img src="/proxy/okK5PsdNY8F082UMQEAbLPeUFfbe2WnNfInNmR9T4WA=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlLnBuZw==" alt="Test"/></p>`
 
 	if expected != output {
@@ -37,77 +220,183 @@ func TestProxyFilterWithHttpDefault(t *testing.T) {
 	}
 }
 
-func TestProxyFilterWithHttpsDefault(t *testing.T) {
+func TestRewriteDocumentWithRelativeProxyURL_HttpOnly_Audio(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "http-only")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "audio")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><audio src="http://website/folder/audio.mp3"></audio></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><audio src="/proxy/t5HoIOMfOlUs1_lCnhvaMI0sUz2_-gqWs_DyRevKIG0=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2F1ZGlvLm1wMw=="></audio></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_HttpOnly_Video(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "http-only")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="http://website/folder/video.mp4"></video></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><video src="/proxy/lKmvyYMkjI4iV7yxQqcYwJHWzMvJmjJZKl7VASyxEZ8=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL3ZpZGVvLm1wNA=="></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_HttpOnly_VideoPoster(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "http-only")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="http://website/folder/video.mp4" poster="http://website/folder/poster.png"></video></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><video src="/proxy/lKmvyYMkjI4iV7yxQqcYwJHWzMvJmjJZKl7VASyxEZ8=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL3ZpZGVvLm1wNA==" poster="/proxy/YEEe0bAqTYpNrLijb25xYUNRFQsTPv5LlBikuDScPuo=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL3Bvc3Rlci5wbmc="></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_HttpOnly_Image_Poster(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("MEDIA_PROXY_MODE", "http-only")
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
 	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
+		t.Fatalf(`Config parsing failure: %v`, err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
-	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
-	expected := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
+	input := `<p><video src="http://website/folder/video.mp4" poster="http://website/folder/poster.png"></video></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><video src="http://website/folder/video.mp4" poster="/proxy/YEEe0bAqTYpNrLijb25xYUNRFQsTPv5LlBikuDScPuo=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL3Bvc3Rlci5wbmc="></video></p>`
 
 	if expected != output {
 		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
 	}
 }
 
-func TestProxyFilterWithHttpNever(t *testing.T) {
+func TestRewriteDocumentWithAbsoluteProxyURL_HttpOnly_Image(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("MEDIA_PROXY_MODE", "none")
+	os.Setenv("MEDIA_PROXY_MODE", "http-only")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
 	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
+		t.Fatalf(`Config parsing failure: %v`, err)
 	}
-
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
 
 	input := `<p><img src="http://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
-	expected := input
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><img src="http://localhost/proxy/okK5PsdNY8F082UMQEAbLPeUFfbe2WnNfInNmR9T4WA=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlLnBuZw==" alt="Test"/></p>`
 
 	if expected != output {
 		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
 	}
 }
 
-func TestProxyFilterWithHttpsNever(t *testing.T) {
+func TestRewriteDocumentWithAbsoluteProxyURL_HttpOnly_Audio(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("MEDIA_PROXY_MODE", "none")
+	os.Setenv("MEDIA_PROXY_MODE", "http-only")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "audio")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
 	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
+		t.Fatalf(`Config parsing failure: %v`, err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
-	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
-	expected := input
+	input := `<p><audio src="http://website/folder/audio.mp3"></audio></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><audio src="http://localhost/proxy/t5HoIOMfOlUs1_lCnhvaMI0sUz2_-gqWs_DyRevKIG0=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2F1ZGlvLm1wMw=="></audio></p>`
 
 	if expected != output {
 		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
 	}
 }
 
-func TestProxyFilterWithHttpAlways(t *testing.T) {
+func TestRewriteDocumentWithAbsoluteProxyURL_HttpOnly_Video(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "http-only")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="http://website/folder/video.mp4"></video></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><video src="http://localhost/proxy/lKmvyYMkjI4iV7yxQqcYwJHWzMvJmjJZKl7VASyxEZ8=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL3ZpZGVvLm1wNA=="></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithAbsoluteProxyURL_HttpOnly_VideoPoster(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "http-only")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="http://website/folder/video.mp4" poster="http://website/folder/poster.png"></video></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><video src="http://localhost/proxy/lKmvyYMkjI4iV7yxQqcYwJHWzMvJmjJZKl7VASyxEZ8=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL3ZpZGVvLm1wNA==" poster="http://localhost/proxy/YEEe0bAqTYpNrLijb25xYUNRFQsTPv5LlBikuDScPuo=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL3Bvc3Rlci5wbmc="></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_All_Image(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("MEDIA_PROXY_MODE", "all")
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
@@ -117,39 +406,11 @@ func TestProxyFilterWithHttpAlways(t *testing.T) {
 	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
+		t.Fatalf(`Config parsing failure: %v`, err)
 	}
-
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
-	input := `<p><img src="http://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
-	expected := `<p><img src="/proxy/okK5PsdNY8F082UMQEAbLPeUFfbe2WnNfInNmR9T4WA=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlLnBuZw==" alt="Test"/></p>`
-
-	if expected != output {
-		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
-	}
-}
-
-func TestProxyFilterWithHttpsAlways(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("MEDIA_PROXY_MODE", "all")
-	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
-	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
-
-	var err error
-	parser := config.NewConfigParser()
-	config.Opts, err = parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
 
 	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
+	output := RewriteDocumentWithRelativeProxyURL(input)
 	expected := `<p><img src="/proxy/LdPNR1GBDigeeNp2ArUQRyZsVqT_PWLfHGjYFrrWWIY=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9pbWFnZS5wbmc=" alt="Test"/></p>`
 
 	if expected != output {
@@ -157,7 +418,74 @@ func TestProxyFilterWithHttpsAlways(t *testing.T) {
 	}
 }
 
-func TestAbsoluteProxyFilterWithHttpsAlways(t *testing.T) {
+func TestRewriteDocumentWithRelativeProxyURL_All_Audio(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "audio")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+	os.Setenv("BASE_URL", "http://example.org:88/folder/")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><audio src="https://website/folder/audio.mp3"></audio></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><audio src="/folder/proxy/EmBTvmU5B17wGuONkeknkptYopW_Tl6Y6_W8oYbN_Xs=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9hdWRpby5tcDM="></audio></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_All_Video(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="https://website/folder/video.mp4"></video></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><video src="/proxy/rg7VlAFvCFDe4kxg3YJRgtty6AblMwBVGXsn0WWl89k=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci92aWRlby5tcDQ="></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_All_VideoPoster(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="https://website/folder/video.mp4" poster="https://website/folder/poster.png"></video></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><video src="/proxy/rg7VlAFvCFDe4kxg3YJRgtty6AblMwBVGXsn0WWl89k=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci92aWRlby5tcDQ=" poster="/proxy/u-yLZEYDELx9OlU9to8bt13iysttOWfYpqRfmQYkm3U=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9wb3N0ZXIucG5n"></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithAbsoluteProxyURL_All_Image(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("MEDIA_PROXY_MODE", "all")
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
@@ -167,14 +495,11 @@ func TestAbsoluteProxyFilterWithHttpsAlways(t *testing.T) {
 	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
+		t.Fatalf(`Config parsing failure: %v`, err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
 	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithAbsoluteProxyURL(r, input)
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
 	expected := `<p><img src="http://localhost/proxy/LdPNR1GBDigeeNp2ArUQRyZsVqT_PWLfHGjYFrrWWIY=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9pbWFnZS5wbmc=" alt="Test"/></p>`
 
 	if expected != output {
@@ -182,44 +507,7 @@ func TestAbsoluteProxyFilterWithHttpsAlways(t *testing.T) {
 	}
 }
 
-func TestAbsoluteProxyFilterWithCustomPortAndSubfolderInBaseURL(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("BASE_URL", "http://example.org:88/folder/")
-	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
-
-	var err error
-	parser := config.NewConfigParser()
-	config.Opts, err = parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	if config.Opts.BaseURL() != "http://example.org:88/folder" {
-		t.Fatalf(`Unexpected base URL, got "%s"`, config.Opts.BaseURL())
-	}
-
-	if config.Opts.RootURL() != "http://example.org:88" {
-		t.Fatalf(`Unexpected root URL, got "%s"`, config.Opts.RootURL())
-	}
-
-	router := mux.NewRouter()
-
-	if config.Opts.BasePath() != "" {
-		router = router.PathPrefix(config.Opts.BasePath()).Subrouter()
-	}
-
-	router.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
-	input := `<p><img src="http://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithAbsoluteProxyURL(router, input)
-	expected := `<p><img src="http://example.org:88/folder/proxy/okK5PsdNY8F082UMQEAbLPeUFfbe2WnNfInNmR9T4WA=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlLnBuZw==" alt="Test"/></p>`
-
-	if expected != output {
-		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
-	}
-}
-
-func TestAbsoluteProxyFilterWithHttpsAlwaysAndAudioTag(t *testing.T) {
+func TestRewriteDocumentWithAbsoluteProxyURL_All_Audio(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("MEDIA_PROXY_MODE", "all")
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "audio")
@@ -229,39 +517,262 @@ func TestAbsoluteProxyFilterWithHttpsAlwaysAndAudioTag(t *testing.T) {
 	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
+		t.Fatalf(`Config parsing failure: %v`, err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
-	input := `<audio src="https://website/folder/audio.mp3"></audio>`
-	output := RewriteDocumentWithAbsoluteProxyURL(r, input)
-	expected := `<audio src="http://localhost/proxy/EmBTvmU5B17wGuONkeknkptYopW_Tl6Y6_W8oYbN_Xs=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9hdWRpby5tcDM="></audio>`
+	input := `<p><audio src="https://website/folder/audio.mp3"></audio></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><audio src="http://localhost/proxy/EmBTvmU5B17wGuONkeknkptYopW_Tl6Y6_W8oYbN_Xs=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9hdWRpby5tcDM="></audio></p>`
 
 	if expected != output {
 		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
 	}
 }
 
-func TestProxyFilterWithHttpsAlwaysAndCustomProxyServer(t *testing.T) {
+func TestRewriteDocumentWithAbsoluteProxyURL_All_Video(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="https://website/folder/video.mp4"></video></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><video src="http://localhost/proxy/rg7VlAFvCFDe4kxg3YJRgtty6AblMwBVGXsn0WWl89k=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci92aWRlby5tcDQ="></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithAbsoluteProxyURL_All_VideoPoster(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="https://website/folder/video.mp4" poster="https://website/folder/poster.png"></video></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><video src="http://localhost/proxy/rg7VlAFvCFDe4kxg3YJRgtty6AblMwBVGXsn0WWl89k=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci92aWRlby5tcDQ=" poster="http://localhost/proxy/u-yLZEYDELx9OlU9to8bt13iysttOWfYpqRfmQYkm3U=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9wb3N0ZXIucG5n"></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_BasePath_All_Image(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("MEDIA_PROXY_MODE", "all")
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+	os.Setenv("BASE_URL", "http://example.org:88/folder/")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><img src="/folder/proxy/LdPNR1GBDigeeNp2ArUQRyZsVqT_PWLfHGjYFrrWWIY=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9pbWFnZS5wbmc=" alt="Test"/></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_BasePath_All_Audio(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "audio")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+	os.Setenv("BASE_URL", "http://example.org:88/folder/")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><audio src="https://website/folder/audio.mp3"></audio></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><audio src="/folder/proxy/EmBTvmU5B17wGuONkeknkptYopW_Tl6Y6_W8oYbN_Xs=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9hdWRpby5tcDM="></audio></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_BasePath_All_Video(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+	os.Setenv("BASE_URL", "http://example.org:88/folder/")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="https://website/folder/video.mp4"></video></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><video src="/folder/proxy/rg7VlAFvCFDe4kxg3YJRgtty6AblMwBVGXsn0WWl89k=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci92aWRlby5tcDQ="></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_BasePath_All_VideoPoster(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+	os.Setenv("BASE_URL", "http://example.org:88/folder/")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="https://website/folder/video.mp4" poster="https://website/folder/poster.png"></video></p>`
+	output := RewriteDocumentWithRelativeProxyURL(input)
+	expected := `<p><video src="/folder/proxy/rg7VlAFvCFDe4kxg3YJRgtty6AblMwBVGXsn0WWl89k=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci92aWRlby5tcDQ=" poster="/folder/proxy/u-yLZEYDELx9OlU9to8bt13iysttOWfYpqRfmQYkm3U=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9wb3N0ZXIucG5n"></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithAbsoluteProxyURL_BasePath_All_Image(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+	os.Setenv("BASE_URL", "http://example.org:88/folder/")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><img src="http://example.org:88/folder/proxy/LdPNR1GBDigeeNp2ArUQRyZsVqT_PWLfHGjYFrrWWIY=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9pbWFnZS5wbmc=" alt="Test"/></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithAbsoluteProxyURL_BasePath_All_Audio(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "audio")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+	os.Setenv("BASE_URL", "http://example.org:88/folder/")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><audio src="https://website/folder/audio.mp3"></audio></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><audio src="http://example.org:88/folder/proxy/EmBTvmU5B17wGuONkeknkptYopW_Tl6Y6_W8oYbN_Xs=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9hdWRpby5tcDM="></audio></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithAbsoluteProxyURL_BasePath_All_Video(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+	os.Setenv("BASE_URL", "http://example.org:88/folder/")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="https://website/folder/video.mp4"></video></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><video src="http://example.org:88/folder/proxy/rg7VlAFvCFDe4kxg3YJRgtty6AblMwBVGXsn0WWl89k=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci92aWRlby5tcDQ="></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithAbsoluteProxyURL_BasePath_All_VideoPoster(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+	os.Setenv("BASE_URL", "http://example.org:88/folder/")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><video src="https://website/folder/video.mp4" poster="https://website/folder/poster.png"></video></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><video src="http://example.org:88/folder/proxy/rg7VlAFvCFDe4kxg3YJRgtty6AblMwBVGXsn0WWl89k=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci92aWRlby5tcDQ=" poster="http://example.org:88/folder/proxy/u-yLZEYDELx9OlU9to8bt13iysttOWfYpqRfmQYkm3U=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9wb3N0ZXIucG5n"></video></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestRewriteDocumentWithRelativeProxyURL_CustomMediaProxy_All_Image(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 	os.Setenv("MEDIA_PROXY_CUSTOM_URL", "https://proxy-example/proxy")
 
 	var err error
 	parser := config.NewConfigParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
 	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
+		t.Fatalf(`Config parsing failure: %v`, err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
 	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
+	output := RewriteDocumentWithRelativeProxyURL(input)
 	expected := `<p><img src="https://proxy-example/proxy/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9pbWFnZS5wbmc=" alt="Test"/></p>`
 
 	if expected != output {
@@ -269,7 +780,30 @@ func TestProxyFilterWithHttpsAlwaysAndCustomProxyServer(t *testing.T) {
 	}
 }
 
-func TestProxyFilterWithHttpsAlwaysAndIncorrectCustomProxyServer(t *testing.T) {
+func TestRewriteDocumentWithAbsoluteProxyURL_CustomMediaProxy_All_Image(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("MEDIA_PROXY_MODE", "all")
+	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
+	os.Setenv("MEDIA_PROXY_CUSTOM_URL", "https://proxy-example/proxy")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Config parsing failure: %v`, err)
+	}
+
+	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(input)
+	expected := `<p><img src="https://proxy-example/proxy/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9pbWFnZS5wbmc=" alt="Test"/></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestMediaProxyWithIncorrectCustomMediaProxy(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("MEDIA_PROXY_MODE", "all")
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
@@ -283,42 +817,7 @@ func TestProxyFilterWithHttpsAlwaysAndIncorrectCustomProxyServer(t *testing.T) {
 	}
 }
 
-func TestAbsoluteProxyFilterWithHttpsAlwaysAndCustomProxyServer(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("MEDIA_PROXY_MODE", "all")
-	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
-	os.Setenv("MEDIA_PROXY_CUSTOM_URL", "https://proxy-example/proxy")
-
-	var err error
-	parser := config.NewConfigParser()
-	config.Opts, err = parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
-	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithAbsoluteProxyURL(r, input)
-	expected := `<p><img src="https://proxy-example/proxy/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9pbWFnZS5wbmc=" alt="Test"/></p>`
-
-	if expected != output {
-		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
-	}
-}
-
-func TestProxyFilterWithHttpInvalid(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("MEDIA_PROXY_MODE", "invalid")
-	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
-
-	if _, err := config.NewConfigParser().ParseEnvironmentVariables(); err == nil {
-		t.Fatalf(`Parsing should have failed (MEDIA_PROXY_MODE=%q): %q`, os.Getenv("MEDIA_PROXY_MODE"), config.Opts.MediaProxyMode())
-	}
-}
-
-func TestProxyFilterWithSrcset(t *testing.T) {
+func TestMediaProxyFilterWithImageSrcset(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("MEDIA_PROXY_MODE", "all")
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
@@ -330,20 +829,17 @@ func TestProxyFilterWithSrcset(t *testing.T) {
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
-
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
 
 	input := `<p><img src="http://website/folder/image.png" srcset="http://website/folder/image2.png 656w, http://website/folder/image3.png 360w" alt="test"></p>`
 	expected := `<p><img src="/proxy/okK5PsdNY8F082UMQEAbLPeUFfbe2WnNfInNmR9T4WA=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlLnBuZw==" srcset="/proxy/aY5Hb4urDnUCly2vTJ7ExQeeaVS-52O7kjUr2v9VrAs=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlMi5wbmc= 656w, /proxy/QgAmrJWiAud_nNAsz3F8OTxaIofwAiO36EDzH_YfMzo=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlMy5wbmc= 360w" alt="test"/></p>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
+	output := RewriteDocumentWithRelativeProxyURL(input)
 
 	if expected != output {
 		t.Errorf(`Not expected output: got %s`, output)
 	}
 }
 
-func TestProxyFilterWithEmptySrcset(t *testing.T) {
+func TestMediaProxyFilterWithEmptySrcset(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("MEDIA_PROXY_MODE", "all")
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
@@ -356,12 +852,9 @@ func TestProxyFilterWithEmptySrcset(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
 	input := `<p><img src="http://website/folder/image.png" srcset="" alt="test"></p>`
 	expected := `<p><img src="/proxy/okK5PsdNY8F082UMQEAbLPeUFfbe2WnNfInNmR9T4WA=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlLnBuZw==" srcset="" alt="test"/></p>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
+	output := RewriteDocumentWithRelativeProxyURL(input)
 
 	if expected != output {
 		t.Errorf(`Not expected output: got %s`, output)
@@ -381,12 +874,9 @@ func TestProxyFilterWithPictureSource(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
 	input := `<picture><source srcset="http://website/folder/image2.png 656w,   http://website/folder/image3.png 360w, https://website/some,image.png 2x"></picture>`
 	expected := `<picture><source srcset="/proxy/aY5Hb4urDnUCly2vTJ7ExQeeaVS-52O7kjUr2v9VrAs=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlMi5wbmc= 656w, /proxy/QgAmrJWiAud_nNAsz3F8OTxaIofwAiO36EDzH_YfMzo=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlMy5wbmc= 360w, /proxy/ZIw0hv8WhSTls5aSqhnFaCXlUrKIqTnBRaY0-NaLnds=/aHR0cHM6Ly93ZWJzaXRlL3NvbWUsaW1hZ2UucG5n 2x"/></picture>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
+	output := RewriteDocumentWithRelativeProxyURL(input)
 
 	if expected != output {
 		t.Errorf(`Not expected output: got %s`, output)
@@ -406,19 +896,16 @@ func TestProxyFilterOnlyNonHTTPWithPictureSource(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
 	input := `<picture><source srcset="http://website/folder/image2.png 656w, https://website/some,image.png 2x"></picture>`
 	expected := `<picture><source srcset="/proxy/aY5Hb4urDnUCly2vTJ7ExQeeaVS-52O7kjUr2v9VrAs=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlMi5wbmc= 656w, https://website/some,image.png 2x"/></picture>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
+	output := RewriteDocumentWithRelativeProxyURL(input)
 
 	if expected != output {
 		t.Errorf(`Not expected output: got %s`, output)
 	}
 }
 
-func TestProxyWithImageDataURL(t *testing.T) {
+func TestMediaProxyWithImageDataURL(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("MEDIA_PROXY_MODE", "all")
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
@@ -435,14 +922,14 @@ func TestProxyWithImageDataURL(t *testing.T) {
 
 	input := `<img src="data:image/gif;base64,test">`
 	expected := `<img src="data:image/gif;base64,test"/>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
+	output := RewriteDocumentWithRelativeProxyURL(input)
 
 	if expected != output {
 		t.Errorf(`Not expected output: got %s`, output)
 	}
 }
 
-func TestProxyWithImageSourceDataURL(t *testing.T) {
+func TestMediaProxyWithImageSourceDataURL(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("MEDIA_PROXY_MODE", "all")
 	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
@@ -459,82 +946,7 @@ func TestProxyWithImageSourceDataURL(t *testing.T) {
 
 	input := `<picture><source srcset="data:image/gif;base64,test"/></picture>`
 	expected := `<picture><source srcset="data:image/gif;base64,test"/></picture>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
-
-	if expected != output {
-		t.Errorf(`Not expected output: got %s`, output)
-	}
-}
-
-func TestProxyFilterWithVideo(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("MEDIA_PROXY_MODE", "all")
-	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "video")
-	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
-
-	var err error
-	parser := config.NewConfigParser()
-	config.Opts, err = parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
-	input := `<video poster="https://example.com/img.png" src="https://example.com/video.mp4"></video>`
-	expected := `<video poster="/proxy/aDFfroYL57q5XsojIzATT6OYUCkuVSPXYJQAVrotnLw=/aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWcucG5n" src="/proxy/0y3LR8zlx8S8qJkj1qWFOO6x3a-5yf2gLWjGIJV5yyc=/aHR0cHM6Ly9leGFtcGxlLmNvbS92aWRlby5tcDQ="></video>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
-
-	if expected != output {
-		t.Errorf(`Not expected output: got %s`, output)
-	}
-}
-
-func TestProxyFilterVideoPoster(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("MEDIA_PROXY_MODE", "all")
-	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image")
-	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
-
-	var err error
-	parser := config.NewConfigParser()
-	config.Opts, err = parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
-	input := `<video poster="https://example.com/img.png" src="https://example.com/video.mp4"></video>`
-	expected := `<video poster="/proxy/aDFfroYL57q5XsojIzATT6OYUCkuVSPXYJQAVrotnLw=/aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWcucG5n" src="https://example.com/video.mp4"></video>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
-
-	if expected != output {
-		t.Errorf(`Not expected output: got %s`, output)
-	}
-}
-
-func TestProxyFilterVideoPosterOnce(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("MEDIA_PROXY_MODE", "all")
-	os.Setenv("MEDIA_PROXY_RESOURCE_TYPES", "image,video")
-	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
-
-	var err error
-	parser := config.NewConfigParser()
-	config.Opts, err = parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
-	input := `<video poster="https://example.com/img.png" src="https://example.com/video.mp4"></video>`
-	expected := `<video poster="/proxy/aDFfroYL57q5XsojIzATT6OYUCkuVSPXYJQAVrotnLw=/aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWcucG5n" src="/proxy/0y3LR8zlx8S8qJkj1qWFOO6x3a-5yf2gLWjGIJV5yyc=/aHR0cHM6Ly9leGFtcGxlLmNvbS92aWRlby5tcDQ="></video>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
+	output := RewriteDocumentWithRelativeProxyURL(input)
 
 	if expected != output {
 		t.Errorf(`Not expected output: got %s`, output)

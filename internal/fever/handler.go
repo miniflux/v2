@@ -13,19 +13,19 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/integration"
+	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 )
 
 // NewHandler returns an http.Handler for Fever API calls.
-func NewHandler(store *storage.Storage, proxyRewriter func(string) string) http.Handler {
-	h := &feverHandler{store: store, proxyRewriter: proxyRewriter}
+func NewHandler(store *storage.Storage) http.Handler {
+	h := &feverHandler{store: store}
 	return http.HandlerFunc(h.serve)
 }
 
 type feverHandler struct {
-	store         *storage.Storage
-	proxyRewriter func(string) string
+	store *storage.Storage
 }
 
 func (h *feverHandler) serve(w http.ResponseWriter, r *http.Request) {
@@ -318,7 +318,7 @@ func (h *feverHandler) handleItems(w http.ResponseWriter, r *http.Request) {
 			FeedID:    entry.FeedID,
 			Title:     entry.Title,
 			Author:    entry.Author,
-			HTML:      h.proxyRewriter(entry.Content),
+			HTML:      mediaproxy.RewriteDocumentWithAbsoluteProxyURL(entry.Content),
 			URL:       entry.URL,
 			IsSaved:   isSaved,
 			IsRead:    isRead,

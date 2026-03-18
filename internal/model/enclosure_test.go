@@ -4,11 +4,9 @@
 package model
 
 import (
-	"net/http"
 	"os"
 	"testing"
 
-	"github.com/gorilla/mux"
 	"miniflux.app/v2/internal/config"
 )
 
@@ -296,9 +294,6 @@ func TestEnclosure_ProxifyEnclosureURL(t *testing.T) {
 		t.Fatalf(`Config parsing failure: %v`, err)
 	}
 
-	router := mux.NewRouter()
-	router.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
 	testCases := []struct {
 		name                    string
 		url                     string
@@ -391,7 +386,7 @@ func TestEnclosure_ProxifyEnclosureURL(t *testing.T) {
 			originalURL := enclosure.URL
 
 			// Call the method
-			enclosure.ProxifyEnclosureURL(router, tc.mediaProxyOption, tc.mediaProxyResourceTypes)
+			enclosure.ProxifyEnclosureURL(tc.mediaProxyOption, tc.mediaProxyResourceTypes)
 
 			// Check if URL changed as expected
 			urlChanged := enclosure.URL != originalURL
@@ -425,9 +420,6 @@ func TestEnclosureList_ProxifyEnclosureURL(t *testing.T) {
 	if err != nil {
 		t.Fatalf(`Config parsing failure: %v`, err)
 	}
-
-	router := mux.NewRouter()
-	router.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
 
 	testCases := []struct {
 		name                    string
@@ -507,7 +499,7 @@ func TestEnclosureList_ProxifyEnclosureURL(t *testing.T) {
 			}
 
 			// Call the method
-			tc.enclosures.ProxifyEnclosureURL(router, tc.mediaProxyOption, tc.mediaProxyResourceTypes)
+			tc.enclosures.ProxifyEnclosureURL(tc.mediaProxyOption, tc.mediaProxyResourceTypes)
 
 			// Count how many URLs actually changed
 			changedCount := 0
@@ -541,8 +533,6 @@ func TestEnclosure_ProxifyEnclosureURL_EdgeCases(t *testing.T) {
 		t.Fatalf(`Config parsing failure: %v`, err)
 	}
 
-	router := mux.NewRouter()
-	router.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
 	t.Run("Empty resource types slice", func(t *testing.T) {
 		enclosure := &Enclosure{
 			URL:      "http://example.com/audio.mp3",
@@ -550,7 +540,7 @@ func TestEnclosure_ProxifyEnclosureURL_EdgeCases(t *testing.T) {
 		}
 
 		originalURL := enclosure.URL
-		enclosure.ProxifyEnclosureURL(router, "all", []string{})
+		enclosure.ProxifyEnclosureURL("all", []string{})
 
 		// With empty resource types, URL should not change
 		if enclosure.URL != originalURL {
@@ -565,7 +555,7 @@ func TestEnclosure_ProxifyEnclosureURL_EdgeCases(t *testing.T) {
 		}
 
 		originalURL := enclosure.URL
-		enclosure.ProxifyEnclosureURL(router, "all", nil)
+		enclosure.ProxifyEnclosureURL("all", nil)
 
 		// With nil resource types, URL should not change
 		if enclosure.URL != originalURL {
@@ -579,7 +569,7 @@ func TestEnclosure_ProxifyEnclosureURL_EdgeCases(t *testing.T) {
 		}
 
 		originalURL := enclosure.URL
-		enclosure.ProxifyEnclosureURL(router, "invalid-mode", []string{"audio"})
+		enclosure.ProxifyEnclosureURL("invalid-mode", []string{"audio"})
 
 		// With invalid proxy mode, the function still proxifies non-HTTPS URLs
 		// because shouldProxifyURL defaults to checking URL scheme

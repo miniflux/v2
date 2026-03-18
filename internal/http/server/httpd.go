@@ -18,8 +18,6 @@ import (
 	"miniflux.app/v2/internal/fever"
 	"miniflux.app/v2/internal/googlereader"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/mediaproxy"
-	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui"
 	"miniflux.app/v2/internal/worker"
@@ -244,20 +242,10 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 	// Fever API routing
 	feverSubrouter := subrouter.PathPrefix("/fever").Subrouter()
 	feverSubrouter.Use(fever.Middleware(store))
-	feverSubrouter.Handle("/", fever.NewHandler(store, func(content string) string {
-		return mediaproxy.RewriteDocumentWithAbsoluteProxyURL(subrouter, content)
-	})).Name("feverEndpoint")
+	feverSubrouter.Handle("/", fever.NewHandler(store)).Name("feverEndpoint")
 
 	// Google Reader API routing
-	googleReaderHandler := http.StripPrefix(config.Opts.BasePath(), googlereader.NewHandler(
-		store,
-		func(content string) string {
-			return mediaproxy.RewriteDocumentWithAbsoluteProxyURL(subrouter, content)
-		},
-		func(el model.EnclosureList) {
-			el.ProxifyEnclosureURL(subrouter, config.Opts.MediaProxyMode(), config.Opts.MediaProxyResourceTypes())
-		},
-	))
+	googleReaderHandler := http.StripPrefix(config.Opts.BasePath(), googlereader.NewHandler(store))
 	subrouter.HandleFunc("/accounts/ClientLogin", googleReaderHandler.ServeHTTP).Methods(http.MethodPost).Name("ClientLogin")
 	subrouter.PathPrefix("/reader/api/0").Handler(googleReaderHandler)
 
