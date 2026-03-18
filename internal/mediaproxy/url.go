@@ -24,10 +24,12 @@ func ProxifyRelativeURL(router *mux.Router, mediaURL string) string {
 		return proxifyURLWithCustomProxy(mediaURL, customProxyURL)
 	}
 
+	mediaURLBytes := []byte(mediaURL)
+
 	mac := hmac.New(sha256.New, config.Opts.MediaProxyPrivateKey())
-	mac.Write([]byte(mediaURL))
+	mac.Write(mediaURLBytes)
 	digest := mac.Sum(nil)
-	return route.Path(router, "proxy", "encodedDigest", base64.URLEncoding.EncodeToString(digest), "encodedURL", base64.URLEncoding.EncodeToString([]byte(mediaURL)))
+	return route.Path(router, "proxy", "encodedDigest", base64.URLEncoding.EncodeToString(digest), "encodedURL", base64.URLEncoding.EncodeToString(mediaURLBytes))
 }
 
 func ProxifyAbsoluteURL(router *mux.Router, mediaURL string) string {
