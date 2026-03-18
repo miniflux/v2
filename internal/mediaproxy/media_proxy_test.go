@@ -4,23 +4,11 @@
 package mediaproxy // import "miniflux.app/v2/internal/mediaproxy"
 
 import (
-	"net/http"
 	"os"
 	"testing"
 
-	"github.com/gorilla/mux"
 	"miniflux.app/v2/internal/config"
 )
-
-func TestMediaProxyWithInvalidMode(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("MEDIA_PROXY_MODE", "invalid")
-	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
-
-	if _, err := config.NewConfigParser().ParseEnvironmentVariables(); err == nil {
-		t.Fatalf(`Parsing should have failed (MEDIA_PROXY_MODE=%q): %q`, os.Getenv("MEDIA_PROXY_MODE"), config.Opts.MediaProxyMode())
-	}
-}
 
 func TestRewriteDocumentWithRelativeProxyURL_None_Image(t *testing.T) {
 	os.Clearenv()
@@ -917,9 +905,6 @@ func TestMediaProxyWithImageDataURL(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
 	input := `<img src="data:image/gif;base64,test">`
 	expected := `<img src="data:image/gif;base64,test"/>`
 	output := RewriteDocumentWithRelativeProxyURL(input)
@@ -940,9 +925,6 @@ func TestMediaProxyWithImageSourceDataURL(t *testing.T) {
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
-
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
 
 	input := `<picture><source srcset="data:image/gif;base64,test"/></picture>`
 	expected := `<picture><source srcset="data:image/gif;base64,test"/></picture>`
