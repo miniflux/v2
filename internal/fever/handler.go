@@ -13,28 +13,22 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/integration"
-	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
-
-	"github.com/gorilla/mux"
 )
 
-// Serve handles Fever API calls.
-func Serve(router *mux.Router, store *storage.Storage) {
-	handler := &handler{store, router}
-
-	sr := router.PathPrefix("/fever").Subrouter()
-	sr.Use(newMiddleware(store).serve)
-	sr.HandleFunc("/", handler.serve).Name("feverEndpoint")
+// NewHandler returns an http.Handler for Fever API calls.
+func NewHandler(store *storage.Storage, proxyRewriter func(string) string) http.Handler {
+	h := &feverHandler{store: store, proxyRewriter: proxyRewriter}
+	return http.HandlerFunc(h.serve)
 }
 
-type handler struct {
-	store  *storage.Storage
-	router *mux.Router
+type feverHandler struct {
+	store         *storage.Storage
+	proxyRewriter func(string) string
 }
 
-func (h *handler) serve(w http.ResponseWriter, r *http.Request) {
+func (h *feverHandler) serve(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case request.HasQueryParam(r, "groups"):
 		h.handleGroups(w, r)
@@ -78,7 +72,7 @@ an is_spark equal to 0.
 The “Sparks” super group is not included in this response and is composed of all feeds with an
 is_spark equal to 1.
 */
-func (h *handler) handleGroups(w http.ResponseWriter, r *http.Request) {
+func (h *feverHandler) handleGroups(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	slog.Debug("[Fever] Fetching groups",
 		slog.Int64("user_id", userID),
@@ -101,7 +95,7 @@ func (h *handler) handleGroups(w http.ResponseWriter, r *http.Request) {
 		result.Groups = append(result.Groups, group{ID: category.ID, Title: category.Title})
 	}
 
-	result.FeedsGroups = h.buildFeedGroups(feeds)
+	result.FeedsGroups = buildFeedGroups(feeds)
 	result.SetCommonValues()
 	response.JSON(w, r, result)
 }
@@ -130,7 +124,7 @@ should be limited to feeds with an is_spark equal to 0.
 
 For the “Sparks” super group the items should be limited to feeds with an is_spark equal to 1.
 */
-func (h *handler) handleFeeds(w http.ResponseWriter, r *http.Request) {
+func (h *feverHandler) handleFeeds(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	slog.Debug("[Fever] Fetching feeds",
 		slog.Int64("user_id", userID),
@@ -161,7 +155,7 @@ func (h *handler) handleFeeds(w http.ResponseWriter, r *http.Request) {
 		result.Feeds = append(result.Feeds, subscription)
 	}
 
-	result.FeedsGroups = h.buildFeedGroups(feeds)
+	result.FeedsGroups = buildFeedGroups(feeds)
 	result.SetCommonValues()
 	response.JSON(w, r, result)
 }
@@ -185,7 +179,7 @@ A PHP/HTML example:
 
 	echo '<img src="data:'.$favicon['data'].'">';
 */
-func (h *handler) handleFavicons(w http.ResponseWriter, r *http.Request) {
+func (h *feverHandler) handleFavicons(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	slog.Debug("[Fever] Fetching favicons",
 		slog.Int64("user_id", userID),
@@ -239,7 +233,7 @@ Three optional arguments control determine the items included in the response.
 	Use the with_ids argument with a comma-separated list of item ids to request (a maximum of 50) specific items.
 	(added in API version 2)
 */
-func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
+func (h *feverHandler) handleItems(w http.ResponseWriter, r *http.Request) {
 	var result itemsResponse
 
 	userID := request.UserID(r)
@@ -324,7 +318,7 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 			FeedID:    entry.FeedID,
 			Title:     entry.Title,
 			Author:    entry.Author,
-			HTML:      mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entry.Content),
+			HTML:      h.proxyRewriter(entry.Content),
 			URL:       entry.URL,
 			IsSaved:   isSaved,
 			IsRead:    isRead,
@@ -344,7 +338,7 @@ A request with the unread_item_ids argument will return one additional member:
 
 	unread_item_ids (string/comma-separated list of positive integers)
 */
-func (h *handler) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
+func (h *feverHandler) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	slog.Debug("[Fever] Fetching unread items",
 		slog.Int64("user_id", userID),
@@ -377,7 +371,7 @@ with the remote Fever installation.
 
 	saved_item_ids (string/comma-separated list of positive integers)
 */
-func (h *handler) handleSavedItems(w http.ResponseWriter, r *http.Request) {
+func (h *feverHandler) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	slog.Debug("[Fever] Fetching saved items",
 		slog.Int64("user_id", userID),
@@ -407,7 +401,7 @@ mark=item
 as=? where ? is replaced with read, saved or unsaved
 id=? where ? is replaced with the id of the item to modify
 */
-func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
+func (h *feverHandler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	slog.Debug("[Fever] Receiving mark=item call",
 		slog.Int64("user_id", userID),
@@ -489,7 +483,7 @@ as=read
 id=? where ? is replaced with the id of the feed or group to modify
 before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
 */
-func (h *handler) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
+func (h *feverHandler) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	feedID := request.FormInt64Value(r, "id")
 	before := time.Unix(request.FormInt64Value(r, "before"), 0)
@@ -504,16 +498,10 @@ func (h *handler) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go func() {
-		if err := h.store.MarkFeedAsRead(userID, feedID, before); err != nil {
-			slog.Error("[Fever] Unable to mark feed as read",
-				slog.Int64("user_id", userID),
-				slog.Int64("feed_id", feedID),
-				slog.Time("before_ts", before),
-				slog.Any("error", err),
-			)
-		}
-	}()
+	if err := h.store.MarkFeedAsRead(userID, feedID, before); err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
 
 	response.JSON(w, r, newBaseResponse())
 }
@@ -524,39 +512,35 @@ as=read
 id=? where ? is replaced with the id of the feed or group to modify
 before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
 */
-func (h *handler) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
+func (h *feverHandler) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	groupID := request.FormInt64Value(r, "id")
-	before := time.Unix(request.FormInt64Value(r, "before"), 0)
-
-	slog.Debug("[Fever] Mark group as read before a given date",
-		slog.Int64("user_id", userID),
-		slog.Int64("group_id", groupID),
-		slog.Time("before_ts", before),
-	)
 
 	if groupID < 0 {
 		return
 	}
 
-	go func() {
-		var err error
+	var err error
 
-		if groupID == 0 {
-			err = h.store.MarkAllAsRead(userID)
-		} else {
-			err = h.store.MarkCategoryAsRead(userID, groupID, before)
-		}
+	if groupID == 0 {
+		err = h.store.MarkAllAsRead(userID)
+		slog.Debug("[Fever] Mark all items as read",
+			slog.Int64("user_id", userID),
+		)
+	} else {
+		before := time.Unix(request.FormInt64Value(r, "before"), 0)
+		err = h.store.MarkCategoryAsRead(userID, groupID, before)
+		slog.Debug("[Fever] Mark group as read before a given date",
+			slog.Int64("user_id", userID),
+			slog.Int64("group_id", groupID),
+			slog.Time("before_ts", before),
+		)
+	}
 
-		if err != nil {
-			slog.Error("[Fever] Unable to mark group as read",
-				slog.Int64("user_id", userID),
-				slog.Int64("group_id", groupID),
-				slog.Time("before_ts", before),
-				slog.Any("error", err),
-			)
-		}
-	}()
+	if err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
 
 	response.JSON(w, r, newBaseResponse())
 }
@@ -567,7 +551,7 @@ A feeds_group object has the following members:
 	group_id (positive integer)
 	feed_ids (string/comma-separated list of positive integers)
 */
-func (h *handler) buildFeedGroups(feeds model.Feeds) []feedsGroups {
+func buildFeedGroups(feeds model.Feeds) []feedsGroups {
 	feedsGroupedByCategory := make(map[int64][]string, len(feeds))
 	for _, feed := range feeds {
 		feedsGroupedByCategory[feed.Category.ID] = append(feedsGroupedByCategory[feed.Category.ID], strconv.FormatInt(feed.ID, 10))
