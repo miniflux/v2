@@ -15,6 +15,7 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/integration"
+	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/proxyrotator"
 	"miniflux.app/v2/internal/reader/fetcher"
@@ -34,11 +35,9 @@ var (
 
 // NewHandler returns an http.Handler that handles Google Reader API calls.
 // The returned handler expects the base path to be stripped from the request URL.
-func NewHandler(store *storage.Storage, rewriteContent func(string) string, proxifyEnclosures func(model.EnclosureList)) http.Handler {
+func NewHandler(store *storage.Storage) http.Handler {
 	h := &greaderHandler{
-		store:             store,
-		rewriteContent:    rewriteContent,
-		proxifyEnclosures: proxifyEnclosures,
+		store: store,
 	}
 
 	authMiddleware := newAuthMiddleware(store)
@@ -67,9 +66,7 @@ func NewHandler(store *storage.Storage, rewriteContent func(string) string, prox
 }
 
 type greaderHandler struct {
-	store             *storage.Storage
-	rewriteContent    func(string) string
-	proxifyEnclosures func(model.EnclosureList)
+	store *storage.Storage
 }
 
 func (h *greaderHandler) clientLoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -696,8 +693,8 @@ func (h *greaderHandler) streamItemContentsHandler(w http.ResponseWriter, r *htt
 			categories = append(categories, userStarred)
 		}
 
-		entry.Content = h.rewriteContent(entry.Content)
-		h.proxifyEnclosures(entry.Enclosures)
+		entry.Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(entry.Content)
+		entry.Enclosures.ProxifyEnclosureURL(config.Opts.MediaProxyMode(), config.Opts.MediaProxyResourceTypes())
 
 		result.Items[i] = contentItem{
 			ID:            convertEntryIDToLongFormItemID(entry.ID),

@@ -36,8 +36,8 @@ func (h *handler) getEntryFromBuilder(w http.ResponseWriter, r *http.Request, b 
 		return
 	}
 
-	entry.Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entry.Content)
-	entry.Enclosures.ProxifyEnclosureURL(h.router, config.Opts.MediaProxyMode(), config.Opts.MediaProxyResourceTypes())
+	entry.Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(entry.Content)
+	entry.Enclosures.ProxifyEnclosureURL(config.Opts.MediaProxyMode(), config.Opts.MediaProxyResourceTypes())
 
 	response.JSON(w, r, entry)
 }
@@ -166,7 +166,7 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	}
 
 	for i := range entries {
-		entries[i].Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entries[i].Content)
+		entries[i].Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(entries[i].Content)
 	}
 
 	response.JSON(w, r, &entriesResponse{Total: count, Entries: entries})
@@ -454,7 +454,7 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	response.JSON(w, r, entryContentResponse{Content: mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entry.Content), ReadingTime: entry.ReadingTime})
+	response.JSON(w, r, entryContentResponse{Content: mediaproxy.RewriteDocumentWithAbsoluteProxyURL(entry.Content), ReadingTime: entry.ReadingTime})
 }
 
 func (h *handler) flushHistory(w http.ResponseWriter, r *http.Request) {

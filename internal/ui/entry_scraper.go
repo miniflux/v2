@@ -65,5 +65,5 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 
 	readingTime := locale.NewPrinter(user.Language).Plural("entry.estimated_reading_time", entry.ReadingTime, entry.ReadingTime)
 
-	response.JSON(w, r, map[string]string{"content": mediaproxy.RewriteDocumentWithRelativeProxyURL(h.router, entry.Content), "reading_time": readingTime})
+	response.JSON(w, r, map[string]string{"content": mediaproxy.RewriteDocumentWithRelativeProxyURL(entry.Content), "reading_time": readingTime})
 }

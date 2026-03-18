@@ -67,14 +67,12 @@ func (f *funcMap) Map() template.FuncMap {
 		"safeHTML": func(str string) template.HTML {
 			return template.HTML(str)
 		},
-		"proxyFilter": func(data string) string {
-			return mediaproxy.RewriteDocumentWithRelativeProxyURL(f.router, data)
-		},
+		"proxyFilter": mediaproxy.RewriteDocumentWithRelativeProxyURL,
 		"proxyURL": func(link string) string {
 			mediaProxyMode := config.Opts.MediaProxyMode()
 
 			if mediaProxyMode == "all" || (mediaProxyMode != "none" && !urllib.IsHTTPS(link)) {
-				return mediaproxy.ProxifyRelativeURL(f.router, link)
+				return mediaproxy.ProxifyRelativeURL(link)
 			}
 
 			return link
