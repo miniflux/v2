@@ -17,15 +17,15 @@ import (
 	"miniflux.app/v2/internal/storage"
 )
 
-type middleware struct {
+type authMiddleware struct {
 	store *storage.Storage
 }
 
-func newMiddleware(s *storage.Storage) *middleware {
-	return &middleware{s}
+func newAuthMiddleware(s *storage.Storage) *authMiddleware {
+	return &authMiddleware{s}
 }
 
-func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
+func (m *authMiddleware) validateApiKey(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		clientIP := request.ClientIP(r)
 
