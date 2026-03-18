@@ -16,7 +16,7 @@ func Path(router *mux.Router, name string, args ...any) string {
 		panic("route not found: " + name)
 	}
 
-	var pairs []string
+	pairs := make([]string, 0, len(args))
 	for _, arg := range args {
 		switch param := arg.(type) {
 		case string:
