@@ -24,8 +24,7 @@ func FormInt64Value(r *http.Request, param string) int64 {
 
 // RouteInt64Param returns the named route parameter parsed as int64, or 0 when missing or invalid.
 func RouteInt64Param(r *http.Request, param string) int64 {
-	vars := mux.Vars(r)
-	value, err := strconv.ParseInt(vars[param], 10, 64)
+	value, err := strconv.ParseInt(routeParam(r, param), 10, 64)
 	if err != nil {
 		return 0
 	}
@@ -39,8 +38,7 @@ func RouteInt64Param(r *http.Request, param string) int64 {
 
 // RouteStringParam returns the named route parameter as a string.
 func RouteStringParam(r *http.Request, param string) string {
-	vars := mux.Vars(r)
-	return vars[param]
+	return routeParam(r, param)
 }
 
 // QueryStringParam returns the named query parameter, or defaultValue if it is empty.
@@ -128,4 +126,13 @@ func HasQueryParam(r *http.Request, param string) bool {
 	values := r.URL.Query()
 	_, ok := values[param]
 	return ok
+}
+
+func routeParam(r *http.Request, param string) string {
+	vars := mux.Vars(r)
+	if value, found := vars[param]; found {
+		return value
+	}
+
+	return r.PathValue(param)
 }
