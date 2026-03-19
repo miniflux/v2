@@ -5,11 +5,8 @@ package api // import "miniflux.app/v2/internal/api"
 
 import (
 	"net/http"
-	"runtime"
 
-	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/storage"
-	"miniflux.app/v2/internal/version"
 	"miniflux.app/v2/internal/worker"
 
 	"github.com/gorilla/mux"
@@ -31,66 +28,54 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	sr.Use(middleware.apiKeyAuth)
 	sr.Use(middleware.basicAuth)
 	sr.Methods(http.MethodOptions)
-	sr.HandleFunc("/users", handler.createUser).Methods(http.MethodPost)
-	sr.HandleFunc("/users", handler.users).Methods(http.MethodGet)
-	sr.HandleFunc("/users/{userID:[0-9]+}", handler.userByID).Methods(http.MethodGet)
-	sr.HandleFunc("/users/{userID:[0-9]+}", handler.updateUser).Methods(http.MethodPut)
-	sr.HandleFunc("/users/{userID:[0-9]+}", handler.removeUser).Methods(http.MethodDelete)
-	sr.HandleFunc("/users/{userID:[0-9]+}/mark-all-as-read", handler.markUserAsRead).Methods(http.MethodPut)
-	sr.HandleFunc("/users/{username}", handler.userByUsername).Methods(http.MethodGet)
-	sr.HandleFunc("/me", handler.currentUser).Methods(http.MethodGet)
-	sr.HandleFunc("/categories", handler.createCategory).Methods(http.MethodPost)
-	sr.HandleFunc("/categories", handler.getCategories).Methods(http.MethodGet)
-	sr.HandleFunc("/categories/{categoryID}", handler.updateCategory).Methods(http.MethodPut)
-	sr.HandleFunc("/categories/{categoryID}", handler.removeCategory).Methods(http.MethodDelete)
-	sr.HandleFunc("/categories/{categoryID}/mark-all-as-read", handler.markCategoryAsRead).Methods(http.MethodPut)
-	sr.HandleFunc("/categories/{categoryID}/feeds", handler.getCategoryFeeds).Methods(http.MethodGet)
-	sr.HandleFunc("/categories/{categoryID}/refresh", handler.refreshCategory).Methods(http.MethodPut)
-	sr.HandleFunc("/categories/{categoryID}/entries", handler.getCategoryEntries).Methods(http.MethodGet)
-	sr.HandleFunc("/categories/{categoryID}/entries/{entryID}", handler.getCategoryEntry).Methods(http.MethodGet)
-	sr.HandleFunc("/discover", handler.discoverSubscriptions).Methods(http.MethodPost)
-	sr.HandleFunc("/feeds", handler.createFeed).Methods(http.MethodPost)
-	sr.HandleFunc("/feeds", handler.getFeeds).Methods(http.MethodGet)
-	sr.HandleFunc("/feeds/counters", handler.fetchCounters).Methods(http.MethodGet)
-	sr.HandleFunc("/feeds/refresh", handler.refreshAllFeeds).Methods(http.MethodPut)
-	sr.HandleFunc("/feeds/{feedID}/refresh", handler.refreshFeed).Methods(http.MethodPut)
-	sr.HandleFunc("/feeds/{feedID}", handler.getFeed).Methods(http.MethodGet)
-	sr.HandleFunc("/feeds/{feedID}", handler.updateFeed).Methods(http.MethodPut)
-	sr.HandleFunc("/feeds/{feedID}", handler.removeFeed).Methods(http.MethodDelete)
-	sr.HandleFunc("/feeds/{feedID}/icon", handler.getIconByFeedID).Methods(http.MethodGet)
-	sr.HandleFunc("/feeds/{feedID}/mark-all-as-read", handler.markFeedAsRead).Methods(http.MethodPut)
-	sr.HandleFunc("/export", handler.exportFeeds).Methods(http.MethodGet)
-	sr.HandleFunc("/import", handler.importFeeds).Methods(http.MethodPost)
-	sr.HandleFunc("/feeds/{feedID}/entries", handler.getFeedEntries).Methods(http.MethodGet)
-	sr.HandleFunc("/feeds/{feedID}/entries/import", handler.importFeedEntry).Methods(http.MethodPost)
-	sr.HandleFunc("/feeds/{feedID}/entries/{entryID}", handler.getFeedEntry).Methods(http.MethodGet)
-	sr.HandleFunc("/entries", handler.getEntries).Methods(http.MethodGet)
-	sr.HandleFunc("/entries", handler.setEntryStatus).Methods(http.MethodPut)
-	sr.HandleFunc("/entries/{entryID}", handler.getEntry).Methods(http.MethodGet)
-	sr.HandleFunc("/entries/{entryID}", handler.updateEntry).Methods(http.MethodPut)
-	sr.HandleFunc("/entries/{entryID}/bookmark", handler.toggleStarred).Methods(http.MethodPut)
-	sr.HandleFunc("/entries/{entryID}/star", handler.toggleStarred).Methods(http.MethodPut)
-	sr.HandleFunc("/entries/{entryID}/save", handler.saveEntry).Methods(http.MethodPost)
-	sr.HandleFunc("/entries/{entryID}/fetch-content", handler.fetchContent).Methods(http.MethodGet)
-	sr.HandleFunc("/flush-history", handler.flushHistory).Methods(http.MethodPut, http.MethodDelete)
-	sr.HandleFunc("/icons/{iconID}", handler.getIconByIconID).Methods(http.MethodGet)
-	sr.HandleFunc("/enclosures/{enclosureID}", handler.getEnclosureByID).Methods(http.MethodGet)
-	sr.HandleFunc("/enclosures/{enclosureID}", handler.updateEnclosureByID).Methods(http.MethodPut)
-	sr.HandleFunc("/integrations/status", handler.getIntegrationsStatus).Methods(http.MethodGet)
+	sr.HandleFunc("/users", handler.createUserHandler).Methods(http.MethodPost)
+	sr.HandleFunc("/users", handler.usersHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/users/{userID:[0-9]+}", handler.userByIDHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/users/{userID:[0-9]+}", handler.updateUserHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/users/{userID:[0-9]+}", handler.removeUserHandler).Methods(http.MethodDelete)
+	sr.HandleFunc("/users/{userID:[0-9]+}/mark-all-as-read", handler.markUserAsReadHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/users/{username}", handler.userByUsernameHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/me", handler.currentUserHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/categories", handler.createCategoryHandler).Methods(http.MethodPost)
+	sr.HandleFunc("/categories", handler.getCategoriesHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/categories/{categoryID}", handler.updateCategoryHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/categories/{categoryID}", handler.removeCategoryHandler).Methods(http.MethodDelete)
+	sr.HandleFunc("/categories/{categoryID}/mark-all-as-read", handler.markCategoryAsReadHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/categories/{categoryID}/feeds", handler.getCategoryFeedsHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/categories/{categoryID}/refresh", handler.refreshCategoryHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/categories/{categoryID}/entries", handler.getCategoryEntriesHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/categories/{categoryID}/entries/{entryID}", handler.getCategoryEntryHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/discover", handler.discoverSubscriptionsHandler).Methods(http.MethodPost)
+	sr.HandleFunc("/feeds", handler.createFeedHandler).Methods(http.MethodPost)
+	sr.HandleFunc("/feeds", handler.getFeedsHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/feeds/counters", handler.fetchCountersHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/feeds/refresh", handler.refreshAllFeedsHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/feeds/{feedID}/refresh", handler.refreshFeedHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/feeds/{feedID}", handler.getFeedHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/feeds/{feedID}", handler.updateFeedHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/feeds/{feedID}", handler.removeFeedHandler).Methods(http.MethodDelete)
+	sr.HandleFunc("/feeds/{feedID}/icon", handler.getIconByFeedIDHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/feeds/{feedID}/mark-all-as-read", handler.markFeedAsReadHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/export", handler.exportFeedsHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/import", handler.importFeedsHandler).Methods(http.MethodPost)
+	sr.HandleFunc("/feeds/{feedID}/entries", handler.getFeedEntriesHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/feeds/{feedID}/entries/import", handler.importFeedEntryHandler).Methods(http.MethodPost)
+	sr.HandleFunc("/feeds/{feedID}/entries/{entryID}", handler.getFeedEntryHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/entries", handler.getEntriesHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/entries", handler.setEntryStatusHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/entries/{entryID}", handler.getEntryHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/entries/{entryID}", handler.updateEntryHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/entries/{entryID}/bookmark", handler.toggleStarredHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/entries/{entryID}/star", handler.toggleStarredHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/entries/{entryID}/save", handler.saveEntryHandler).Methods(http.MethodPost)
+	sr.HandleFunc("/entries/{entryID}/fetch-content", handler.fetchContentHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/flush-history", handler.flushHistoryHandler).Methods(http.MethodPut, http.MethodDelete)
+	sr.HandleFunc("/icons/{iconID}", handler.getIconByIconIDHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/enclosures/{enclosureID}", handler.getEnclosureByIDHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/enclosures/{enclosureID}", handler.updateEnclosureByIDHandler).Methods(http.MethodPut)
+	sr.HandleFunc("/integrations/status", handler.getIntegrationsStatusHandler).Methods(http.MethodGet)
 	sr.HandleFunc("/version", handler.versionHandler).Methods(http.MethodGet)
-	sr.HandleFunc("/api-keys", handler.createAPIKey).Methods(http.MethodPost)
-	sr.HandleFunc("/api-keys", handler.getAPIKeys).Methods(http.MethodGet)
-	sr.HandleFunc("/api-keys/{apiKeyID}", handler.deleteAPIKey).Methods(http.MethodDelete)
-}
-
-func (h *handler) versionHandler(w http.ResponseWriter, r *http.Request) {
-	response.JSON(w, r, &versionResponse{
-		Version:   version.Version,
-		Commit:    version.Commit,
-		BuildDate: version.BuildDate,
-		GoVersion: runtime.Version(),
-		Compiler:  runtime.Compiler,
-		Arch:      runtime.GOARCH,
-		OS:        runtime.GOOS,
-	})
+	sr.HandleFunc("/api-keys", handler.createAPIKeyHandler).Methods(http.MethodPost)
+	sr.HandleFunc("/api-keys", handler.getAPIKeysHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/api-keys/{apiKeyID}", handler.deleteAPIKeyHandler).Methods(http.MethodDelete)
 }

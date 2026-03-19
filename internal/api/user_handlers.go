@@ -14,7 +14,7 @@ import (
 	"miniflux.app/v2/internal/validator"
 )
 
-func (h *handler) currentUser(w http.ResponseWriter, r *http.Request) {
+func (h *handler) currentUserHandler(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		response.JSONServerError(w, r, err)
@@ -24,7 +24,7 @@ func (h *handler) currentUser(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, user)
 }
 
-func (h *handler) createUser(w http.ResponseWriter, r *http.Request) {
+func (h *handler) createUserHandler(w http.ResponseWriter, r *http.Request) {
 	if !request.IsAdminUser(r) {
 		response.JSONForbidden(w, r)
 		return
@@ -50,7 +50,7 @@ func (h *handler) createUser(w http.ResponseWriter, r *http.Request) {
 	response.JSONCreated(w, r, user)
 }
 
-func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
+func (h *handler) updateUserHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.RouteInt64Param(r, "userID")
 
 	var userModificationRequest model.UserModificationRequest
@@ -96,7 +96,7 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 	response.JSONCreated(w, r, originalUser)
 }
 
-func (h *handler) markUserAsRead(w http.ResponseWriter, r *http.Request) {
+func (h *handler) markUserAsReadHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.RouteInt64Param(r, "userID")
 	if userID != request.UserID(r) {
 		response.JSONForbidden(w, r)
@@ -116,7 +116,7 @@ func (h *handler) markUserAsRead(w http.ResponseWriter, r *http.Request) {
 	response.JSONNoContent(w, r)
 }
 
-func (h *handler) getIntegrationsStatus(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getIntegrationsStatusHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 
 	if _, err := h.store.UserByID(userID); err != nil {
@@ -129,7 +129,7 @@ func (h *handler) getIntegrationsStatus(w http.ResponseWriter, r *http.Request) 
 	response.JSON(w, r, integrationsStatusResponse{HasIntegrations: hasIntegrations})
 }
 
-func (h *handler) users(w http.ResponseWriter, r *http.Request) {
+func (h *handler) usersHandler(w http.ResponseWriter, r *http.Request) {
 	if !request.IsAdminUser(r) {
 		response.JSONForbidden(w, r)
 		return
@@ -145,7 +145,7 @@ func (h *handler) users(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, users)
 }
 
-func (h *handler) userByID(w http.ResponseWriter, r *http.Request) {
+func (h *handler) userByIDHandler(w http.ResponseWriter, r *http.Request) {
 	if !request.IsAdminUser(r) {
 		response.JSONForbidden(w, r)
 		return
@@ -167,7 +167,7 @@ func (h *handler) userByID(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, user)
 }
 
-func (h *handler) userByUsername(w http.ResponseWriter, r *http.Request) {
+func (h *handler) userByUsernameHandler(w http.ResponseWriter, r *http.Request) {
 	if !request.IsAdminUser(r) {
 		response.JSONForbidden(w, r)
 		return
@@ -188,7 +188,7 @@ func (h *handler) userByUsername(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, user)
 }
 
-func (h *handler) removeUser(w http.ResponseWriter, r *http.Request) {
+func (h *handler) removeUserHandler(w http.ResponseWriter, r *http.Request) {
 	if !request.IsAdminUser(r) {
 		response.JSONForbidden(w, r)
 		return

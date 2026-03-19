@@ -14,7 +14,7 @@ import (
 	"miniflux.app/v2/internal/validator"
 )
 
-func (h *handler) getEnclosureByID(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getEnclosureByIDHandler(w http.ResponseWriter, r *http.Request) {
 	enclosureID := request.RouteInt64Param(r, "enclosureID")
 
 	enclosure, err := h.store.GetEnclosure(enclosureID)
@@ -39,7 +39,7 @@ func (h *handler) getEnclosureByID(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, enclosure)
 }
 
-func (h *handler) updateEnclosureByID(w http.ResponseWriter, r *http.Request) {
+func (h *handler) updateEnclosureByIDHandler(w http.ResponseWriter, r *http.Request) {
 	enclosureID := request.RouteInt64Param(r, "enclosureID")
 
 	var enclosureUpdateRequest model.EnclosureUpdateRequest

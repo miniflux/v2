@@ -17,7 +17,7 @@ import (
 	"miniflux.app/v2/internal/validator"
 )
 
-func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) {
+func (h *handler) discoverSubscriptionsHandler(w http.ResponseWriter, r *http.Request) {
 	var subscriptionDiscoveryRequest model.SubscriptionDiscoveryRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&subscriptionDiscoveryRequest); err != nil {
 		response.JSONBadRequest(w, r, err)
