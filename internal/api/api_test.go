@@ -21,8 +21,8 @@ func TestNewHandlerHandlesOptionsRequests(t *testing.T) {
 
 	handler.ServeHTTP(w, r)
 
-	if got := w.Code; got != http.StatusOK {
-		t.Fatalf(`Unexpected status code, got %d instead of %d`, got, http.StatusOK)
+	if got := w.Code; got != http.StatusNoContent {
+		t.Fatalf(`Unexpected status code, got %d instead of %d`, got, http.StatusNoContent)
 	}
 
 	if got := w.Header().Get("Access-Control-Allow-Origin"); got != "*" {
@@ -31,6 +31,14 @@ func TestNewHandlerHandlesOptionsRequests(t *testing.T) {
 
 	if got := w.Header().Get("Access-Control-Allow-Methods"); got != "GET, POST, PUT, DELETE, OPTIONS" {
 		t.Fatalf(`Unexpected Access-Control-Allow-Methods header, got %q`, got)
+	}
+
+	if got := w.Header().Get("Access-Control-Allow-Headers"); got != "X-Auth-Token, Authorization, Content-Type, Accept" {
+		t.Fatalf(`Unexpected Access-Control-Allow-Headers header, got %q`, got)
+	}
+
+	if got := w.Header().Get("Access-Control-Max-Age"); got != "3600" {
+		t.Fatalf(`Unexpected Access-Control-Max-Age header, got %q`, got)
 	}
 }
 
@@ -102,8 +110,8 @@ func TestNewHandlerSupportsBasePathStripping(t *testing.T) {
 
 			handler.ServeHTTP(w, r)
 
-			if got := w.Code; got != http.StatusOK {
-				t.Fatalf(`Unexpected status code, got %d instead of %d`, got, http.StatusOK)
+			if got := w.Code; got != http.StatusNoContent {
+				t.Fatalf(`Unexpected status code, got %d instead of %d`, got, http.StatusNoContent)
 			}
 		})
 	}
