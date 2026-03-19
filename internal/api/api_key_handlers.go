@@ -64,5 +64,5 @@ func (h *handler) deleteAPIKeyHandler(w http.ResponseWriter, r *http.Request) {
 		response.JSONServerError(w, r, err)
 		return
 	}
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }

@@ -335,7 +335,7 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 		config.Opts.BasePath(),
 	))
 
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }
 
 func (h *handler) renameCredential(w http.ResponseWriter, r *http.Request) {
@@ -421,7 +421,7 @@ func (h *handler) deleteCredential(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }
 
 func (h *handler) deleteAllCredentials(w http.ResponseWriter, r *http.Request) {
@@ -430,5 +430,5 @@ func (h *handler) deleteAllCredentials(w http.ResponseWriter, r *http.Request) {
 		response.JSONServerError(w, r, err)
 		return
 	}
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }

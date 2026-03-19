@@ -122,7 +122,7 @@ func (h *handler) markUserAsReadHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }
 
 func (h *handler) getIntegrationsStatusHandler(w http.ResponseWriter, r *http.Request) {
@@ -243,5 +243,5 @@ func (h *handler) removeUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.store.RemoveUserAsync(user.ID)
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }

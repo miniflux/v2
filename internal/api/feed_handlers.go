@@ -70,7 +70,7 @@ func (h *handler) refreshFeedHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }
 
 func (h *handler) refreshAllFeedsHandler(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +97,7 @@ func (h *handler) refreshAllFeedsHandler(w http.ResponseWriter, r *http.Request)
 
 	go h.pool.Push(jobs)
 
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }
 
 func (h *handler) updateFeedHandler(w http.ResponseWriter, r *http.Request) {
@@ -165,7 +165,7 @@ func (h *handler) markFeedAsReadHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }
 
 func (h *handler) getCategoryFeedsHandler(w http.ResponseWriter, r *http.Request) {
@@ -256,5 +256,5 @@ func (h *handler) removeFeedHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }

@@ -43,14 +43,6 @@ func JSONCreated(w http.ResponseWriter, r *http.Request, body any) {
 	builder.Write()
 }
 
-// JSONNoContent sends a no content response to the client.
-func JSONNoContent(w http.ResponseWriter, r *http.Request) {
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusNoContent)
-	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.Write()
-}
-
 // JSONAccepted sends an accepted response to the client.
 func JSONAccepted(w http.ResponseWriter, r *http.Request) {
 	builder := NewBuilder(w, r)
