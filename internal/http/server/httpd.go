@@ -250,7 +250,8 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 	subrouter.PathPrefix("/reader/api/0").Handler(googleReaderHandler)
 
 	if config.Opts.HasAPI() {
-		api.Serve(subrouter, store, pool)
+		apiHandler := http.StripPrefix(config.Opts.BasePath(), api.NewHandler(store, pool))
+		subrouter.PathPrefix("/v1").Handler(apiHandler)
 	}
 	ui.Serve(subrouter, store, pool)
 

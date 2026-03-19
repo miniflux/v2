@@ -51,6 +51,10 @@ func (h *handler) getAPIKeysHandler(w http.ResponseWriter, r *http.Request) {
 func (h *handler) deleteAPIKeyHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	apiKeyID := request.RouteInt64Param(r, "apiKeyID")
+	if apiKeyID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid API key ID"))
+		return
+	}
 
 	if err := h.store.DeleteAPIKey(userID, apiKeyID); err != nil {
 		if errors.Is(err, storage.ErrAPIKeyNotFound) {

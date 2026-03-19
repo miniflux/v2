@@ -52,6 +52,10 @@ func (h *handler) createUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) updateUserHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.RouteInt64Param(r, "userID")
+	if userID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid user ID"))
+		return
+	}
 
 	var userModificationRequest model.UserModificationRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&userModificationRequest); err != nil {
@@ -98,6 +102,11 @@ func (h *handler) updateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) markUserAsReadHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.RouteInt64Param(r, "userID")
+	if userID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid user ID"))
+		return
+	}
+
 	if userID != request.UserID(r) {
 		response.JSONForbidden(w, r)
 		return
@@ -118,7 +127,6 @@ func (h *handler) markUserAsReadHandler(w http.ResponseWriter, r *http.Request) 
 
 func (h *handler) getIntegrationsStatusHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-
 	if _, err := h.store.UserByID(userID); err != nil {
 		response.JSONNotFound(w, r)
 		return
@@ -145,6 +153,19 @@ func (h *handler) usersHandler(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, users)
 }
 
+func (h *handler) dispatchUserLookupHandler(w http.ResponseWriter, r *http.Request) {
+	identifier := request.RouteStringParam(r, "identifier")
+	userID := request.RouteInt64Param(r, "identifier")
+	if userID > 0 {
+		r.SetPathValue("userID", identifier)
+		h.userByIDHandler(w, r)
+		return
+	}
+
+	r.SetPathValue("username", identifier)
+	h.userByUsernameHandler(w, r)
+}
+
 func (h *handler) userByIDHandler(w http.ResponseWriter, r *http.Request) {
 	if !request.IsAdminUser(r) {
 		response.JSONForbidden(w, r)
@@ -152,6 +173,11 @@ func (h *handler) userByIDHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := request.RouteInt64Param(r, "userID")
+	if userID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid user ID"))
+		return
+	}
+
 	user, err := h.store.UserByID(userID)
 	if err != nil {
 		response.JSONBadRequest(w, r, errors.New("unable to fetch this user from the database"))
@@ -195,6 +221,11 @@ func (h *handler) removeUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := request.RouteInt64Param(r, "userID")
+	if userID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid user ID"))
+		return
+	}
+
 	user, err := h.store.UserByID(userID)
 	if err != nil {
 		response.JSONServerError(w, r, err)

@@ -4,6 +4,7 @@
 package api // import "miniflux.app/v2/internal/api"
 
 import (
+	"errors"
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
@@ -12,6 +13,10 @@ import (
 
 func (h *handler) getIconByFeedIDHandler(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
+	if feedID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid feed ID"))
+		return
+	}
 
 	icon, err := h.store.IconByFeedID(request.UserID(r), feedID)
 	if err != nil {
@@ -33,6 +38,10 @@ func (h *handler) getIconByFeedIDHandler(w http.ResponseWriter, r *http.Request)
 
 func (h *handler) getIconByIconIDHandler(w http.ResponseWriter, r *http.Request) {
 	iconID := request.RouteInt64Param(r, "iconID")
+	if iconID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid icon ID"))
+		return
+	}
 
 	icon, err := h.store.IconByID(iconID)
 	if err != nil {

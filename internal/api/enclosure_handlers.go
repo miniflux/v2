@@ -5,6 +5,7 @@ package api // import "miniflux.app/v2/internal/api"
 
 import (
 	json_parser "encoding/json"
+	"errors"
 	"net/http"
 
 	"miniflux.app/v2/internal/config"
@@ -16,6 +17,10 @@ import (
 
 func (h *handler) getEnclosureByIDHandler(w http.ResponseWriter, r *http.Request) {
 	enclosureID := request.RouteInt64Param(r, "enclosureID")
+	if enclosureID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid enclosure ID"))
+		return
+	}
 
 	enclosure, err := h.store.GetEnclosure(enclosureID)
 	if err != nil {
@@ -41,6 +46,10 @@ func (h *handler) getEnclosureByIDHandler(w http.ResponseWriter, r *http.Request
 
 func (h *handler) updateEnclosureByIDHandler(w http.ResponseWriter, r *http.Request) {
 	enclosureID := request.RouteInt64Param(r, "enclosureID")
+	if enclosureID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid enclosure ID"))
+		return
+	}
 
 	var enclosureUpdateRequest model.EnclosureUpdateRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&enclosureUpdateRequest); err != nil {
