@@ -42,7 +42,7 @@ func (h *handler) getEntryFromBuilder(w http.ResponseWriter, r *http.Request, b 
 	response.JSON(w, r, entry)
 }
 
-func (h *handler) getFeedEntry(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getFeedEntryHandler(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	entryID := request.RouteInt64Param(r, "entryID")
 
@@ -54,7 +54,7 @@ func (h *handler) getFeedEntry(w http.ResponseWriter, r *http.Request) {
 	h.getEntryFromBuilder(w, r, builder)
 }
 
-func (h *handler) getCategoryEntry(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getCategoryEntryHandler(w http.ResponseWriter, r *http.Request) {
 	categoryID := request.RouteInt64Param(r, "categoryID")
 	entryID := request.RouteInt64Param(r, "entryID")
 
@@ -66,7 +66,7 @@ func (h *handler) getCategoryEntry(w http.ResponseWriter, r *http.Request) {
 	h.getEntryFromBuilder(w, r, builder)
 }
 
-func (h *handler) getEntry(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getEntryHandler(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
 	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
@@ -75,17 +75,17 @@ func (h *handler) getEntry(w http.ResponseWriter, r *http.Request) {
 	h.getEntryFromBuilder(w, r, builder)
 }
 
-func (h *handler) getFeedEntries(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getFeedEntriesHandler(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	h.findEntries(w, r, feedID, 0)
 }
 
-func (h *handler) getCategoryEntries(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getCategoryEntriesHandler(w http.ResponseWriter, r *http.Request) {
 	categoryID := request.RouteInt64Param(r, "categoryID")
 	h.findEntries(w, r, 0, categoryID)
 }
 
-func (h *handler) getEntries(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getEntriesHandler(w http.ResponseWriter, r *http.Request) {
 	h.findEntries(w, r, 0, 0)
 }
 
@@ -172,7 +172,7 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	response.JSON(w, r, &entriesResponse{Total: count, Entries: entries})
 }
 
-func (h *handler) setEntryStatus(w http.ResponseWriter, r *http.Request) {
+func (h *handler) setEntryStatusHandler(w http.ResponseWriter, r *http.Request) {
 	var entriesStatusUpdateRequest model.EntriesStatusUpdateRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&entriesStatusUpdateRequest); err != nil {
 		response.JSONBadRequest(w, r, err)
@@ -192,7 +192,7 @@ func (h *handler) setEntryStatus(w http.ResponseWriter, r *http.Request) {
 	response.JSONNoContent(w, r)
 }
 
-func (h *handler) toggleStarred(w http.ResponseWriter, r *http.Request) {
+func (h *handler) toggleStarredHandler(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
 	if err := h.store.ToggleStarred(request.UserID(r), entryID); err != nil {
 		response.JSONServerError(w, r, err)
@@ -202,7 +202,7 @@ func (h *handler) toggleStarred(w http.ResponseWriter, r *http.Request) {
 	response.JSONNoContent(w, r)
 }
 
-func (h *handler) saveEntry(w http.ResponseWriter, r *http.Request) {
+func (h *handler) saveEntryHandler(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
 	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
@@ -235,7 +235,7 @@ func (h *handler) saveEntry(w http.ResponseWriter, r *http.Request) {
 	response.JSONAccepted(w, r)
 }
 
-func (h *handler) updateEntry(w http.ResponseWriter, r *http.Request) {
+func (h *handler) updateEntryHandler(w http.ResponseWriter, r *http.Request) {
 	var entryUpdateRequest model.EntryUpdateRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&entryUpdateRequest); err != nil {
 		response.JSONBadRequest(w, r, err)
@@ -294,7 +294,7 @@ func (h *handler) updateEntry(w http.ResponseWriter, r *http.Request) {
 	response.JSONCreated(w, r, entry)
 }
 
-func (h *handler) importFeedEntry(w http.ResponseWriter, r *http.Request) {
+func (h *handler) importFeedEntryHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	feedID := request.RouteInt64Param(r, "feedID")
 
@@ -398,7 +398,7 @@ func (h *handler) importFeedEntry(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
+func (h *handler) fetchContentHandler(w http.ResponseWriter, r *http.Request) {
 	loggedUserID := request.UserID(r)
 	entryID := request.RouteInt64Param(r, "entryID")
 
@@ -457,7 +457,7 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, entryContentResponse{Content: mediaproxy.RewriteDocumentWithAbsoluteProxyURL(entry.Content), ReadingTime: entry.ReadingTime})
 }
 
-func (h *handler) flushHistory(w http.ResponseWriter, r *http.Request) {
+func (h *handler) flushHistoryHandler(w http.ResponseWriter, r *http.Request) {
 	loggedUserID := request.UserID(r)
 	go h.store.FlushHistory(loggedUserID)
 	response.JSONAccepted(w, r)

@@ -10,7 +10,7 @@ import (
 	"miniflux.app/v2/internal/http/response"
 )
 
-func (h *handler) getIconByFeedID(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getIconByFeedIDHandler(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 
 	icon, err := h.store.IconByFeedID(request.UserID(r), feedID)
@@ -31,7 +31,7 @@ func (h *handler) getIconByFeedID(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (h *handler) getIconByIconID(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getIconByIconIDHandler(w http.ResponseWriter, r *http.Request) {
 	iconID := request.RouteInt64Param(r, "iconID")
 
 	icon, err := h.store.IconByID(iconID)

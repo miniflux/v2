@@ -17,7 +17,7 @@ import (
 	"miniflux.app/v2/internal/validator"
 )
 
-func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {
+func (h *handler) createFeedHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 
 	var feedCreationRequest model.FeedCreationRequest
@@ -50,7 +50,7 @@ func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {
 	response.JSONCreated(w, r, &feedCreationResponse{FeedID: feed.ID})
 }
 
-func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
+func (h *handler) refreshFeedHandler(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	userID := request.UserID(r)
 
@@ -68,7 +68,7 @@ func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 	response.JSONNoContent(w, r)
 }
 
-func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
+func (h *handler) refreshAllFeedsHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 
 	batchBuilder := h.store.NewBatchBuilder()
@@ -95,7 +95,7 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 	response.JSONNoContent(w, r)
 }
 
-func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
+func (h *handler) updateFeedHandler(w http.ResponseWriter, r *http.Request) {
 	var feedModificationRequest model.FeedModificationRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&feedModificationRequest); err != nil {
 		response.JSONBadRequest(w, r, err)
@@ -137,7 +137,7 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 	response.JSONCreated(w, r, originalFeed)
 }
 
-func (h *handler) markFeedAsRead(w http.ResponseWriter, r *http.Request) {
+func (h *handler) markFeedAsReadHandler(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	userID := request.UserID(r)
 
@@ -154,7 +154,7 @@ func (h *handler) markFeedAsRead(w http.ResponseWriter, r *http.Request) {
 	response.JSONNoContent(w, r)
 }
 
-func (h *handler) getCategoryFeeds(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getCategoryFeedsHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	categoryID := request.RouteInt64Param(r, "categoryID")
 
@@ -178,7 +178,7 @@ func (h *handler) getCategoryFeeds(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, feeds)
 }
 
-func (h *handler) getFeeds(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getFeedsHandler(w http.ResponseWriter, r *http.Request) {
 	feeds, err := h.store.Feeds(request.UserID(r))
 	if err != nil {
 		response.JSONServerError(w, r, err)
@@ -188,7 +188,7 @@ func (h *handler) getFeeds(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, feeds)
 }
 
-func (h *handler) fetchCounters(w http.ResponseWriter, r *http.Request) {
+func (h *handler) fetchCountersHandler(w http.ResponseWriter, r *http.Request) {
 	counters, err := h.store.FetchCounters(request.UserID(r))
 	if err != nil {
 		response.JSONServerError(w, r, err)
@@ -198,7 +198,7 @@ func (h *handler) fetchCounters(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, counters)
 }
 
-func (h *handler) getFeed(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getFeedHandler(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	feed, err := h.store.FeedByID(request.UserID(r), feedID)
 	if err != nil {
@@ -214,7 +214,7 @@ func (h *handler) getFeed(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, feed)
 }
 
-func (h *handler) removeFeed(w http.ResponseWriter, r *http.Request) {
+func (h *handler) removeFeedHandler(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	userID := request.UserID(r)
 

@@ -16,7 +16,7 @@ import (
 	"miniflux.app/v2/internal/validator"
 )
 
-func (h *handler) createCategory(w http.ResponseWriter, r *http.Request) {
+func (h *handler) createCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 
 	var categoryCreationRequest model.CategoryCreationRequest
@@ -39,7 +39,7 @@ func (h *handler) createCategory(w http.ResponseWriter, r *http.Request) {
 	response.JSONCreated(w, r, category)
 }
 
-func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
+func (h *handler) updateCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	categoryID := request.RouteInt64Param(r, "categoryID")
 
@@ -75,7 +75,7 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 	response.JSONCreated(w, r, category)
 }
 
-func (h *handler) markCategoryAsRead(w http.ResponseWriter, r *http.Request) {
+func (h *handler) markCategoryAsReadHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	categoryID := request.RouteInt64Param(r, "categoryID")
 
@@ -98,7 +98,7 @@ func (h *handler) markCategoryAsRead(w http.ResponseWriter, r *http.Request) {
 	response.JSONNoContent(w, r)
 }
 
-func (h *handler) getCategories(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	var categories model.Categories
 	var err error
 	includeCounts := request.QueryStringParam(r, "counts", "false")
@@ -116,7 +116,7 @@ func (h *handler) getCategories(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, categories)
 }
 
-func (h *handler) removeCategory(w http.ResponseWriter, r *http.Request) {
+func (h *handler) removeCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	categoryID := request.RouteInt64Param(r, "categoryID")
 
@@ -133,7 +133,7 @@ func (h *handler) removeCategory(w http.ResponseWriter, r *http.Request) {
 	response.JSONNoContent(w, r)
 }
 
-func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) {
+func (h *handler) refreshCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	categoryID := request.RouteInt64Param(r, "categoryID")
 

@@ -11,7 +11,7 @@ import (
 	"miniflux.app/v2/internal/reader/opml"
 )
 
-func (h *handler) exportFeeds(w http.ResponseWriter, r *http.Request) {
+func (h *handler) exportFeedsHandler(w http.ResponseWriter, r *http.Request) {
 	opmlHandler := opml.NewHandler(h.store)
 	opmlExport, err := opmlHandler.Export(request.UserID(r))
 	if err != nil {
@@ -22,7 +22,7 @@ func (h *handler) exportFeeds(w http.ResponseWriter, r *http.Request) {
 	response.XML(w, r, opmlExport)
 }
 
-func (h *handler) importFeeds(w http.ResponseWriter, r *http.Request) {
+func (h *handler) importFeedsHandler(w http.ResponseWriter, r *http.Request) {
 	opmlHandler := opml.NewHandler(h.store)
 	err := opmlHandler.Import(request.UserID(r), r.Body)
 	defer r.Body.Close()
