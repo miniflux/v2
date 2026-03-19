@@ -173,18 +173,25 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	builder.WithTags(tags)
 	builder.WithEnclosures()
 
-	switch len(statuses) {
-	// If no status filter is specified, show everything except removed entries.
+	// Removed entries have their content cleared; always exclude them
+	// regardless of what the caller requests.
+	filtered := make([]string, 0, len(statuses))
+	for _, s := range statuses {
+		if s != model.EntryStatusRemoved {
+			filtered = append(filtered, s)
+		}
+	}
+
+	// Use exact equality for a single status so the query planner can choose a
+	// time-ordered index, avoiding a full sort on large result sets.
+	// ANY($1) with a one-element array prevents the planner from doing so.
+	switch len(filtered) {
 	case 0:
 		builder.WithoutStatus(model.EntryStatusRemoved)
-	// Use exact equality for a single status so the query planner can choose a
-	// time-ordered index (published_at, created_at, etc.), avoiding a full sort
-	// on large result sets. ANY($1) with a one-element array causes the planner
-	// to pick a suboptimal index.
 	case 1:
-		builder.WithStatus(statuses[0])
+		builder.WithStatus(filtered[0])
 	default:
-		builder.WithStatuses(statuses)
+		builder.WithStatuses(filtered)
 	}
 
 	if request.HasQueryParam(r, "globally_visible") {
