@@ -85,5 +85,5 @@ func (h *handler) updateEnclosureByIDHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }

@@ -221,7 +221,7 @@ func (h *handler) setEntryStatusHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }
 
 func (h *handler) toggleStarredHandler(w http.ResponseWriter, r *http.Request) {
@@ -236,7 +236,7 @@ func (h *handler) toggleStarredHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }
 
 func (h *handler) saveEntryHandler(w http.ResponseWriter, r *http.Request) {

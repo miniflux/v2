@@ -106,7 +106,7 @@ func (h *handler) markCategoryAsReadHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }
 
 func (h *handler) getCategoriesHandler(w http.ResponseWriter, r *http.Request) {
@@ -146,7 +146,7 @@ func (h *handler) removeCategoryHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }
 
 func (h *handler) refreshCategoryHandler(w http.ResponseWriter, r *http.Request) {
@@ -181,5 +181,5 @@ func (h *handler) refreshCategoryHandler(w http.ResponseWriter, r *http.Request)
 
 	go h.pool.Push(jobs)
 
-	response.JSONNoContent(w, r)
+	response.NoContent(w, r)
 }
