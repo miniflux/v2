@@ -5,6 +5,7 @@ package api // import "miniflux.app/v2/internal/api"
 
 import (
 	json_parser "encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
 	"time"
@@ -41,7 +42,12 @@ func (h *handler) createCategoryHandler(w http.ResponseWriter, r *http.Request) 
 
 func (h *handler) updateCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
+
 	categoryID := request.RouteInt64Param(r, "categoryID")
+	if categoryID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid category ID"))
+		return
+	}
 
 	category, err := h.store.Category(userID, categoryID)
 	if err != nil {
@@ -77,7 +83,12 @@ func (h *handler) updateCategoryHandler(w http.ResponseWriter, r *http.Request) 
 
 func (h *handler) markCategoryAsReadHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
+
 	categoryID := request.RouteInt64Param(r, "categoryID")
+	if categoryID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid category ID"))
+		return
+	}
 
 	category, err := h.store.Category(userID, categoryID)
 	if err != nil {
@@ -118,7 +129,12 @@ func (h *handler) getCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) removeCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
+
 	categoryID := request.RouteInt64Param(r, "categoryID")
+	if categoryID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid category ID"))
+		return
+	}
 
 	if !h.store.CategoryIDExists(userID, categoryID) {
 		response.JSONNotFound(w, r)
@@ -135,7 +151,12 @@ func (h *handler) removeCategoryHandler(w http.ResponseWriter, r *http.Request) 
 
 func (h *handler) refreshCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
+
 	categoryID := request.RouteInt64Param(r, "categoryID")
+	if categoryID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid category ID"))
+		return
+	}
 
 	batchBuilder := h.store.NewBatchBuilder()
 	batchBuilder.WithErrorLimit(config.Opts.PollingParsingErrorLimit())

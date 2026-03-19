@@ -5,6 +5,7 @@ package api // import "miniflux.app/v2/internal/api"
 
 import (
 	json_parser "encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
 	"time"
@@ -52,8 +53,12 @@ func (h *handler) createFeedHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) refreshFeedHandler(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
-	userID := request.UserID(r)
+	if feedID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid feed ID"))
+		return
+	}
 
+	userID := request.UserID(r)
 	if !h.store.FeedExists(userID, feedID) {
 		response.JSONNotFound(w, r)
 		return
@@ -96,6 +101,12 @@ func (h *handler) refreshAllFeedsHandler(w http.ResponseWriter, r *http.Request)
 }
 
 func (h *handler) updateFeedHandler(w http.ResponseWriter, r *http.Request) {
+	feedID := request.RouteInt64Param(r, "feedID")
+	if feedID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid feed ID"))
+		return
+	}
+
 	var feedModificationRequest model.FeedModificationRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&feedModificationRequest); err != nil {
 		response.JSONBadRequest(w, r, err)
@@ -103,8 +114,6 @@ func (h *handler) updateFeedHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := request.UserID(r)
-	feedID := request.RouteInt64Param(r, "feedID")
-
 	originalFeed, err := h.store.FeedByID(userID, feedID)
 	if err != nil {
 		response.JSONNotFound(w, r)
@@ -138,8 +147,13 @@ func (h *handler) updateFeedHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) markFeedAsReadHandler(w http.ResponseWriter, r *http.Request) {
-	feedID := request.RouteInt64Param(r, "feedID")
 	userID := request.UserID(r)
+
+	feedID := request.RouteInt64Param(r, "feedID")
+	if feedID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid feed ID"))
+		return
+	}
 
 	if !h.store.FeedExists(userID, feedID) {
 		response.JSONNotFound(w, r)
@@ -156,7 +170,12 @@ func (h *handler) markFeedAsReadHandler(w http.ResponseWriter, r *http.Request) 
 
 func (h *handler) getCategoryFeedsHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
+
 	categoryID := request.RouteInt64Param(r, "categoryID")
+	if categoryID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid category ID"))
+		return
+	}
 
 	category, err := h.store.Category(userID, categoryID)
 	if err != nil {
@@ -200,6 +219,11 @@ func (h *handler) fetchCountersHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) getFeedHandler(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
+	if feedID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid feed ID"))
+		return
+	}
+
 	feed, err := h.store.FeedByID(request.UserID(r), feedID)
 	if err != nil {
 		response.JSONServerError(w, r, err)
@@ -216,8 +240,12 @@ func (h *handler) getFeedHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) removeFeedHandler(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
-	userID := request.UserID(r)
+	if feedID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid feed ID"))
+		return
+	}
 
+	userID := request.UserID(r)
 	if !h.store.FeedExists(userID, feedID) {
 		response.JSONNotFound(w, r)
 		return
