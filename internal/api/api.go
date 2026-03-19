@@ -73,5 +73,5 @@ func NewHandler(store *storage.Storage, pool *worker.Pool) http.Handler {
 	mux.HandleFunc("GET /v1/api-keys", handler.getAPIKeysHandler)
 	mux.HandleFunc("DELETE /v1/api-keys/{apiKeyID}", handler.deleteAPIKeyHandler)
 
-	return middleware.handleCORS(middleware.apiKeyAuth(middleware.basicAuth(mux)))
+	return middleware.withCORSHeaders(middleware.validateAPIKeyAuth(middleware.validateBasicAuth(mux)))
 }
