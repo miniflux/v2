@@ -9,7 +9,6 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
@@ -79,5 +78,5 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.HTMLRedirect(w, r, route.Path(h.router, "feedEntries", "feedID", feed.ID))
+	response.HTMLRedirect(w, r, h.routePath("/feed/%d/entries", feed.ID))
 }

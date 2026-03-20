@@ -8,7 +8,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 )
@@ -44,7 +43,7 @@ func (h *handler) sharedEntries(w http.ResponseWriter, r *http.Request) {
 	view := view.New(h.tpl, r, sess)
 	view.Set("entries", entries)
 	view.Set("total", count)
-	view.Set("pagination", getPagination(route.Path(h.router, "sharedEntries"), count, offset, user.EntriesPerPage))
+	view.Set("pagination", getPagination(h.routePath("/shares"), count, offset, user.EntriesPerPage))
 	view.Set("menu", "history")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))

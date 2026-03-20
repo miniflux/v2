@@ -27,15 +27,15 @@
         >
             <header class="item-header" dir="auto">
                 <h2 id="entry-title-{{ .ID }}" class="item-title">
-                    <a href="{{ route "tagEntry" "entryID" .ID "tagName" (urlEncode $.tagName) }}">
+                    <a href="{{ routePath "/tags/%s/entry/%d" (urlEncode $.tagName) .ID }}">
                         {{ if ne .Feed.Icon.IconID 0 }}
-                        <img src="{{ route "feedIcon" "externalIconID" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
+                        <img src="{{ routePath "/feed-icon/%s" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
                         {{ end }}
                         {{ .Title }}
                     </a>
                 </h2>
                 <span class="category">
-                    <a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">
+                    <a href="{{ routePath "/category/%d/entries" .Feed.Category.ID }}">
                         {{ .Feed.Category.Title }}
                     </a>
                 </span>

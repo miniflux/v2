@@ -10,7 +10,6 @@ import (
 	"miniflux.app/v2/internal/http/cookie"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/ui/session"
 )
 
@@ -36,5 +35,5 @@ func (h *handler) logout(w http.ResponseWriter, r *http.Request) {
 		config.Opts.BasePath(),
 	))
 
-	response.HTMLRedirect(w, r, route.Path(h.router, "login"))
+	response.HTMLRedirect(w, r, h.routePath("/"))
 }

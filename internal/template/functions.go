@@ -17,18 +17,15 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/timezone"
 	"miniflux.app/v2/internal/urllib"
-
-	"github.com/gorilla/mux"
 )
 
 type funcMap struct {
-	router *mux.Router
+	basePath string
 }
 
 // Map returns a map of template functions that are compiled during template parsing.
@@ -52,8 +49,11 @@ func (f *funcMap) Map() template.FuncMap {
 		"hasAuthProxy": func() bool {
 			return config.Opts.AuthProxyHeader() != ""
 		},
-		"route": func(name string, args ...any) string {
-			return route.Path(f.router, name, args...)
+		"routePath": func(format string, args ...any) string {
+			if len(args) > 0 {
+				return f.basePath + fmt.Sprintf(format, args...)
+			}
+			return f.basePath + format
 		},
 		"safeURL": func(url string) template.URL {
 			return template.URL(url)
@@ -90,8 +90,8 @@ func (f *funcMap) Map() template.FuncMap {
 		"theme_color": model.ThemeColor,
 		"icon": func(iconName string) template.HTML {
 			return template.HTML(fmt.Sprintf(
-				`<svg class="icon" aria-hidden="true"><use href="%s#icon-%s"/></svg>`,
-				route.Path(f.router, "appIcon", "filename", "sprite.svg"),
+				`<svg class="icon" aria-hidden="true"><use href="%s/icon/sprite.svg#icon-%s"/></svg>`,
+				f.basePath,
 				iconName,
 			))
 		},

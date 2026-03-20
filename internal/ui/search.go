@@ -8,7 +8,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
@@ -53,7 +52,7 @@ func (h *handler) showSearchPage(w http.ResponseWriter, r *http.Request) {
 
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
-	pagination := getPagination(route.Path(h.router, "search"), entriesCount, offset, user.EntriesPerPage)
+	pagination := getPagination(h.routePath("/search"), entriesCount, offset, user.EntriesPerPage)
 	pagination.SearchQuery = searchQuery
 	pagination.UnreadOnly = unreadOnly
 

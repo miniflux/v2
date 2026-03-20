@@ -44,7 +44,7 @@
                 data-label-yes="{{ t "confirm.yes" }}"
                 data-label-no="{{ t "confirm.no" }}"
                 data-label-loading="{{ t "confirm.loading" }}"
-                data-url="{{ route "deleteAPIKey" "keyID" .ID }}">{{ t "action.remove" }}</a>
+                data-url="{{ routePath "/keys/%d/delete" .ID }}">{{ t "action.remove" }}</a>
         </td>
     </tr>
     </table>
@@ -68,7 +68,7 @@
 </div>
 
 <p>
-    <a href="{{ route "createAPIKey" }}" class="button button-primary">{{ t "menu.create_api_key" }}</a>
+    <a href="{{ routePath "/keys/create" }}" class="button button-primary">{{ t "menu.create_api_key" }}</a>
 </p>
 
 {{ end }}

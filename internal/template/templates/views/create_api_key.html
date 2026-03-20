@@ -8,7 +8,7 @@
 {{ end }}
 
 {{ define "content"}}
-<form action="{{ route "saveAPIKey" }}" method="post" autocomplete="off">
+<form action="{{ routePath "/keys/save" }}" method="post" autocomplete="off">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
     {{ if .errorMessage }}
@@ -19,7 +19,7 @@
     <input type="text" name="description" id="form-description" value="{{ .form.Description }}" spellcheck="false" required autofocus>
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.save" }}</button> {{ t "action.or" }} <a href="{{ route "apiKeys" }}">{{ t "action.cancel" }}</a>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.save" }}</button> {{ t "action.or" }} <a href="{{ routePath "/keys" }}">{{ t "action.cancel" }}</a>
     </div>
 </form>
 {{ end }}

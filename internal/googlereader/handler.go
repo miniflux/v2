@@ -518,7 +518,7 @@ func move(feedStream Stream, labelStream Stream, store *storage.Storage, userID 
 
 func (h *greaderHandler) feedIconURL(f *model.Feed) string {
 	if f.Icon != nil && f.Icon.ExternalIconID != "" {
-		return config.Opts.BaseURL() + "/feed/icon/" + f.Icon.ExternalIconID
+		return config.Opts.BaseURL() + "/feed-icon/" + f.Icon.ExternalIconID
 	}
 	return ""
 }

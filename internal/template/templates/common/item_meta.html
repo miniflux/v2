@@ -2,7 +2,7 @@
 <div class="item-meta">
     <ul class="item-meta-info">
         <li class="item-meta-info-title">
-            <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}" data-feed-link="true">{{ truncate .entry.Feed.Title 35 }}</a>
+            <a href="{{ routePath "/feed/%d/entries" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}" data-feed-link="true">{{ truncate .entry.Feed.Title 35 }}</a>
         </li>
         <li class="item-meta-info-timestamp">
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>
@@ -29,7 +29,7 @@
             <button
                 aria-describedby="entry-title-{{ .entry.ID }}"
                 data-toggle-starred="true"
-                data-star-url="{{ route "toggleStarred" "entryID" .entry.ID }}"
+                data-star-url="{{ routePath "/entry/star/%d" .entry.ID }}"
                 data-label-loading="{{ t "entry.state.saving" }}"
                 data-label-star="{{ t "entry.starred.toggle.on" }}"
                 data-label-unstar="{{ t "entry.starred.toggle.off" }}"
@@ -38,7 +38,7 @@
         </li>
         {{ if .entry.ShareCode }}
             <li class="item-meta-icons-share">
-                <a href="{{ route "sharedEntry" "shareCode" .entry.ShareCode }}"
+                <a href="{{ routePath "/share/%s" .entry.ShareCode }}"
                     aria-describedby="entry-title-{{ .entry.ID }}"
                     title="{{ t "entry.shared_entry.title" }}"
                     {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>{{ icon "share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
@@ -47,7 +47,7 @@
                 <button
                     aria-describedby="entry-title-{{ .entry.ID }}"
                     data-confirm="true"
-                    data-url="{{ route "unshareEntry" "entryID" .entry.ID }}"
+                    data-url="{{ routePath "/entry/unshare/%d" .entry.ID }}"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
@@ -60,7 +60,7 @@
                     aria-describedby="entry-title-{{ .entry.ID }}"
                     title="{{ t "entry.save.title" }}"
                     data-save-entry="true"
-                    data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
+                    data-save-url="{{ routePath "/entry/save/%d" .entry.ID }}"
                     data-label-loading="{{ t "entry.state.saving" }}"
                     data-label-done="{{ t "entry.save.completed" }}"
                     >{{ icon "save" }}<span class="icon-label">{{ t "entry.save.label" }}</span></button>

@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	"github.com/gorilla/mux"
 )
 
 // FormInt64Value returns the named form value parsed as int64, or 0 on error.
@@ -129,10 +127,5 @@ func HasQueryParam(r *http.Request, param string) bool {
 }
 
 func routeParam(r *http.Request, param string) string {
-	vars := mux.Vars(r)
-	if value, found := vars[param]; found {
-		return value
-	}
-
 	return r.PathValue(param)
 }

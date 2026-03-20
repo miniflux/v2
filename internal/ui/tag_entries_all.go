@@ -9,7 +9,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
@@ -55,7 +54,7 @@ func (h *handler) showTagEntriesAllPage(w http.ResponseWriter, r *http.Request) 
 	view.Set("tagName", tagName)
 	view.Set("total", count)
 	view.Set("entries", entries)
-	view.Set("pagination", getPagination(route.Path(h.router, "tagEntriesAll", "tagName", url.PathEscape(tagName)), count, offset, user.EntriesPerPage))
+	view.Set("pagination", getPagination(h.routePath("/tags/%s/entries/all", url.PathEscape(tagName)), count, offset, user.EntriesPerPage))
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))

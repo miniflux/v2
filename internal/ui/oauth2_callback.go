@@ -13,7 +13,6 @@ import (
 	"miniflux.app/v2/internal/http/cookie"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/session"
@@ -23,14 +22,14 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 	provider := request.RouteStringParam(r, "provider")
 	if provider == "" {
 		slog.Warn("Invalid or missing OAuth2 provider")
-		response.HTMLRedirect(w, r, route.Path(h.router, "login"))
+		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
 
 	code := request.QueryStringParam(r, "code", "")
 	if code == "" {
 		slog.Warn("No code received on OAuth2 callback")
-		response.HTMLRedirect(w, r, route.Path(h.router, "login"))
+		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
 
@@ -40,7 +39,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 			slog.String("expected", request.OAuth2State(r)),
 			slog.String("received", state),
 		)
-		response.HTMLRedirect(w, r, route.Path(h.router, "login"))
+		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
 
@@ -50,7 +49,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 			slog.String("provider", provider),
 			slog.Any("error", err),
 		)
-		response.HTMLRedirect(w, r, route.Path(h.router, "login"))
+		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
 
@@ -60,7 +59,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 			slog.String("provider", provider),
 			slog.Any("error", err),
 		)
-		response.HTMLRedirect(w, r, route.Path(h.router, "login"))
+		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
 
@@ -81,7 +80,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 				slog.String("oauth2_profile_id", profile.ID),
 			)
 			sess.NewFlashErrorMessage(printer.Print("error.duplicate_linked_account"))
-			response.HTMLRedirect(w, r, route.Path(h.router, "settings"))
+			response.HTMLRedirect(w, r, h.routePath("/settings"))
 			return
 		}
 
@@ -92,7 +91,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		}
 
 		sess.NewFlashMessage(printer.Print("alert.account_linked"))
-		response.HTMLRedirect(w, r, route.Path(h.router, "settings"))
+		response.HTMLRedirect(w, r, h.routePath("/settings"))
 		return
 	}
 
@@ -149,5 +148,5 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		config.Opts.BasePath(),
 	))
 
-	response.HTMLRedirect(w, r, route.Path(h.router, user.DefaultHomePage))
+	response.HTMLRedirect(w, r, h.basePath+"/"+user.DefaultHomePage)
 }

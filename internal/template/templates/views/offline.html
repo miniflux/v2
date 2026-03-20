@@ -10,7 +10,7 @@
         <meta name="theme-color" content="{{ theme_color .theme "dark" }}" media="(prefers-color-scheme: dark)">
     </head>
     <body>
-        <p>{{ t "page.offline.message" }} - <a href="{{ route "unread" }}">{{ t "page.offline.refresh_page" }}</a>.</p>
+        <p>{{ t "page.offline.message" }} - <a href="{{ routePath "/unread" }}">{{ t "page.offline.refresh_page" }}</a>.</p>
     </body>
 </html>
 {{end}}

@@ -9,7 +9,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/oauth2"
 	"miniflux.app/v2/internal/ui/session"
 )
@@ -18,7 +17,7 @@ func (h *handler) oauth2Redirect(w http.ResponseWriter, r *http.Request) {
 	provider := request.RouteStringParam(r, "provider")
 	if provider == "" {
 		slog.Warn("Invalid or missing OAuth2 provider")
-		response.HTMLRedirect(w, r, route.Path(h.router, "login"))
+		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
 
@@ -28,7 +27,7 @@ func (h *handler) oauth2Redirect(w http.ResponseWriter, r *http.Request) {
 			slog.String("provider", provider),
 			slog.Any("error", err),
 		)
-		response.HTMLRedirect(w, r, route.Path(h.router, "login"))
+		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
 

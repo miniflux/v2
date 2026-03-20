@@ -34,37 +34,37 @@
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
-                    data-url="{{ route "markCategoryAsRead" "categoryID" .category.ID }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</button>
+                    data-url="{{ routePath "/category/%d/mark-all-as-read" .category.ID }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</button>
             </li>
             {{ end }}
             {{ if .showOnlyUnreadEntries }}
             <li>
-                <a class="page-link" href="{{ route "categoryEntriesAll" "categoryID" .category.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
+                <a class="page-link" href="{{ routePath "/category/%d/entries/all" .category.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
             </li>
             <li>
-                <a class="page-link" href="{{ route "categoryEntriesStarred" "categoryID" .category.ID }}">{{ icon "star" }}{{ t "menu.show_only_starred_entries" }}</a>
+                <a class="page-link" href="{{ routePath "/category/%d/entries/starred" .category.ID }}">{{ icon "star" }}{{ t "menu.show_only_starred_entries" }}</a>
             </li>
             {{ else if .showOnlyStarredEntries }}
             <li>
-                <a class="page-link" href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
+                <a class="page-link" href="{{ routePath "/category/%d/entries" .category.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
             </li>
             <li>
-                <a class="page-link" href="{{ route "categoryEntriesAll" "categoryID" .category.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
+                <a class="page-link" href="{{ routePath "/category/%d/entries/all" .category.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
             </li>
             {{ else }}
             <li>
-                <a class="page-link" href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
+                <a class="page-link" href="{{ routePath "/category/%d/entries" .category.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
             </li>
             <li>
-                <a class="page-link" href="{{ route "categoryEntriesStarred" "categoryID" .category.ID }}">{{ icon "star" }}{{ t "menu.show_only_starred_entries" }}</a>
+                <a class="page-link" href="{{ routePath "/category/%d/entries/starred" .category.ID }}">{{ icon "star" }}{{ t "menu.show_only_starred_entries" }}</a>
             </li>
             {{ end }}
             <li>
-                <a class="page-link" href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
+                <a class="page-link" href="{{ routePath "/category/%d/feeds" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
             </li>
             <li>
                 <form
-                    action="{{ route "refreshCategoryEntriesPage" "categoryID" .category.ID }}"
+                    action="{{ routePath "/category/%d/entries/refresh" .category.ID }}"
                     class="page-header-action-form"
                 >
                     <button class="page-button" data-label-loading="{{ t "confirm.loading" }}">
@@ -96,21 +96,21 @@
                 <h2 id="entry-title-{{ .ID }}" class="item-title">
                     <a
                         {{ if $.showOnlyUnreadEntries }}
-                        href="{{ route "unreadCategoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}"
+                        href="{{ routePath "/unread/category/%d/entry/%d" .Feed.Category.ID .ID }}"
                         {{ else if $.showOnlyStarredEntries }}
-                        href="{{ route "starredCategoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}"
+                        href="{{ routePath "/starred/category/%d/entry/%d" .Feed.Category.ID .ID }}"
                         {{ else }}
-                        href="{{ route "categoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}"
+                        href="{{ routePath "/category/%d/entry/%d" .Feed.Category.ID .ID }}"
                         {{ end }}
                     >
                         {{ if ne .Feed.Icon.IconID 0 }}
-                            <img src="{{ route "feedIcon" "externalIconID" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
+                            <img src="{{ routePath "/feed-icon/%s" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
                         {{ end }}
                         {{ .Title }}
                     </a>
                 </h2>
                 <span class="category">
-                    <a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}" aria-label="{{ t "page.category_label" .Feed.Category.Title }}">
+                    <a href="{{ routePath "/category/%d/entries" .Feed.Category.ID }}" aria-label="{{ t "page.category_label" .Feed.Category.Title }}">
                         {{ .Feed.Category.Title }}
                     </a>
                 </span>

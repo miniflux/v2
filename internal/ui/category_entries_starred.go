@@ -8,7 +8,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
@@ -60,7 +59,7 @@ func (h *handler) showCategoryEntriesStarredPage(w http.ResponseWriter, r *http.
 	view.Set("category", category)
 	view.Set("total", count)
 	view.Set("entries", entries)
-	view.Set("pagination", getPagination(route.Path(h.router, "categoryEntriesStarred", "categoryID", category.ID), count, offset, user.EntriesPerPage))
+	view.Set("pagination", getPagination(h.routePath("/category/%d/entries/starred", category.ID), count, offset, user.EntriesPerPage))
 	view.Set("menu", "categories")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))

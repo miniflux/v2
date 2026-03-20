@@ -8,7 +8,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
@@ -59,7 +58,7 @@ func (h *handler) showFeedEntriesAllPage(w http.ResponseWriter, r *http.Request)
 	view.Set("feed", feed)
 	view.Set("entries", entries)
 	view.Set("total", count)
-	view.Set("pagination", getPagination(route.Path(h.router, "feedEntriesAll", "feedID", feed.ID), count, offset, user.EntriesPerPage))
+	view.Set("pagination", getPagination(h.routePath("/feed/%d/entries/all", feed.ID), count, offset, user.EntriesPerPage))
 	view.Set("menu", "feeds")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))

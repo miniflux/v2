@@ -9,7 +9,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 )
 
 func (h *handler) markCategoryAsRead(w http.ResponseWriter, r *http.Request) {
@@ -32,5 +31,5 @@ func (h *handler) markCategoryAsRead(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.HTMLRedirect(w, r, route.Path(h.router, "categories"))
+	response.HTMLRedirect(w, r, h.routePath("/categories"))
 }
