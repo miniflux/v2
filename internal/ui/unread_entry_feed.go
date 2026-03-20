@@ -8,7 +8,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/session"
@@ -71,12 +70,12 @@ func (h *handler) showUnreadFeedEntryPage(w http.ResponseWriter, r *http.Request
 
 	nextEntryRoute := ""
 	if nextEntry != nil {
-		nextEntryRoute = route.Path(h.router, "unreadFeedEntry", "feedID", feedID, "entryID", nextEntry.ID)
+		nextEntryRoute = h.routePath("/unread/feed/%d/entry/%d", feedID, nextEntry.ID)
 	}
 
 	prevEntryRoute := ""
 	if prevEntry != nil {
-		prevEntryRoute = route.Path(h.router, "unreadFeedEntry", "feedID", feedID, "entryID", prevEntry.ID)
+		prevEntryRoute = h.routePath("/unread/feed/%d/entry/%d", feedID, prevEntry.ID)
 	}
 
 	// Restore entry read status if needed after fetching the pagination.

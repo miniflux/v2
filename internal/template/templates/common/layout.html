@@ -14,21 +14,21 @@
     <meta name="theme-color" content="{{ theme_color .theme "light" }}" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="{{ theme_color .theme "dark" }}" media="(prefers-color-scheme: dark)">
 
-    <link rel="manifest" href="{{ route "webManifest" }}" crossorigin="use-credentials">
+    <link rel="manifest" href="{{ routePath "/manifest.json" }}" crossorigin="use-credentials">
 
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ route "appIcon" "filename" "icon-16.png" }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ route "appIcon" "filename" "icon-32.png" }}">
-    <link rel="icon" type="image/png" sizes="128x128" href="{{ route "appIcon" "filename" "icon-128.png" }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ route "appIcon" "filename" "icon-192.png" }}">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ route "appIcon" "filename" "icon-120.png" }}">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ route "appIcon" "filename" "icon-152.png" }}">
-    <link rel="apple-touch-icon" sizes="167x167" href="{{ route "appIcon" "filename" "icon-167.png" }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ route "appIcon" "filename" "icon-180.png" }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ routePath "/icon/%s" "icon-16.png" }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ routePath "/icon/%s" "icon-32.png" }}">
+    <link rel="icon" type="image/png" sizes="128x128" href="{{ routePath "/icon/%s" "icon-128.png" }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ routePath "/icon/%s" "icon-192.png" }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ routePath "/icon/%s" "icon-120.png" }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ routePath "/icon/%s" "icon-152.png" }}">
+    <link rel="apple-touch-icon" sizes="167x167" href="{{ routePath "/icon/%s" "icon-167.png" }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ routePath "/icon/%s" "icon-180.png" }}">
 
     {{ $cspNonce := nonce }}
     {{ csp .user $cspNonce | safeHTML }}
-    <link rel="stylesheet" nonce="{{ $cspNonce }}" type="text/css" href="{{ route "stylesheet" "name" .theme "checksum" .theme_checksum }}">
-    <script nonce="{{ $cspNonce }}" src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" type="module"></script>
+    <link rel="stylesheet" nonce="{{ $cspNonce }}" type="text/css" href="{{ routePath "/stylesheets/%s.%s.css" .theme .theme_checksum }}">
+    <script nonce="{{ $cspNonce }}" src="{{ routePath "/%s.%s.js" "app" .app_js_checksum }}" type="module"></script>
     {{ if .user -}}
         {{ if .user.Stylesheet -}}
         <style nonce="{{ $cspNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
@@ -39,17 +39,17 @@
     {{ end -}}
 </head>
 <body
-    data-service-worker-url="{{ route "javascript" "name" "service-worker" "checksum" .sw_js_checksum }}"
+    data-service-worker-url="{{ routePath "/%s.%s.js" "service-worker" .sw_js_checksum }}"
     {{ if .csrf }}data-csrf-token="{{ .csrf }}"{{ end }}
-    data-add-subscription-url="{{ route "addSubscription" }}"
-    data-entries-status-url="{{ route "updateEntriesStatus" }}"
-    data-refresh-all-feeds-url="{{ route "refreshAllFeeds" }}"
+    data-add-subscription-url="{{ routePath "/subscribe" }}"
+    data-entries-status-url="{{ routePath "/entry/status" }}"
+    data-refresh-all-feeds-url="{{ routePath "/feeds/refresh" }}"
     {{ if .webAuthnEnabled }}
-    data-webauthn-register-begin-url="{{ route "webauthnRegisterBegin" }}"
-    data-webauthn-register-finish-url="{{ route "webauthnRegisterFinish" }}"
-    data-webauthn-login-begin-url="{{ route "webauthnLoginBegin" }}"
-    data-webauthn-login-finish-url="{{ route "webauthnLoginFinish" }}"
-    data-webauthn-delete-all-url="{{ route "webauthnDeleteAll" }}"
+    data-webauthn-register-begin-url="{{ routePath "/webauthn/register/begin" }}"
+    data-webauthn-register-finish-url="{{ routePath "/webauthn/register/finish" }}"
+    data-webauthn-login-begin-url="{{ routePath "/webauthn/login/begin" }}"
+    data-webauthn-login-finish-url="{{ routePath "/webauthn/login/finish" }}"
+    data-webauthn-delete-all-url="{{ routePath "/webauthn/deleteall" }}"
     {{ end }}
     {{ if .user }}
         {{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}
@@ -61,14 +61,14 @@
     <header class="header">
         <nav>
             <div class="logo" data-toggle-button-label="{{ t "menu.title" }}">
-                <a aria-label="{{ t "menu.home_page" }}" href="{{ route .user.DefaultHomePage }}">
+                <a aria-label="{{ t "menu.home_page" }}" href="{{ routePath (printf "/%s" .user.DefaultHomePage) }}">
                     Mini<span>flux</span>
                 </a>
                 {{ icon "chevron-down"}}
             </div>
             <ul id="header-menu">
                 <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
-                    <a href="{{ route "unread" }}"
+                    <a href="{{ routePath "/unread" }}"
                         data-page="unread"
                         {{ if gt .countUnread 0 }}
                         aria-label="{{ t "menu.unread" }}, {{ plural "page.unread_entry_count" .countUnread .countUnread }}"
@@ -81,33 +81,33 @@
                     </a>
                 </li>
                 <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g b" }}">
-                    <a href="{{ route "starred" }}" data-page="starred">{{ icon "star" }}{{ t "menu.starred" }}</a>
+                    <a href="{{ routePath "/starred" }}" data-page="starred">{{ icon "star" }}{{ t "menu.starred" }}</a>
                 </li>
                 <li {{ if eq .menu "history" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g h" }}">
-                    <a href="{{ route "history" }}" data-page="history">{{ icon "history" }}{{ t "menu.history" }}</a>
+                    <a href="{{ routePath "/history" }}" data-page="history">{{ icon "history" }}{{ t "menu.history" }}</a>
                 </li>
                 <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g f" }}">
-                    <a href="{{ route "feeds" }}" data-page="feeds">{{ icon "feeds" }}{{ t "menu.feeds" }}
+                    <a href="{{ routePath "/feeds" }}" data-page="feeds">{{ icon "feeds" }}{{ t "menu.feeds" }}
                       {{ if gt .countErrorFeeds 0 }}
                           <span class="error-feeds-counter-wrapper">(<span class="error-feeds-counter">{{ .countErrorFeeds }}</span>)</span>
                       {{ end }}
                     </a>
-                    <a href="{{ route "addSubscription" }}" title="{{ t "tooltip.keyboard_shortcuts" "+" }}" aria-label="{{ t "menu.add_feed" }}">
+                    <a href="{{ routePath "/subscribe" }}" title="{{ t "tooltip.keyboard_shortcuts" "+" }}" aria-label="{{ t "menu.add_feed" }}">
                         (+)
                     </a>
                 </li>
                 <li {{ if eq .menu "categories" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g c" }}">
-                    <a href="{{ route "categories" }}" data-page="categories">{{ icon "categories" }}{{ t "menu.categories" }}</a>
+                    <a href="{{ routePath "/categories" }}" data-page="categories">{{ icon "categories" }}{{ t "menu.categories" }}</a>
                 </li>
                 <li {{ if eq .menu "search" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "/" }}">
-                    <a href="{{ route "search" }}" data-page="search">{{ icon "search" }}{{ t "menu.search" }}</a>
+                    <a href="{{ routePath "/search" }}" data-page="search">{{ icon "search" }}{{ t "menu.search" }}</a>
                 </li>
                 <li {{ if eq .menu "settings" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g s" }}">
-                    <a href="{{ route "settings" }}" data-page="settings">{{ icon "settings" }}{{ t "menu.settings" }}</a>
+                    <a href="{{ routePath "/settings" }}" data-page="settings">{{ icon "settings" }}{{ t "menu.settings" }}</a>
                 </li>
                 {{ if not hasAuthProxy }}
                     <li>
-                        <a href="{{ route "logout" }}" title="{{ t "tooltip.logged_user" .user.Username }}">{{ icon "logout" }}{{ t "menu.logout" }}</a>
+                        <a href="{{ routePath "/logout" }}" title="{{ t "tooltip.logged_user" .user.Username }}">{{ icon "logout" }}{{ t "menu.logout" }}</a>
                     </li>
                 {{ end }}
             </ul>

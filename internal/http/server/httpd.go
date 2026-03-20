@@ -13,17 +13,10 @@ import (
 	"strconv"
 	"strings"
 
-	"miniflux.app/v2/internal/api"
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/fever"
-	"miniflux.app/v2/internal/googlereader"
-	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/storage"
-	"miniflux.app/v2/internal/ui"
 	"miniflux.app/v2/internal/worker"
 
-	"github.com/gorilla/mux"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/crypto/acme"
 	"golang.org/x/crypto/acme/autocert"
 )
@@ -68,7 +61,7 @@ func StartWebServer(store *storage.Storage, pool *worker.Pool) []*http.Server {
 			ReadTimeout:  config.Opts.HTTPServerTimeout(),
 			WriteTimeout: config.Opts.HTTPServerTimeout(),
 			IdleTimeout:  config.Opts.HTTPServerTimeout(),
-			Handler:      setupHandler(store, pool),
+			Handler:      newRouter(store, pool),
 		}
 
 		isUNIXSocket := strings.HasPrefix(listenAddr, "/")
@@ -198,128 +191,6 @@ func startHTTPServer(server *http.Server) {
 			printErrorAndExit("HTTP server failed to start on %s: %v", server.Addr, err)
 		}
 	}()
-}
-
-func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
-	livenessProbe := func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
-	}
-	readinessProbe := func(w http.ResponseWriter, r *http.Request) {
-		if err := store.Ping(); err != nil {
-			http.Error(w, fmt.Sprintf("Database Connection Error: %q", err), http.StatusServiceUnavailable)
-			return
-		}
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
-	}
-
-	router := mux.NewRouter()
-
-	// These routes do not take the base path into consideration and are always available at the root of the server.
-	router.HandleFunc("/liveness", livenessProbe).Name("liveness")
-	router.HandleFunc("/healthz", livenessProbe).Name("healthz")
-	router.HandleFunc("/readiness", readinessProbe).Name("readiness")
-	router.HandleFunc("/readyz", readinessProbe).Name("readyz")
-
-	var subrouter *mux.Router
-	if config.Opts.BasePath() != "" {
-		subrouter = router.PathPrefix(config.Opts.BasePath()).Subrouter()
-	} else {
-		subrouter = router.NewRoute().Subrouter()
-	}
-
-	if config.Opts.HasMaintenanceMode() {
-		subrouter.Use(func(next http.Handler) http.Handler {
-			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				w.Write([]byte(config.Opts.MaintenanceMessage()))
-			})
-		})
-	}
-
-	subrouter.Use(middleware)
-
-	// Fever API routing
-	feverSubrouter := subrouter.PathPrefix("/fever").Subrouter()
-	feverSubrouter.Use(fever.Middleware(store))
-	feverSubrouter.Handle("/", fever.NewHandler(store)).Name("feverEndpoint")
-
-	// Google Reader API routing
-	googleReaderHandler := http.StripPrefix(config.Opts.BasePath(), googlereader.NewHandler(store))
-	subrouter.HandleFunc("/accounts/ClientLogin", googleReaderHandler.ServeHTTP).Methods(http.MethodPost).Name("ClientLogin")
-	subrouter.PathPrefix("/reader/api/0").Handler(googleReaderHandler)
-
-	if config.Opts.HasAPI() {
-		apiHandler := http.StripPrefix(config.Opts.BasePath(), api.NewHandler(store, pool))
-		subrouter.PathPrefix("/v1").Handler(apiHandler)
-	}
-	ui.Serve(subrouter, store, pool)
-
-	subrouter.HandleFunc("/healthcheck", readinessProbe).Name("healthcheck")
-
-	if config.Opts.HasMetricsCollector() {
-		subrouter.Handle("/metrics", promhttp.Handler()).Name("metrics")
-		subrouter.Use(func(next http.Handler) http.Handler {
-			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				route := mux.CurrentRoute(r)
-
-				// Returns a 404 if the client is not authorized to access the metrics endpoint.
-				if route.GetName() == "metrics" && !isAllowedToAccessMetricsEndpoint(r) {
-					slog.Warn("Authentication failed while accessing the metrics endpoint",
-						slog.String("client_ip", request.ClientIP(r)),
-						slog.String("client_user_agent", r.UserAgent()),
-						slog.String("client_remote_addr", r.RemoteAddr),
-					)
-					http.NotFound(w, r)
-					return
-				}
-
-				next.ServeHTTP(w, r)
-			})
-		})
-	}
-
-	return router
-}
-
-func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
-	clientIP := request.ClientIP(r)
-
-	if config.Opts.MetricsUsername() != "" && config.Opts.MetricsPassword() != "" {
-		username, password, authOK := r.BasicAuth()
-		if !authOK {
-			slog.Warn("Metrics endpoint accessed without authentication header",
-				slog.Bool("authentication_failed", true),
-				slog.String("client_ip", clientIP),
-				slog.String("client_user_agent", r.UserAgent()),
-				slog.String("client_remote_addr", r.RemoteAddr),
-			)
-			return false
-		}
-
-		if username == "" || password == "" {
-			slog.Warn("Metrics endpoint accessed with empty username or password",
-				slog.Bool("authentication_failed", true),
-				slog.String("client_ip", clientIP),
-				slog.String("client_user_agent", r.UserAgent()),
-				slog.String("client_remote_addr", r.RemoteAddr),
-			)
-			return false
-		}
-
-		if username != config.Opts.MetricsUsername() || password != config.Opts.MetricsPassword() {
-			slog.Warn("Metrics endpoint accessed with invalid username or password",
-				slog.Bool("authentication_failed", true),
-				slog.String("client_ip", clientIP),
-				slog.String("client_user_agent", r.UserAgent()),
-				slog.String("client_remote_addr", r.RemoteAddr),
-			)
-			return false
-		}
-	}
-
-	remoteIP := request.FindRemoteIP(r)
-	return request.IsTrustedIP(remoteIP, config.Opts.MetricsAllowedNetworks())
 }
 
 func printErrorAndExit(format string, a ...any) {

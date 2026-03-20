@@ -20,7 +20,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
@@ -149,7 +148,7 @@ func (h *handler) finishRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handleEncoded := model.WebAuthnCredential{Handle: sessionData.UserID}.HandleEncoded()
-	redirect := route.Path(h.router, "webauthnRename", "credentialHandle", handleEncoded)
+	redirect := h.routePath("/webauthn/%s/rename", handleEncoded)
 	response.JSON(w, r, map[string]string{"redirect": redirect})
 }
 
@@ -398,7 +397,7 @@ func (h *handler) saveCredential(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.HTMLRedirect(w, r, route.Path(h.router, "settings"))
+	response.HTMLRedirect(w, r, h.routePath("/settings"))
 }
 
 func (h *handler) deleteCredential(w http.ResponseWriter, r *http.Request) {

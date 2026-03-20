@@ -9,27 +9,25 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/cookie"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/session"
-
-	"github.com/gorilla/mux"
 )
 
 type middleware struct {
-	router *mux.Router
-	store  *storage.Storage
+	basePath string
+	store    *storage.Storage
 }
 
-func newMiddleware(router *mux.Router, store *storage.Storage) *middleware {
-	return &middleware{router, store}
+func newMiddleware(basePath string, store *storage.Storage) *middleware {
+	return &middleware{basePath, store}
 }
 
 func (m *middleware) handleUserSession(next http.Handler) http.Handler {
@@ -37,13 +35,13 @@ func (m *middleware) handleUserSession(next http.Handler) http.Handler {
 		session := m.getUserSessionFromCookie(r)
 
 		if session == nil {
-			if m.isPublicRoute(r) {
+			if isPublicRoute(r) {
 				next.ServeHTTP(w, r)
 			} else {
 				slog.Debug("Redirecting to login page because no user session has been found",
 					slog.String("url", r.RequestURI),
 				)
-				loginURL, _ := url.Parse(route.Path(m.router, "login"))
+				loginURL, _ := url.Parse(m.basePath + "/")
 				values := loginURL.Query()
 				values.Set("redirect_url", r.RequestURI)
 				loginURL.RawQuery = values.Encode()
@@ -68,7 +66,7 @@ func (m *middleware) handleUserSession(next http.Handler) http.Handler {
 
 func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if mux.CurrentRoute(r).GetName() == "feedIcon" {
+		if strings.HasPrefix(r.URL.Path, "/feed-icon/") {
 			// Skip app session handling for the feed icon route to avoid unnecessary session creation
 			// when fetching feed icons.
 			next.ServeHTTP(w, r)
@@ -112,8 +110,8 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 					slog.String("header_csrf", headerValue),
 				)
 
-				if mux.CurrentRoute(r).GetName() == "checkLogin" {
-					response.HTMLRedirect(w, r, route.Path(m.router, "login"))
+				if r.URL.Path == "/login" {
+					response.HTMLRedirect(w, r, m.basePath+"/")
 					return
 				}
 
@@ -155,30 +153,31 @@ func (m *middleware) getAppSessionValueFromCookie(r *http.Request) *model.Sessio
 	return session
 }
 
-func (m *middleware) isPublicRoute(r *http.Request) bool {
-	route := mux.CurrentRoute(r)
-	switch route.GetName() {
-	case "login",
-		"checkLogin",
-		"stylesheet",
-		"javascript",
-		"oauth2Redirect",
-		"oauth2Callback",
-		"appIcon",
-		"feedIcon",
-		"favicon",
-		"webManifest",
-		"robots",
-		"sharedEntry",
-		"healthcheck",
-		"offline",
-		"proxy",
-		"webauthnLoginBegin",
-		"webauthnLoginFinish":
+// isPublicRoute checks if the request path corresponds to a route that
+// does not require authentication. The path is expected to have the base
+// path already stripped.
+func isPublicRoute(r *http.Request) bool {
+	path := r.URL.Path
+
+	switch path {
+	case "/", "/login", "/favicon.ico", "/manifest.json", "/robots.txt",
+		"/healthcheck", "/offline",
+		"/webauthn/login/begin", "/webauthn/login/finish":
 		return true
-	default:
-		return false
 	}
+
+	if strings.HasPrefix(path, "/stylesheets/") ||
+		strings.HasPrefix(path, "/icon/") ||
+		strings.HasPrefix(path, "/feed-icon/") ||
+		strings.HasSuffix(path, "/redirect") && strings.HasPrefix(path, "/oauth2/") ||
+		strings.HasSuffix(path, "/callback") && strings.HasPrefix(path, "/oauth2/") ||
+		strings.HasPrefix(path, "/share/") ||
+		strings.HasPrefix(path, "/proxy/") ||
+		strings.HasSuffix(path, ".js") {
+		return true
+	}
+
+	return false
 }
 
 func (m *middleware) getUserSessionFromCookie(r *http.Request) *model.UserSession {
@@ -286,6 +285,6 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 			config.Opts.BasePath(),
 		))
 
-		response.HTMLRedirect(w, r, route.Path(m.router, user.DefaultHomePage))
+		response.HTMLRedirect(w, r, m.basePath+"/"+user.DefaultHomePage)
 	})
 }

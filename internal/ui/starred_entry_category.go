@@ -8,7 +8,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/session"
@@ -68,12 +67,12 @@ func (h *handler) showStarredCategoryEntryPage(w http.ResponseWriter, r *http.Re
 
 	nextEntryRoute := ""
 	if nextEntry != nil {
-		nextEntryRoute = route.Path(h.router, "starredCategoryEntry", "categoryID", categoryID, "entryID", nextEntry.ID)
+		nextEntryRoute = h.routePath("/starred/category/%d/entry/%d", categoryID, nextEntry.ID)
 	}
 
 	prevEntryRoute := ""
 	if prevEntry != nil {
-		prevEntryRoute = route.Path(h.router, "starredCategoryEntry", "categoryID", categoryID, "entryID", prevEntry.ID)
+		prevEntryRoute = h.routePath("/starred/category/%d/entry/%d", categoryID, prevEntry.ID)
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

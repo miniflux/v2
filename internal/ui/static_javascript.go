@@ -9,10 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/ui/static"
 )
 
@@ -20,7 +18,14 @@ const licensePrefix = "//@license magnet:?xt=urn:btih:8e4f440f4c65981c5bf93c76d3
 const licenseSuffix = "\n//@license-end"
 
 func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
-	filename := request.RouteStringParam(r, "name")
+	// The filename path value contains "name.checksum.js"; reject non-JS requests
+	// and extract the name portion.
+	rawFilename := r.PathValue("filename")
+	if !strings.HasSuffix(rawFilename, ".js") {
+		response.HTMLNotFound(w, r)
+		return
+	}
+	filename, _, _ := strings.Cut(strings.TrimSuffix(rawFilename, ".js"), ".")
 	js, found := static.JavascriptBundles[filename]
 	if !found {
 		response.HTMLNotFound(w, r)
@@ -31,7 +36,7 @@ func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
 		contents := js.Data
 
 		if filename == "service-worker" {
-			variables := fmt.Sprintf(`const OFFLINE_URL=%q;`, route.Path(h.router, "offline"))
+			variables := fmt.Sprintf(`const OFFLINE_URL=%q;`, h.routePath("/offline"))
 			contents = append([]byte(variables), contents...)
 		}
 

@@ -8,7 +8,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 )
 
 func (h *handler) deleteAPIKey(w http.ResponseWriter, r *http.Request) {
@@ -18,5 +17,5 @@ func (h *handler) deleteAPIKey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.HTMLRedirect(w, r, route.Path(h.router, "apiKeys"))
+	response.HTMLRedirect(w, r, h.routePath("/keys"))
 }

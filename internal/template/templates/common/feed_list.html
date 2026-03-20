@@ -8,9 +8,9 @@
         >
             <header class="item-header" dir="auto">
                 <h2 id="feed-title-{{ .ID }}" class="item-title">
-                    <a href="{{ route "feedEntries" "feedID" .ID }}">
+                    <a href="{{ routePath "/feed/%d/entries" .ID }}">
                         {{ if and (.Icon) (gt .Icon.IconID 0) }}
-                        <img src="{{ route "feedIcon" "externalIconID" .Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
+                        <img src="{{ routePath "/feed-icon/%s" .Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
                         {{ end }}
                         {{ if .Disabled }} 🚫 {{ end }}
                         {{ .Title }}
@@ -25,7 +25,7 @@
                 </span>
                 <span class="category">
                     <a id="feed-category-{{ .ID }}"
-                       href="{{ route "categoryEntries" "categoryID" .Category.ID }}"
+                       href="{{ routePath "/category/%d/entries" .Category.ID }}"
                        aria-label="{{ t "page.category_label" .Category.Title }}"
                     >
                         {{ .Category.Title }}
@@ -51,12 +51,12 @@
                 </ul>
                 <ul class="item-meta-icons">
                     <li class="item-meta-icons-refresh">
-                        <a href="{{ route "refreshFeed" "feedID" .ID }}" aria-describedby="feed-title-{{ .ID }}">
+                        <a href="{{ routePath "/feed/%d/refresh" .ID }}" aria-describedby="feed-title-{{ .ID }}">
                             {{ icon "refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span>
                         </a>
                     </li>
                     <li class="item-meta-icons-edit">
-                        <a href="{{ route "editFeed" "feedID" .ID }}" aria-describedby="feed-title-{{ .ID }}">
+                        <a href="{{ routePath "/feed/%d/edit" .ID }}" aria-describedby="feed-title-{{ .ID }}">
                             {{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_feed" }}</span>
                         </a>
                     </li>
@@ -69,9 +69,9 @@
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
                             {{ if $.categoryID }}
-                                data-url="{{ route "removeCategoryFeed" "categoryID" $.categoryID "feedID" .ID }}"
+                                data-url="{{ routePath "/category/%d/feed/%d/remove" $.categoryID .ID }}"
                             {{ else }}
-                                data-url="{{ route "removeFeed" "feedID" .ID }}"
+                                data-url="{{ routePath "/feed/%d/remove" .ID }}"
                             {{ end }}>{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></button>
                     </li>
                     {{ if .UnreadCount }}
@@ -83,7 +83,7 @@
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "markFeedAsRead" "feedID" .ID }}">
+                            data-url="{{ routePath "/feed/%d/mark-all-as-read" .ID }}">
                                 {{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span>
                         </button>
                     </li>

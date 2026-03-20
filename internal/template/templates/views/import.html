@@ -12,7 +12,7 @@
     <div role="alert" class="alert alert-error">{{ .errorMessage }}</div>
 {{ end }}
 
-<form action="{{ route "uploadOPML" }}" method="post" enctype="multipart/form-data">
+<form action="{{ routePath "/upload" }}" method="post" enctype="multipart/form-data">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
     <label for="form-file">{{ t "form.import.label.file" }}</label>
@@ -23,7 +23,7 @@
     </div>
 </form>
 <hr>
-<form action="{{ route "fetchOPML" }}" method="post" enctype="multipart/form-data">
+<form action="{{ routePath "/fetch" }}" method="post" enctype="multipart/form-data">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
     <label for="form-url">{{ t "form.import.label.url" }}</label>

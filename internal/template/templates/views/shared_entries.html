@@ -14,14 +14,14 @@
                 <button
                     class="page-button"
                     data-confirm="true"
-                    data-url="{{ route "flushHistory" }}"
+                    data-url="{{ routePath "/history/flush" }}"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}">{{ icon "delete" }}{{ t "menu.flush_history" }}</button>
             </li>
             <li>
-                <a class="page-link" href="{{ route "sharedEntries" }}">{{ icon "share" }}{{ t "menu.shared_entries" }}</a>
+                <a class="page-link" href="{{ routePath "/shares" }}">{{ icon "share" }}{{ t "menu.shared_entries" }}</a>
             </li>
         </ul>
     </nav>
@@ -46,24 +46,24 @@
         >
             <header class="item-header" dir="auto">
                 <h2 id="entry-title-{{ .ID }}" class="item-title">
-                    <a href="{{ route "readEntry" "entryID" .ID }}">
+                    <a href="{{ routePath "/history/entry/%d" .ID }}">
                         {{ if ne .Feed.Icon.IconID 0 }}
-                        <img src="{{ route "feedIcon" "externalIconID" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
+                        <img src="{{ routePath "/feed-icon/%s" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
                         {{ end }}
                         {{ .Title }}
                     </a>
                     {{ if .ShareCode }}
-                    <a href="{{ route "sharedEntry" "shareCode" .ShareCode }}"
+                    <a href="{{ routePath "/share/%s" .ShareCode }}"
                         title="{{ t "entry.shared_entry.title" }}"
                         {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>{{ icon "share" }}</a>
                     {{ end }}
                 </h2>
-                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                <span class="category"><a href="{{ routePath "/category/%d/entries" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
             </header>
             <div class="item-meta">
                 <ul class="item-meta-info">
                     <li class="item-meta-info-site-url">
-                        <a href="{{ route "feedEntries" "feedID" .Feed.ID }}" title="{{ .Feed.SiteURL }}">{{ truncate .Feed.Title 35 }}</a>
+                        <a href="{{ routePath "/feed/%d/entries" .Feed.ID }}" title="{{ .Feed.SiteURL }}">{{ truncate .Feed.Title 35 }}</a>
                     </li>
                     <li class="item-meta-info-timestamp">
                         <time datetime="{{ isodate .Date }}" title="{{ isodate .Date }}">{{ elapsed $.user.Timezone .Date }}</time>
@@ -74,7 +74,7 @@
                         {{ icon "delete" }}
                         <a href="#"
                             data-confirm="true"
-                            data-url="{{ route "unshareEntry" "entryID" .ID }}"
+                            data-url="{{ routePath "/entry/unshare/%d" .ID }}"
                             data-label-question="{{ t "confirm.question" }}"
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"

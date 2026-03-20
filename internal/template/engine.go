@@ -10,8 +10,6 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/locale"
-
-	"github.com/gorilla/mux"
 )
 
 //go:embed templates/common/*.html
@@ -27,10 +25,10 @@ type Engine struct {
 }
 
 // NewEngine returns a new template engine.
-func NewEngine(router *mux.Router) *Engine {
+func NewEngine(basePath string) *Engine {
 	return &Engine{
 		templates: make(map[string]*template.Template),
-		funcMap:   &funcMap{router},
+		funcMap:   &funcMap{basePath},
 	}
 }
 

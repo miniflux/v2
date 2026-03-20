@@ -9,8 +9,6 @@ import (
 	"net/url"
 	"reflect"
 	"testing"
-
-	"github.com/gorilla/mux"
 )
 
 func TestFormInt64Value(t *testing.T) {
@@ -42,33 +40,6 @@ func TestFormInt64Value(t *testing.T) {
 	}
 }
 
-func TestRouteStringParamWithGorillaMux(t *testing.T) {
-	router := mux.NewRouter()
-	router.HandleFunc("/route/{variable}/index", func(w http.ResponseWriter, r *http.Request) {
-		result := RouteStringParam(r, "variable")
-		expected := "value"
-
-		if result != expected {
-			t.Errorf(`Unexpected result, got %q instead of %q`, result, expected)
-		}
-
-		result = RouteStringParam(r, "missing variable")
-		expected = ""
-
-		if result != expected {
-			t.Errorf(`Unexpected result, got %q instead of %q`, result, expected)
-		}
-	})
-
-	r, err := http.NewRequest("GET", "/route/value/index", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, r)
-}
-
 func TestRouteStringParamWithServerMux(t *testing.T) {
 	router := http.NewServeMux()
 	router.HandleFunc("GET /route/{variable}/index", func(w http.ResponseWriter, r *http.Request) {
@@ -88,47 +59,6 @@ func TestRouteStringParamWithServerMux(t *testing.T) {
 	})
 
 	r, err := http.NewRequest(http.MethodGet, "/route/value/index", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, r)
-}
-
-func TestRouteInt64ParamWithGorillaMux(t *testing.T) {
-	router := mux.NewRouter()
-	router.HandleFunc("/a/{variable1}/b/{variable2}/c/{variable3}", func(w http.ResponseWriter, r *http.Request) {
-		result := RouteInt64Param(r, "variable1")
-		expected := int64(42)
-
-		if result != expected {
-			t.Errorf(`Unexpected result, got %d instead of %d`, result, expected)
-		}
-
-		result = RouteInt64Param(r, "missing variable")
-		expected = 0
-
-		if result != expected {
-			t.Errorf(`Unexpected result, got %d instead of %d`, result, expected)
-		}
-
-		result = RouteInt64Param(r, "variable2")
-		expected = 0
-
-		if result != expected {
-			t.Errorf(`Unexpected result, got %d instead of %d`, result, expected)
-		}
-
-		result = RouteInt64Param(r, "variable3")
-		expected = 0
-
-		if result != expected {
-			t.Errorf(`Unexpected result, got %d instead of %d`, result, expected)
-		}
-	})
-
-	r, err := http.NewRequest("GET", "/a/42/b/not-int/c/-10", nil)
 	if err != nil {
 		t.Fatal(err)
 	}

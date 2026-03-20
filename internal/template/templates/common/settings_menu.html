@@ -2,26 +2,26 @@
 <nav aria-label="{{ t "page.settings.title" }} {{ t "menu.title" }}">
     <ul>
         <li>
-            <a href="{{ route "settings" }}">{{ icon "settings" }}{{ t "menu.settings" }}</a>
+            <a href="{{ routePath "/settings" }}">{{ icon "settings" }}{{ t "menu.settings" }}</a>
         </li>
         <li>
-            <a href="{{ route "integrations" }}">{{ icon "third-party-services" }}{{ t "menu.integrations" }}</a>
+            <a href="{{ routePath "/integrations" }}">{{ icon "third-party-services" }}{{ t "menu.integrations" }}</a>
         </li>
         {{ if apiEnabled }}
         <li>
-            <a href="{{ route "apiKeys" }}">{{ icon "api" }}{{ t "menu.api_keys" }}</a>
+            <a href="{{ routePath "/keys" }}">{{ icon "api" }}{{ t "menu.api_keys" }}</a>
         </li>
         {{ end }}
         <li>
-            <a href="{{ route "sessions" }}">{{ icon "sessions" }}{{ t "menu.sessions" }}</a>
+            <a href="{{ routePath "/sessions" }}">{{ icon "sessions" }}{{ t "menu.sessions" }}</a>
         </li>
         {{ if .user.IsAdmin }}
             <li>
-                <a href="{{ route "users" }}">{{ icon "users" }}{{ t "menu.users" }}</a>
+                <a href="{{ routePath "/users" }}">{{ icon "users" }}{{ t "menu.users" }}</a>
             </li>
         {{ end }}
         <li>
-            <a href="{{ route "about" }}">{{ icon "about" }}{{ t "menu.about" }}</a>
+            <a href="{{ routePath "/about" }}">{{ icon "about" }}{{ t "menu.about" }}</a>
         </li>
     </ul>
 </nav>

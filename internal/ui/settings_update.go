@@ -8,7 +8,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/timezone"
@@ -96,5 +95,5 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	sess.SetLanguage(user.Language)
 	sess.SetTheme(user.Theme)
 	sess.NewFlashMessage(locale.NewPrinter(request.UserLanguage(r)).Printf("alert.prefs_saved"))
-	response.HTMLRedirect(w, r, route.Path(h.router, "settings"))
+	response.HTMLRedirect(w, r, h.routePath("/settings"))
 }

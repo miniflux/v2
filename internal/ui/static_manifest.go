@@ -8,7 +8,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 )
@@ -83,31 +82,31 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 		ShortName:       "Miniflux",
 		Description:     "Minimalist Feed Reader",
 		Display:         displayMode,
-		StartURL:        route.Path(h.router, "login"),
+		StartURL:        h.routePath("/"),
 		BackgroundColor: themeColor,
 		Icons: []webManifestIcon{
-			{Source: route.Path(h.router, "appIcon", "filename", "icon-120.png"), Sizes: "120x120", Type: "image/png", Purpose: "any"},
-			{Source: route.Path(h.router, "appIcon", "filename", "icon-192.png"), Sizes: "192x192", Type: "image/png", Purpose: "any"},
-			{Source: route.Path(h.router, "appIcon", "filename", "icon-512.png"), Sizes: "512x512", Type: "image/png", Purpose: "any"},
-			{Source: route.Path(h.router, "appIcon", "filename", "maskable-icon-120.png"), Sizes: "120x120", Type: "image/png", Purpose: "maskable"},
-			{Source: route.Path(h.router, "appIcon", "filename", "maskable-icon-192.png"), Sizes: "192x192", Type: "image/png", Purpose: "maskable"},
-			{Source: route.Path(h.router, "appIcon", "filename", "maskable-icon-512.png"), Sizes: "512x512", Type: "image/png", Purpose: "maskable"},
+			{Source: h.routePath("/icon/%s", "icon-120.png"), Sizes: "120x120", Type: "image/png", Purpose: "any"},
+			{Source: h.routePath("/icon/%s", "icon-192.png"), Sizes: "192x192", Type: "image/png", Purpose: "any"},
+			{Source: h.routePath("/icon/%s", "icon-512.png"), Sizes: "512x512", Type: "image/png", Purpose: "any"},
+			{Source: h.routePath("/icon/%s", "maskable-icon-120.png"), Sizes: "120x120", Type: "image/png", Purpose: "maskable"},
+			{Source: h.routePath("/icon/%s", "maskable-icon-192.png"), Sizes: "192x192", Type: "image/png", Purpose: "maskable"},
+			{Source: h.routePath("/icon/%s", "maskable-icon-512.png"), Sizes: "512x512", Type: "image/png", Purpose: "maskable"},
 		},
 		ShareTarget: webManifestShareTarget{
-			Action:  route.Path(h.router, "bookmarklet"),
+			Action:  h.routePath("/bookmarklet"),
 			Method:  http.MethodGet,
 			Enctype: "application/x-www-form-urlencoded",
 			Params:  webManifestShareTargetParams{URL: "uri", Text: "text"},
 		},
 		Shortcuts: []webManifestShortcut{
-			{Name: labelNewFeed, URL: route.Path(h.router, "addSubscription"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "add-feed-icon.png"), Sizes: "240x240", Type: "image/png"}}},
-			{Name: labelUnreadMenu, URL: route.Path(h.router, "unread"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "unread-icon.png"), Sizes: "240x240", Type: "image/png"}}},
-			{Name: labelStarredMenu, URL: route.Path(h.router, "starred"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "starred-icon.png"), Sizes: "240x240", Type: "image/png"}}},
-			{Name: labelHistoryMenu, URL: route.Path(h.router, "history"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "history-icon.png"), Sizes: "240x240", Type: "image/png"}}},
-			{Name: labelFeedsMenu, URL: route.Path(h.router, "feeds"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "feeds-icon.png"), Sizes: "240x240", Type: "image/png"}}},
-			{Name: labelCategoriesMenu, URL: route.Path(h.router, "categories"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "categories-icon.png"), Sizes: "240x240", Type: "image/png"}}},
-			{Name: labelSearchMenu, URL: route.Path(h.router, "search"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "search-icon.png"), Sizes: "240x240", Type: "image/png"}}},
-			{Name: labelSettingsMenu, URL: route.Path(h.router, "settings"), Icons: []webManifestIcon{{Source: route.Path(h.router, "appIcon", "filename", "settings-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelNewFeed, URL: h.routePath("/subscribe"), Icons: []webManifestIcon{{Source: h.routePath("/icon/%s", "add-feed-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelUnreadMenu, URL: h.routePath("/unread"), Icons: []webManifestIcon{{Source: h.routePath("/icon/%s", "unread-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelStarredMenu, URL: h.routePath("/starred"), Icons: []webManifestIcon{{Source: h.routePath("/icon/%s", "starred-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelHistoryMenu, URL: h.routePath("/history"), Icons: []webManifestIcon{{Source: h.routePath("/icon/%s", "history-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelFeedsMenu, URL: h.routePath("/feeds"), Icons: []webManifestIcon{{Source: h.routePath("/icon/%s", "feeds-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelCategoriesMenu, URL: h.routePath("/categories"), Icons: []webManifestIcon{{Source: h.routePath("/icon/%s", "categories-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelSearchMenu, URL: h.routePath("/search"), Icons: []webManifestIcon{{Source: h.routePath("/icon/%s", "search-icon.png"), Sizes: "240x240", Type: "image/png"}}},
+			{Name: labelSettingsMenu, URL: h.routePath("/settings"), Icons: []webManifestIcon{{Source: h.routePath("/icon/%s", "settings-icon.png"), Sizes: "240x240", Type: "image/png"}}},
 		},
 	}
 

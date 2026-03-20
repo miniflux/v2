@@ -34,16 +34,16 @@
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
-                    data-url="{{ route "markFeedAsRead" "feedID" .feed.ID }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</button>
+                    data-url="{{ routePath "/feed/%d/mark-all-as-read" .feed.ID }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</button>
             </li>
             {{ end }}
             {{ if .showOnlyUnreadEntries }}
             <li>
-                <a class="page-link" href="{{ route "feedEntriesAll" "feedID" .feed.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
+                <a class="page-link" href="{{ routePath "/feed/%d/entries/all" .feed.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
             </li>
             {{ else }}
             <li>
-                <a class="page-link" href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
+                <a class="page-link" href="{{ routePath "/feed/%d/entries" .feed.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
             </li>
             {{ end }}
             <li>
@@ -54,11 +54,11 @@
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
-                    data-url="{{ route "refreshFeed" "feedID" .feed.ID }}?forceRefresh=true"
-                    data-no-action-url="{{ route "refreshFeed" "feedID" .feed.ID }}?forceRefresh=false">{{ icon "refresh" }}{{ t "menu.refresh_feed" }}</button>
+                    data-url="{{ routePath "/feed/%d/refresh" .feed.ID }}?forceRefresh=true"
+                    data-no-action-url="{{ routePath "/feed/%d/refresh" .feed.ID }}?forceRefresh=false">{{ icon "refresh" }}{{ t "menu.refresh_feed" }}</button>
             </li>
             <li>
-                <a class="page-link" href="{{ route "editFeed" "feedID" .feed.ID }}">{{ icon "edit" }}{{ t "menu.edit_feed" }}</a>
+                <a class="page-link" href="{{ routePath "/feed/%d/edit" .feed.ID }}">{{ icon "edit" }}{{ t "menu.edit_feed" }}</a>
             </li>
             <li>
                 <button
@@ -69,8 +69,8 @@
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
-                    data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
-                    data-redirect-url="{{ route "feeds" }}">{{ icon "delete" }}{{ t "action.remove_feed" }}</button>
+                    data-url="{{ routePath "/feed/%d/remove" .feed.ID }}"
+                    data-redirect-url="{{ routePath "/feeds" }}">{{ icon "delete" }}{{ t "action.remove_feed" }}</button>
             </li>
         </ul>
     </nav>
@@ -107,20 +107,20 @@
                 <h2 id="entry-title-{{ .ID }}" class="item-title">
                     <a
                         {{ if $.showOnlyUnreadEntries }}
-                        href="{{ route "unreadFeedEntry" "feedID" .Feed.ID "entryID" .ID }}"
+                        href="{{ routePath "/unread/feed/%d/entry/%d" .Feed.ID .ID }}"
                         {{ else }}
-                        href="{{ route "feedEntry" "feedID" .Feed.ID "entryID" .ID }}"
+                        href="{{ routePath "/feed/%d/entry/%d" .Feed.ID .ID }}"
                         {{ end }}
                     >
                         {{ if ne .Feed.Icon.IconID 0 }}
-                        <img src="{{ route "feedIcon" "externalIconID" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
+                        <img src="{{ routePath "/feed-icon/%s" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
                         {{ end }}
                         {{ .Title }}
                     </a>
                 </h2>
                 <span class="category">
                     <a
-                        href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}"
+                        href="{{ routePath "/category/%d/entries" .Feed.Category.ID }}"
                         aria-label="{{ t "page.category_label" .Feed.Category.Title }}"
                     >
                         {{ .Feed.Category.Title }}
