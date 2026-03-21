@@ -8,6 +8,7 @@ import (
 
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/template"
+	"miniflux.app/v2/internal/ui/static"
 	"miniflux.app/v2/internal/worker"
 )
 
@@ -23,4 +24,8 @@ func (h *handler) routePath(format string, args ...any) string {
 		return h.basePath + fmt.Sprintf(format, args...)
 	}
 	return h.basePath + format
+}
+
+func (h *handler) iconPath(filename string) string {
+	return h.basePath + fmt.Sprintf("/icon/%s/%s", static.BinaryBundles[filename].Checksum, filename)
 }

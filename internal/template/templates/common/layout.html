@@ -16,14 +16,14 @@
 
     <link rel="manifest" href="{{ routePath "/manifest.json" }}" crossorigin="use-credentials">
 
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ routePath "/icon/%s" "icon-16.png" }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ routePath "/icon/%s" "icon-32.png" }}">
-    <link rel="icon" type="image/png" sizes="128x128" href="{{ routePath "/icon/%s" "icon-128.png" }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ routePath "/icon/%s" "icon-192.png" }}">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ routePath "/icon/%s" "icon-120.png" }}">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ routePath "/icon/%s" "icon-152.png" }}">
-    <link rel="apple-touch-icon" sizes="167x167" href="{{ routePath "/icon/%s" "icon-167.png" }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ routePath "/icon/%s" "icon-180.png" }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ iconPath "icon-16.png" }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ iconPath "icon-32.png" }}">
+    <link rel="icon" type="image/png" sizes="128x128" href="{{ iconPath "icon-128.png" }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ iconPath "icon-192.png" }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ iconPath "icon-120.png" }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ iconPath "icon-152.png" }}">
+    <link rel="apple-touch-icon" sizes="167x167" href="{{ iconPath "icon-167.png" }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ iconPath "icon-180.png" }}">
 
     {{ $cspNonce := nonce }}
     {{ csp .user $cspNonce | safeHTML }}

@@ -21,6 +21,7 @@ import (
 	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/timezone"
+	"miniflux.app/v2/internal/ui/static"
 	"miniflux.app/v2/internal/urllib"
 )
 
@@ -88,10 +89,11 @@ func (f *funcMap) Map() template.FuncMap {
 			return ts.Format("2006-01-02 15:04:05")
 		},
 		"theme_color": model.ThemeColor,
+		"iconPath":    f.iconPath,
 		"icon": func(iconName string) template.HTML {
 			return template.HTML(fmt.Sprintf(
-				`<svg class="icon" aria-hidden="true"><use href="%s/icon/sprite.svg#icon-%s"/></svg>`,
-				f.basePath,
+				`<svg class="icon" aria-hidden="true"><use href="%s#icon-%s"/></svg>`,
+				f.iconPath("sprite.svg"),
 				iconName,
 			))
 		},
@@ -157,6 +159,13 @@ func (f *funcMap) Map() template.FuncMap {
 			return ""
 		},
 	}
+}
+
+func (f *funcMap) iconPath(filename string) string {
+	if bundle, ok := static.BinaryBundles[filename]; ok {
+		return fmt.Sprintf("%s/icon/%s/%s", f.basePath, bundle.Checksum, filename)
+	}
+	return fmt.Sprintf("%s/icon/_/%s", f.basePath, filename)
 }
 
 func csp(user *model.User, nonce string) string {
