@@ -29,7 +29,7 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 	mux.HandleFunc("GET /stylesheets/{filename}", handler.showStylesheet)
 	mux.HandleFunc("GET /{filename}", handler.showJavascript)
 	mux.HandleFunc("GET /favicon.ico", handler.showFavicon)
-	mux.HandleFunc("GET /icon/{filename}", handler.showAppIcon)
+	mux.HandleFunc("GET /icon/{checksum}/{filename}", handler.showAppIcon)
 	mux.HandleFunc("GET /manifest.json", handler.showWebManifest)
 
 	// New subscription pages.
