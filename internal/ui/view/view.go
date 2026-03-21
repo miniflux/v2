@@ -41,9 +41,9 @@ func New(tpl *template.Engine, r *http.Request, sess *session.Session) *view {
 		"flashErrorMessage": sess.FlashErrorMessage(request.FlashErrorMessage(r)),
 		"theme":             theme,
 		"language":          request.UserLanguage(r),
-		"theme_checksum":    static.StylesheetBundles[theme].Checksum,
-		"app_js_checksum":   static.JavascriptBundles["app"].Checksum,
-		"sw_js_checksum":    static.JavascriptBundles["service-worker"].Checksum,
+		"theme_checksum":    static.StylesheetBundles[theme+".css"].Checksum,
+		"app_js_checksum":   static.JavascriptBundles["app.js"].Checksum,
+		"sw_js_checksum":    static.JavascriptBundles["service-worker.js"].Checksum,
 		"webAuthnEnabled":   config.Opts.WebAuthn(),
 	}}
 }

@@ -173,7 +173,7 @@ func isPublicRoute(r *http.Request) bool {
 		strings.HasSuffix(path, "/callback") && strings.HasPrefix(path, "/oauth2/") ||
 		strings.HasPrefix(path, "/share/") ||
 		strings.HasPrefix(path, "/proxy/") ||
-		strings.HasSuffix(path, ".js") {
+		strings.HasPrefix(path, "/js/") {
 		return true
 	}
 
