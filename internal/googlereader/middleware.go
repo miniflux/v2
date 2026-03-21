@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"strings"
 
+	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
@@ -130,7 +131,7 @@ func (m *authMiddleware) validateApiKey(next http.Handler) http.Handler {
 			return
 		}
 		expectedToken := getAuthToken(integration.GoogleReaderUsername, integration.GoogleReaderPassword)
-		if expectedToken != token {
+		if !crypto.ConstantTimeCmp(expectedToken, token) {
 			slog.Warn("[GoogleReader] Token does not match",
 				slog.Bool("authentication_failed", true),
 				slog.String("client_ip", clientIP),
