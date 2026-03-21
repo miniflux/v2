@@ -182,15 +182,9 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 		}
 	}
 
-	// Use exact equality for a single status so the query planner can choose a
-	// time-ordered index, avoiding a full sort on large result sets.
-	// ANY($1) with a one-element array prevents the planner from doing so.
-	switch len(filtered) {
-	case 0:
+	if len(filtered) == 0 {
 		builder.WithoutStatus(model.EntryStatusRemoved)
-	case 1:
-		builder.WithStatus(filtered[0])
-	default:
+	} else {
 		builder.WithStatuses(filtered)
 	}
 

@@ -149,8 +149,15 @@ func (e *EntryQueryBuilder) WithStatus(status string) *EntryQueryBuilder {
 }
 
 // WithStatuses filter by a list of entry statuses.
+// 0 statuses: no-op; 1 status: exact equality; 2+: ANY().
 func (e *EntryQueryBuilder) WithStatuses(statuses []string) *EntryQueryBuilder {
-	if len(statuses) > 0 {
+	switch len(statuses) {
+	case 0:
+		// no-op
+	case 1:
+		e.conditions = append(e.conditions, "e.status = $"+strconv.Itoa(len(e.args)+1))
+		e.args = append(e.args, statuses[0])
+	default:
 		e.conditions = append(e.conditions, fmt.Sprintf("e.status = ANY($%d)", len(e.args)+1))
 		e.args = append(e.args, pq.StringArray(statuses))
 	}
