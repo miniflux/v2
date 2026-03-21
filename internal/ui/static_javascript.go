@@ -18,24 +18,17 @@ const licensePrefix = "//@license magnet:?xt=urn:btih:8e4f440f4c65981c5bf93c76d3
 const licenseSuffix = "\n//@license-end"
 
 func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
-	// The filename path value contains "name.checksum.js"; reject non-JS requests
-	// and extract the name portion.
-	rawFilename := r.PathValue("filename")
-	if !strings.HasSuffix(rawFilename, ".js") {
-		response.HTMLNotFound(w, r)
-		return
-	}
-	filename, _, _ := strings.Cut(strings.TrimSuffix(rawFilename, ".js"), ".")
-	js, found := static.JavascriptBundles[filename]
+	filename := r.PathValue("filename")
+	javascriptBundle, found := static.JavascriptBundles[filename]
 	if !found {
 		response.HTMLNotFound(w, r)
 		return
 	}
 
-	response.NewBuilder(w, r).WithCaching(js.Checksum, 48*time.Hour, func(b *response.Builder) {
-		contents := js.Data
+	response.NewBuilder(w, r).WithCaching(javascriptBundle.Checksum, 48*time.Hour, func(b *response.Builder) {
+		contents := javascriptBundle.Data
 
-		if filename == "service-worker" {
+		if filename == "service-worker.js" {
 			variables := fmt.Sprintf(`const OFFLINE_URL=%q;`, h.routePath("/offline"))
 			contents = append([]byte(variables), contents...)
 		}

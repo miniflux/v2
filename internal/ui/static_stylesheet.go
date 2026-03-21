@@ -5,7 +5,6 @@ package ui // import "miniflux.app/v2/internal/ui"
 
 import (
 	"net/http"
-	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/http/response"
@@ -14,17 +13,15 @@ import (
 )
 
 func (h *handler) showStylesheet(w http.ResponseWriter, r *http.Request) {
-	// The filename path value contains "name.checksum.css"; extract the name portion.
-	filename, _, _ := strings.Cut(r.PathValue("filename"), ".")
-	m, found := static.StylesheetBundles[filename]
+	stylesheetBundle, found := static.StylesheetBundles[r.PathValue("filename")]
 	if !found {
 		response.HTMLNotFound(w, r)
 		return
 	}
 
-	response.NewBuilder(w, r).WithCaching(m.Checksum, 48*time.Hour, func(b *response.Builder) {
+	response.NewBuilder(w, r).WithCaching(stylesheetBundle.Checksum, 48*time.Hour, func(b *response.Builder) {
 		b.WithHeader("Content-Type", "text/css; charset=utf-8")
-		b.WithBodyAsBytes(m.Data)
+		b.WithBodyAsBytes(stylesheetBundle.Data)
 		b.Write()
 	})
 }

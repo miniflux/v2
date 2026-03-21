@@ -27,8 +27,8 @@
 
     {{ $cspNonce := nonce }}
     {{ csp .user $cspNonce | safeHTML }}
-    <link rel="stylesheet" nonce="{{ $cspNonce }}" type="text/css" href="{{ routePath "/stylesheets/%s.%s.css" .theme .theme_checksum }}">
-    <script nonce="{{ $cspNonce }}" src="{{ routePath "/%s.%s.js" "app" .app_js_checksum }}" type="module"></script>
+    <link rel="stylesheet" nonce="{{ $cspNonce }}" type="text/css" href="{{ routePath "/stylesheets/%s/%s.css" .theme_checksum .theme }}">
+    <script nonce="{{ $cspNonce }}" src="{{ routePath "/js/%s/%s.js" .app_js_checksum "app" }}" type="module"></script>
     {{ if .user -}}
         {{ if .user.Stylesheet -}}
         <style nonce="{{ $cspNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
@@ -39,7 +39,7 @@
     {{ end -}}
 </head>
 <body
-    data-service-worker-url="{{ routePath "/%s.%s.js" "service-worker" .sw_js_checksum }}"
+    data-service-worker-url="{{ routePath "/js/%s/%s.js" .sw_js_checksum "service-worker" }}"
     {{ if .csrf }}data-csrf-token="{{ .csrf }}"{{ end }}
     data-add-subscription-url="{{ routePath "/subscribe" }}"
     data-entries-status-url="{{ routePath "/entry/status" }}"
