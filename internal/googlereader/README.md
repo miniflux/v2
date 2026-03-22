@@ -80,7 +80,7 @@ The digest is generated server-side from:
 - the Google Reader username
 - the stored bcrypt hash of the Google Reader password
 
-Specifically, the code computes an HMAC-SHA1 digest of an empty message using the key:
+Specifically, the code computes an HMAC-SHA256 digest of an empty message using the key:
 
 ```text
 googlereader_username + bcrypt_hash
