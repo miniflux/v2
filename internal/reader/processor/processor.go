@@ -119,9 +119,9 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 			}
 
 			if config.Opts.HasMetricsCollector() {
-				status := "success"
+				status := metric.StatusSuccess
 				if scraperErr != nil {
-					status = "error"
+					status = metric.StatusError
 				}
 				metric.ScraperRequestDuration.WithLabelValues(status).Observe(time.Since(startTime).Seconds())
 			}
@@ -199,9 +199,9 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	)
 
 	if config.Opts.HasMetricsCollector() {
-		status := "success"
+		status := metric.StatusSuccess
 		if scraperErr != nil {
-			status = "error"
+			status = metric.StatusError
 		}
 		metric.ScraperRequestDuration.WithLabelValues(status).Observe(time.Since(startTime).Seconds())
 	}

@@ -13,6 +13,12 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+// Status label values for histogram metrics.
+const (
+	StatusSuccess = "success"
+	StatusError   = "error"
+)
+
 // Prometheus Metrics.
 var (
 	BackgroundFeedRefreshDuration = prometheus.NewHistogramVec(

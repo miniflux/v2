@@ -39,9 +39,9 @@ func (w *worker) Run(c <-chan model.Job) {
 		localizedError := feedHandler.RefreshFeed(w.store, job.UserID, job.FeedID, false)
 
 		if config.Opts.HasMetricsCollector() {
-			status := "success"
+			status := metric.StatusSuccess
 			if localizedError != nil {
-				status = "error"
+				status = metric.StatusError
 			}
 			metric.BackgroundFeedRefreshDuration.WithLabelValues(status).Observe(time.Since(startTime).Seconds())
 		}
