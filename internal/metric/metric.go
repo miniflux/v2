@@ -4,6 +4,7 @@
 package metric // import "miniflux.app/v2/internal/metric"
 
 import (
+	"context"
 	"log/slog"
 	"time"
 
@@ -162,8 +163,17 @@ func NewCollector(store *storage.Storage, refreshInterval time.Duration) *collec
 }
 
 // GatherStorageMetrics polls the database to fetch metrics.
-func (c *collector) GatherStorageMetrics() {
-	for range time.Tick(c.refreshInterval) {
+func (c *collector) GatherStorageMetrics(ctx context.Context) {
+	ticker := time.NewTicker(c.refreshInterval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			slog.Debug("Stopping metric collector")
+			return
+		case <-ticker.C:
+		}
 		slog.Debug("Collecting metrics from the database")
 
 		usersGauge.Set(float64(c.store.CountUsers()))

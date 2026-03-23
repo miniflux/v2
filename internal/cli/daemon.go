@@ -38,9 +38,10 @@ func startDaemon(store *storage.Storage) {
 		httpServers = server.StartWebServer(store, pool)
 	}
 
+	metricsCtx, cancelMetrics := context.WithCancel(context.Background())
 	if config.Opts.HasMetricsCollector() {
 		collector := metric.NewCollector(store, config.Opts.MetricsRefreshInterval())
-		go collector.GatherStorageMetrics()
+		go collector.GatherStorageMetrics(metricsCtx)
 	}
 
 	if systemd.HasNotifySocket() {
@@ -75,6 +76,7 @@ func startDaemon(store *storage.Storage) {
 
 	<-stop
 	slog.Debug("Shutting down the process")
+	cancelMetrics()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
