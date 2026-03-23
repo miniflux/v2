@@ -18,14 +18,14 @@ import (
 )
 
 // CountUsers returns the total number of users.
-func (s *Storage) CountUsers() int {
+func (s *Storage) CountUsers() (int, error) {
 	var result int
 	err := s.db.QueryRow(`SELECT count(*) FROM users`).Scan(&result)
 	if err != nil {
-		return 0
+		return 0, fmt.Errorf("storage: unable to count users: %w", err)
 	}
 
-	return result
+	return result, nil
 }
 
 // SetLastLogin updates the last login date of a user.
