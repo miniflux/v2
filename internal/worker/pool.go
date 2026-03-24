@@ -4,20 +4,29 @@
 package worker // import "miniflux.app/v2/internal/worker"
 
 import (
+	"sync"
+
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 )
 
-// Pool handles a pool of workers.
+// Pool manages a set of background workers that process feed refresh jobs.
 type Pool struct {
 	queue chan model.Job
+	wg    sync.WaitGroup
 }
 
-// Push send a list of jobs to the queue.
+// Push sends a list of jobs to the queue.
 func (p *Pool) Push(jobs model.JobList) {
 	for _, job := range jobs {
 		p.queue <- job
 	}
+}
+
+// Shutdown closes the job queue and waits for all workers to finish their current jobs.
+func (p *Pool) Shutdown() {
+	close(p.queue)
+	p.wg.Wait()
 }
 
 // NewPool creates a pool of background workers.
@@ -27,8 +36,9 @@ func NewPool(store *storage.Storage, nbWorkers int) *Pool {
 	}
 
 	for i := range nbWorkers {
+		workerPool.wg.Add(1)
 		worker := &worker{id: i, store: store}
-		go worker.Run(workerPool.queue)
+		go worker.Run(workerPool.queue, &workerPool.wg)
 	}
 
 	return workerPool
