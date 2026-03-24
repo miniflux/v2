@@ -13,7 +13,7 @@ on:
       - 'packaging/debian/**' # Only run on changes to the debian packaging files
 jobs:
   test-packages:
-    if: (github.event_name == 'schedule' && github.repository_owner == 'miniflux' )
+    if: (github.event_name == 'schedule' && github.repository_owner == 'miniflux')
       || github.event_name == 'pull_request'
     name: Test Packages
     runs-on: ubuntu-latest
@@ -61,7 +61,7 @@ jobs:
         if-no-files-found: error
         retention-days: 3
   publish-packages:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.repository_owner == 'miniflux'
     name: Publish Packages
     runs-on: ubuntu-latest
     steps:
