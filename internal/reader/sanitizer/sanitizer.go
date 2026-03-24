@@ -121,6 +121,7 @@ var (
 		"bandcamp.com":         {},
 		"cdn.embedly.com":      {},
 		"dailymotion.com":      {},
+		"framatube.org":        {},
 		"open.spotify.com":     {},
 		"player.bilibili.com":  {},
 		"player.twitch.tv":     {},
