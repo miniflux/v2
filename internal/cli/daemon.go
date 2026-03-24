@@ -94,5 +94,9 @@ func startDaemon(store *storage.Storage) {
 		slog.Debug("No HTTP servers to shut down.")
 	}
 
+	slog.Debug("Shutting down worker pool...")
+	pool.Shutdown()
+	slog.Debug("Worker pool shut down.")
+
 	slog.Debug("Process gracefully stopped")
 }

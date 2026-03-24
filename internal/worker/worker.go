@@ -5,6 +5,7 @@ package worker // import "miniflux.app/v2/internal/worker"
 
 import (
 	"log/slog"
+	"sync"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -14,20 +15,20 @@ import (
 	"miniflux.app/v2/internal/storage"
 )
 
-// worker refreshes a feed in the background.
 type worker struct {
 	id    int
 	store *storage.Storage
 }
 
-// Run wait for a job and refresh the given feed.
-func (w *worker) Run(c <-chan model.Job) {
+// Run processes feed refresh jobs from the channel until it is closed.
+func (w *worker) Run(c <-chan model.Job, wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	slog.Debug("Worker started",
 		slog.Int("worker_id", w.id),
 	)
 
-	for {
-		job := <-c
+	for job := range c {
 		slog.Debug("Job received by worker",
 			slog.Int("worker_id", w.id),
 			slog.Int64("user_id", job.UserID),
