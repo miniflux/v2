@@ -487,7 +487,7 @@ func Convert(tz string, t time.Time) time.Time {
 			t.Nanosecond(),
 			userTimezone,
 		)
-	} else if t.Location() != userTimezone {
+	} else if t.Location().String() != userTimezone.String() {
 		return t.In(userTimezone)
 	}
 

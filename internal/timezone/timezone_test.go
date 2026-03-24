@@ -77,6 +77,19 @@ func TestConvertTimeWithIdenticalTimezone(t *testing.T) {
 	}
 }
 
+func TestConvertTimeWithEquivalentTimezone(t *testing.T) {
+	tz := "UTC"
+	// FixedZone creates a distinct pointer that has the same name as the cached location.
+	// The old pointer comparison would treat these as different, calling t.In() unnecessarily.
+	loc := time.FixedZone("UTC", 0)
+	input := time.Date(2024, 6, 15, 12, 0, 0, 0, loc)
+	output := Convert(tz, input)
+
+	if output.Location() != loc {
+		t.Fatal("Convert replaced the location even though timezone names match")
+	}
+}
+
 func TestConvertPostgresDateTimeWithNegativeTimezoneOffset(t *testing.T) {
 	tz := "US/Eastern"
 	input := time.Date(0, 1, 1, 0, 0, 0, 0, time.FixedZone("", -5))
