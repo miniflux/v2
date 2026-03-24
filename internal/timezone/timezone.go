@@ -521,11 +521,5 @@ func IsValid(timezone string) bool {
 
 // AvailableTimezones returns an iterator over supported timezone names.
 func AvailableTimezones() iter.Seq[string] {
-	return func(yield func(string) bool) {
-		for _, tz := range timezones {
-			if !yield(tz) {
-				return
-			}
-		}
-	}
+	return slices.Values(timezones)
 }
