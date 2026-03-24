@@ -100,7 +100,7 @@ func TestIsValid(t *testing.T) {
 
 	for _, tz := range validTZ {
 		if !IsValid(tz) {
-			t.Fatalf(`Timezone %q should be valid an it's not`, tz)
+			t.Fatalf(`Timezone %q should be valid and it's not`, tz)
 		}
 	}
 
@@ -111,7 +111,7 @@ func TestIsValid(t *testing.T) {
 
 	for _, tz := range invalidTZ {
 		if IsValid(tz) {
-			t.Fatalf(`Timezone %q should be invalid an it's not`, tz)
+			t.Fatalf(`Timezone %q should be invalid and it's not`, tz)
 		}
 	}
 }
