@@ -99,12 +99,12 @@ func TestValidateTimezone(t *testing.T) {
 
 func TestValidateEntryDirection(t *testing.T) {
 	for _, direction := range []string{"asc", "desc"} {
-		if err := validateEntryDirection(direction); err != nil {
+		if err := ValidateDirection(direction); err != nil {
 			t.Errorf("expected valid direction %q to pass, got %v", direction, err)
 		}
 	}
 
-	if err := validateEntryDirection("sideways"); err == nil {
+	if err := ValidateDirection("sideways"); err == nil {
 		t.Error("expected invalid direction to fail")
 	}
 }
