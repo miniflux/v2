@@ -291,6 +291,10 @@ func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.
 
 		htmlAttributes, hasAllRequiredAttributes := sanitizeAttributes(parsedBaseUrl, tag, n.Attr, sanitizerOptions)
 		if !hasAllRequiredAttributes {
+			if tag == "iframe" {
+				// A blocked iframe should not have its inner content rendered.
+				return nil
+			}
 			// The tag doesn't have every required attributes but we're still interested in its content
 			return filterAndRenderHTMLChildren(buf, n, parsedBaseUrl, sanitizerOptions, depth-1)
 		}

@@ -397,6 +397,18 @@ func TestInvalidIFrame(t *testing.T) {
 	}
 }
 
+func TestBlockedIFrameWithChildElements(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	input := `<iframe src="http://example.org/"><p>test</p></iframe>`
+	expected := ``
+	output := sanitizeHTMLWithDefaultOptions("http://example.com/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: %q != %q`, expected, output)
+	}
+}
+
 func TestSameDomainIFrame(t *testing.T) {
 	config.Opts = config.NewConfigOptions()
 
