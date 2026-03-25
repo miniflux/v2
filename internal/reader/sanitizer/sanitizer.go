@@ -5,6 +5,7 @@ package sanitizer // import "miniflux.app/v2/internal/reader/sanitizer"
 
 import (
 	"errors"
+	"io"
 	"net/url"
 	"slices"
 	"strconv"
@@ -223,7 +224,11 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 
 	// We need to surround `rawHTML` with body tags so that html.Parse
 	// will consider it a valid html document.
-	doc, err := html.Parse(strings.NewReader("<body>" + rawHTML + "</body>"))
+	doc, err := html.Parse(io.MultiReader(
+		strings.NewReader("<body>"),
+		strings.NewReader(rawHTML),
+		strings.NewReader("</body>"),
+	))
 	if err != nil {
 		return ""
 	}
