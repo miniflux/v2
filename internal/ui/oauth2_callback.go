@@ -63,8 +63,11 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	printer := locale.NewPrinter(request.UserLanguage(r))
 	sess := session.New(h.store, request.SessionID(r))
+	sess.SetOAuth2State("")
+	sess.SetOAuth2CodeVerifier("")
+
+	printer := locale.NewPrinter(request.UserLanguage(r))
 
 	if request.IsAuthenticated(r) {
 		loggedUser, err := h.store.UserByID(request.UserID(r))
