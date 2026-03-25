@@ -99,6 +99,10 @@ func (o *oidcProvider) PopulateUserWithProfileID(user *model.User, profile *Prof
 	user.OpenIDConnectID = profile.ID
 }
 
+func (o *oidcProvider) GetUserProfileID(user *model.User) string {
+	return user.OpenIDConnectID
+}
+
 func (o *oidcProvider) UnsetUserProfileID(user *model.User) {
 	user.OpenIDConnectID = ""
 }
