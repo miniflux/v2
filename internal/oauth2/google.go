@@ -59,6 +59,10 @@ func (g *googleProvider) GetProfile(ctx context.Context, code, codeVerifier stri
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("google: unexpected status code %d from userinfo endpoint", resp.StatusCode)
+	}
+
 	var user googleProfile
 	decoder := json.NewDecoder(resp.Body)
 	if err := decoder.Decode(&user); err != nil {
