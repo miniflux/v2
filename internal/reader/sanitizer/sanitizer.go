@@ -279,7 +279,7 @@ func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.
 	case html.TextNode:
 		buf.WriteString(html.EscapeString(n.Data))
 	case html.ElementNode:
-		tag := strings.ToLower(n.Data)
+		tag := n.Data
 		if shouldIgnoreTag(n, tag) {
 			return nil
 		}
