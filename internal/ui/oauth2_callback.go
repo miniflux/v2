@@ -84,6 +84,19 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		existingProfileID := authProvider.GetUserProfileID(loggedUser)
+		if existingProfileID != "" && existingProfileID != profile.ID {
+			slog.Error("Oauth2 user cannot be associated because this user is already linked to a different identity",
+				slog.Int64("user_id", loggedUser.ID),
+				slog.String("oauth2_provider", provider),
+				slog.String("existing_profile_id", existingProfileID),
+				slog.String("new_profile_id", profile.ID),
+			)
+			sess.NewFlashErrorMessage(printer.Print("error.duplicate_linked_account"))
+			response.HTMLRedirect(w, r, h.routePath("/settings"))
+			return
+		}
+
 		authProvider.PopulateUserWithProfileID(loggedUser, profile)
 		if err := h.store.UpdateUser(loggedUser); err != nil {
 			response.HTMLServerError(w, r, err)

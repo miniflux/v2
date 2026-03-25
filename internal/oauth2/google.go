@@ -77,6 +77,10 @@ func (g *googleProvider) PopulateUserWithProfileID(user *model.User, profile *Pr
 	user.GoogleID = profile.ID
 }
 
+func (g *googleProvider) GetUserProfileID(user *model.User) string {
+	return user.GoogleID
+}
+
 func (g *googleProvider) UnsetUserProfileID(user *model.User) {
 	user.GoogleID = ""
 }
