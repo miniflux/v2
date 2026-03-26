@@ -27,7 +27,6 @@ func (m *Manager) AddProvider(name string, provider Provider) {
 
 func NewManager(ctx context.Context, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint string) *Manager {
 	m := &Manager{providers: make(map[string]Provider)}
-	m.AddProvider("google", NewGoogleProvider(clientID, clientSecret, redirectURL))
 
 	if oidcDiscoveryEndpoint != "" {
 		if clientSecret == "" {
@@ -41,6 +40,8 @@ func NewManager(ctx context.Context, clientID, clientSecret, redirectURL, oidcDi
 		} else {
 			m.AddProvider("oidc", genericOidcProvider)
 		}
+	} else {
+		m.AddProvider("google", NewGoogleProvider(clientID, clientSecret, redirectURL))
 	}
 
 	return m
