@@ -30,6 +30,10 @@ func NewManager(ctx context.Context, clientID, clientSecret, redirectURL, oidcDi
 	m.AddProvider("google", NewGoogleProvider(clientID, clientSecret, redirectURL))
 
 	if oidcDiscoveryEndpoint != "" {
+		if clientSecret == "" {
+			slog.Warn("OIDC client secret is empty or missing.")
+		}
+
 		if genericOidcProvider, err := NewOidcProvider(ctx, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint); err != nil {
 			slog.Error("Failed to initialize OIDC provider",
 				slog.Any("error", err),
@@ -37,10 +41,6 @@ func NewManager(ctx context.Context, clientID, clientSecret, redirectURL, oidcDi
 		} else {
 			m.AddProvider("oidc", genericOidcProvider)
 		}
-	}
-
-	if clientSecret == "" {
-		slog.Warn("OIDC client secret is empty or missing.")
 	}
 
 	return m
