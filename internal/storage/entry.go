@@ -458,7 +458,9 @@ func (s *Storage) ArchiveEntries(status string, interval time.Duration, limit in
 					share_code='' AND
 					created_at < now () - $3::interval
 				ORDER BY
-					created_at ASC LIMIT $4
+					created_at ASC
+				FOR UPDATE SKIP LOCKED
+				LIMIT $4
 				)
 	`
 
