@@ -194,16 +194,16 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 
 	query = fmt.Sprintf(query, f.buildCondition(), f.buildSorting())
 
+	readCounters, unreadCounters, err := f.fetchFeedCounter()
+	if err != nil {
+		return nil, err
+	}
+
 	rows, err := f.store.db.Query(query, f.args...)
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch feeds: %w`, err)
 	}
 	defer rows.Close()
-
-	readCounters, unreadCounters, err := f.fetchFeedCounter()
-	if err != nil {
-		return nil, err
-	}
 
 	feeds := make(model.Feeds, 0)
 	for rows.Next() {
