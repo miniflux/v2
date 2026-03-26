@@ -6,8 +6,9 @@ class KeyboardHandler {
     }
 
     on(combination, callback) {
-        this.shortcuts.set(combination, callback);
-        this.triggers.add(combination.split(" ")[0]);
+        const keys = combination.split(" ");
+        this.shortcuts.set(combination, { keys, callback });
+        this.triggers.add(keys[0]);
     }
 
     listen() {
@@ -23,9 +24,7 @@ class KeyboardHandler {
 
             this.queue.push(key);
 
-            for (const [combination, callback] of this.shortcuts.entries()) {
-                const keys = combination.split(" ");
-
+            for (const [combination, { keys, callback }] of this.shortcuts.entries()) {
                 if (keys.every((value, index) => value === this.queue[index])) {
                     this.queue = [];
                     callback(event);
