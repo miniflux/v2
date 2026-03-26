@@ -71,13 +71,14 @@ function scrollPageTo(element, evenIfOnScreen) {
  * @param {boolean} noPreventDefault
  */
 function onClick(selector, callback, noPreventDefault) {
-    document.querySelectorAll(selector).forEach((element) => {
-        element.onclick = (event) => {
+    document.addEventListener("click", (event) => {
+        const element = event.target.closest(selector);
+        if (element) {
             if (!noPreventDefault) {
                 event.preventDefault();
             }
             callback(event);
-        };
+        }
     });
 }
 
@@ -89,13 +90,14 @@ function onClick(selector, callback, noPreventDefault) {
  * @param {boolean} noPreventDefault
  */
 function onAuxClick(selector, callback, noPreventDefault) {
-    document.querySelectorAll(selector).forEach((element) => {
-        element.onauxclick = (event) => {
+    document.addEventListener("auxclick", (event) => {
+        const element = event.target.closest(selector);
+        if (element) {
             if (!noPreventDefault) {
                 event.preventDefault();
             }
             callback(event);
-        };
+        }
     });
 }
 
