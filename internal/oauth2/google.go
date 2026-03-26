@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"miniflux.app/v2/internal/model"
 
@@ -66,7 +67,7 @@ func (g *googleProvider) GetProfile(ctx context.Context, code, codeVerifier stri
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("google: unexpected status code %d from userinfo endpoint", resp.StatusCode)
 	}
 
