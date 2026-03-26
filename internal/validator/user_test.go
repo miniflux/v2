@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"miniflux.app/v2/internal/locale"
+	"miniflux.app/v2/internal/model"
 )
 
 func TestValidateUsername(t *testing.T) {
@@ -98,12 +99,12 @@ func TestValidateTimezone(t *testing.T) {
 
 func TestValidateEntryDirection(t *testing.T) {
 	for _, direction := range []string{"asc", "desc"} {
-		if err := validateEntryDirection(direction); err != nil {
+		if err := ValidateDirection(direction); err != nil {
 			t.Errorf("expected valid direction %q to pass, got %v", direction, err)
 		}
 	}
 
-	if err := validateEntryDirection("sideways"); err == nil {
+	if err := ValidateDirection("sideways"); err == nil {
 		t.Error("expected invalid direction to fail")
 	}
 }
@@ -177,5 +178,26 @@ func TestValidateMediaPlaybackRate(t *testing.T) {
 		if err := validateMediaPlaybackRate(rate); err == nil {
 			t.Errorf("expected invalid rate %.2f to fail", rate)
 		}
+	}
+}
+
+func TestValidateUserModificationAllowsClearingFilterRules(t *testing.T) {
+	req := &model.UserModificationRequest{
+		BlockFilterEntryRules: new(string),
+		KeepFilterEntryRules:  new(string),
+	}
+
+	if err := ValidateUserModification(nil, 0, req); err != nil {
+		t.Fatalf("expected empty filter rules to be accepted, got %v", err)
+	}
+}
+
+func TestValidateUserModificationRejectsInvalidNonEmptyFilterRule(t *testing.T) {
+	req := &model.UserModificationRequest{
+		BlockFilterEntryRules: new("EntryTitle=["),
+	}
+
+	if err := ValidateUserModification(nil, 0, req); err == nil {
+		t.Fatal("expected invalid non-empty filter rules to be rejected")
 	}
 }

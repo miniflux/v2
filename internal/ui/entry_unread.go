@@ -7,8 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/session"
@@ -18,7 +17,7 @@ import (
 func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -29,12 +28,12 @@ func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if entry == nil {
-		html.Redirect(w, r, route.Path(h.router, "unread"))
+		response.HTMLRedirect(w, r, h.routePath("/unread"))
 		return
 	}
 
@@ -42,7 +41,7 @@ func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
 	if entry.Status == model.EntryStatusRead {
 		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusUnread)
 		if err != nil {
-			html.ServerError(w, r, err)
+			response.HTMLServerError(w, r, err)
 			return
 		}
 	}
@@ -52,18 +51,18 @@ func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
 	entryPaginationBuilder.WithGloballyVisible()
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	nextEntryRoute := ""
 	if nextEntry != nil {
-		nextEntryRoute = route.Path(h.router, "unreadEntry", "entryID", nextEntry.ID)
+		nextEntryRoute = h.routePath("/unread/entry/%d", nextEntry.ID)
 	}
 
 	prevEntryRoute := ""
 	if prevEntry != nil {
-		prevEntryRoute = route.Path(h.router, "unreadEntry", "entryID", prevEntry.ID)
+		prevEntryRoute = h.routePath("/unread/entry/%d", prevEntry.ID)
 	}
 
 	if entry.ShouldMarkAsReadOnView(user) {
@@ -74,13 +73,13 @@ func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
 	if entry.Status == model.EntryStatusRead {
 		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
-			html.ServerError(w, r, err)
+			response.HTMLServerError(w, r, err)
 			return
 		}
 	}
 
 	if user.AlwaysOpenExternalLinks {
-		html.Redirect(w, r, entry.URL)
+		response.HTMLRedirect(w, r, entry.URL)
 		return
 	}
 
@@ -99,5 +98,5 @@ func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
 	// Fetching the counter here avoid to be off by one.
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 
-	html.OK(w, r, view.Render("entry"))
+	response.HTML(w, r, view.Render("entry"))
 }

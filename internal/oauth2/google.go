@@ -7,10 +7,18 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"miniflux.app/v2/internal/model"
 
 	"golang.org/x/oauth2"
+)
+
+// Google OAuth2 API documentation: https://developers.google.com/identity/protocols/oauth2
+const (
+	googleAuthURL     = "https://accounts.google.com/o/oauth2/v2/auth"
+	googleTokenURL    = "https://oauth2.googleapis.com/token"
+	googleUserInfoURL = "https://www.googleapis.com/oauth2/v3/userinfo"
 )
 
 type googleProfile struct {
@@ -35,8 +43,8 @@ func (g *googleProvider) GetConfig() *oauth2.Config {
 		ClientSecret: g.clientSecret,
 		Scopes:       []string{"email"},
 		Endpoint: oauth2.Endpoint{
-			AuthURL:  "https://accounts.google.com/o/oauth2/auth",
-			TokenURL: "https://accounts.google.com/o/oauth2/token",
+			AuthURL:  googleAuthURL,
+			TokenURL: googleTokenURL,
 		},
 	}
 }
@@ -53,11 +61,15 @@ func (g *googleProvider) GetProfile(ctx context.Context, code, codeVerifier stri
 	}
 
 	client := conf.Client(ctx, token)
-	resp, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
+	resp, err := client.Get(googleUserInfoURL)
 	if err != nil {
 		return nil, fmt.Errorf("google: failed to get user info: %w", err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("google: unexpected status code %d from userinfo endpoint", resp.StatusCode)
+	}
 
 	var user googleProfile
 	decoder := json.NewDecoder(resp.Body)
@@ -75,6 +87,10 @@ func (g *googleProvider) PopulateUserCreationWithProfileID(user *model.UserCreat
 
 func (g *googleProvider) PopulateUserWithProfileID(user *model.User, profile *Profile) {
 	user.GoogleID = profile.ID
+}
+
+func (g *googleProvider) GetUserProfileID(user *model.User) string {
+	return user.GoogleID
 }
 
 func (g *googleProvider) UnsetUserProfileID(user *model.User) {

@@ -8,7 +8,7 @@
 {{ end }}
 
 {{ define "content"}}
-<form action="{{ route "saveUser" }}" method="post" autocomplete="off">
+<form action="{{ routePath "/user/save" }}" method="post" autocomplete="off">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
     {{ if .errorMessage }}
@@ -27,7 +27,7 @@
     <label><input type="checkbox" name="is_admin" value="1" {{ if .form.IsAdmin }}checked{{ end }}> {{ t "form.user.label.admin" }}</label>
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.save" }}</button> {{ t "action.or" }} <a href="{{ route "users" }}">{{ t "action.cancel" }}</a>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.save" }}</button> {{ t "action.or" }} <a href="{{ routePath "/users" }}">{{ t "action.cancel" }}</a>
     </div>
 </form>
 {{ end }}

@@ -10,7 +10,7 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/response/html"
+
 	"miniflux.app/v2/internal/ui/static"
 )
 
@@ -18,11 +18,11 @@ func (h *handler) showAppIcon(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "filename")
 	value, ok := static.BinaryBundles[filename]
 	if !ok {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 
-	response.New(w, r).WithCaching(value.Checksum, 72*time.Hour, func(b *response.Builder) {
+	response.NewBuilder(w, r).WithCaching(value.Checksum, 72*time.Hour, func(b *response.Builder) {
 		switch filepath.Ext(filename) {
 		case ".png":
 			b.WithoutCompression()
@@ -30,7 +30,7 @@ func (h *handler) showAppIcon(w http.ResponseWriter, r *http.Request) {
 		case ".svg":
 			b.WithHeader("Content-Type", "image/svg+xml")
 		}
-		b.WithBody(value.Data)
+		b.WithBodyAsBytes(value.Data)
 		b.Write()
 	})
 }

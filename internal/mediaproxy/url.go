@@ -7,15 +7,13 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"fmt"
 	"net/url"
 
-	"github.com/gorilla/mux"
-
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/http/route"
 )
 
-func ProxifyRelativeURL(router *mux.Router, mediaURL string) string {
+func ProxifyRelativeURL(mediaURL string) string {
 	if mediaURL == "" {
 		return ""
 	}
@@ -24,13 +22,17 @@ func ProxifyRelativeURL(router *mux.Router, mediaURL string) string {
 		return proxifyURLWithCustomProxy(mediaURL, customProxyURL)
 	}
 
+	mediaURLBytes := []byte(mediaURL)
+
 	mac := hmac.New(sha256.New, config.Opts.MediaProxyPrivateKey())
-	mac.Write([]byte(mediaURL))
+	mac.Write(mediaURLBytes)
 	digest := mac.Sum(nil)
-	return route.Path(router, "proxy", "encodedDigest", base64.URLEncoding.EncodeToString(digest), "encodedURL", base64.URLEncoding.EncodeToString([]byte(mediaURL)))
+
+	// Preserve the configured base path so proxied URLs still work when Miniflux is served from a subfolder.
+	return fmt.Sprintf("%s/proxy/%s/%s", config.Opts.BasePath(), base64.URLEncoding.EncodeToString(digest), base64.URLEncoding.EncodeToString(mediaURLBytes))
 }
 
-func ProxifyAbsoluteURL(router *mux.Router, mediaURL string) string {
+func ProxifyAbsoluteURL(mediaURL string) string {
 	if mediaURL == "" {
 		return ""
 	}
@@ -40,7 +42,7 @@ func ProxifyAbsoluteURL(router *mux.Router, mediaURL string) string {
 	}
 
 	// Note that the proxyified URL is relative to the root URL.
-	proxifiedUrl := ProxifyRelativeURL(router, mediaURL)
+	proxifiedUrl := ProxifyRelativeURL(mediaURL)
 	absoluteURL, err := url.JoinPath(config.Opts.RootURL(), proxifiedUrl)
 	if err != nil {
 		return mediaURL

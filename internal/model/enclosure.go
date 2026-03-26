@@ -6,8 +6,6 @@ package model // import "miniflux.app/v2/internal/model"
 import (
 	"strings"
 
-	"github.com/gorilla/mux"
-
 	"miniflux.app/v2/internal/mediaproxy"
 )
 
@@ -52,9 +50,9 @@ func (e *Enclosure) IsImage() bool {
 }
 
 // ProxifyEnclosureURL modifies the enclosure URL to use the media proxy if necessary.
-func (e *Enclosure) ProxifyEnclosureURL(router *mux.Router, mediaProxyOption string, mediaProxyResourceTypes []string) {
+func (e *Enclosure) ProxifyEnclosureURL(mediaProxyOption string, mediaProxyResourceTypes []string) {
 	if mediaproxy.ShouldProxifyURLWithMimeType(e.URL, e.MimeType, mediaProxyOption, mediaProxyResourceTypes) {
-		e.URL = mediaproxy.ProxifyAbsoluteURL(router, e.URL)
+		e.URL = mediaproxy.ProxifyAbsoluteURL(e.URL)
 	}
 }
 
@@ -83,8 +81,8 @@ func (el EnclosureList) ContainsAudioOrVideo() bool {
 	return false
 }
 
-func (el EnclosureList) ProxifyEnclosureURL(router *mux.Router, mediaProxyOption string, mediaProxyResourceTypes []string) {
+func (el EnclosureList) ProxifyEnclosureURL(mediaProxyOption string, mediaProxyResourceTypes []string) {
 	for _, enclosure := range el {
-		enclosure.ProxifyEnclosureURL(router, mediaProxyOption, mediaProxyResourceTypes)
+		enclosure.ProxifyEnclosureURL(mediaProxyOption, mediaProxyResourceTypes)
 	}
 }

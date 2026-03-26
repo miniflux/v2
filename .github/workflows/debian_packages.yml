@@ -13,7 +13,7 @@ on:
       - 'packaging/debian/**' # Only run on changes to the debian packaging files
 jobs:
   test-packages:
-    if: (github.event_name == 'schedule' && github.repository_owner == 'miniflux' )
+    if: (github.event_name == 'schedule' && github.repository_owner == 'miniflux')
       || github.event_name == 'pull_request'
     name: Test Packages
     runs-on: ubuntu-latest
@@ -22,9 +22,9 @@ jobs:
       with:
           fetch-depth: 0
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
+      uses: docker/setup-qemu-action@v4
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      uses: docker/setup-buildx-action@v4
       id: buildx
       with:
           install: true
@@ -43,9 +43,9 @@ jobs:
       with:
           fetch-depth: 0
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
+      uses: docker/setup-qemu-action@v4
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      uses: docker/setup-buildx-action@v4
       id: buildx
       with:
           install: true
@@ -61,7 +61,7 @@ jobs:
         if-no-files-found: error
         retention-days: 3
   publish-packages:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.repository_owner == 'miniflux'
     name: Publish Packages
     runs-on: ubuntu-latest
     steps:
@@ -69,9 +69,9 @@ jobs:
       with:
           fetch-depth: 0
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
+      uses: docker/setup-qemu-action@v4
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      uses: docker/setup-buildx-action@v4
       id: buildx
       with:
           install: true

@@ -5,100 +5,111 @@ package api // import "miniflux.app/v2/internal/api"
 
 import (
 	json_parser "encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
 	"time"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/json"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/validator"
 )
 
-func (h *handler) createCategory(w http.ResponseWriter, r *http.Request) {
+func (h *handler) createCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 
 	var categoryCreationRequest model.CategoryCreationRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&categoryCreationRequest); err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	if validationErr := validator.ValidateCategoryCreation(h.store, userID, &categoryCreationRequest); validationErr != nil {
-		json.BadRequest(w, r, validationErr.Error())
+		response.JSONBadRequest(w, r, validationErr.Error())
 		return
 	}
 
 	category, err := h.store.CreateCategory(userID, &categoryCreationRequest)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
-	json.Created(w, r, category)
+	response.JSONCreated(w, r, category)
 }
 
-func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
+func (h *handler) updateCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
+
 	categoryID := request.RouteInt64Param(r, "categoryID")
+	if categoryID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid category ID"))
+		return
+	}
 
 	category, err := h.store.Category(userID, categoryID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	if category == nil {
-		json.NotFound(w, r)
+		response.JSONNotFound(w, r)
 		return
 	}
 
 	var categoryModificationRequest model.CategoryModificationRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&categoryModificationRequest); err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	if validationErr := validator.ValidateCategoryModification(h.store, userID, category.ID, &categoryModificationRequest); validationErr != nil {
-		json.BadRequest(w, r, validationErr.Error())
+		response.JSONBadRequest(w, r, validationErr.Error())
 		return
 	}
 
 	categoryModificationRequest.Patch(category)
 
 	if err := h.store.UpdateCategory(category); err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
-	json.Created(w, r, category)
+	response.JSONCreated(w, r, category)
 }
 
-func (h *handler) markCategoryAsRead(w http.ResponseWriter, r *http.Request) {
+func (h *handler) markCategoryAsReadHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
+
 	categoryID := request.RouteInt64Param(r, "categoryID")
+	if categoryID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid category ID"))
+		return
+	}
 
 	category, err := h.store.Category(userID, categoryID)
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
 	if category == nil {
-		json.NotFound(w, r)
+		response.JSONNotFound(w, r)
 		return
 	}
 
 	if err = h.store.MarkCategoryAsRead(userID, categoryID, time.Now()); err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
-	json.NoContent(w, r)
+	response.NoContent(w, r)
 }
 
-func (h *handler) getCategories(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	var categories model.Categories
 	var err error
 	includeCounts := request.QueryStringParam(r, "counts", "false")
@@ -110,32 +121,42 @@ func (h *handler) getCategories(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
-	json.OK(w, r, categories)
+	response.JSON(w, r, categories)
 }
 
-func (h *handler) removeCategory(w http.ResponseWriter, r *http.Request) {
+func (h *handler) removeCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
+
 	categoryID := request.RouteInt64Param(r, "categoryID")
+	if categoryID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid category ID"))
+		return
+	}
 
 	if !h.store.CategoryIDExists(userID, categoryID) {
-		json.NotFound(w, r)
+		response.JSONNotFound(w, r)
 		return
 	}
 
 	if err := h.store.RemoveCategory(userID, categoryID); err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
-	json.NoContent(w, r)
+	response.NoContent(w, r)
 }
 
-func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) {
+func (h *handler) refreshCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
+
 	categoryID := request.RouteInt64Param(r, "categoryID")
+	if categoryID == 0 {
+		response.JSONBadRequest(w, r, errors.New("invalid category ID"))
+		return
+	}
 
 	batchBuilder := h.store.NewBatchBuilder()
 	batchBuilder.WithErrorLimit(config.Opts.PollingParsingErrorLimit())
@@ -147,7 +168,7 @@ func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) {
 
 	jobs, err := batchBuilder.FetchJobs()
 	if err != nil {
-		json.ServerError(w, r, err)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -160,5 +181,5 @@ func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) {
 
 	go h.pool.Push(jobs)
 
-	json.NoContent(w, r)
+	response.NoContent(w, r)
 }

@@ -487,7 +487,7 @@ func Convert(tz string, t time.Time) time.Time {
 			t.Nanosecond(),
 			userTimezone,
 		)
-	} else if t.Location() != userTimezone {
+	} else if t.Location().String() != userTimezone.String() {
 		return t.In(userTimezone)
 	}
 
@@ -521,11 +521,5 @@ func IsValid(timezone string) bool {
 
 // AvailableTimezones returns an iterator over supported timezone names.
 func AvailableTimezones() iter.Seq[string] {
-	return func(yield func(string) bool) {
-		for _, tz := range timezones {
-			if !yield(tz) {
-				return
-			}
-		}
-	}
+	return slices.Values(timezones)
 }

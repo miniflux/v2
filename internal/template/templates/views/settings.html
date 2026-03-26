@@ -8,7 +8,7 @@
 {{ end }}
 
 {{ define "content"}}
-<form method="post" autocomplete="off" action="{{ route "updateSettings" }}">
+<form method="post" autocomplete="off" action="{{ routePath "/settings" }}">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
     {{ if .errorMessage }}
@@ -31,17 +31,17 @@
         {{ if hasOAuth2Provider "google" }}
         <p>
             {{ if .user.GoogleID }}
-                <a href="{{ route "oauth2Unlink" "provider" "google" }}">{{ t "page.settings.unlink_google_account" }}</a>
+                <a href="{{ routePath "/oauth2/%s/unlink" "google" }}">{{ t "page.settings.unlink_google_account" }}</a>
             {{ else }}
-                <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "page.settings.link_google_account" }}</a>
+                <a href="{{ routePath "/oauth2/%s/redirect" "google" }}">{{ t "page.settings.link_google_account" }}</a>
             {{ end }}
         </p>
         {{ else if hasOAuth2Provider "oidc" }}
         <p>
             {{ if .user.OpenIDConnectID }}
-                <a href="{{ route "oauth2Unlink" "provider" "oidc" }}">{{ t "page.settings.unlink_oidc_account" oidcProviderName }}</a>
+                <a href="{{ routePath "/oauth2/%s/unlink" "oidc" }}">{{ t "page.settings.unlink_oidc_account" oidcProviderName }}</a>
             {{ else }}
-                <a href="{{ route "oauth2Redirect" "provider" "oidc" }}">{{ t "page.settings.link_oidc_account" oidcProviderName }}</a>
+                <a href="{{ routePath "/oauth2/%s/redirect" "oidc" }}">{{ t "page.settings.link_oidc_account" oidcProviderName }}</a>
             {{ end }}
         </p>
         {{ end }}
@@ -83,8 +83,8 @@
                         data-label-yes="{{ t "confirm.yes" }}"
                         data-label-no="{{ t "confirm.no" }}"
                         data-label-loading="{{ t "confirm.loading" }}"
-                        data-url="{{ route "webauthnDelete" "credentialHandle" .HandleEncoded }}">{{ icon "delete" }}{{ t "action.remove" }}</a>
-                    <a href="{{ route "webauthnRename" "credentialHandle" .HandleEncoded }}">{{ icon "edit" }} {{ t "action.edit" }}</a>
+                        data-url="{{ routePath "/webauthn/%s/delete" .HandleEncoded }}">{{ icon "delete" }}{{ t "action.remove" }}</a>
+                    <a href="{{ routePath "/webauthn/%s/rename" .HandleEncoded }}">{{ icon "edit" }} {{ t "action.edit" }}</a>
                 </td>
             </tr>
             {{ end }}

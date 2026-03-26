@@ -3,24 +3,7 @@
 
 package validator // import "miniflux.app/v2/internal/validator"
 
-import (
-	"testing"
-)
-
-func TestIsValidURL(t *testing.T) {
-	scenarios := map[string]bool{
-		"https://www.example.org": true,
-		"http://www.example.org/": true,
-		"www.example.org":         false,
-	}
-
-	for link, expected := range scenarios {
-		result := IsValidURL(link)
-		if result != expected {
-			t.Errorf(`Unexpected result, got %v instead of %v`, result, expected)
-		}
-	}
-}
+import "testing"
 
 func TestValidateRange(t *testing.T) {
 	if err := ValidateRange(-1, 0); err == nil {

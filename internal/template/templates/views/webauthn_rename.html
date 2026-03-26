@@ -7,7 +7,7 @@
 {{ end }}
 
 {{ define "content"}}
-<form action="{{ route "webauthnSave" "credentialHandle" .cred.HandleEncoded }}" method="post" autocomplete="off">
+<form action="{{ routePath "/webauthn/%s/save" .cred.HandleEncoded }}" method="post" autocomplete="off">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
     {{ if .errorMessage }}

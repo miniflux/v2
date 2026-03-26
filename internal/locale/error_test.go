@@ -283,6 +283,16 @@ func TestLocalizedErrorWrapper_WithNilError(t *testing.T) {
 	}
 }
 
+func TestLocalizedErrorWrapper_TranslateWithEmptyKeyAndNilError(t *testing.T) {
+	wrapper := NewLocalizedErrorWrapper(nil, "")
+
+	result := wrapper.Translate("en_US")
+	expected := ""
+	if result != expected {
+		t.Errorf("Expected empty string for nil wrapped error, got %q", result)
+	}
+}
+
 func TestLocalizedError_EmptyKey(t *testing.T) {
 	localizedErr := NewLocalizedError("")
 

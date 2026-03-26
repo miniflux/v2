@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package html // import "miniflux.app/v2/internal/http/response/html"
+package response // import "miniflux.app/v2/internal/http/response"
 
 import (
 	"html"
@@ -9,20 +9,24 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response"
 )
 
-// OK creates a new HTML response with a 200 status code.
-func OK[T []byte | string](w http.ResponseWriter, r *http.Request, body T) {
-	builder := response.New(w, r)
+// HTML creates a new HTML response with a 200 status code.
+func HTML[T []byte | string](w http.ResponseWriter, r *http.Request, body T) {
+	builder := NewBuilder(w, r)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBody(body)
+	switch v := any(body).(type) {
+	case []byte:
+		builder.WithBodyAsBytes(v)
+	case string:
+		builder.WithBodyAsString(v)
+	}
 	builder.Write()
 }
 
-// ServerError sends an internal error to the client.
-func ServerError(w http.ResponseWriter, r *http.Request, err error) {
+// HTMLServerError sends an internal error to the client.
+func HTMLServerError(w http.ResponseWriter, r *http.Request, err error) {
 	slog.Error(http.StatusText(http.StatusInternalServerError),
 		slog.Any("error", err),
 		slog.String("client_ip", request.ClientIP(r)),
@@ -36,17 +40,17 @@ func ServerError(w http.ResponseWriter, r *http.Request, err error) {
 		),
 	)
 
-	builder := response.New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusInternalServerError)
-	builder.WithHeader("Content-Security-Policy", response.ContentSecurityPolicyForUntrustedContent)
+	builder.WithHeader("Content-Security-Policy", ContentSecurityPolicyForUntrustedContent)
 	builder.WithHeader("Content-Type", "text/plain; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBody(html.EscapeString(err.Error()))
+	builder.WithBodyAsString(html.EscapeString(err.Error()))
 	builder.Write()
 }
 
-// BadRequest sends a bad request error to the client.
-func BadRequest(w http.ResponseWriter, r *http.Request, err error) {
+// HTMLBadRequest sends a bad request error to the client.
+func HTMLBadRequest(w http.ResponseWriter, r *http.Request, err error) {
 	slog.Warn(http.StatusText(http.StatusBadRequest),
 		slog.Any("error", err),
 		slog.String("client_ip", request.ClientIP(r)),
@@ -60,17 +64,17 @@ func BadRequest(w http.ResponseWriter, r *http.Request, err error) {
 		),
 	)
 
-	builder := response.New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusBadRequest)
-	builder.WithHeader("Content-Security-Policy", response.ContentSecurityPolicyForUntrustedContent)
+	builder.WithHeader("Content-Security-Policy", ContentSecurityPolicyForUntrustedContent)
 	builder.WithHeader("Content-Type", "text/plain; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBody(html.EscapeString(err.Error()))
+	builder.WithBodyAsString(html.EscapeString(err.Error()))
 	builder.Write()
 }
 
-// Forbidden sends a forbidden error to the client.
-func Forbidden(w http.ResponseWriter, r *http.Request) {
+// HTMLForbidden sends a forbidden error to the client.
+func HTMLForbidden(w http.ResponseWriter, r *http.Request) {
 	slog.Warn(http.StatusText(http.StatusForbidden),
 		slog.String("client_ip", request.ClientIP(r)),
 		slog.Group("request",
@@ -83,16 +87,16 @@ func Forbidden(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	builder := response.New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusForbidden)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBody("Access Forbidden")
+	builder.WithBodyAsString("Access Forbidden")
 	builder.Write()
 }
 
-// NotFound sends a page not found error to the client.
-func NotFound(w http.ResponseWriter, r *http.Request) {
+// HTMLNotFound sends a page not found error to the client.
+func HTMLNotFound(w http.ResponseWriter, r *http.Request) {
 	slog.Warn(http.StatusText(http.StatusNotFound),
 		slog.String("client_ip", request.ClientIP(r)),
 		slog.Group("request",
@@ -105,21 +109,21 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	builder := response.New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusNotFound)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBody("Page Not Found")
+	builder.WithBodyAsString("Page Not Found")
 	builder.Write()
 }
 
-// Redirect redirects the user to another location.
-func Redirect(w http.ResponseWriter, r *http.Request, uri string) {
+// HTMLRedirect redirects the user to another location.
+func HTMLRedirect(w http.ResponseWriter, r *http.Request, uri string) {
 	http.Redirect(w, r, uri, http.StatusFound)
 }
 
-// RequestedRangeNotSatisfiable sends a range not satisfiable error to the client.
-func RequestedRangeNotSatisfiable(w http.ResponseWriter, r *http.Request, contentRange string) {
+// HTMLRequestedRangeNotSatisfiable sends a range not satisfiable error to the client.
+func HTMLRequestedRangeNotSatisfiable(w http.ResponseWriter, r *http.Request, contentRange string) {
 	slog.Warn(http.StatusText(http.StatusRequestedRangeNotSatisfiable),
 		slog.String("client_ip", request.ClientIP(r)),
 		slog.Group("request",
@@ -132,11 +136,11 @@ func RequestedRangeNotSatisfiable(w http.ResponseWriter, r *http.Request, conten
 		),
 	)
 
-	builder := response.New(w, r)
+	builder := NewBuilder(w, r)
 	builder.WithStatus(http.StatusRequestedRangeNotSatisfiable)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
 	builder.WithHeader("Content-Range", contentRange)
-	builder.WithBody("Range Not Satisfiable")
+	builder.WithBodyAsString("Range Not Satisfiable")
 	builder.Write()
 }

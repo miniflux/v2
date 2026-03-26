@@ -7,9 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"net/netip"
 	"net/url"
 	"strings"
 )
+
+var rfc6598SharedAddressSpacePrefix = netip.MustParsePrefix("100.64.0.0/10")
 
 // IsRelativePath reports whether the link is a relative path (no scheme, host, or scheme-relative // form).
 func IsRelativePath(link string) bool {
@@ -31,10 +34,10 @@ func hasHTTPPrefix(inputURL string) bool {
 	return strings.HasPrefix(inputURL, "https://") || strings.HasPrefix(inputURL, "http://")
 }
 
-// IsAbsoluteURL reports whether the link is absolute.
+// IsAbsoluteURL reports whether the link is absolute and starts with an HTTP or HTTPS scheme.
 func IsAbsoluteURL(inputURL string) bool {
-	if hasHTTPPrefix(inputURL) {
-		return true
+	if !hasHTTPPrefix(inputURL) {
+		return false
 	}
 	parsedURL, err := url.Parse(inputURL)
 	if err != nil {
@@ -158,6 +161,10 @@ func JoinBaseURLAndPath(baseURL, path string) (string, error) {
 // link-local, multicast, or unspecified.
 func IsNonPublicIP(ip net.IP) bool {
 	if ip == nil {
+		return true
+	}
+
+	if addr, ok := netip.AddrFromSlice(ip); ok && rfc6598SharedAddressSpacePrefix.Contains(addr.Unmap()) {
 		return true
 	}
 

@@ -7,8 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
@@ -20,12 +19,12 @@ import (
 func (h *handler) saveUser(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if !user.IsAdmin {
-		html.Forbidden(w, r)
+		response.HTMLForbidden(w, r)
 		return
 	}
 
@@ -41,13 +40,13 @@ func (h *handler) saveUser(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := userForm.ValidateCreation(); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		html.OK(w, r, view.Render("create_user"))
+		response.HTML(w, r, view.Render("create_user"))
 		return
 	}
 
 	if h.store.UserExists(userForm.Username) {
 		view.Set("errorMessage", locale.NewLocalizedError("error.user_already_exists").Translate(user.Language))
-		html.OK(w, r, view.Render("create_user"))
+		response.HTML(w, r, view.Render("create_user"))
 		return
 	}
 
@@ -59,14 +58,14 @@ func (h *handler) saveUser(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := validator.ValidateUserCreationWithPassword(h.store, userCreationRequest); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		html.OK(w, r, view.Render("create_user"))
+		response.HTML(w, r, view.Render("create_user"))
 		return
 	}
 
 	if _, err := h.store.CreateUser(userCreationRequest); err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "users"))
+	response.HTMLRedirect(w, r, h.routePath("/users"))
 }

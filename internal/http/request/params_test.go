@@ -9,8 +9,6 @@ import (
 	"net/url"
 	"reflect"
 	"testing"
-
-	"github.com/gorilla/mux"
 )
 
 func TestFormInt64Value(t *testing.T) {
@@ -42,9 +40,9 @@ func TestFormInt64Value(t *testing.T) {
 	}
 }
 
-func TestRouteStringParam(t *testing.T) {
-	router := mux.NewRouter()
-	router.HandleFunc("/route/{variable}/index", func(w http.ResponseWriter, r *http.Request) {
+func TestRouteStringParamWithServerMux(t *testing.T) {
+	router := http.NewServeMux()
+	router.HandleFunc("GET /route/{variable}/index", func(w http.ResponseWriter, r *http.Request) {
 		result := RouteStringParam(r, "variable")
 		expected := "value"
 
@@ -60,7 +58,7 @@ func TestRouteStringParam(t *testing.T) {
 		}
 	})
 
-	r, err := http.NewRequest("GET", "/route/value/index", nil)
+	r, err := http.NewRequest(http.MethodGet, "/route/value/index", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -69,9 +67,9 @@ func TestRouteStringParam(t *testing.T) {
 	router.ServeHTTP(w, r)
 }
 
-func TestRouteInt64Param(t *testing.T) {
-	router := mux.NewRouter()
-	router.HandleFunc("/a/{variable1}/b/{variable2}/c/{variable3}", func(w http.ResponseWriter, r *http.Request) {
+func TestRouteInt64ParamWithServerMux(t *testing.T) {
+	router := http.NewServeMux()
+	router.HandleFunc("GET /a/{variable1}/b/{variable2}/c/{variable3}", func(w http.ResponseWriter, r *http.Request) {
 		result := RouteInt64Param(r, "variable1")
 		expected := int64(42)
 
@@ -101,7 +99,7 @@ func TestRouteInt64Param(t *testing.T) {
 		}
 	})
 
-	r, err := http.NewRequest("GET", "/a/42/b/not-int/c/-10", nil)
+	r, err := http.NewRequest(http.MethodGet, "/a/42/b/not-int/c/-10", nil)
 	if err != nil {
 		t.Fatal(err)
 	}

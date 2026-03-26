@@ -8,8 +8,7 @@ import (
 	"net/url"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
@@ -18,13 +17,13 @@ import (
 func (h *handler) showTagEntriesAllPage(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	tagName, err := url.PathUnescape(request.RouteStringParam(r, "tagName"))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -40,13 +39,13 @@ func (h *handler) showTagEntriesAllPage(w http.ResponseWriter, r *http.Request) 
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	count, err := builder.CountEntries()
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -55,12 +54,12 @@ func (h *handler) showTagEntriesAllPage(w http.ResponseWriter, r *http.Request) 
 	view.Set("tagName", tagName)
 	view.Set("total", count)
 	view.Set("entries", entries)
-	view.Set("pagination", getPagination(route.Path(h.router, "tagEntriesAll", "tagName", url.PathEscape(tagName)), count, offset, user.EntriesPerPage))
+	view.Set("pagination", getPagination(h.routePath("/tags/%s/entries/all", url.PathEscape(tagName)), count, offset, user.EntriesPerPage))
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 	view.Set("showOnlyUnreadEntries", false)
 
-	html.OK(w, r, view.Render("tag_entries"))
+	response.HTML(w, r, view.Render("tag_entries"))
 }

@@ -60,9 +60,24 @@ func (o *oidcProvider) GetProfile(ctx context.Context, code, codeVerifier string
 		return nil, fmt.Errorf(`oidc: failed to exchange token: %w`, err)
 	}
 
+	rawIDToken, ok := token.Extra("id_token").(string)
+	if !ok {
+		return nil, errors.New(`oidc: no id_token in token response`)
+	}
+
+	verifier := o.provider.Verifier(&oidc.Config{ClientID: o.clientID})
+	idToken, err := verifier.Verify(ctx, rawIDToken)
+	if err != nil {
+		return nil, fmt.Errorf(`oidc: failed to verify id token: %w`, err)
+	}
+
 	userInfo, err := o.provider.UserInfo(ctx, oauth2.StaticTokenSource(token))
 	if err != nil {
 		return nil, fmt.Errorf(`oidc: failed to get user info: %w`, err)
+	}
+
+	if idToken.Subject != userInfo.Subject {
+		return nil, fmt.Errorf(`oidc: id token subject %q does not match userinfo subject %q`, idToken.Subject, userInfo.Subject)
 	}
 
 	profile := &Profile{
@@ -97,6 +112,10 @@ func (o *oidcProvider) PopulateUserCreationWithProfileID(user *model.UserCreatio
 
 func (o *oidcProvider) PopulateUserWithProfileID(user *model.User, profile *Profile) {
 	user.OpenIDConnectID = profile.ID
+}
+
+func (o *oidcProvider) GetUserProfileID(user *model.User) string {
+	return user.OpenIDConnectID
 }
 
 func (o *oidcProvider) UnsetUserProfileID(user *model.User) {

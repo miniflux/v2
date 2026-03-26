@@ -7,8 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 )
 
 func (h *handler) markFeedAsRead(w http.ResponseWriter, r *http.Request) {
@@ -17,14 +16,14 @@ func (h *handler) markFeedAsRead(w http.ResponseWriter, r *http.Request) {
 
 	checkedAt, err := h.store.CheckedAt(userID, feedID)
 	if err != nil {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 
 	if err = h.store.MarkFeedAsRead(userID, feedID, checkedAt); err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "feeds"))
+	response.HTMLRedirect(w, r, h.routePath("/feeds"))
 }

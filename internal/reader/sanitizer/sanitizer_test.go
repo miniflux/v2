@@ -4,6 +4,7 @@
 package sanitizer // import "miniflux.app/v2/internal/reader/sanitizer"
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -397,6 +398,18 @@ func TestInvalidIFrame(t *testing.T) {
 	}
 }
 
+func TestBlockedIFrameWithChildElements(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	input := `<iframe src="http://example.org/"><p>test</p></iframe>`
+	expected := ``
+	output := sanitizeHTMLWithDefaultOptions("http://example.com/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: %q != %q`, expected, output)
+	}
+}
+
 func TestSameDomainIFrame(t *testing.T) {
 	config.Opts = config.NewConfigOptions()
 
@@ -418,6 +431,37 @@ func TestInvidiousIFrame(t *testing.T) {
 
 	if expected != output {
 		t.Errorf(`Wrong output: %q != %q`, expected, output)
+	}
+}
+
+func TestIFrameAllowList(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	allowedDomains := []string{
+		"bandcamp.com",
+		"cdn.embedly.com",
+		"dailymotion.com",
+		"framatube.org",
+		"open.spotify.com",
+		"player.bilibili.com",
+		"player.twitch.tv",
+		"player.vimeo.com",
+		"soundcloud.com",
+		"vk.com",
+		"w.soundcloud.com",
+		"youtube-nocookie.com",
+		"youtube.com",
+	}
+
+	for _, domain := range allowedDomains {
+		t.Run(domain, func(t *testing.T) {
+			input := fmt.Sprintf(`<iframe src="https://%s/video/test"></iframe>`, domain)
+			output := sanitizeHTMLWithDefaultOptions("http://example.com/", input)
+
+			if !strings.Contains(output, "<iframe") {
+				t.Errorf(`iframe from %q should be allowed, got: %q`, domain, output)
+			}
+		})
 	}
 }
 

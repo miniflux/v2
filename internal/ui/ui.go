@@ -10,171 +10,174 @@ import (
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/template"
 	"miniflux.app/v2/internal/worker"
-
-	"github.com/gorilla/mux"
 )
 
-// Serve declares all routes for the user interface.
-func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
-	middleware := newMiddleware(router, store)
+// Serve returns an http.Handler that serves the user interface.
+// The returned handler expects the base path to be stripped from the request URL.
+func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
+	basePath := config.Opts.BasePath()
+	middleware := newMiddleware(basePath, store)
 
-	templateEngine := template.NewEngine(router)
+	templateEngine := template.NewEngine(basePath)
 	templateEngine.ParseTemplates()
 
-	handler := &handler{router, store, templateEngine, pool}
+	handler := &handler{basePath, store, templateEngine, pool}
 
-	uiRouter := router.NewRoute().Subrouter()
-	uiRouter.Use(middleware.handleUserSession)
-	uiRouter.Use(middleware.handleAppSession)
-	uiRouter.StrictSlash(true)
+	mux := http.NewServeMux()
 
 	// Static assets.
-	uiRouter.HandleFunc("/stylesheets/{name}.{checksum}.css", handler.showStylesheet).Name("stylesheet").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/{name}.{checksum}.js", handler.showJavascript).Name("javascript").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/favicon.ico", handler.showFavicon).Name("favicon").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/icon/{filename}", handler.showAppIcon).Name("appIcon").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/manifest.json", handler.showWebManifest).Name("webManifest").Methods(http.MethodGet)
+	mux.HandleFunc("GET /stylesheets/{checksum}/{filename}", handler.showStylesheet)
+	mux.HandleFunc("GET /js/{checksum}/{filename}", handler.showJavascript)
+	mux.HandleFunc("GET /icon/{checksum}/{filename}", handler.showAppIcon)
+	mux.HandleFunc("GET /favicon.ico", handler.showFavicon)
+	mux.HandleFunc("GET /manifest.json", handler.showWebManifest)
 
 	// New subscription pages.
-	uiRouter.HandleFunc("/subscribe", handler.showAddSubscriptionPage).Name("addSubscription").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/subscribe", handler.submitSubscription).Name("submitSubscription").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/subscriptions", handler.showChooseSubscriptionPage).Name("chooseSubscription").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/bookmarklet", handler.bookmarklet).Name("bookmarklet").Methods(http.MethodGet)
+	mux.HandleFunc("GET /subscribe", handler.showAddSubscriptionPage)
+	mux.HandleFunc("POST /subscribe", handler.submitSubscription)
+	mux.HandleFunc("POST /subscriptions", handler.showChooseSubscriptionPage)
+	mux.HandleFunc("GET /bookmarklet", handler.bookmarklet)
 
 	// Unread page.
-	uiRouter.HandleFunc("/mark-all-as-read", handler.markAllAsRead).Name("markAllAsRead").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/unread", handler.showUnreadPage).Name("unread").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/unread/entry/{entryID}", handler.showUnreadEntryPage).Name("unreadEntry").Methods(http.MethodGet)
+	mux.HandleFunc("POST /mark-all-as-read", handler.markAllAsRead)
+	mux.HandleFunc("GET /unread", handler.showUnreadPage)
+	mux.HandleFunc("GET /unread/entry/{entryID}", handler.showUnreadEntryPage)
 
 	// History pages.
-	uiRouter.HandleFunc("/history", handler.showHistoryPage).Name("history").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/history/entry/{entryID}", handler.showReadEntryPage).Name("readEntry").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/history/flush", handler.flushHistory).Name("flushHistory").Methods(http.MethodPost)
+	mux.HandleFunc("GET /history", handler.showHistoryPage)
+	mux.HandleFunc("GET /history/entry/{entryID}", handler.showReadEntryPage)
+	mux.HandleFunc("POST /history/flush", handler.flushHistory)
 
 	// Starred pages.
-	uiRouter.HandleFunc("/starred", handler.showStarredPage).Name("starred").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/starred/entry/{entryID}", handler.showStarredEntryPage).Name("starredEntry").Methods(http.MethodGet)
+	mux.HandleFunc("GET /starred", handler.showStarredPage)
+	mux.HandleFunc("GET /starred/entry/{entryID}", handler.showStarredEntryPage)
 
 	// Search pages.
-	uiRouter.HandleFunc("/search", handler.showSearchPage).Name("search").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/search/entry/{entryID}", handler.showSearchEntryPage).Name("searchEntry").Methods(http.MethodGet)
+	mux.HandleFunc("GET /search", handler.showSearchPage)
+	mux.HandleFunc("GET /search/entry/{entryID}", handler.showSearchEntryPage)
 
 	// Feed listing pages.
-	uiRouter.HandleFunc("/feeds", handler.showFeedsPage).Name("feeds").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/feeds/refresh", handler.refreshAllFeeds).Name("refreshAllFeeds").Methods(http.MethodGet)
+	mux.HandleFunc("GET /feeds", handler.showFeedsPage)
+	mux.HandleFunc("GET /feeds/refresh", handler.refreshAllFeeds)
 
 	// Individual feed pages.
-	uiRouter.HandleFunc("/feed/{feedID}/refresh", handler.refreshFeed).Name("refreshFeed").Methods(http.MethodGet, http.MethodPost)
-	uiRouter.HandleFunc("/feed/{feedID}/refresh", handler.refreshFeed).Queries("forceRefresh", "{forceRefresh:true|false}").Name("refreshFeed").Methods(http.MethodGet, http.MethodPost)
-	uiRouter.HandleFunc("/feed/{feedID}/edit", handler.showEditFeedPage).Name("editFeed").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/feed/{feedID}/remove", handler.removeFeed).Name("removeFeed").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/feed/{feedID}/update", handler.updateFeed).Name("updateFeed").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/feed/{feedID}/entries", handler.showFeedEntriesPage).Name("feedEntries").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/feed/{feedID}/entries/all", handler.showFeedEntriesAllPage).Name("feedEntriesAll").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/feed/{feedID}/entry/{entryID}", handler.showFeedEntryPage).Name("feedEntry").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/unread/feed/{feedID}/entry/{entryID}", handler.showUnreadFeedEntryPage).Name("unreadFeedEntry").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/feed/icon/{externalIconID}", handler.showFeedIcon).Name("feedIcon").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/feed/{feedID}/mark-all-as-read", handler.markFeedAsRead).Name("markFeedAsRead").Methods(http.MethodPost)
+	mux.HandleFunc("GET /feed/{feedID}/refresh", handler.refreshFeed)
+	mux.HandleFunc("POST /feed/{feedID}/refresh", handler.refreshFeed)
+	mux.HandleFunc("GET /feed/{feedID}/edit", handler.showEditFeedPage)
+	mux.HandleFunc("POST /feed/{feedID}/remove", handler.removeFeed)
+	mux.HandleFunc("POST /feed/{feedID}/update", handler.updateFeed)
+	mux.HandleFunc("GET /feed/{feedID}/entries", handler.showFeedEntriesPage)
+	mux.HandleFunc("GET /feed/{feedID}/entries/all", handler.showFeedEntriesAllPage)
+	mux.HandleFunc("GET /feed/{feedID}/entry/{entryID}", handler.showFeedEntryPage)
+	mux.HandleFunc("GET /unread/feed/{feedID}/entry/{entryID}", handler.showUnreadFeedEntryPage)
+	mux.HandleFunc("POST /feed/{feedID}/mark-all-as-read", handler.markFeedAsRead)
+	mux.HandleFunc("GET /feed-icon/{externalIconID}", handler.showFeedIcon)
 
 	// Category pages.
-	uiRouter.HandleFunc("/category/{categoryID}/entry/{entryID}", handler.showCategoryEntryPage).Name("categoryEntry").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/unread/category/{categoryID}/entry/{entryID}", handler.showUnreadCategoryEntryPage).Name("unreadCategoryEntry").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/starred/category/{categoryID}/entry/{entryID}", handler.showStarredCategoryEntryPage).Name("starredCategoryEntry").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/categories", handler.showCategoryListPage).Name("categories").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/category/create", handler.showCreateCategoryPage).Name("createCategory").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/category/save", handler.saveCategory).Name("saveCategory").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/category/{categoryID}/feeds", handler.showCategoryFeedsPage).Name("categoryFeeds").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/category/{categoryID}/feed/{feedID}/remove", handler.removeCategoryFeed).Name("removeCategoryFeed").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/category/{categoryID}/feeds/refresh", handler.refreshCategoryFeedsPage).Name("refreshCategoryFeedsPage").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/category/{categoryID}/entries", handler.showCategoryEntriesPage).Name("categoryEntries").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/category/{categoryID}/entries/refresh", handler.refreshCategoryEntriesPage).Name("refreshCategoryEntriesPage").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/category/{categoryID}/entries/all", handler.showCategoryEntriesAllPage).Name("categoryEntriesAll").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/category/{categoryID}/entries/starred", handler.showCategoryEntriesStarredPage).Name("categoryEntriesStarred").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/category/{categoryID}/edit", handler.showEditCategoryPage).Name("editCategory").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/category/{categoryID}/update", handler.updateCategory).Name("updateCategory").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/category/{categoryID}/remove", handler.removeCategory).Name("removeCategory").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/category/{categoryID}/mark-all-as-read", handler.markCategoryAsRead).Name("markCategoryAsRead").Methods(http.MethodPost)
+	mux.HandleFunc("GET /category/{categoryID}/entry/{entryID}", handler.showCategoryEntryPage)
+	mux.HandleFunc("GET /unread/category/{categoryID}/entry/{entryID}", handler.showUnreadCategoryEntryPage)
+	mux.HandleFunc("GET /starred/category/{categoryID}/entry/{entryID}", handler.showStarredCategoryEntryPage)
+	mux.HandleFunc("GET /categories", handler.showCategoryListPage)
+	mux.HandleFunc("GET /category/create", handler.showCreateCategoryPage)
+	mux.HandleFunc("POST /category/save", handler.saveCategory)
+	mux.HandleFunc("GET /category/{categoryID}/feeds", handler.showCategoryFeedsPage)
+	mux.HandleFunc("POST /category/{categoryID}/feed/{feedID}/remove", handler.removeCategoryFeed)
+	mux.HandleFunc("GET /category/{categoryID}/feeds/refresh", handler.refreshCategoryFeedsPage)
+	mux.HandleFunc("GET /category/{categoryID}/entries", handler.showCategoryEntriesPage)
+	mux.HandleFunc("GET /category/{categoryID}/entries/refresh", handler.refreshCategoryEntriesPage)
+	mux.HandleFunc("GET /category/{categoryID}/entries/all", handler.showCategoryEntriesAllPage)
+	mux.HandleFunc("GET /category/{categoryID}/entries/starred", handler.showCategoryEntriesStarredPage)
+	mux.HandleFunc("GET /category/{categoryID}/edit", handler.showEditCategoryPage)
+	mux.HandleFunc("POST /category/{categoryID}/update", handler.updateCategory)
+	mux.HandleFunc("POST /category/{categoryID}/remove", handler.removeCategory)
+	mux.HandleFunc("POST /category/{categoryID}/mark-all-as-read", handler.markCategoryAsRead)
 
 	// Tag pages.
-	uiRouter.HandleFunc("/tags/{tagName}/entries/all", handler.showTagEntriesAllPage).Name("tagEntriesAll").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/tags/{tagName}/entry/{entryID}", handler.showTagEntryPage).Name("tagEntry").Methods(http.MethodGet)
+	mux.HandleFunc("GET /tags/{tagName}/entries/all", handler.showTagEntriesAllPage)
+	mux.HandleFunc("GET /tags/{tagName}/entry/{entryID}", handler.showTagEntryPage)
 
 	// Entry pages.
-	uiRouter.HandleFunc("/entry/status", handler.updateEntriesStatus).Name("updateEntriesStatus").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/entry/save/{entryID}", handler.saveEntry).Name("saveEntry").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/entry/enclosure/{enclosureID}/save-progression", handler.saveEnclosureProgression).Name("saveEnclosureProgression").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/entry/download/{entryID}", handler.fetchContent).Name("fetchContent").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", handler.mediaProxy).Name("proxy").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/entry/star/{entryID}", handler.toggleStarred).Name("toggleStarred").Methods(http.MethodPost)
+	mux.HandleFunc("POST /entry/status", handler.updateEntriesStatus)
+	mux.HandleFunc("POST /entry/save/{entryID}", handler.saveEntry)
+	mux.HandleFunc("POST /entry/enclosure/{enclosureID}/save-progression", handler.saveEnclosureProgression)
+	mux.HandleFunc("POST /entry/download/{entryID}", handler.fetchContent)
+	mux.HandleFunc("POST /entry/star/{entryID}", handler.toggleStarred)
+
+	// Media proxy.
+	mux.HandleFunc("GET /proxy/{encodedDigest}/{encodedURL}", handler.mediaProxy)
 
 	// Share pages.
-	uiRouter.HandleFunc("/entry/share/{entryID}", handler.createSharedEntry).Name("shareEntry").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/entry/unshare/{entryID}", handler.unshareEntry).Name("unshareEntry").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/share/{shareCode}", handler.sharedEntry).Name("sharedEntry").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/shares", handler.sharedEntries).Name("sharedEntries").Methods(http.MethodGet)
+	mux.HandleFunc("POST /entry/share/{entryID}", handler.createSharedEntry)
+	mux.HandleFunc("POST /entry/unshare/{entryID}", handler.unshareEntry)
+	mux.HandleFunc("GET /share/{shareCode}", handler.sharedEntry)
+	mux.HandleFunc("GET /shares", handler.sharedEntries)
 
 	// User pages.
-	uiRouter.HandleFunc("/users", handler.showUsersPage).Name("users").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/user/create", handler.showCreateUserPage).Name("createUser").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/user/save", handler.saveUser).Name("saveUser").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/users/{userID}/edit", handler.showEditUserPage).Name("editUser").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/users/{userID}/update", handler.updateUser).Name("updateUser").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/users/{userID}/remove", handler.removeUser).Name("removeUser").Methods(http.MethodPost)
+	mux.HandleFunc("GET /users", handler.showUsersPage)
+	mux.HandleFunc("GET /user/create", handler.showCreateUserPage)
+	mux.HandleFunc("POST /user/save", handler.saveUser)
+	mux.HandleFunc("GET /users/{userID}/edit", handler.showEditUserPage)
+	mux.HandleFunc("POST /users/{userID}/update", handler.updateUser)
+	mux.HandleFunc("POST /users/{userID}/remove", handler.removeUser)
 
 	// Settings pages.
-	uiRouter.HandleFunc("/settings", handler.showSettingsPage).Name("settings").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/settings", handler.updateSettings).Name("updateSettings").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/integrations", handler.showIntegrationPage).Name("integrations").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/integration", handler.updateIntegration).Name("updateIntegration").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/about", handler.showAboutPage).Name("about").Methods(http.MethodGet)
+	mux.HandleFunc("GET /settings", handler.showSettingsPage)
+	mux.HandleFunc("POST /settings", handler.updateSettings)
+	mux.HandleFunc("GET /integrations", handler.showIntegrationPage)
+	mux.HandleFunc("POST /integration", handler.updateIntegration)
+	mux.HandleFunc("GET /about", handler.showAboutPage)
 
 	// Session pages.
-	uiRouter.HandleFunc("/sessions", handler.showSessionsPage).Name("sessions").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/sessions/{sessionID}/remove", handler.removeSession).Name("removeSession").Methods(http.MethodPost)
+	mux.HandleFunc("GET /sessions", handler.showSessionsPage)
+	mux.HandleFunc("POST /sessions/{sessionID}/remove", handler.removeSession)
 
 	// API Keys pages.
 	if config.Opts.HasAPI() {
-		uiRouter.HandleFunc("/keys", handler.showAPIKeysPage).Name("apiKeys").Methods(http.MethodGet)
-		uiRouter.HandleFunc("/keys/{keyID}/delete", handler.deleteAPIKey).Name("deleteAPIKey").Methods(http.MethodPost)
-		uiRouter.HandleFunc("/keys/create", handler.showCreateAPIKeyPage).Name("createAPIKey").Methods(http.MethodGet)
-		uiRouter.HandleFunc("/keys/save", handler.saveAPIKey).Name("saveAPIKey").Methods(http.MethodPost)
+		mux.HandleFunc("GET /keys", handler.showAPIKeysPage)
+		mux.HandleFunc("POST /keys/{keyID}/delete", handler.deleteAPIKey)
+		mux.HandleFunc("GET /keys/create", handler.showCreateAPIKeyPage)
+		mux.HandleFunc("POST /keys/save", handler.saveAPIKey)
 	}
 
 	// OPML pages.
-	uiRouter.HandleFunc("/export", handler.exportFeeds).Name("export").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/import", handler.showImportPage).Name("import").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/upload", handler.uploadOPML).Name("uploadOPML").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/fetch", handler.fetchOPML).Name("fetchOPML").Methods(http.MethodPost)
+	mux.HandleFunc("GET /export", handler.exportFeeds)
+	mux.HandleFunc("GET /import", handler.showImportPage)
+	mux.HandleFunc("POST /upload", handler.uploadOPML)
+	mux.HandleFunc("POST /fetch", handler.fetchOPML)
 
 	// OAuth2 flow.
 	if config.Opts.OAuth2Provider() != "" {
-		uiRouter.HandleFunc("/oauth2/{provider}/unlink", handler.oauth2Unlink).Name("oauth2Unlink").Methods(http.MethodGet)
-		uiRouter.HandleFunc("/oauth2/{provider}/redirect", handler.oauth2Redirect).Name("oauth2Redirect").Methods(http.MethodGet)
-		uiRouter.HandleFunc("/oauth2/{provider}/callback", handler.oauth2Callback).Name("oauth2Callback").Methods(http.MethodGet)
+		mux.HandleFunc("GET /oauth2/{provider}/unlink", handler.oauth2Unlink)
+		mux.HandleFunc("GET /oauth2/{provider}/redirect", handler.oauth2Redirect)
+		mux.HandleFunc("GET /oauth2/{provider}/callback", handler.oauth2Callback)
 	}
 
-	// Offline page
-	uiRouter.HandleFunc("/offline", handler.showOfflinePage).Name("offline").Methods(http.MethodGet)
+	// Offline page.
+	mux.HandleFunc("GET /offline", handler.showOfflinePage)
 
 	// Authentication pages.
-	uiRouter.HandleFunc("/login", handler.checkLogin).Name("checkLogin").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/logout", handler.logout).Name("logout").Methods(http.MethodGet)
-	uiRouter.Handle("/", middleware.handleAuthProxy(http.HandlerFunc(handler.showLoginPage))).Name("login").Methods(http.MethodGet)
+	mux.HandleFunc("POST /login", handler.checkLogin)
+	mux.HandleFunc("GET /logout", handler.logout)
+	mux.Handle("GET /{$}", middleware.handleAuthProxy(http.HandlerFunc(handler.showLoginPage)))
 
-	// WebAuthn flow
+	// WebAuthn flow.
 	if config.Opts.WebAuthn() {
-		uiRouter.HandleFunc("/webauthn/register/begin", handler.beginRegistration).Name("webauthnRegisterBegin").Methods(http.MethodGet)
-		uiRouter.HandleFunc("/webauthn/register/finish", handler.finishRegistration).Name("webauthnRegisterFinish").Methods(http.MethodPost)
-		uiRouter.HandleFunc("/webauthn/login/begin", handler.beginLogin).Name("webauthnLoginBegin").Methods(http.MethodGet)
-		uiRouter.HandleFunc("/webauthn/login/finish", handler.finishLogin).Name("webauthnLoginFinish").Methods(http.MethodPost)
-		uiRouter.HandleFunc("/webauthn/deleteall", handler.deleteAllCredentials).Name("webauthnDeleteAll").Methods(http.MethodPost)
-		uiRouter.HandleFunc("/webauthn/{credentialHandle}/delete", handler.deleteCredential).Name("webauthnDelete").Methods(http.MethodPost)
-		uiRouter.HandleFunc("/webauthn/{credentialHandle}/rename", handler.renameCredential).Name("webauthnRename").Methods(http.MethodGet)
-		uiRouter.HandleFunc("/webauthn/{credentialHandle}/save", handler.saveCredential).Name("webauthnSave").Methods(http.MethodPost)
+		mux.HandleFunc("GET /webauthn/register/begin", handler.beginRegistration)
+		mux.HandleFunc("POST /webauthn/register/finish", handler.finishRegistration)
+		mux.HandleFunc("GET /webauthn/login/begin", handler.beginLogin)
+		mux.HandleFunc("POST /webauthn/login/finish", handler.finishLogin)
+		mux.HandleFunc("POST /webauthn/deleteall", handler.deleteAllCredentials)
+		mux.HandleFunc("POST /webauthn/{credentialHandle}/delete", handler.deleteCredential)
+		mux.HandleFunc("GET /webauthn/{credentialHandle}/rename", handler.renameCredential)
+		mux.HandleFunc("POST /webauthn/{credentialHandle}/save", handler.saveCredential)
 	}
 
-	router.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
+	// robots.txt
+	mux.HandleFunc("GET /robots.txt", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
 		w.Write([]byte("User-agent: *\nDisallow: /"))
-	}).Name("robots")
+	})
+
+	// Apply middleware chain: user session then app session.
+	return middleware.handleUserSession(middleware.handleAppSession(mux))
 }

@@ -7,8 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
@@ -18,24 +17,24 @@ import (
 func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 	loggedUser, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if !loggedUser.IsAdmin {
-		html.Forbidden(w, r)
+		response.HTMLForbidden(w, r)
 		return
 	}
 
 	userID := request.RouteInt64Param(r, "userID")
 	selectedUser, err := h.store.UserByID(userID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if selectedUser == nil {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 
@@ -52,21 +51,21 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := userForm.ValidateModification(); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
-		html.OK(w, r, view.Render("edit_user"))
+		response.HTML(w, r, view.Render("edit_user"))
 		return
 	}
 
 	if h.store.AnotherUserExists(selectedUser.ID, userForm.Username) {
 		view.Set("errorMessage", locale.NewLocalizedError("error.user_already_exists").Translate(loggedUser.Language))
-		html.OK(w, r, view.Render("edit_user"))
+		response.HTML(w, r, view.Render("edit_user"))
 		return
 	}
 
 	userForm.Merge(selectedUser)
 	if err := h.store.UpdateUser(selectedUser); err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "users"))
+	response.HTMLRedirect(w, r, h.routePath("/users"))
 }

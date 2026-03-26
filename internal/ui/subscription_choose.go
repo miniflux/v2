@@ -8,8 +8,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/model"
 	feedHandler "miniflux.app/v2/internal/reader/handler"
 	"miniflux.app/v2/internal/ui/form"
@@ -20,13 +19,13 @@ import (
 func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	categories, err := h.store.Categories(user.ID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -43,7 +42,7 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 	if validationErr := subscriptionForm.Validate(); validationErr != nil {
 		view.Set("form", subscriptionForm)
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		html.OK(w, r, view.Render("add_subscription"))
+		response.HTML(w, r, view.Render("add_subscription"))
 		return
 	}
 
@@ -71,9 +70,9 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 	if localizedError != nil {
 		view.Set("form", subscriptionForm)
 		view.Set("errorMessage", localizedError.Translate(user.Language))
-		html.OK(w, r, view.Render("add_subscription"))
+		response.HTML(w, r, view.Render("add_subscription"))
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "feedEntries", "feedID", feed.ID))
+	response.HTMLRedirect(w, r, h.routePath("/feed/%d/entries", feed.ID))
 }

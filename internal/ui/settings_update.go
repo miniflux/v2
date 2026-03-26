@@ -7,8 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/timezone"
@@ -21,13 +20,13 @@ import (
 func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	creds, err := h.store.WebAuthnCredentialsByUserID(user.ID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -56,7 +55,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := settingsForm.Validate(); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		html.OK(w, r, view.Render("settings"))
+		response.HTML(w, r, view.Render("settings"))
 		return
 	}
 
@@ -83,18 +82,18 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := validator.ValidateUserModification(h.store, user.ID, userModificationRequest); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		html.OK(w, r, view.Render("settings"))
+		response.HTML(w, r, view.Render("settings"))
 		return
 	}
 
 	err = h.store.UpdateUser(settingsForm.Merge(user))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	sess.SetLanguage(user.Language)
 	sess.SetTheme(user.Theme)
 	sess.NewFlashMessage(locale.NewPrinter(request.UserLanguage(r)).Printf("alert.prefs_saved"))
-	html.Redirect(w, r, route.Path(h.router, "settings"))
+	response.HTMLRedirect(w, r, h.routePath("/settings"))
 }

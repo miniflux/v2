@@ -7,16 +7,15 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 )
 
 func (h *handler) deleteAPIKey(w http.ResponseWriter, r *http.Request) {
 	keyID := request.RouteInt64Param(r, "keyID")
 	if err := h.store.DeleteAPIKey(request.UserID(r), keyID); err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "apiKeys"))
+	response.HTMLRedirect(w, r, h.routePath("/keys"))
 }

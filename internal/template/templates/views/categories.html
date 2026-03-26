@@ -10,7 +10,7 @@
     <nav aria-label="{{ t "page.categories.title" }} {{ t "menu.title" }}">
         <ul>
             <li>
-                <a href="{{ route "createCategory" }}">{{ icon "add-category" }}{{ t "menu.create_category" }}</a>
+                <a href="{{ routePath "/category/create" }}">{{ icon "add-category" }}{{ t "menu.create_category" }}</a>
             </li>
         </ul>
     </nav>
@@ -30,7 +30,7 @@
         >
             <header id="category-title-{{ .ID }}"  class="item-header" dir="auto">
                 <h2 class="item-title">
-                    <a href="{{ route "categoryEntries" "categoryID" .ID }}">
+                    <a href="{{ routePath "/category/%d/entries" .ID }}">
                         {{ .Title }}
                         <span class="category-item-total" aria-hidden="true">({{ .TotalUnread }})</span>
                         <span class="sr-only">{{ plural "page.unread_entry_count" (deRef .TotalUnread) (deRef .TotalUnread) }}</span>
@@ -45,13 +45,13 @@
                 </ul>
                 <ul class="item-meta-icons">
                     <li class="item-meta-icons-entries">
-                        <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ icon "entries" }}<span class="icon-label">{{ t "page.categories.entries" }}</span></a>
+                        <a href="{{ routePath "/category/%d/entries" .ID }}">{{ icon "entries" }}<span class="icon-label">{{ t "page.categories.entries" }}</span></a>
                     </li>
                     <li class="item-meta-icons-feeds">
-                        <a href="{{ route "categoryFeeds" "categoryID" .ID }}">{{ icon "feeds" }}<span class="icon-label">{{ t "page.categories.feeds" }}</span></a>
+                        <a href="{{ routePath "/category/%d/feeds" .ID }}">{{ icon "feeds" }}<span class="icon-label">{{ t "page.categories.feeds" }}</span></a>
                     </li>
                     <li class="item-meta-icons-edit">
-                        <a href="{{ route "editCategory" "categoryID" .ID }}">{{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_category" }}</span></a>
+                        <a href="{{ routePath "/category/%d/edit" .ID }}">{{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_category" }}</span></a>
                     </li>
                     {{ if eq (deRef .FeedCount) 0 }}
                     <li class="item-meta-icons-delete">
@@ -62,7 +62,7 @@
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "removeCategory" "categoryID" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></button>
+                            data-url="{{ routePath "/category/%d/remove" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></button>
                     </li>
                     {{ end }}
                     {{ if gt (deRef .TotalUnread) 0 }}
@@ -74,7 +74,7 @@
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "markCategoryAsRead" "categoryID" .ID }}">{{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></button>
+                            data-url="{{ routePath "/category/%d/mark-all-as-read" .ID }}">{{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></button>
                       </li>
                     {{ end }}
                 </ul>

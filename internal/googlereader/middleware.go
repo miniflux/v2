@@ -6,26 +6,27 @@ package googlereader // import "miniflux.app/v2/internal/googlereader"
 import (
 	"context"
 	"crypto/hmac"
-	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/hex"
 	"log/slog"
 	"net/http"
 	"strings"
 
+	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 )
 
-type middleware struct {
+type authMiddleware struct {
 	store *storage.Storage
 }
 
-func newMiddleware(s *storage.Storage) *middleware {
-	return &middleware{s}
+func newAuthMiddleware(s *storage.Storage) *authMiddleware {
+	return &authMiddleware{s}
 }
 
-func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
+func (m *authMiddleware) validateApiKey(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		clientIP := request.ClientIP(r)
 
@@ -38,7 +39,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 					slog.String("user_agent", r.UserAgent()),
 					slog.Any("error", err),
 				)
-				sendUnauthorizedResponse(w)
+				sendUnauthorizedResponse(w, r)
 				return
 			}
 
@@ -49,7 +50,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 					slog.String("client_ip", clientIP),
 					slog.String("user_agent", r.UserAgent()),
 				)
-				sendUnauthorizedResponse(w)
+				sendUnauthorizedResponse(w, r)
 				return
 			}
 		} else {
@@ -61,7 +62,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 					slog.String("client_ip", clientIP),
 					slog.String("user_agent", r.UserAgent()),
 				)
-				sendUnauthorizedResponse(w)
+				sendUnauthorizedResponse(w, r)
 				return
 			}
 			fields := strings.Fields(authorization)
@@ -71,7 +72,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 					slog.String("client_ip", clientIP),
 					slog.String("user_agent", r.UserAgent()),
 				)
-				sendUnauthorizedResponse(w)
+				sendUnauthorizedResponse(w, r)
 				return
 			}
 			if fields[0] != "GoogleLogin" {
@@ -80,7 +81,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 					slog.String("client_ip", clientIP),
 					slog.String("user_agent", r.UserAgent()),
 				)
-				sendUnauthorizedResponse(w)
+				sendUnauthorizedResponse(w, r)
 				return
 			}
 			auths := strings.Split(fields[1], "=")
@@ -90,7 +91,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 					slog.String("client_ip", clientIP),
 					slog.String("user_agent", r.UserAgent()),
 				)
-				sendUnauthorizedResponse(w)
+				sendUnauthorizedResponse(w, r)
 				return
 			}
 			if auths[0] != "auth" {
@@ -99,7 +100,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 					slog.String("client_ip", clientIP),
 					slog.String("user_agent", r.UserAgent()),
 				)
-				sendUnauthorizedResponse(w)
+				sendUnauthorizedResponse(w, r)
 				return
 			}
 			token = auths[1]
@@ -113,7 +114,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 				slog.String("user_agent", r.UserAgent()),
 				slog.String("token", token),
 			)
-			sendUnauthorizedResponse(w)
+			sendUnauthorizedResponse(w, r)
 			return
 		}
 		var integration *model.Integration
@@ -126,17 +127,17 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 				slog.String("user_agent", r.UserAgent()),
 				slog.Any("error", err),
 			)
-			sendUnauthorizedResponse(w)
+			sendUnauthorizedResponse(w, r)
 			return
 		}
 		expectedToken := getAuthToken(integration.GoogleReaderUsername, integration.GoogleReaderPassword)
-		if expectedToken != token {
+		if !crypto.ConstantTimeCmp(expectedToken, token) {
 			slog.Warn("[GoogleReader] Token does not match",
 				slog.Bool("authentication_failed", true),
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
 			)
-			sendUnauthorizedResponse(w)
+			sendUnauthorizedResponse(w, r)
 			return
 		}
 		if user, err = m.store.UserByID(integration.UserID); err != nil {
@@ -146,7 +147,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 				slog.String("user_agent", r.UserAgent()),
 				slog.Any("error", err),
 			)
-			sendUnauthorizedResponse(w)
+			sendUnauthorizedResponse(w, r)
 			return
 		}
 
@@ -156,7 +157,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
 			)
-			sendUnauthorizedResponse(w)
+			sendUnauthorizedResponse(w, r)
 			return
 		}
 
@@ -175,7 +176,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 }
 
 func getAuthToken(username, password string) string {
-	token := hex.EncodeToString(hmac.New(sha1.New, []byte(username+password)).Sum(nil))
+	token := hex.EncodeToString(hmac.New(sha256.New, []byte(username+password)).Sum(nil))
 	token = username + "/" + token
 	return token
 }

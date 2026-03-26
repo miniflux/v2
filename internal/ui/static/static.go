@@ -91,7 +91,7 @@ func GenerateStylesheetsBundles() error {
 	minifier := minify.New()
 	minifier.AddFunc("text/css", css.Minify)
 
-	for bundle, srcFiles := range bundles {
+	for bundleName, srcFiles := range bundles {
 		var buffer bytes.Buffer
 
 		for _, srcFile := range srcFiles {
@@ -108,7 +108,7 @@ func GenerateStylesheetsBundles() error {
 			return err
 		}
 
-		StylesheetBundles[bundle] = asset{
+		StylesheetBundles[bundleName+".css"] = asset{
 			Data:     minifiedData,
 			Checksum: crypto.HashFromBytes(minifiedData),
 		}
@@ -141,7 +141,7 @@ func GenerateJavascriptBundles(webauthnEnabled bool) error {
 	minifier := minify.New()
 	minifier.AddFunc("text/javascript", jsMinifier.Minify)
 
-	for bundle, srcFiles := range bundles {
+	for bundleName, srcFiles := range bundles {
 		var buffer bytes.Buffer
 
 		for _, srcFile := range srcFiles {
@@ -158,7 +158,7 @@ func GenerateJavascriptBundles(webauthnEnabled bool) error {
 			return err
 		}
 
-		JavascriptBundles[bundle] = asset{
+		JavascriptBundles[bundleName+".js"] = asset{
 			Data:     minifiedData,
 			Checksum: crypto.HashFromBytes(minifiedData),
 		}

@@ -9,7 +9,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/json"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/proxyrotator"
 	"miniflux.app/v2/internal/reader/fetcher"
@@ -17,15 +17,15 @@ import (
 	"miniflux.app/v2/internal/validator"
 )
 
-func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) {
+func (h *handler) discoverSubscriptionsHandler(w http.ResponseWriter, r *http.Request) {
 	var subscriptionDiscoveryRequest model.SubscriptionDiscoveryRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&subscriptionDiscoveryRequest); err != nil {
-		json.BadRequest(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
 	if validationErr := validator.ValidateSubscriptionDiscovery(&subscriptionDiscoveryRequest); validationErr != nil {
-		json.BadRequest(w, r, validationErr.Error())
+		response.JSONBadRequest(w, r, validationErr.Error())
 		return
 	}
 
@@ -56,14 +56,14 @@ func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) 
 	)
 
 	if localizedError != nil {
-		json.ServerError(w, r, localizedError.Error())
+		response.JSONServerError(w, r, localizedError.Error())
 		return
 	}
 
 	if len(subscriptions) == 0 {
-		json.NotFound(w, r)
+		response.JSONNotFound(w, r)
 		return
 	}
 
-	json.OK(w, r, subscriptions)
+	response.JSON(w, r, subscriptions)
 }

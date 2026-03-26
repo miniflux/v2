@@ -9,10 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+
 	"miniflux.app/v2/internal/ui/static"
 )
 
@@ -20,18 +18,18 @@ const licensePrefix = "//@license magnet:?xt=urn:btih:8e4f440f4c65981c5bf93c76d3
 const licenseSuffix = "\n//@license-end"
 
 func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
-	filename := request.RouteStringParam(r, "name")
-	js, found := static.JavascriptBundles[filename]
+	filename := r.PathValue("filename")
+	javascriptBundle, found := static.JavascriptBundles[filename]
 	if !found {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 
-	response.New(w, r).WithCaching(js.Checksum, 48*time.Hour, func(b *response.Builder) {
-		contents := js.Data
+	response.NewBuilder(w, r).WithCaching(javascriptBundle.Checksum, 48*time.Hour, func(b *response.Builder) {
+		contents := javascriptBundle.Data
 
-		if filename == "service-worker" {
-			variables := fmt.Sprintf(`const OFFLINE_URL=%q;`, route.Path(h.router, "offline"))
+		if filename == "service-worker.js" {
+			variables := fmt.Sprintf(`const OFFLINE_URL=%q;`, h.routePath("/offline"))
 			contents = append([]byte(variables), contents...)
 		}
 
@@ -40,7 +38,7 @@ func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
 		contents = append(contents, []byte(licenseSuffix)...)
 
 		b.WithHeader("Content-Type", "text/javascript; charset=utf-8")
-		b.WithBody(contents)
+		b.WithBodyAsBytes(contents)
 		b.Write()
 	})
 }

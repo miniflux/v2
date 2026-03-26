@@ -10,8 +10,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/proxyrotator"
 	"miniflux.app/v2/internal/reader/fetcher"
@@ -23,7 +22,7 @@ import (
 func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -34,7 +33,7 @@ func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
 			slog.Any("error", err),
 		)
 
-		html.Redirect(w, r, route.Path(h.router, "import"))
+		response.HTMLRedirect(w, r, h.routePath("/import"))
 		return
 	}
 	defer file.Close()
@@ -54,29 +53,29 @@ func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
 
 	if fileHeader.Size == 0 {
 		view.Set("errorMessage", locale.NewLocalizedError("error.empty_file").Translate(user.Language))
-		html.OK(w, r, view.Render("import"))
+		response.HTML(w, r, view.Render("import"))
 		return
 	}
 
 	if impErr := opml.NewHandler(h.store).Import(user.ID, file); impErr != nil {
 		view.Set("errorMessage", impErr)
-		html.OK(w, r, view.Render("import"))
+		response.HTML(w, r, view.Render("import"))
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "feeds"))
+	response.HTMLRedirect(w, r, h.routePath("/feeds"))
 }
 
 func (h *handler) fetchOPML(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	opmlFileURL := strings.TrimSpace(r.FormValue("url"))
 	if opmlFileURL == "" {
-		html.Redirect(w, r, route.Path(h.router, "import"))
+		response.HTMLRedirect(w, r, h.routePath("/import"))
 		return
 	}
 
@@ -102,15 +101,15 @@ func (h *handler) fetchOPML(w http.ResponseWriter, r *http.Request) {
 	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
 		slog.Warn("Unable to fetch OPML file", slog.String("opml_file_url", opmlFileURL), slog.Any("error", localizedError.Error()))
 		view.Set("errorMessage", localizedError.Translate(user.Language))
-		html.OK(w, r, view.Render("import"))
+		response.HTML(w, r, view.Render("import"))
 		return
 	}
 
 	if impErr := opml.NewHandler(h.store).Import(user.ID, responseHandler.Body(config.Opts.HTTPClientMaxBodySize())); impErr != nil {
 		view.Set("errorMessage", impErr)
-		html.OK(w, r, view.Render("import"))
+		response.HTML(w, r, view.Render("import"))
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "feeds"))
+	response.HTMLRedirect(w, r, h.routePath("/feeds"))
 }

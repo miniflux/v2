@@ -19,7 +19,7 @@ import (
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/response/html"
+
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/rewrite"
 )
@@ -33,20 +33,20 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 
 	encodedURL := request.RouteStringParam(r, "encodedURL")
 	if encodedURL == "" {
-		html.BadRequest(w, r, errors.New("no URL provided"))
+		response.HTMLBadRequest(w, r, errors.New("no URL provided"))
 		return
 	}
 
 	encodedDigest := request.RouteStringParam(r, "encodedDigest")
 	decodedDigest, err := base64.URLEncoding.DecodeString(encodedDigest)
 	if err != nil {
-		html.BadRequest(w, r, errors.New("unable to decode this digest"))
+		response.HTMLBadRequest(w, r, errors.New("unable to decode this digest"))
 		return
 	}
 
 	decodedURL, err := base64.URLEncoding.DecodeString(encodedURL)
 	if err != nil {
-		html.BadRequest(w, r, errors.New("unable to decode this URL"))
+		response.HTMLBadRequest(w, r, errors.New("unable to decode this URL"))
 		return
 	}
 
@@ -55,28 +55,28 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 	expectedMAC := mac.Sum(nil)
 
 	if !hmac.Equal(decodedDigest, expectedMAC) {
-		html.Forbidden(w, r)
+		response.HTMLForbidden(w, r)
 		return
 	}
 
 	parsedMediaURL, err := url.Parse(string(decodedURL))
 	if err != nil {
-		html.BadRequest(w, r, errors.New("invalid URL provided"))
+		response.HTMLBadRequest(w, r, errors.New("invalid URL provided"))
 		return
 	}
 
 	if parsedMediaURL.Scheme != "http" && parsedMediaURL.Scheme != "https" {
-		html.BadRequest(w, r, errors.New("invalid URL provided"))
+		response.HTMLBadRequest(w, r, errors.New("invalid URL provided"))
 		return
 	}
 
 	if parsedMediaURL.Host == "" {
-		html.BadRequest(w, r, errors.New("invalid URL provided"))
+		response.HTMLBadRequest(w, r, errors.New("invalid URL provided"))
 		return
 	}
 
 	if !parsedMediaURL.IsAbs() {
-		html.BadRequest(w, r, errors.New("invalid URL provided"))
+		response.HTMLBadRequest(w, r, errors.New("invalid URL provided"))
 		return
 	}
 
@@ -110,7 +110,7 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 				slog.String("media_url", mediaURL),
 				slog.Any("error", err),
 			)
-			html.Forbidden(w, r)
+			response.HTMLForbidden(w, r)
 			return
 		}
 
@@ -128,7 +128,7 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 			slog.String("media_url", mediaURL),
 			slog.Int("status_code", resp.StatusCode),
 		)
-		html.RequestedRangeNotSatisfiable(w, r, resp.Header.Get("Content-Range"))
+		response.HTMLRequestedRangeNotSatisfiable(w, r, resp.Header.Get("Content-Range"))
 		return
 	}
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusPartialContent {
@@ -144,7 +144,7 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 
 	etag := crypto.HashFromBytes(decodedURL)
 
-	response.New(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
+	response.NewBuilder(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
 		b.WithStatus(resp.StatusCode)
 		b.WithHeader("Content-Security-Policy", response.ContentSecurityPolicyForUntrustedContent)
 		b.WithHeader("Content-Type", resp.Header.Get("Content-Type"))
@@ -159,7 +159,7 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 				b.WithHeader(responseHeaderName, resp.Header.Get(responseHeaderName))
 			}
 		}
-		b.WithBody(resp.Body)
+		b.WithBodyAsReader(resp.Body)
 		b.WithoutCompression()
 		b.Write()
 	})

@@ -27,9 +27,12 @@ func (m *Manager) AddProvider(name string, provider Provider) {
 
 func NewManager(ctx context.Context, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint string) *Manager {
 	m := &Manager{providers: make(map[string]Provider)}
-	m.AddProvider("google", NewGoogleProvider(clientID, clientSecret, redirectURL))
 
 	if oidcDiscoveryEndpoint != "" {
+		if clientSecret == "" {
+			slog.Warn("OIDC client secret is empty or missing.")
+		}
+
 		if genericOidcProvider, err := NewOidcProvider(ctx, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint); err != nil {
 			slog.Error("Failed to initialize OIDC provider",
 				slog.Any("error", err),
@@ -37,10 +40,8 @@ func NewManager(ctx context.Context, clientID, clientSecret, redirectURL, oidcDi
 		} else {
 			m.AddProvider("oidc", genericOidcProvider)
 		}
-	}
-
-	if clientSecret == "" {
-		slog.Warn("OIDC client secret is empty or missing.")
+	} else {
+		m.AddProvider("google", NewGoogleProvider(clientID, clientSecret, redirectURL))
 	}
 
 	return m

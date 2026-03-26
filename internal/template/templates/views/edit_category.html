@@ -6,13 +6,13 @@
     <nav aria-label="{{ t "page.edit_category.title" .category.Title }} {{ t "menu.title" }}">
         <ul>
             <li>
-                <a href="{{ route "categories" }}">{{ icon "categories" }}{{ t "menu.categories" }}</a>
+                <a href="{{ routePath "/categories" }}">{{ icon "categories" }}{{ t "menu.categories" }}</a>
             </li>
             <li>
-                <a href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
+                <a href="{{ routePath "/category/%d/feeds" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
             </li>
             <li>
-                <a href="{{ route "createCategory" }}">{{ icon "add-category" }}{{ t "menu.create_category" }}</a>
+                <a href="{{ routePath "/category/create" }}">{{ icon "add-category" }}{{ t "menu.create_category" }}</a>
             </li>
         </ul>
     </nav>
@@ -20,7 +20,7 @@
 {{ end }}
 
 {{ define "content"}}
-<form action="{{ route "updateCategory" "categoryID" .category.ID }}" method="post" autocomplete="off">
+<form action="{{ routePath "/category/%d/update" .category.ID }}" method="post" autocomplete="off">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
     {{ if .errorMessage }}

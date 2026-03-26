@@ -18,5 +18,6 @@ type Provider interface {
 	GetProfile(ctx context.Context, code, codeVerifier string) (*Profile, error)
 	PopulateUserCreationWithProfileID(user *model.UserCreationRequest, profile *Profile)
 	PopulateUserWithProfileID(user *model.User, profile *Profile)
+	GetUserProfileID(user *model.User) string
 	UnsetUserProfileID(user *model.User)
 }

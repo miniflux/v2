@@ -6,7 +6,7 @@
 {{ define "content"}}
 <section class="login-form">
     {{ if not disableLocalAuth }}
-    <form action="{{ route "checkLogin" }}" method="post">
+    <form action="{{ routePath "/login" }}" method="post">
         <input type="hidden" name="csrf" value="{{ .csrf }}">
         <input type="hidden" name="redirect_url" value="{{ .redirectURL }}">
 
@@ -49,11 +49,11 @@
     {{ end }}
     {{ if hasOAuth2Provider "google" }}
     <div class="oauth2">
-        <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "page.login.google_signin" }}</a>
+        <a href="{{ routePath "/oauth2/%s/redirect" "google" }}">{{ t "page.login.google_signin" }}</a>
     </div>
     {{ else if hasOAuth2Provider "oidc" }}
     <div class="oauth2">
-        <a href="{{ route "oauth2Redirect" "provider" "oidc" }}">{{ t "page.login.oidc_signin" oidcProviderName }}</a>
+        <a href="{{ routePath "/oauth2/%s/redirect" "oidc" }}">{{ t "page.login.oidc_signin" oidcProviderName }}</a>
     </div>
     {{ end }}
 </section>

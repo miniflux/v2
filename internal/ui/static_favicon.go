@@ -8,21 +8,21 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/response/html"
+
 	"miniflux.app/v2/internal/ui/static"
 )
 
 func (h *handler) showFavicon(w http.ResponseWriter, r *http.Request) {
 	value, ok := static.BinaryBundles["favicon.ico"]
 	if !ok {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 
-	response.New(w, r).WithCaching(value.Checksum, 48*time.Hour, func(b *response.Builder) {
+	response.NewBuilder(w, r).WithCaching(value.Checksum, 48*time.Hour, func(b *response.Builder) {
 		b.WithHeader("Content-Type", "image/x-icon")
 		b.WithoutCompression()
-		b.WithBody(value.Data)
+		b.WithBodyAsBytes(value.Data)
 		b.Write()
 	})
 }

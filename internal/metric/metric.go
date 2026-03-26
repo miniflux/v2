@@ -4,12 +4,19 @@
 package metric // import "miniflux.app/v2/internal/metric"
 
 import (
+	"context"
 	"log/slog"
 	"time"
 
 	"miniflux.app/v2/internal/storage"
 
 	"github.com/prometheus/client_golang/prometheus"
+)
+
+// Status label values for histogram metrics.
+const (
+	StatusSuccess = "success"
+	StatusError   = "error"
 )
 
 // Prometheus Metrics.
@@ -162,21 +169,45 @@ func NewCollector(store *storage.Storage, refreshInterval time.Duration) *collec
 }
 
 // GatherStorageMetrics polls the database to fetch metrics.
-func (c *collector) GatherStorageMetrics() {
-	for range time.Tick(c.refreshInterval) {
+func (c *collector) GatherStorageMetrics(ctx context.Context) {
+	ticker := time.NewTicker(c.refreshInterval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			slog.Debug("Stopping metric collector")
+			return
+		case <-ticker.C:
+		}
 		slog.Debug("Collecting metrics from the database")
 
-		usersGauge.Set(float64(c.store.CountUsers()))
-		brokenFeedsGauge.Set(float64(c.store.CountAllFeedsWithErrors()))
-
-		feedsCount := c.store.CountAllFeeds()
-		for status, count := range feedsCount {
-			feedsGauge.WithLabelValues(status).Set(float64(count))
+		if usersCount, err := c.store.CountUsers(); err != nil {
+			slog.Warn("Unable to collect users metric", slog.Any("error", err))
+		} else {
+			usersGauge.Set(float64(usersCount))
 		}
 
-		entriesCount := c.store.CountAllEntries()
-		for status, count := range entriesCount {
-			entriesGauge.WithLabelValues(status).Set(float64(count))
+		if brokenFeedsCount, err := c.store.CountAllFeedsWithErrors(); err != nil {
+			slog.Warn("Unable to collect broken feeds metric", slog.Any("error", err))
+		} else {
+			brokenFeedsGauge.Set(float64(brokenFeedsCount))
+		}
+
+		if feedsCount, err := c.store.CountAllFeeds(); err != nil {
+			slog.Warn("Unable to collect feeds metric", slog.Any("error", err))
+		} else {
+			for status, count := range feedsCount {
+				feedsGauge.WithLabelValues(status).Set(float64(count))
+			}
+		}
+
+		if entriesCount, err := c.store.CountAllEntries(); err != nil {
+			slog.Warn("Unable to collect entries metric", slog.Any("error", err))
+		} else {
+			for status, count := range entriesCount {
+				entriesGauge.WithLabelValues(status).Set(float64(count))
+			}
 		}
 
 		dbStats := c.store.DBStats()

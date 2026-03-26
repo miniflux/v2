@@ -8,7 +8,7 @@
 {{ end }}
 
 {{ define "content"}}
-<form method="post" autocomplete="off" action="{{ route "updateIntegration" }}" class="integration-form">
+<form method="post" autocomplete="off" action="{{ routePath "/integration" }}" class="integration-form">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
     {{ if .errorMessage }}
@@ -136,7 +136,7 @@
             <label for="form-fever-password">{{ t "form.integration.fever_password" }}</label>
             <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}" autocomplete="new-password">
 
-            <p>{{ t "form.integration.fever_endpoint" }} <strong>{{ rootURL }}{{ route "feverEndpoint" }}</strong></p>
+            <p>{{ t "form.integration.fever_endpoint" }} <strong>{{ rootURL }}{{ routePath "/fever/" }}</strong></p>
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
@@ -157,7 +157,7 @@
             <label for="form-googlereader-password">{{ t "form.integration.googlereader_password" }}</label>
             <input type="password" name="googlereader_password" id="form-googlereader-password" value="{{ .form.GoogleReaderPassword }}" autocomplete="new-password">
 
-            <p>{{ t "form.integration.googlereader_endpoint" }} <strong>{{ rootURL }}{{ route "login" }}</strong></p>
+            <p>{{ t "form.integration.googlereader_endpoint" }} <strong>{{ rootURL }}{{ routePath "/" }}</strong></p>
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
@@ -722,7 +722,7 @@
     <p>{{ t "page.integration.bookmarklet.help" }}</p>
 
     <div class="bookmarklet">
-        <a href="javascript:location.href='{{ rootURL }}{{ route "bookmarklet" }}?uri='+encodeURIComponent(window.location.href)">{{ t "page.integration.bookmarklet.name" }}</a>
+        <a href="javascript:location.href='{{ rootURL }}{{ routePath "/bookmarklet" }}?uri='+encodeURIComponent(window.location.href)">{{ t "page.integration.bookmarklet.name" }}</a>
     </div>
 
     <p>{{ t "page.integration.bookmarklet.instructions" }}</p>

@@ -12,8 +12,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/cookie"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/session"
@@ -23,14 +22,14 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 	provider := request.RouteStringParam(r, "provider")
 	if provider == "" {
 		slog.Warn("Invalid or missing OAuth2 provider")
-		html.Redirect(w, r, route.Path(h.router, "login"))
+		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
 
 	code := request.QueryStringParam(r, "code", "")
 	if code == "" {
 		slog.Warn("No code received on OAuth2 callback")
-		html.Redirect(w, r, route.Path(h.router, "login"))
+		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
 
@@ -40,7 +39,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 			slog.String("expected", request.OAuth2State(r)),
 			slog.String("received", state),
 		)
-		html.Redirect(w, r, route.Path(h.router, "login"))
+		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
 
@@ -50,7 +49,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 			slog.String("provider", provider),
 			slog.Any("error", err),
 		)
-		html.Redirect(w, r, route.Path(h.router, "login"))
+		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
 
@@ -60,17 +59,20 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 			slog.String("provider", provider),
 			slog.Any("error", err),
 		)
-		html.Redirect(w, r, route.Path(h.router, "login"))
+		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
 
-	printer := locale.NewPrinter(request.UserLanguage(r))
 	sess := session.New(h.store, request.SessionID(r))
+	sess.SetOAuth2State("")
+	sess.SetOAuth2CodeVerifier("")
+
+	printer := locale.NewPrinter(request.UserLanguage(r))
 
 	if request.IsAuthenticated(r) {
 		loggedUser, err := h.store.UserByID(request.UserID(r))
 		if err != nil {
-			html.ServerError(w, r, err)
+			response.HTMLServerError(w, r, err)
 			return
 		}
 
@@ -81,35 +83,48 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 				slog.String("oauth2_profile_id", profile.ID),
 			)
 			sess.NewFlashErrorMessage(printer.Print("error.duplicate_linked_account"))
-			html.Redirect(w, r, route.Path(h.router, "settings"))
+			response.HTMLRedirect(w, r, h.routePath("/settings"))
+			return
+		}
+
+		existingProfileID := authProvider.GetUserProfileID(loggedUser)
+		if existingProfileID != "" && existingProfileID != profile.ID {
+			slog.Error("Oauth2 user cannot be associated because this user is already linked to a different identity",
+				slog.Int64("user_id", loggedUser.ID),
+				slog.String("oauth2_provider", provider),
+				slog.String("existing_profile_id", existingProfileID),
+				slog.String("new_profile_id", profile.ID),
+			)
+			sess.NewFlashErrorMessage(printer.Print("error.duplicate_linked_account"))
+			response.HTMLRedirect(w, r, h.routePath("/settings"))
 			return
 		}
 
 		authProvider.PopulateUserWithProfileID(loggedUser, profile)
 		if err := h.store.UpdateUser(loggedUser); err != nil {
-			html.ServerError(w, r, err)
+			response.HTMLServerError(w, r, err)
 			return
 		}
 
 		sess.NewFlashMessage(printer.Print("alert.account_linked"))
-		html.Redirect(w, r, route.Path(h.router, "settings"))
+		response.HTMLRedirect(w, r, h.routePath("/settings"))
 		return
 	}
 
 	user, err := h.store.UserByField(profile.Key, profile.ID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if user == nil {
 		if !config.Opts.IsOAuth2UserCreationAllowed() {
-			html.Forbidden(w, r)
+			response.HTMLForbidden(w, r)
 			return
 		}
 
 		if h.store.UserExists(profile.Username) {
-			html.BadRequest(w, r, errors.New(printer.Print("error.user_already_exists")))
+			response.HTMLBadRequest(w, r, errors.New(printer.Print("error.user_already_exists")))
 			return
 		}
 
@@ -118,7 +133,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 
 		user, err = h.store.CreateUser(userCreationRequest)
 		if err != nil {
-			html.ServerError(w, r, err)
+			response.HTMLServerError(w, r, err)
 			return
 		}
 	}
@@ -126,7 +141,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 	clientIP := request.ClientIP(r)
 	sessionToken, _, err := h.store.CreateUserSessionFromUsername(user.Username, r.UserAgent(), clientIP)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -149,5 +164,5 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		config.Opts.BasePath(),
 	))
 
-	html.Redirect(w, r, route.Path(h.router, user.DefaultHomePage))
+	response.HTMLRedirect(w, r, h.basePath+"/"+user.DefaultHomePage)
 }

@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"miniflux.app/v2/internal/locale"
+	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/validator"
 )
 
@@ -40,7 +41,7 @@ func (s *SubscriptionForm) Validate() *locale.LocalizedError {
 		return locale.NewLocalizedError("error.feed_mandatory_fields")
 	}
 
-	if !validator.IsValidURL(s.URL) {
+	if !urllib.IsAbsoluteURL(s.URL) {
 		return locale.NewLocalizedError("error.invalid_feed_url")
 	}
 
@@ -56,7 +57,7 @@ func (s *SubscriptionForm) Validate() *locale.LocalizedError {
 		return locale.NewLocalizedError("error.feed_invalid_urlrewrite_rule")
 	}
 
-	if s.ProxyURL != "" && !validator.IsValidURL(s.ProxyURL) {
+	if s.ProxyURL != "" && !urllib.IsAbsoluteURL(s.ProxyURL) {
 		return locale.NewLocalizedError("error.invalid_feed_proxy_url")
 	}
 

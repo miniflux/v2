@@ -8,7 +8,7 @@
 
 {{ define "content"}}
 <search role="search">
-    <form class="search-form" action="{{ route "search" }}" aria-labelledby="search-input-label">
+    <form class="search-form" action="{{ routePath "/search" }}" aria-labelledby="search-input-label">
         <div class="search-input-row">
             <input type="search" name="q" id="search-input" aria-label="{{ t "search.label" }}" placeholder="{{ t "search.placeholder" }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ else }}autofocus{{ end }} required>
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "search.submit" }}</button>
@@ -33,9 +33,9 @@
             >
                 <header class="item-header" dir="auto">
                     <h2 id="entry-title-{{ .ID }}" class="item-title">
-                        <a href="{{ route "searchEntry" "entryID" .ID }}{{ queryString (dict "q" $.searchQuery "unread" $.searchUnreadOnly) }}">
+                        <a href="{{ routePath "/search/entry/%d" .ID }}{{ queryString (dict "q" $.searchQuery "unread" $.searchUnreadOnly) }}">
                             {{ if ne .Feed.Icon.IconID 0 }}
-                            <img src="{{ route "feedIcon" "externalIconID" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                            <img src="{{ routePath "/feed-icon/%s" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
                             {{ else }}
                             <span class="sr-only">{{ .Feed.Title }}</span>
                             {{ end }}
@@ -43,7 +43,7 @@
                         </a>
                     </h2>
                     <span class="category">
-                        <a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">
+                        <a href="{{ routePath "/category/%d/entries" .Feed.Category.ID }}">
                             {{ .Feed.Category.Title }}
                         </a>
                     </span>

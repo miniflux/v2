@@ -14,7 +14,7 @@
                 <button
                     class="page-button"
                     data-confirm="true"
-                    data-url="{{ route "flushHistory" }}"
+                    data-url="{{ routePath "/history/flush" }}"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
@@ -22,7 +22,7 @@
             </li>
             {{ end }}
             <li>
-                <a class="page-link" href="{{ route "sharedEntries" }}">{{ icon "share" }}{{ t "menu.shared_entries" }}</a>
+                <a class="page-link" href="{{ routePath "/shares" }}">{{ icon "share" }}{{ t "menu.shared_entries" }}</a>
             </li>
         </ul>
     </nav>
@@ -46,15 +46,15 @@
         >
             <header class="item-header" dir="auto">
                 <h2 id="entry-title-{{ .ID }}" class="item-title">
-                    <a href="{{ route "readEntry" "entryID" .ID }}">
+                    <a href="{{ routePath "/history/entry/%d" .ID }}">
                         {{ if ne .Feed.Icon.IconID 0 }}
-                        <img src="{{ route "feedIcon" "externalIconID" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
+                        <img src="{{ routePath "/feed-icon/%s" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
                         {{ end }}
                         {{ .Title }}
                     </a>
                 </h2>
                 <span class="category">
-                    <a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">
+                    <a href="{{ routePath "/category/%d/entries" .Feed.Category.ID }}">
                         {{ .Feed.Category.Title }}
                     </a>
                 </span>

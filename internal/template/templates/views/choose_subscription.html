@@ -8,7 +8,7 @@
 {{ end }}
 
 {{ define "content"}}
-<form action="{{ route "chooseSubscription" }}" method="POST">
+<form action="{{ routePath "/subscriptions" }}" method="POST">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
     <input type="hidden" name="category_id" value="{{ .form.CategoryID }}">
     <input type="hidden" name="user_agent" value="{{ .form.UserAgent }}">

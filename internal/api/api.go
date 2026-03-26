@@ -5,92 +5,73 @@ package api // import "miniflux.app/v2/internal/api"
 
 import (
 	"net/http"
-	"runtime"
 
-	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/storage"
-	"miniflux.app/v2/internal/version"
 	"miniflux.app/v2/internal/worker"
-
-	"github.com/gorilla/mux"
 )
 
 type handler struct {
-	store  *storage.Storage
-	pool   *worker.Pool
-	router *mux.Router
+	store *storage.Storage
+	pool  *worker.Pool
 }
 
-// Serve declares API routes for the application.
-func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
-	handler := &handler{store, pool, router}
-
-	sr := router.PathPrefix("/v1").Subrouter()
+// NewHandler returns an http.Handler that handles API v1 calls.
+// The returned handler expects the base path to be stripped from the request URL.
+func NewHandler(store *storage.Storage, pool *worker.Pool) http.Handler {
+	handler := &handler{store: store, pool: pool}
 	middleware := newMiddleware(store)
-	sr.Use(middleware.handleCORS)
-	sr.Use(middleware.apiKeyAuth)
-	sr.Use(middleware.basicAuth)
-	sr.Methods(http.MethodOptions)
-	sr.HandleFunc("/users", handler.createUser).Methods(http.MethodPost)
-	sr.HandleFunc("/users", handler.users).Methods(http.MethodGet)
-	sr.HandleFunc("/users/{userID:[0-9]+}", handler.userByID).Methods(http.MethodGet)
-	sr.HandleFunc("/users/{userID:[0-9]+}", handler.updateUser).Methods(http.MethodPut)
-	sr.HandleFunc("/users/{userID:[0-9]+}", handler.removeUser).Methods(http.MethodDelete)
-	sr.HandleFunc("/users/{userID:[0-9]+}/mark-all-as-read", handler.markUserAsRead).Methods(http.MethodPut)
-	sr.HandleFunc("/users/{username}", handler.userByUsername).Methods(http.MethodGet)
-	sr.HandleFunc("/me", handler.currentUser).Methods(http.MethodGet)
-	sr.HandleFunc("/categories", handler.createCategory).Methods(http.MethodPost)
-	sr.HandleFunc("/categories", handler.getCategories).Methods(http.MethodGet)
-	sr.HandleFunc("/categories/{categoryID}", handler.updateCategory).Methods(http.MethodPut)
-	sr.HandleFunc("/categories/{categoryID}", handler.removeCategory).Methods(http.MethodDelete)
-	sr.HandleFunc("/categories/{categoryID}/mark-all-as-read", handler.markCategoryAsRead).Methods(http.MethodPut)
-	sr.HandleFunc("/categories/{categoryID}/feeds", handler.getCategoryFeeds).Methods(http.MethodGet)
-	sr.HandleFunc("/categories/{categoryID}/refresh", handler.refreshCategory).Methods(http.MethodPut)
-	sr.HandleFunc("/categories/{categoryID}/entries", handler.getCategoryEntries).Methods(http.MethodGet)
-	sr.HandleFunc("/categories/{categoryID}/entries/{entryID}", handler.getCategoryEntry).Methods(http.MethodGet)
-	sr.HandleFunc("/discover", handler.discoverSubscriptions).Methods(http.MethodPost)
-	sr.HandleFunc("/feeds", handler.createFeed).Methods(http.MethodPost)
-	sr.HandleFunc("/feeds", handler.getFeeds).Methods(http.MethodGet)
-	sr.HandleFunc("/feeds/counters", handler.fetchCounters).Methods(http.MethodGet)
-	sr.HandleFunc("/feeds/refresh", handler.refreshAllFeeds).Methods(http.MethodPut)
-	sr.HandleFunc("/feeds/{feedID}/refresh", handler.refreshFeed).Methods(http.MethodPut)
-	sr.HandleFunc("/feeds/{feedID}", handler.getFeed).Methods(http.MethodGet)
-	sr.HandleFunc("/feeds/{feedID}", handler.updateFeed).Methods(http.MethodPut)
-	sr.HandleFunc("/feeds/{feedID}", handler.removeFeed).Methods(http.MethodDelete)
-	sr.HandleFunc("/feeds/{feedID}/icon", handler.getIconByFeedID).Methods(http.MethodGet)
-	sr.HandleFunc("/feeds/{feedID}/mark-all-as-read", handler.markFeedAsRead).Methods(http.MethodPut)
-	sr.HandleFunc("/export", handler.exportFeeds).Methods(http.MethodGet)
-	sr.HandleFunc("/import", handler.importFeeds).Methods(http.MethodPost)
-	sr.HandleFunc("/feeds/{feedID}/entries", handler.getFeedEntries).Methods(http.MethodGet)
-	sr.HandleFunc("/feeds/{feedID}/entries/import", handler.importFeedEntry).Methods(http.MethodPost)
-	sr.HandleFunc("/feeds/{feedID}/entries/{entryID}", handler.getFeedEntry).Methods(http.MethodGet)
-	sr.HandleFunc("/entries", handler.getEntries).Methods(http.MethodGet)
-	sr.HandleFunc("/entries", handler.setEntryStatus).Methods(http.MethodPut)
-	sr.HandleFunc("/entries/{entryID}", handler.getEntry).Methods(http.MethodGet)
-	sr.HandleFunc("/entries/{entryID}", handler.updateEntry).Methods(http.MethodPut)
-	sr.HandleFunc("/entries/{entryID}/bookmark", handler.toggleStarred).Methods(http.MethodPut)
-	sr.HandleFunc("/entries/{entryID}/star", handler.toggleStarred).Methods(http.MethodPut)
-	sr.HandleFunc("/entries/{entryID}/save", handler.saveEntry).Methods(http.MethodPost)
-	sr.HandleFunc("/entries/{entryID}/fetch-content", handler.fetchContent).Methods(http.MethodGet)
-	sr.HandleFunc("/flush-history", handler.flushHistory).Methods(http.MethodPut, http.MethodDelete)
-	sr.HandleFunc("/icons/{iconID}", handler.getIconByIconID).Methods(http.MethodGet)
-	sr.HandleFunc("/enclosures/{enclosureID}", handler.getEnclosureByID).Methods(http.MethodGet)
-	sr.HandleFunc("/enclosures/{enclosureID}", handler.updateEnclosureByID).Methods(http.MethodPut)
-	sr.HandleFunc("/integrations/status", handler.getIntegrationsStatus).Methods(http.MethodGet)
-	sr.HandleFunc("/version", handler.versionHandler).Methods(http.MethodGet)
-	sr.HandleFunc("/api-keys", handler.createAPIKey).Methods(http.MethodPost)
-	sr.HandleFunc("/api-keys", handler.getAPIKeys).Methods(http.MethodGet)
-	sr.HandleFunc("/api-keys/{apiKeyID}", handler.deleteAPIKey).Methods(http.MethodDelete)
-}
 
-func (h *handler) versionHandler(w http.ResponseWriter, r *http.Request) {
-	json.OK(w, r, &versionResponse{
-		Version:   version.Version,
-		Commit:    version.Commit,
-		BuildDate: version.BuildDate,
-		GoVersion: runtime.Version(),
-		Compiler:  runtime.Compiler,
-		Arch:      runtime.GOARCH,
-		OS:        runtime.GOOS,
-	})
+	mux := http.NewServeMux()
+	mux.HandleFunc("POST /v1/users", handler.createUserHandler)
+	mux.HandleFunc("GET /v1/users", handler.usersHandler)
+	mux.HandleFunc("GET /v1/users/{identifier}", handler.dispatchUserLookupHandler)
+	mux.HandleFunc("PUT /v1/users/{userID}", handler.updateUserHandler)
+	mux.HandleFunc("DELETE /v1/users/{userID}", handler.removeUserHandler)
+	mux.HandleFunc("PUT /v1/users/{userID}/mark-all-as-read", handler.markUserAsReadHandler)
+	mux.HandleFunc("GET /v1/me", handler.currentUserHandler)
+	mux.HandleFunc("POST /v1/categories", handler.createCategoryHandler)
+	mux.HandleFunc("GET /v1/categories", handler.getCategoriesHandler)
+	mux.HandleFunc("PUT /v1/categories/{categoryID}", handler.updateCategoryHandler)
+	mux.HandleFunc("DELETE /v1/categories/{categoryID}", handler.removeCategoryHandler)
+	mux.HandleFunc("PUT /v1/categories/{categoryID}/mark-all-as-read", handler.markCategoryAsReadHandler)
+	mux.HandleFunc("GET /v1/categories/{categoryID}/feeds", handler.getCategoryFeedsHandler)
+	mux.HandleFunc("PUT /v1/categories/{categoryID}/refresh", handler.refreshCategoryHandler)
+	mux.HandleFunc("GET /v1/categories/{categoryID}/entries", handler.getCategoryEntriesHandler)
+	mux.HandleFunc("GET /v1/categories/{categoryID}/entries/{entryID}", handler.getCategoryEntryHandler)
+	mux.HandleFunc("POST /v1/discover", handler.discoverSubscriptionsHandler)
+	mux.HandleFunc("POST /v1/feeds", handler.createFeedHandler)
+	mux.HandleFunc("GET /v1/feeds", handler.getFeedsHandler)
+	mux.HandleFunc("GET /v1/feeds/counters", handler.fetchCountersHandler)
+	mux.HandleFunc("PUT /v1/feeds/refresh", handler.refreshAllFeedsHandler)
+	mux.HandleFunc("PUT /v1/feeds/{feedID}/refresh", handler.refreshFeedHandler)
+	mux.HandleFunc("GET /v1/feeds/{feedID}", handler.getFeedHandler)
+	mux.HandleFunc("PUT /v1/feeds/{feedID}", handler.updateFeedHandler)
+	mux.HandleFunc("DELETE /v1/feeds/{feedID}", handler.removeFeedHandler)
+	mux.HandleFunc("GET /v1/feeds/{feedID}/icon", handler.getIconByFeedIDHandler)
+	mux.HandleFunc("PUT /v1/feeds/{feedID}/mark-all-as-read", handler.markFeedAsReadHandler)
+	mux.HandleFunc("GET /v1/export", handler.exportFeedsHandler)
+	mux.HandleFunc("POST /v1/import", handler.importFeedsHandler)
+	mux.HandleFunc("GET /v1/feeds/{feedID}/entries", handler.getFeedEntriesHandler)
+	mux.HandleFunc("POST /v1/feeds/{feedID}/entries/import", handler.importFeedEntryHandler)
+	mux.HandleFunc("GET /v1/feeds/{feedID}/entries/{entryID}", handler.getFeedEntryHandler)
+	mux.HandleFunc("GET /v1/entries", handler.getEntriesHandler)
+	mux.HandleFunc("PUT /v1/entries", handler.setEntryStatusHandler)
+	mux.HandleFunc("GET /v1/entries/{entryID}", handler.getEntryHandler)
+	mux.HandleFunc("PUT /v1/entries/{entryID}", handler.updateEntryHandler)
+	mux.HandleFunc("PUT /v1/entries/{entryID}/bookmark", handler.toggleStarredHandler)
+	mux.HandleFunc("PUT /v1/entries/{entryID}/star", handler.toggleStarredHandler)
+	mux.HandleFunc("POST /v1/entries/{entryID}/save", handler.saveEntryHandler)
+	mux.HandleFunc("GET /v1/entries/{entryID}/fetch-content", handler.fetchContentHandler)
+	mux.HandleFunc("PUT /v1/flush-history", handler.flushHistoryHandler)
+	mux.HandleFunc("DELETE /v1/flush-history", handler.flushHistoryHandler)
+	mux.HandleFunc("GET /v1/icons/{iconID}", handler.getIconByIconIDHandler)
+	mux.HandleFunc("GET /v1/enclosures/{enclosureID}", handler.getEnclosureByIDHandler)
+	mux.HandleFunc("PUT /v1/enclosures/{enclosureID}", handler.updateEnclosureByIDHandler)
+	mux.HandleFunc("GET /v1/integrations/status", handler.getIntegrationsStatusHandler)
+	mux.HandleFunc("GET /v1/version", handler.versionHandler)
+	mux.HandleFunc("POST /v1/api-keys", handler.createAPIKeyHandler)
+	mux.HandleFunc("GET /v1/api-keys", handler.getAPIKeysHandler)
+	mux.HandleFunc("DELETE /v1/api-keys/{apiKeyID}", handler.deleteAPIKeyHandler)
+
+	return middleware.withCORSHeaders(middleware.validateAPIKeyAuth(middleware.validateBasicAuth(mux)))
 }

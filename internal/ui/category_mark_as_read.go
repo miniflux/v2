@@ -8,8 +8,7 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 )
 
 func (h *handler) markCategoryAsRead(w http.ResponseWriter, r *http.Request) {
@@ -18,19 +17,19 @@ func (h *handler) markCategoryAsRead(w http.ResponseWriter, r *http.Request) {
 
 	category, err := h.store.Category(userID, categoryID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if category == nil {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 
 	if err = h.store.MarkCategoryAsRead(userID, categoryID, time.Now()); err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "categories"))
+	response.HTMLRedirect(w, r, h.routePath("/categories"))
 }

@@ -8,8 +8,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
@@ -20,25 +19,25 @@ import (
 func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 	loggedUser, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	feedID := request.RouteInt64Param(r, "feedID")
 	feed, err := h.store.FeedByID(loggedUser.ID, feedID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if feed == nil {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 
 	categories, err := h.store.Categories(loggedUser.ID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
@@ -69,15 +68,15 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := validator.ValidateFeedModification(h.store, loggedUser.ID, feed.ID, feedModificationRequest); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
-		html.OK(w, r, view.Render("edit_feed"))
+		response.HTML(w, r, view.Render("edit_feed"))
 		return
 	}
 
 	err = h.store.UpdateFeed(feedForm.Merge(feed))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "feedEntries", "feedID", feed.ID))
+	response.HTMLRedirect(w, r, h.routePath("/feed/%d/entries", feed.ID))
 }

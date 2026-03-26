@@ -69,8 +69,8 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 	}
 
 	if changes.EntryDirection != nil {
-		if err := validateEntryDirection(*changes.EntryDirection); err != nil {
-			return err
+		if err := ValidateDirection(*changes.EntryDirection); err != nil {
+			return locale.NewLocalizedError("error.invalid_entry_direction")
 		}
 	}
 
@@ -129,14 +129,18 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 	}
 
 	if changes.BlockFilterEntryRules != nil {
-		if err := isValidFilterRules(*changes.BlockFilterEntryRules, "block"); err != nil {
-			return err
+		if *changes.BlockFilterEntryRules != "" {
+			if err := isValidFilterRules(*changes.BlockFilterEntryRules, "block"); err != nil {
+				return err
+			}
 		}
 	}
 
 	if changes.KeepFilterEntryRules != nil {
-		if err := isValidFilterRules(*changes.KeepFilterEntryRules, "keep"); err != nil {
-			return err
+		if *changes.KeepFilterEntryRules != "" {
+			if err := isValidFilterRules(*changes.KeepFilterEntryRules, "keep"); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -203,13 +207,6 @@ func validateLanguage(language string) *locale.LocalizedError {
 func validateTimezone(timezoneValue string) *locale.LocalizedError {
 	if !timezone.IsValid(timezoneValue) {
 		return locale.NewLocalizedError("error.invalid_timezone")
-	}
-	return nil
-}
-
-func validateEntryDirection(direction string) *locale.LocalizedError {
-	if direction != "asc" && direction != "desc" {
-		return locale.NewLocalizedError("error.invalid_entry_direction")
 	}
 	return nil
 }

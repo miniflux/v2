@@ -7,23 +7,21 @@ import (
 	"net/http"
 	"time"
 
-	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/http/response/html"
+
 	"miniflux.app/v2/internal/ui/static"
 )
 
 func (h *handler) showStylesheet(w http.ResponseWriter, r *http.Request) {
-	filename := request.RouteStringParam(r, "name")
-	m, found := static.StylesheetBundles[filename]
+	stylesheetBundle, found := static.StylesheetBundles[r.PathValue("filename")]
 	if !found {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 
-	response.New(w, r).WithCaching(m.Checksum, 48*time.Hour, func(b *response.Builder) {
+	response.NewBuilder(w, r).WithCaching(stylesheetBundle.Checksum, 48*time.Hour, func(b *response.Builder) {
 		b.WithHeader("Content-Type", "text/css; charset=utf-8")
-		b.WithBody(m.Data)
+		b.WithBodyAsBytes(stylesheetBundle.Data)
 		b.Write()
 	})
 }

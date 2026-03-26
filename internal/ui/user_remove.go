@@ -8,43 +8,42 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 )
 
 func (h *handler) removeUser(w http.ResponseWriter, r *http.Request) {
 	loggedUser, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if !loggedUser.IsAdmin {
-		html.Forbidden(w, r)
+		response.HTMLForbidden(w, r)
 		return
 	}
 
 	selectedUserID := request.RouteInt64Param(r, "userID")
 	selectedUser, err := h.store.UserByID(selectedUserID)
 	if err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
 	if selectedUser == nil {
-		html.NotFound(w, r)
+		response.HTMLNotFound(w, r)
 		return
 	}
 
 	if selectedUser.ID == loggedUser.ID {
-		html.BadRequest(w, r, errors.New("you cannot remove yourself"))
+		response.HTMLBadRequest(w, r, errors.New("you cannot remove yourself"))
 		return
 	}
 
 	if err := h.store.RemoveUser(selectedUser.ID); err != nil {
-		html.ServerError(w, r, err)
+		response.HTMLServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "users"))
+	response.HTMLRedirect(w, r, h.routePath("/users"))
 }

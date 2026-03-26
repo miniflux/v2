@@ -10,8 +10,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/locale"
 	feedHandler "miniflux.app/v2/internal/reader/handler"
 	"miniflux.app/v2/internal/ui/session"
@@ -29,7 +28,7 @@ func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 		)
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "feedEntries", "feedID", feedID))
+	response.HTMLRedirect(w, r, h.routePath("/feed/%d/entries", feedID))
 }
 
 func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +50,7 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 
 		jobs, err := batchBuilder.FetchJobs()
 		if err != nil {
-			html.ServerError(w, r, err)
+			response.HTMLServerError(w, r, err)
 			return
 		}
 
@@ -67,5 +66,5 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 		sess.NewFlashMessage(printer.Print("alert.background_feed_refresh"))
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "feeds"))
+	response.HTMLRedirect(w, r, h.routePath("/feeds"))
 }

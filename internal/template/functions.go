@@ -17,18 +17,16 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/timezone"
+	"miniflux.app/v2/internal/ui/static"
 	"miniflux.app/v2/internal/urllib"
-
-	"github.com/gorilla/mux"
 )
 
 type funcMap struct {
-	router *mux.Router
+	basePath string
 }
 
 // Map returns a map of template functions that are compiled during template parsing.
@@ -52,8 +50,11 @@ func (f *funcMap) Map() template.FuncMap {
 		"hasAuthProxy": func() bool {
 			return config.Opts.AuthProxyHeader() != ""
 		},
-		"route": func(name string, args ...any) string {
-			return route.Path(f.router, name, args...)
+		"routePath": func(format string, args ...any) string {
+			if len(args) > 0 {
+				return f.basePath + fmt.Sprintf(format, args...)
+			}
+			return f.basePath + format
 		},
 		"safeURL": func(url string) template.URL {
 			return template.URL(url)
@@ -67,14 +68,12 @@ func (f *funcMap) Map() template.FuncMap {
 		"safeHTML": func(str string) template.HTML {
 			return template.HTML(str)
 		},
-		"proxyFilter": func(data string) string {
-			return mediaproxy.RewriteDocumentWithRelativeProxyURL(f.router, data)
-		},
+		"proxyFilter": mediaproxy.RewriteDocumentWithRelativeProxyURL,
 		"proxyURL": func(link string) string {
 			mediaProxyMode := config.Opts.MediaProxyMode()
 
 			if mediaProxyMode == "all" || (mediaProxyMode != "none" && !urllib.IsHTTPS(link)) {
-				return mediaproxy.ProxifyRelativeURL(f.router, link)
+				return mediaproxy.ProxifyRelativeURL(link)
 			}
 
 			return link
@@ -90,10 +89,11 @@ func (f *funcMap) Map() template.FuncMap {
 			return ts.Format("2006-01-02 15:04:05")
 		},
 		"theme_color": model.ThemeColor,
+		"iconPath":    f.iconPath,
 		"icon": func(iconName string) template.HTML {
 			return template.HTML(fmt.Sprintf(
 				`<svg class="icon" aria-hidden="true"><use href="%s#icon-%s"/></svg>`,
-				route.Path(f.router, "appIcon", "filename", "sprite.svg"),
+				f.iconPath("sprite.svg"),
 				iconName,
 			))
 		},
@@ -161,6 +161,13 @@ func (f *funcMap) Map() template.FuncMap {
 	}
 }
 
+func (f *funcMap) iconPath(filename string) string {
+	if bundle, ok := static.BinaryBundles[filename]; ok {
+		return fmt.Sprintf("%s/icon/%s/%s", f.basePath, bundle.Checksum, filename)
+	}
+	return fmt.Sprintf("%s/icon/_/%s", f.basePath, filename)
+}
+
 func csp(user *model.User, nonce string) string {
 	policies := map[string]string{
 		"default-src":               "'none'",
@@ -211,9 +218,21 @@ func dict(values ...any) (map[string]any, error) {
 }
 
 func truncate(str string, max int) string {
-	if runes := []rune(str); len(runes) > max {
-		return string(runes[:max]) + "…"
+	if max <= 0 {
+		panic("truncate: max must be greater than zero")
 	}
+
+	// Template callers pass feed titles from remote content. Scanning and
+	// allocating the entire untrusted input just to truncate it could create a
+	// denial-of-service risk, so stop as soon as we reach the requested limit.
+	runeCount := 0
+	for i := range str {
+		if runeCount == max {
+			return str[:i] + "…"
+		}
+		runeCount++
+	}
+
 	return str
 }
 

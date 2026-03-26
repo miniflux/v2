@@ -77,10 +77,10 @@ func (s *Storage) AnotherFeedURLExists(userID, feedID int64, feedURL string) boo
 }
 
 // CountAllFeeds returns the number of feeds in the database.
-func (s *Storage) CountAllFeeds() map[string]int64 {
+func (s *Storage) CountAllFeeds() (map[string]int64, error) {
 	rows, err := s.db.Query(`SELECT disabled, count(*) FROM feeds GROUP BY disabled`)
 	if err != nil {
-		return nil
+		return nil, fmt.Errorf("storage: unable to count feeds: %w", err)
 	}
 	defer rows.Close()
 
@@ -106,7 +106,7 @@ func (s *Storage) CountAllFeeds() map[string]int64 {
 	}
 
 	results["total"] = results["disabled"] + results["enabled"]
-	return results
+	return results, nil
 }
 
 // CountUserFeedsWithErrors returns the number of feeds with parsing errors that belong to the given user.
@@ -126,7 +126,7 @@ func (s *Storage) CountUserFeedsWithErrors(userID int64) int {
 }
 
 // CountAllFeedsWithErrors returns the number of feeds with parsing errors.
-func (s *Storage) CountAllFeedsWithErrors() int {
+func (s *Storage) CountAllFeedsWithErrors() (int, error) {
 	pollingParsingErrorLimit := config.Opts.PollingParsingErrorLimit()
 	if pollingParsingErrorLimit <= 0 {
 		pollingParsingErrorLimit = 1
@@ -135,10 +135,10 @@ func (s *Storage) CountAllFeedsWithErrors() int {
 	var result int
 	err := s.db.QueryRow(query, pollingParsingErrorLimit).Scan(&result)
 	if err != nil {
-		return 0
+		return 0, fmt.Errorf("storage: unable to count feeds with errors: %w", err)
 	}
 
-	return result
+	return result, nil
 }
 
 // Feeds returns all feeds that belongs to the given user.

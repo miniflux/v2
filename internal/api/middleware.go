@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/http/response/json"
+	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/storage"
 )
 
@@ -20,21 +20,21 @@ type middleware struct {
 func newMiddleware(s *storage.Storage) *middleware {
 	return &middleware{s}
 }
-func (m *middleware) handleCORS(next http.Handler) http.Handler {
+func (m *middleware) withCORSHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "X-Auth-Token, Authorization, Content-Type, Accept")
 		if r.Method == http.MethodOptions {
 			w.Header().Set("Access-Control-Max-Age", "3600")
-			w.WriteHeader(http.StatusOK)
+			response.NoContent(w, r)
 			return
 		}
 		next.ServeHTTP(w, r)
 	})
 }
 
-func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
+func (m *middleware) validateAPIKeyAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		clientIP := request.ClientIP(r)
 		token := r.Header.Get("X-Auth-Token")
@@ -51,7 +51,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 
 		user, err := m.store.UserByAPIKey(token)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 
@@ -62,7 +62,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 				slog.String("user_agent", r.UserAgent()),
 				slog.String("request_uri", r.RequestURI),
 			)
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 
@@ -87,7 +87,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 	})
 }
 
-func (m *middleware) basicAuth(next http.Handler) http.Handler {
+func (m *middleware) validateBasicAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if request.IsAuthenticated(r) {
 			next.ServeHTTP(w, r)
@@ -105,7 +105,7 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 				slog.String("user_agent", r.UserAgent()),
 				slog.String("request_uri", r.RequestURI),
 			)
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 
@@ -116,7 +116,7 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 				slog.String("user_agent", r.UserAgent()),
 				slog.String("request_uri", r.RequestURI),
 			)
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 
@@ -128,13 +128,13 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 				slog.String("username", username),
 				slog.String("request_uri", r.RequestURI),
 			)
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 
 		user, err := m.store.UserByUsername(username)
 		if err != nil {
-			json.ServerError(w, r, err)
+			response.JSONServerError(w, r, err)
 			return
 		}
 
@@ -146,7 +146,7 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 				slog.String("username", username),
 				slog.String("request_uri", r.RequestURI),
 			)
-			json.Unauthorized(w, r)
+			response.JSONUnauthorized(w, r)
 			return
 		}
 
