@@ -39,6 +39,7 @@ func (h *handler) showCategoryEntriesStarredPage(w http.ResponseWriter, r *http.
 	builder.WithSorting("id", user.EntryDirection)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStarred(true)
+	builder.WithoutContent()
 	builder.WithOffset(offset)
 	builder.WithLimit(user.EntriesPerPage)
 

@@ -34,6 +34,7 @@ func (h *handler) showTagEntriesAllPage(w http.ResponseWriter, r *http.Request) 
 	builder.WithSorting("status", "asc")
 	builder.WithSorting(user.EntryOrder, user.EntryDirection)
 	builder.WithSorting("id", user.EntryDirection)
+	builder.WithoutContent()
 	builder.WithOffset(offset)
 	builder.WithLimit(user.EntriesPerPage)
 

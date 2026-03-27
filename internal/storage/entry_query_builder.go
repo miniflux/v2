@@ -25,11 +25,20 @@ type EntryQueryBuilder struct {
 	limit           int
 	offset          int
 	fetchEnclosures bool
+	excludeContent  bool
 }
 
 // WithEnclosures fetches enclosures for each entry.
 func (e *EntryQueryBuilder) WithEnclosures() *EntryQueryBuilder {
 	e.fetchEnclosures = true
+	return e
+}
+
+// WithoutContent excludes the content column from the query results,
+// replacing it with an empty string. This significantly reduces data
+// transfer from PostgreSQL on list pages where content is not displayed.
+func (e *EntryQueryBuilder) WithoutContent() *EntryQueryBuilder {
+	e.excludeContent = true
 	return e
 }
 
@@ -298,7 +307,7 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 			e.comments_url,
 			e.author,
 			e.share_code,
-			e.content,
+			` + e.contentColumn() + `,
 			e.status,
 			e.starred,
 			e.reading_time,
@@ -477,6 +486,13 @@ func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
 	}
 
 	return entryIDs, nil
+}
+
+func (e *EntryQueryBuilder) contentColumn() string {
+	if e.excludeContent {
+		return "'' AS content"
+	}
+	return "e.content"
 }
 
 func (e *EntryQueryBuilder) buildCondition() string {
