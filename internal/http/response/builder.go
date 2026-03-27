@@ -78,7 +78,7 @@ func (b *Builder) WithoutCompression() *Builder {
 func (b *Builder) WithCaching(etag string, duration time.Duration, callback func(*Builder)) {
 	etag = normalizeETag(etag)
 	b.headers["ETag"] = etag
-	b.headers["Cache-Control"] = "public"
+	b.headers["Cache-Control"] = "public, immutable"
 	b.headers["Expires"] = time.Now().Add(duration).UTC().Format(http.TimeFormat)
 
 	if ifNoneMatch(b.r.Header.Get("If-None-Match"), etag) {
