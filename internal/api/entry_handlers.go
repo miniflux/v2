@@ -185,13 +185,7 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 
 	configureFilters(builder, r)
 
-	entries, err := builder.GetEntries()
-	if err != nil {
-		response.JSONServerError(w, r, err)
-		return
-	}
-
-	count, err := builder.CountEntries()
+	entries, count, err := builder.GetEntriesWithCount()
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return

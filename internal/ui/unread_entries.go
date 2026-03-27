@@ -23,28 +23,32 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 	offset := request.QueryIntParam(r, "offset", 0)
 	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStatus(model.EntryStatusUnread)
-	builder.WithGloballyVisible()
-	countUnread, err := builder.CountEntries()
-	if err != nil {
-		response.HTMLServerError(w, r, err)
-		return
-	}
-
-	if offset >= countUnread {
-		offset = 0
-	}
-
-	builder = h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithStatus(model.EntryStatusUnread)
 	builder.WithSorting(user.EntryOrder, user.EntryDirection)
 	builder.WithSorting("id", user.EntryDirection)
 	builder.WithOffset(offset)
 	builder.WithLimit(user.EntriesPerPage)
 	builder.WithGloballyVisible()
-	entries, err := builder.GetEntries()
+
+	entries, countUnread, err := builder.GetEntriesWithCount()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
+	}
+
+	if offset >= countUnread && countUnread > 0 {
+		offset = 0
+		builder = h.store.NewEntryQueryBuilder(user.ID)
+		builder.WithStatus(model.EntryStatusUnread)
+		builder.WithSorting(user.EntryOrder, user.EntryDirection)
+		builder.WithSorting("id", user.EntryDirection)
+		builder.WithLimit(user.EntriesPerPage)
+		builder.WithGloballyVisible()
+
+		entries, countUnread, err = builder.GetEntriesWithCount()
+		if err != nil {
+			response.HTMLServerError(w, r, err)
+			return
+		}
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

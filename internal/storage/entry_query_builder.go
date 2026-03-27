@@ -257,8 +257,29 @@ func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 
 // GetEntries returns a list of entries that match the condition.
 func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
+	entries, _, err := e.fetchEntries(false)
+	return entries, err
+}
+
+// GetEntriesWithCount returns a list of entries and the total count of matching
+// rows (ignoring limit/offset) in a single query using a window function.
+// This avoids a separate CountEntries() round-trip.
+func (e *EntryQueryBuilder) GetEntriesWithCount() (model.Entries, int, error) {
+	return e.fetchEntries(true)
+}
+
+// fetchEntries is the shared implementation for GetEntries and GetEntriesWithCount.
+// When withCount is true, count(*) OVER() is included in the SELECT and the total
+// count of matching rows is returned; otherwise the returned count is 0.
+func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, error) {
+	countColumn := ""
+	if withCount {
+		countColumn = "count(*) OVER(),"
+	}
+
 	query := `
 		SELECT
+			` + countColumn + `
 			e.id,
 			e.user_id,
 			e.feed_id,
@@ -311,13 +332,14 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
-		return nil, fmt.Errorf("store: unable to get entries: %v", err)
+		return nil, 0, fmt.Errorf("store: unable to get entries: %v", err)
 	}
 	defer rows.Close()
 
 	entries := make(model.Entries, 0)
 	entryMap := make(map[int64]*model.Entry)
 	var entryIDs []int64
+	var totalCount int
 
 	for rows.Next() {
 		var iconID sql.NullInt64
@@ -326,7 +348,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 
 		entry := model.NewEntry()
 
-		err := rows.Scan(
+		dest := []any{
 			&entry.ID,
 			&entry.UserID,
 			&entry.FeedID,
@@ -363,10 +385,16 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&iconID,
 			&externalIconID,
 			&tz,
-		)
+		}
+
+		if withCount {
+			dest = append([]any{&totalCount}, dest...)
+		}
+
+		err := rows.Scan(dest...)
 
 		if err != nil {
-			return nil, fmt.Errorf("store: unable to fetch entry row: %v", err)
+			return nil, 0, fmt.Errorf("store: unable to fetch entry row: %v", err)
 		}
 
 		if iconID.Valid && externalIconID.Valid && externalIconID.String != "" {
@@ -396,7 +424,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 	if e.fetchEnclosures && len(entryIDs) > 0 {
 		enclosures, err := e.store.GetEnclosuresForEntries(entryIDs)
 		if err != nil {
-			return nil, fmt.Errorf("store: unable to fetch enclosures: %w", err)
+			return nil, 0, fmt.Errorf("store: unable to fetch enclosures: %w", err)
 		}
 
 		for entryID, entryEnclosures := range enclosures {
@@ -406,7 +434,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		}
 	}
 
-	return entries, nil
+	return entries, totalCount, nil
 }
 
 // GetEntryIDs returns a list of entry IDs that match the condition.
