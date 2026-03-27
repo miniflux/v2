@@ -41,6 +41,7 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 	builder.WithOffset(offset)
 	builder.WithLimit(user.EntriesPerPage)
 	builder.WithGloballyVisible()
+	builder.WithoutContent()
 	entries, err := builder.GetEntries()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
