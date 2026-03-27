@@ -41,13 +41,7 @@ func (h *handler) showCategoryEntriesAllPage(w http.ResponseWriter, r *http.Requ
 	builder.WithOffset(offset)
 	builder.WithLimit(user.EntriesPerPage)
 
-	entries, err := builder.GetEntries()
-	if err != nil {
-		response.HTMLServerError(w, r, err)
-		return
-	}
-
-	count, err := builder.CountEntries()
+	entries, count, err := builder.GetEntriesWithCount()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return

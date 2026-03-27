@@ -37,13 +37,7 @@ func (h *handler) showTagEntriesAllPage(w http.ResponseWriter, r *http.Request) 
 	builder.WithOffset(offset)
 	builder.WithLimit(user.EntriesPerPage)
 
-	entries, err := builder.GetEntries()
-	if err != nil {
-		response.HTMLServerError(w, r, err)
-		return
-	}
-
-	count, err := builder.CountEntries()
+	entries, count, err := builder.GetEntriesWithCount()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
