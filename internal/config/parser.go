@@ -50,6 +50,54 @@ func (cp *configParser) ParseFile(filename string) (*configOptions, error) {
 	return cp.options, nil
 }
 
+// Validate checks for invalid or incomplete option combinations.
+func (c *configOptions) Validate() error {
+	if c.OAuth2Provider() == "oidc" && c.OAuth2OIDCDiscoveryEndpoint() == "" {
+		return errors.New("OAUTH2_OIDC_DISCOVERY_ENDPOINT must be configured when using the OIDC provider")
+	}
+
+	if c.DisableLocalAuth() {
+		switch {
+		case c.OAuth2Provider() == "" && c.AuthProxyHeader() == "":
+			return errors.New("DISABLE_LOCAL_AUTH is enabled but neither OAUTH2_PROVIDER nor AUTH_PROXY_HEADER is set. Please enable at least one authentication source")
+		case c.OAuth2Provider() != "" && !c.IsOAuth2UserCreationAllowed():
+			return errors.New("DISABLE_LOCAL_AUTH is enabled and an OAUTH2_PROVIDER is configured, but OAUTH2_USER_CREATION is not enabled")
+		case c.AuthProxyHeader() != "" && !c.IsAuthProxyUserCreationAllowed():
+			return errors.New("DISABLE_LOCAL_AUTH is enabled and an AUTH_PROXY_HEADER is configured, but AUTH_PROXY_USER_CREATION is not enabled")
+		}
+	}
+
+	if c.AuthProxyHeader() != "" && len(c.TrustedReverseProxyNetworks()) == 0 {
+		return errors.New("TRUSTED_REVERSE_PROXY_NETWORKS must be configured when AUTH_PROXY_HEADER is used")
+	}
+
+	if (c.CertFile() != "") != (c.CertKeyFile() != "") {
+		return errors.New("CERT_FILE and KEY_FILE must both be provided")
+	}
+
+	if c.CertDomain() != "" && c.CertFile() != "" {
+		return errors.New("CERT_DOMAIN and CERT_FILE/KEY_FILE are mutually exclusive")
+	}
+
+	if (c.MetricsUsername() != "") != (c.MetricsPassword() != "") {
+		return errors.New("METRICS_USERNAME and METRICS_PASSWORD must both be provided")
+	}
+
+	if c.DatabaseMinConns() > c.DatabaseMaxConns() {
+		return errors.New("DATABASE_MIN_CONNS must be less than or equal to DATABASE_MAX_CONNS")
+	}
+
+	if c.SchedulerRoundRobinMinInterval() > c.SchedulerRoundRobinMaxInterval() {
+		return errors.New("SCHEDULER_ROUND_ROBIN_MIN_INTERVAL must be less than or equal to SCHEDULER_ROUND_ROBIN_MAX_INTERVAL")
+	}
+
+	if c.SchedulerEntryFrequencyMinInterval() > c.SchedulerEntryFrequencyMaxInterval() {
+		return errors.New("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL must be less than or equal to SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL")
+	}
+
+	return nil
+}
+
 func (cp *configParser) postParsing() error {
 	// Parse basePath and rootURL based on BASE_URL
 	baseURL := cp.options.options["BASE_URL"].parsedStringValue
