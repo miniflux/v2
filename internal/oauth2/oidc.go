@@ -14,9 +14,15 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var (
-	ErrEmptyUsername = errors.New("oidc: username is empty")
-)
+// ErrEmptyUsername is returned when the OIDC user profile has no username.
+var ErrEmptyUsername = errors.New("oidc: username is empty")
+
+type userClaims struct {
+	Email             string `json:"email"`
+	Profile           string `json:"profile"`
+	Name              string `json:"name"`
+	PreferredUsername string `json:"preferred_username"`
+}
 
 type oidcProvider struct {
 	clientID     string
@@ -25,7 +31,9 @@ type oidcProvider struct {
 	provider     *oidc.Provider
 }
 
-func NewOidcProvider(ctx context.Context, clientID, clientSecret, redirectURL, discoveryEndpoint string) (*oidcProvider, error) {
+// NewOidcProvider returns a Provider that authenticates users via OpenID Connect.
+// It discovers the OIDC endpoints from the given discovery URL.
+func NewOidcProvider(ctx context.Context, clientID, clientSecret, redirectURL, discoveryEndpoint string) (Provider, error) {
 	provider, err := oidc.NewProvider(ctx, discoveryEndpoint)
 	if err != nil {
 		return nil, fmt.Errorf(`oidc: failed to initialize provider %q: %w`, discoveryEndpoint, err)
@@ -39,11 +47,11 @@ func NewOidcProvider(ctx context.Context, clientID, clientSecret, redirectURL, d
 	}, nil
 }
 
-func (o *oidcProvider) GetUserExtraKey() string {
+func (o *oidcProvider) UserExtraKey() string {
 	return "openid_connect_id"
 }
 
-func (o *oidcProvider) GetConfig() *oauth2.Config {
+func (o *oidcProvider) Config() *oauth2.Config {
 	return &oauth2.Config{
 		RedirectURL:  o.redirectURL,
 		ClientID:     o.clientID,
@@ -53,8 +61,8 @@ func (o *oidcProvider) GetConfig() *oauth2.Config {
 	}
 }
 
-func (o *oidcProvider) GetProfile(ctx context.Context, code, codeVerifier string) (*Profile, error) {
-	conf := o.GetConfig()
+func (o *oidcProvider) Profile(ctx context.Context, code, codeVerifier string) (*UserProfile, error) {
+	conf := o.Config()
 	token, err := conf.Exchange(ctx, code, oauth2.SetAuthURLParam("code_verifier", codeVerifier))
 	if err != nil {
 		return nil, fmt.Errorf(`oidc: failed to exchange token: %w`, err)
@@ -80,8 +88,8 @@ func (o *oidcProvider) GetProfile(ctx context.Context, code, codeVerifier string
 		return nil, fmt.Errorf(`oidc: id token subject %q does not match userinfo subject %q`, idToken.Subject, userInfo.Subject)
 	}
 
-	profile := &Profile{
-		Key: o.GetUserExtraKey(),
+	profile := &UserProfile{
+		Key: o.UserExtraKey(),
 		ID:  userInfo.Subject,
 	}
 
@@ -106,25 +114,18 @@ func (o *oidcProvider) GetProfile(ctx context.Context, code, codeVerifier string
 	return profile, nil
 }
 
-func (o *oidcProvider) PopulateUserCreationWithProfileID(user *model.UserCreationRequest, profile *Profile) {
+func (o *oidcProvider) PopulateUserCreationWithProfileID(user *model.UserCreationRequest, profile *UserProfile) {
 	user.OpenIDConnectID = profile.ID
 }
 
-func (o *oidcProvider) PopulateUserWithProfileID(user *model.User, profile *Profile) {
+func (o *oidcProvider) PopulateUserWithProfileID(user *model.User, profile *UserProfile) {
 	user.OpenIDConnectID = profile.ID
 }
 
-func (o *oidcProvider) GetUserProfileID(user *model.User) string {
+func (o *oidcProvider) UserProfileID(user *model.User) string {
 	return user.OpenIDConnectID
 }
 
 func (o *oidcProvider) UnsetUserProfileID(user *model.User) {
 	user.OpenIDConnectID = ""
-}
-
-type userClaims struct {
-	Email             string `json:"email"`
-	Profile           string `json:"profile"`
-	Name              string `json:"name"`
-	PreferredUsername string `json:"preferred_username"`
 }
