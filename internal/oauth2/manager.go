@@ -9,10 +9,13 @@ import (
 	"log/slog"
 )
 
+// Manager manages registered OAuth2 providers.
 type Manager struct {
 	providers map[string]Provider
 }
 
+// FindProvider returns the provider registered under the given name,
+// or an error if no such provider exists.
 func (m *Manager) FindProvider(name string) (Provider, error) {
 	if provider, found := m.providers[name]; found {
 		return provider, nil
@@ -21,10 +24,13 @@ func (m *Manager) FindProvider(name string) (Provider, error) {
 	return nil, errors.New("oauth2 provider not found")
 }
 
+// AddProvider registers a provider under the given name.
 func (m *Manager) AddProvider(name string, provider Provider) {
 	m.providers[name] = provider
 }
 
+// NewManager creates a Manager and registers either an OIDC provider (if a discovery
+// endpoint is provided) or a Google provider as the default.
 func NewManager(ctx context.Context, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint string) *Manager {
 	m := &Manager{providers: make(map[string]Provider)}
 

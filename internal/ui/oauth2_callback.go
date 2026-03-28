@@ -53,7 +53,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	profile, err := authProvider.GetProfile(r.Context(), code, request.OAuth2CodeVerifier(r))
+	profile, err := authProvider.Profile(r.Context(), code, request.OAuth2CodeVerifier(r))
 	if err != nil {
 		slog.Warn("Unable to get OAuth2 profile from provider",
 			slog.String("provider", provider),
@@ -87,7 +87,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		existingProfileID := authProvider.GetUserProfileID(loggedUser)
+		existingProfileID := authProvider.UserProfileID(loggedUser)
 		if existingProfileID != "" && existingProfileID != profile.ID {
 			slog.Error("Oauth2 user cannot be associated because this user is already linked to a different identity",
 				slog.Int64("user_id", loggedUser.ID),
