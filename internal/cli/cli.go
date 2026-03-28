@@ -92,10 +92,8 @@ func Parse() {
 		printErrorAndExit(err)
 	}
 
-	if oauth2Provider := config.Opts.OAuth2Provider(); oauth2Provider != "" {
-		if oauth2Provider != "oidc" && oauth2Provider != "google" {
-			printErrorAndExit(fmt.Errorf(`unsupported OAuth2 provider: %q (Possible values are "google" or "oidc")`, oauth2Provider))
-		}
+	if config.Opts.OAuth2Provider() == "oidc" && config.Opts.OAuth2OIDCDiscoveryEndpoint() == "" {
+		printErrorAndExit(errors.New("OAUTH2_OIDC_DISCOVERY_ENDPOINT must be configured when using the OIDC provider"))
 	}
 
 	if config.Opts.DisableLocalAuth() {
