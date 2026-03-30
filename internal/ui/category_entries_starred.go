@@ -56,9 +56,10 @@ func (h *handler) showCategoryEntriesStarredPage(w http.ResponseWriter, r *http.
 	view.Set("pagination", getPagination(h.routePath("/category/%d/entries/starred", category.ID), count, offset, user.EntriesPerPage))
 	view.Set("menu", "categories")
 	view.Set("user", user)
-	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
-	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
+	navMetadata, _ := h.store.GetNavMetadata(user.ID)
+	view.Set("countUnread", navMetadata.CountUnread)
+	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
+	view.Set("hasSaveEntry", navMetadata.HasSaveEntry)
 	view.Set("showOnlyStarredEntries", true)
 
 	response.HTML(w, r, view.Render("category_entries"))

@@ -29,8 +29,9 @@ func (h *handler) saveCategory(w http.ResponseWriter, r *http.Request) {
 	view.Set("form", categoryForm)
 	view.Set("menu", "categories")
 	view.Set("user", user)
-	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+	navMetadata, _ := h.store.GetNavMetadata(user.ID)
+	view.Set("countUnread", navMetadata.CountUnread)
+	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 
 	categoryCreationRequest := &model.CategoryCreationRequest{Title: categoryForm.Title}
 

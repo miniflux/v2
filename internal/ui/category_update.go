@@ -42,8 +42,9 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 	view.Set("category", category)
 	view.Set("menu", "categories")
 	view.Set("user", user)
-	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+	navMetadata, _ := h.store.GetNavMetadata(user.ID)
+	view.Set("countUnread", navMetadata.CountUnread)
+	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 
 	categoryRequest := &model.CategoryModificationRequest{
 		Title:        new(categoryForm.Title),

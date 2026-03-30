@@ -34,8 +34,9 @@ func (h *handler) saveUser(w http.ResponseWriter, r *http.Request) {
 	view := view.New(h.tpl, r, sess)
 	view.Set("menu", "settings")
 	view.Set("user", user)
-	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+	navMetadata, _ := h.store.GetNavMetadata(user.ID)
+	view.Set("countUnread", navMetadata.CountUnread)
+	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 	view.Set("form", userForm)
 
 	if validationErr := userForm.ValidateCreation(); validationErr != nil {
