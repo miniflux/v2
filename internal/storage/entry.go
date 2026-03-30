@@ -44,24 +44,6 @@ func (s *Storage) CountAllEntries() (map[string]int64, error) {
 	return results, nil
 }
 
-// CountUnreadEntries returns the number of unread entries.
-func (s *Storage) CountUnreadEntries(userID int64) int {
-	builder := s.NewEntryQueryBuilder(userID)
-	builder.WithStatus(model.EntryStatusUnread)
-	builder.WithGloballyVisible()
-
-	n, err := builder.CountEntries()
-	if err != nil {
-		slog.Error("Unable to count unread entries",
-			slog.Int64("user_id", userID),
-			slog.Any("error", err),
-		)
-		return 0
-	}
-
-	return n
-}
-
 // NewEntryQueryBuilder returns a new EntryQueryBuilder
 func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 	return NewEntryQueryBuilder(s, userID)
