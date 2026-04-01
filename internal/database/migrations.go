@@ -128,6 +128,11 @@ var migrations = [...]func(tx *sql.Tx) error{
 				foreign key (user_id) references users(id) on delete cascade,
 				primary key (id)
 			);
+
+			CREATE TABLE vapid_key (
+				private_key text not null,
+				public_key text not null
+			);
 		`
 		_, err = tx.Exec(sql)
 		return err
