@@ -118,6 +118,16 @@ var migrations = [...]func(tx *sql.Tx) error{
 				foreign key (feed_id) references feeds(id) on delete cascade,
 				foreign key (icon_id) references icons(id) on delete cascade
 			);
+
+			CREATE TABLE webpush_subscriptions (
+				id BIGSERIAL,
+				user_id int not null,
+				endpoint text not null,
+				auth text,
+				p256dh text,
+				foreign key (user_id) references users(id) on delete cascade,
+				primary key (id)
+			);
 		`
 		_, err = tx.Exec(sql)
 		return err
