@@ -42,6 +42,9 @@ func newRouter(store *storage.Storage, pool *worker.Pool) http.Handler {
 		appMux.Handle("GET /metrics", metricsHandler())
 	}
 
+	// Make the public VAPID key accessible
+	appMux.Handle("/vapid", newVAPIDProbe(store))
+
 	// UI routing (catch-all).
 	appMux.Handle("/", ui.Serve(store, pool))
 
@@ -62,6 +65,7 @@ func newRouter(store *storage.Storage, pool *worker.Pool) http.Handler {
 	rootMux.HandleFunc("/healthz", livenessProbe)
 	rootMux.HandleFunc("/readiness", readinessProbe)
 	rootMux.HandleFunc("/readyz", readinessProbe)
+	
 
 	basePath := config.Opts.BasePath()
 	if basePath != "" {
