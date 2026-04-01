@@ -119,20 +119,6 @@ var migrations = [...]func(tx *sql.Tx) error{
 				foreign key (icon_id) references icons(id) on delete cascade
 			);
 
-			CREATE TABLE webpush_subscriptions (
-				id BIGSERIAL,
-				user_id int not null,
-				endpoint text not null,
-				auth text,
-				p256dh text,
-				foreign key (user_id) references users(id) on delete cascade,
-				primary key (id)
-			);
-
-			CREATE TABLE vapid_key (
-				private_key text not null,
-				public_key text not null
-			);
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -1444,6 +1430,25 @@ var migrations = [...]func(tx *sql.Tx) error{
 	},
 	func(tx *sql.Tx) (err error) {
 		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN ignore_entry_updates bool default 'f'`)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			CREATE TABLE webpush_subscriptions (
+				id BIGSERIAL,
+				user_id int not null,
+				endpoint text not null,
+				auth text,
+				p256dh text,
+				foreign key (user_id) references users(id) on delete cascade,
+				primary key (id)
+			);
+
+			CREATE TABLE vapid_key (
+				private_key text not null,
+				public_key text not null
+			);
+		`)
 		return err
 	},
 }
