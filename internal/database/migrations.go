@@ -6,6 +6,7 @@ package database // import "miniflux.app/v2/internal/database"
 import (
 	"database/sql"
 
+	"github.com/SherClockHolmes/webpush-go"
 	"miniflux.app/v2/internal/crypto"
 )
 
@@ -1449,6 +1450,14 @@ var migrations = [...]func(tx *sql.Tx) error{
 				public_key text not null
 			);
 		`)
+		if err != nil {
+			return err
+		}
+		privateKey, publicKey, err := webpush.GenerateVAPIDKeys()
+		_, err = tx.Exec(`
+			INSERT INTO vapid_key (private_key, public_key)
+			VALUES ($1, $2) `,
+			privateKey, publicKey)
 		return err
 	},
 }
