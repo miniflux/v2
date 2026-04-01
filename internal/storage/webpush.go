@@ -15,3 +15,17 @@ func (s *Storage) GetVAPIDKeys() (string, string, error) {
 
 	return privateKey, publicKey, err
 }
+
+
+// Register a new subscription
+func (s *Storage) RegisterWebPushSubscription(userID int64, endpoint string, key string, auth string) error {
+	query := `
+		INSERT INTO webpush_subscriptions
+			(user_id, endpoint, auth, p256dh)
+		VALUES
+			($1, $2, $3, $4)
+	`
+	_, err := s.db.Exec(query, userID, endpoint, auth, key)
+
+	return err
+}
