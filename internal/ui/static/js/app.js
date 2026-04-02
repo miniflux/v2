@@ -1077,6 +1077,17 @@ function initializeMediaPlayerHandlers() {
     });
 }
 
+
+function _arrayBufferToBase64( buffer ) {
+    var binary = '';
+    var bytes = new Uint8Array( buffer );
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode( bytes[ i ] );
+    }
+    return window.btoa( binary );
+}
+
 /**
  * Initialize the service worker and PWA installation prompt.
  */
@@ -1099,6 +1110,13 @@ function initializeServiceWorker() {
 			.then(function(subscription) {
 				if (!subscription) {
 					subscribeWebpush();
+				} else {
+					console.log('Existing subscription found.');
+					sendPOSTRequest('/register-webpush', {
+						endpoint: subscription.endpoint,
+						key: _arrayBufferToBase64(subscription.getKey("p256dh")),
+						auth: _arrayBufferToBase64(subscription.getKey("auth")),
+					})
 				}
 			});
 	}
