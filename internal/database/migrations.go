@@ -1436,13 +1436,12 @@ var migrations = [...]func(tx *sql.Tx) error{
 	func(tx *sql.Tx) (err error) {
 		_, err = tx.Exec(`
 			CREATE TABLE webpush_subscriptions (
-				id BIGSERIAL,
 				user_id int not null,
 				endpoint text not null,
 				auth text,
 				p256dh text,
 				foreign key (user_id) references users(id) on delete cascade,
-				primary key (id)
+				primary key (endpoint)
 			);
 
 			CREATE TABLE vapid_key (

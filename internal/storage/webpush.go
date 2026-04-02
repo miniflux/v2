@@ -26,6 +26,7 @@ func (s *Storage) RegisterWebPushSubscription(userID int64, request model.WebPus
 			(user_id, endpoint, auth, p256dh)
 		VALUES
 			($1, $2, $3, $4)
+		ON CONFLICT(endpoint) DO NOTHING
 	`
 	_, err := s.db.Exec(query, userID, request.Endpoint, request.Auth, request.Key)
 
