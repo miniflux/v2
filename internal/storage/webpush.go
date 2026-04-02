@@ -3,6 +3,9 @@
 
 package storage // import "miniflux.app/v2/internal/storage"
 
+import (
+	"miniflux.app/v2/internal/model"
+)
 
 // Get the VAPID keys from the database
 func (s *Storage) GetVAPIDKeys() (string, string, error) {
@@ -16,16 +19,15 @@ func (s *Storage) GetVAPIDKeys() (string, string, error) {
 	return privateKey, publicKey, err
 }
 
-
 // Register a new subscription
-func (s *Storage) RegisterWebPushSubscription(userID int64, endpoint string, key string, auth string) error {
+func (s *Storage) RegisterWebPushSubscription(userID int64, request model.WebPushSubscriptionRequest) error {
 	query := `
 		INSERT INTO webpush_subscriptions
 			(user_id, endpoint, auth, p256dh)
 		VALUES
 			($1, $2, $3, $4)
 	`
-	_, err := s.db.Exec(query, userID, endpoint, auth, key)
+	_, err := s.db.Exec(query, userID, request.Endpoint, request.Auth, request.Key)
 
 	return err
 }
