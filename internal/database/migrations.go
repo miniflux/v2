@@ -1440,6 +1440,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 				endpoint text not null,
 				auth text,
 				p256dh text,
+				authscheme text,
 				foreign key (user_id) references users(id) on delete cascade,
 				primary key (endpoint)
 			);
