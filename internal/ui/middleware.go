@@ -66,9 +66,7 @@ func (m *middleware) handleUserSession(next http.Handler) http.Handler {
 
 func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasPrefix(r.URL.Path, "/feed-icon/") {
-			// Skip app session handling for the feed icon route to avoid unnecessary session creation
-			// when fetching feed icons.
+		if isStaticAssetRoute(r) {
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -150,31 +148,42 @@ func (m *middleware) getAppSessionValueFromCookie(r *http.Request) *model.Sessio
 	return session
 }
 
+// isStaticAssetRoute checks if the request path corresponds to a static
+// asset route that does not require an app session.
+func isStaticAssetRoute(r *http.Request) bool {
+	path := r.URL.Path
+
+	switch path {
+	case "/favicon.ico", "/robots.txt":
+		return true
+	}
+
+	return strings.HasPrefix(path, "/stylesheets/") ||
+		strings.HasPrefix(path, "/js/") ||
+		strings.HasPrefix(path, "/icon/") ||
+		strings.HasPrefix(path, "/feed-icon/")
+}
+
 // isPublicRoute checks if the request path corresponds to a route that
 // does not require authentication. The path is expected to have the base
 // path already stripped.
 func isPublicRoute(r *http.Request) bool {
+	if isStaticAssetRoute(r) {
+		return true
+	}
+
 	path := r.URL.Path
 
 	switch path {
-	case "/", "/login", "/favicon.ico", "/manifest.json", "/robots.txt",
+	case "/", "/login", "/manifest.json",
 		"/healthcheck", "/offline",
 		"/webauthn/login/begin", "/webauthn/login/finish":
 		return true
 	}
 
-	if strings.HasPrefix(path, "/stylesheets/") ||
-		strings.HasPrefix(path, "/icon/") ||
-		strings.HasPrefix(path, "/feed-icon/") ||
-		strings.HasSuffix(path, "/redirect") && strings.HasPrefix(path, "/oauth2/") ||
-		strings.HasSuffix(path, "/callback") && strings.HasPrefix(path, "/oauth2/") ||
+	return strings.HasPrefix(path, "/oauth2/") && (strings.HasSuffix(path, "/redirect") || strings.HasSuffix(path, "/callback")) ||
 		strings.HasPrefix(path, "/share/") ||
-		strings.HasPrefix(path, "/proxy/") ||
-		strings.HasPrefix(path, "/js/") {
-		return true
-	}
-
-	return false
+		strings.HasPrefix(path, "/proxy/")
 }
 
 func (m *middleware) getUserSessionFromCookie(r *http.Request) *model.UserSession {
