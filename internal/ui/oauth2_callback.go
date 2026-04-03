@@ -35,10 +35,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 
 	state := request.QueryStringParam(r, "state", "")
 	if subtle.ConstantTimeCompare([]byte(state), []byte(request.OAuth2State(r))) == 0 {
-		slog.Warn("Invalid OAuth2 state value received",
-			slog.String("expected", request.OAuth2State(r)),
-			slog.String("received", state),
-		)
+		slog.Warn("Invalid OAuth2 state value received")
 		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
