@@ -167,13 +167,26 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithFeedID(feedID)
 	builder.WithCategoryID(categoryID)
-	builder.WithStatuses(statuses)
 	builder.WithSorting(order, direction)
 	builder.WithOffset(offset)
 	builder.WithLimit(limit)
 	builder.WithTags(tags)
 	builder.WithEnclosures()
-	builder.WithoutStatus(model.EntryStatusRemoved)
+
+	// Removed entries have their content cleared; always exclude them
+	// regardless of what the caller requests.
+	filtered := make([]string, 0, len(statuses))
+	for _, s := range statuses {
+		if s != model.EntryStatusRemoved {
+			filtered = append(filtered, s)
+		}
+	}
+
+	if len(filtered) == 0 {
+		builder.WithoutStatus(model.EntryStatusRemoved)
+	} else {
+		builder.WithStatuses(filtered)
+	}
 
 	if request.HasQueryParam(r, "globally_visible") {
 		globallyVisible := request.QueryBoolParam(r, "globally_visible", true)
