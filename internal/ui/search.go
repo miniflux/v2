@@ -34,6 +34,7 @@ func (h *handler) showSearchPage(w http.ResponseWriter, r *http.Request) {
 			builder.WithStatus(model.EntryStatusUnread)
 		}
 		builder.WithoutStatus(model.EntryStatusRemoved)
+		builder.WithoutContent()
 		builder.WithOffset(offset)
 		builder.WithLimit(user.EntriesPerPage)
 
