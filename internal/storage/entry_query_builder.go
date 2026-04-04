@@ -107,8 +107,13 @@ func (e *EntryQueryBuilder) AfterEntryID(entryID int64) *EntryQueryBuilder {
 
 // WithEntryIDs filter by entry IDs.
 func (e *EntryQueryBuilder) WithEntryIDs(entryIDs []int64) *EntryQueryBuilder {
-	e.conditions = append(e.conditions, fmt.Sprintf("e.id = ANY($%d)", len(e.args)+1))
-	e.args = append(e.args, pq.Int64Array(entryIDs))
+	if len(entryIDs) == 1 {
+		e.conditions = append(e.conditions, fmt.Sprintf("e.id = $%d", len(e.args)+1))
+		e.args = append(e.args, entryIDs[0])
+	} else if len(entryIDs) > 1 {
+		e.conditions = append(e.conditions, fmt.Sprintf("e.id = ANY($%d)", len(e.args)+1))
+		e.args = append(e.args, pq.Int64Array(entryIDs))
+	}
 	return e
 }
 
@@ -150,7 +155,10 @@ func (e *EntryQueryBuilder) WithStatus(status string) *EntryQueryBuilder {
 
 // WithStatuses filter by a list of entry statuses.
 func (e *EntryQueryBuilder) WithStatuses(statuses []string) *EntryQueryBuilder {
-	if len(statuses) > 0 {
+	if len(statuses) == 1 {
+		e.conditions = append(e.conditions, fmt.Sprintf("e.status = $%d", len(e.args)+1))
+		e.args = append(e.args, statuses[0])
+	} else if len(statuses) > 1 {
 		e.conditions = append(e.conditions, fmt.Sprintf("e.status = ANY($%d)", len(e.args)+1))
 		e.args = append(e.args, pq.StringArray(statuses))
 	}
