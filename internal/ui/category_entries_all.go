@@ -55,9 +55,10 @@ func (h *handler) showCategoryEntriesAllPage(w http.ResponseWriter, r *http.Requ
 	view.Set("pagination", getPagination(h.routePath("/category/%d/entries/all", category.ID), count, offset, user.EntriesPerPage))
 	view.Set("menu", "categories")
 	view.Set("user", user)
-	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
-	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
+	countUnread, countErrorFeeds, hasSaveEntry := h.store.GetNavMetadata(user.ID)
+	view.Set("countUnread", countUnread)
+	view.Set("countErrorFeeds", countErrorFeeds)
+	view.Set("hasSaveEntry", hasSaveEntry)
 	view.Set("showOnlyUnreadEntries", false)
 
 	response.HTML(w, r, view.Render("category_entries"))
