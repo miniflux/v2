@@ -9,10 +9,13 @@ import (
 	"log/slog"
 )
 
+// Manager manages registered OAuth2 providers.
 type Manager struct {
 	providers map[string]Provider
 }
 
+// FindProvider returns the provider registered under the given name,
+// or an error if no such provider exists.
 func (m *Manager) FindProvider(name string) (Provider, error) {
 	if provider, found := m.providers[name]; found {
 		return provider, nil
@@ -21,27 +24,35 @@ func (m *Manager) FindProvider(name string) (Provider, error) {
 	return nil, errors.New("oauth2 provider not found")
 }
 
+// AddProvider registers a provider under the given name.
 func (m *Manager) AddProvider(name string, provider Provider) {
 	m.providers[name] = provider
 }
 
-func NewManager(ctx context.Context, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint string) *Manager {
+// NewManager creates a Manager and registers the specified OAuth2 provider.
+// The provider argument must be "oidc" or "google".
+func NewManager(ctx context.Context, provider, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint string) *Manager {
 	m := &Manager{providers: make(map[string]Provider)}
 
-	if oidcDiscoveryEndpoint != "" {
+	switch provider {
+	case "oidc":
 		if clientSecret == "" {
 			slog.Warn("OIDC client secret is empty or missing.")
 		}
 
-		if genericOidcProvider, err := NewOidcProvider(ctx, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint); err != nil {
+		if oidcProvider, err := NewOidcProvider(ctx, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint); err != nil {
 			slog.Error("Failed to initialize OIDC provider",
 				slog.Any("error", err),
 			)
 		} else {
-			m.AddProvider("oidc", genericOidcProvider)
+			m.AddProvider("oidc", oidcProvider)
 		}
-	} else {
+	case "google":
 		m.AddProvider("google", NewGoogleProvider(clientID, clientSecret, redirectURL))
+	default:
+		slog.Error("Unsupported OAuth2 provider",
+			slog.String("provider", provider),
+		)
 	}
 
 	return m

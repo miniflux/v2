@@ -32,11 +32,12 @@ type googleProvider struct {
 	redirectURL  string
 }
 
-func NewGoogleProvider(clientID, clientSecret, redirectURL string) *googleProvider {
+// NewGoogleProvider returns a Provider that authenticates users via Google OAuth2.
+func NewGoogleProvider(clientID, clientSecret, redirectURL string) Provider {
 	return &googleProvider{clientID: clientID, clientSecret: clientSecret, redirectURL: redirectURL}
 }
 
-func (g *googleProvider) GetConfig() *oauth2.Config {
+func (g *googleProvider) Config() *oauth2.Config {
 	return &oauth2.Config{
 		RedirectURL:  g.redirectURL,
 		ClientID:     g.clientID,
@@ -49,12 +50,12 @@ func (g *googleProvider) GetConfig() *oauth2.Config {
 	}
 }
 
-func (g *googleProvider) GetUserExtraKey() string {
+func (g *googleProvider) UserExtraKey() string {
 	return "google_id"
 }
 
-func (g *googleProvider) GetProfile(ctx context.Context, code, codeVerifier string) (*Profile, error) {
-	conf := g.GetConfig()
+func (g *googleProvider) Profile(ctx context.Context, code, codeVerifier string) (*UserProfile, error) {
+	conf := g.Config()
 	token, err := conf.Exchange(ctx, code, oauth2.SetAuthURLParam("code_verifier", codeVerifier))
 	if err != nil {
 		return nil, fmt.Errorf("google: failed to exchange token: %w", err)
@@ -77,19 +78,18 @@ func (g *googleProvider) GetProfile(ctx context.Context, code, codeVerifier stri
 		return nil, fmt.Errorf("google: unable to unserialize Google profile: %w", err)
 	}
 
-	profile := &Profile{Key: g.GetUserExtraKey(), ID: user.Sub, Username: user.Email}
-	return profile, nil
+	return &UserProfile{Key: g.UserExtraKey(), ID: user.Sub, Username: user.Email}, nil
 }
 
-func (g *googleProvider) PopulateUserCreationWithProfileID(user *model.UserCreationRequest, profile *Profile) {
+func (g *googleProvider) PopulateUserCreationWithProfileID(user *model.UserCreationRequest, profile *UserProfile) {
 	user.GoogleID = profile.ID
 }
 
-func (g *googleProvider) PopulateUserWithProfileID(user *model.User, profile *Profile) {
+func (g *googleProvider) PopulateUserWithProfileID(user *model.User, profile *UserProfile) {
 	user.GoogleID = profile.ID
 }
 
-func (g *googleProvider) GetUserProfileID(user *model.User) string {
+func (g *googleProvider) UserProfileID(user *model.User) string {
 	return user.GoogleID
 }
 

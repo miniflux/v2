@@ -7,13 +7,14 @@ import (
 	"fmt"
 )
 
-// Profile is the OAuth2 user profile.
-type Profile struct {
+// UserProfile represents a user's profile retrieved from an OAuth2 provider.
+type UserProfile struct {
 	Key      string
 	ID       string
 	Username string
 }
 
-func (p Profile) String() string {
+// String returns a formatted string representation of the user profile.
+func (p UserProfile) String() string {
 	return fmt.Sprintf(`Key=%s ; ID=%s ; Username=%s`, p.Key, p.ID, p.Username)
 }

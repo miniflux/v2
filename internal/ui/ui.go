@@ -82,6 +82,7 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 	mux.HandleFunc("POST /category/save", handler.saveCategory)
 	mux.HandleFunc("GET /category/{categoryID}/feeds", handler.showCategoryFeedsPage)
 	mux.HandleFunc("POST /category/{categoryID}/feed/{feedID}/remove", handler.removeCategoryFeed)
+	mux.HandleFunc("POST /category/{categoryID}/feed/{feedID}/mark-all-as-read", handler.markCategoryFeedAsRead)
 	mux.HandleFunc("GET /category/{categoryID}/feeds/refresh", handler.refreshCategoryFeedsPage)
 	mux.HandleFunc("GET /category/{categoryID}/entries", handler.showCategoryEntriesPage)
 	mux.HandleFunc("GET /category/{categoryID}/entries/refresh", handler.refreshCategoryEntriesPage)

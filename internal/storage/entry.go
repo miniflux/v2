@@ -245,6 +245,9 @@ func (s *Storage) getEntryIDByHash(tx *sql.Tx, feedID int64, entryHash string) (
 		entryHash,
 	).Scan(&entryID)
 
+	if err == sql.ErrNoRows {
+		return 0, nil
+	}
 	if err != nil {
 		return 0, fmt.Errorf(`store: unable to fetch entry ID: %v`, err)
 	}
@@ -264,16 +267,13 @@ func (s *Storage) InsertEntryForFeed(userID, feedID int64, entry *model.Entry) (
 	}
 	defer tx.Rollback()
 
-	exists, err := s.entryExists(tx, entry)
+	entryID, err := s.getEntryIDByHash(tx, entry.FeedID, entry.Hash)
 	if err != nil {
 		return false, err
 	}
+	alreadyExistingEntry := entryID > 0
 
-	if exists {
-		entryID, err := s.getEntryIDByHash(tx, entry.FeedID, entry.Hash)
-		if err != nil {
-			return false, err
-		}
+	if alreadyExistingEntry {
 		entry.ID = entryID
 	} else {
 		if err := s.createEntry(tx, entry); err != nil {
@@ -285,7 +285,7 @@ func (s *Storage) InsertEntryForFeed(userID, feedID int64, entry *model.Entry) (
 		return false, err
 	}
 
-	return !exists, nil
+	return !alreadyExistingEntry, nil
 }
 
 func (s *Storage) IsNewEntry(feedID int64, entryHash string) bool {
@@ -458,7 +458,9 @@ func (s *Storage) ArchiveEntries(status string, interval time.Duration, limit in
 					share_code='' AND
 					created_at < now () - $3::interval
 				ORDER BY
-					created_at ASC LIMIT $4
+					created_at ASC
+				FOR UPDATE SKIP LOCKED
+				LIMIT $4
 				)
 	`
 

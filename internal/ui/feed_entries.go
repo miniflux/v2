@@ -42,13 +42,7 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 	builder.WithLimit(user.EntriesPerPage)
 	builder.WithoutContent()
 
-	entries, err := builder.GetEntries()
-	if err != nil {
-		response.HTMLServerError(w, r, err)
-		return
-	}
-
-	count, err := builder.CountEntries()
+	entries, count, err := builder.GetEntriesWithCount()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return

@@ -83,7 +83,11 @@
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ routePath "/feed/%d/mark-all-as-read" .ID }}">
+                            {{ if $.categoryID }}
+                            data-url="{{ routePath "/category/%d/feed/%d/mark-all-as-read" $.categoryID .ID }}"
+                        {{ else }}
+                            data-url="{{ routePath "/feed/%d/mark-all-as-read" .ID }}"
+                        {{ end }}>
                                 {{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span>
                         </button>
                     </li>

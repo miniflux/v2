@@ -578,10 +578,10 @@ function markPageAsReadAction() {
     const items = getVisibleEntries();
     if (items.length === 0) return;
 
-    const entryIDs = items.map((element) => {
-        element.classList.add("item-status-read");
-        return parseInt(element.dataset.id, 10);
-    });
+    const entryIDs = items.map((element) => parseInt(element.dataset.id, 10));
+
+    // Batch DOM writes after all reads
+    items.forEach((element) => element.classList.add("item-status-read"));
 
     updateEntriesStatus(entryIDs, "read", () => {
         const element = document.querySelector(":is(a, button)[data-action=markPageAsRead]");

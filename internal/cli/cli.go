@@ -4,7 +4,6 @@
 package cli // import "miniflux.app/v2/internal/cli"
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -92,27 +91,8 @@ func Parse() {
 		printErrorAndExit(err)
 	}
 
-	if oauth2Provider := config.Opts.OAuth2Provider(); oauth2Provider != "" {
-		if oauth2Provider != "oidc" && oauth2Provider != "google" {
-			printErrorAndExit(fmt.Errorf(`unsupported OAuth2 provider: %q (Possible values are "google" or "oidc")`, oauth2Provider))
-		}
-	}
-
-	if config.Opts.DisableLocalAuth() {
-		switch {
-		case config.Opts.OAuth2Provider() == "" && config.Opts.AuthProxyHeader() == "":
-			printErrorAndExit(errors.New("DISABLE_LOCAL_AUTH is enabled but neither OAUTH2_PROVIDER nor AUTH_PROXY_HEADER is not set. Please enable at least one authentication source"))
-		case config.Opts.OAuth2Provider() != "" && !config.Opts.IsOAuth2UserCreationAllowed():
-			printErrorAndExit(errors.New("DISABLE_LOCAL_AUTH is enabled and an OAUTH2_PROVIDER is configured, but OAUTH2_USER_CREATION is not enabled"))
-		case config.Opts.AuthProxyHeader() != "" && !config.Opts.IsAuthProxyUserCreationAllowed():
-			printErrorAndExit(errors.New("DISABLE_LOCAL_AUTH is enabled and an AUTH_PROXY_HEADER is configured, but AUTH_PROXY_USER_CREATION is not enabled"))
-		}
-	}
-
-	if config.Opts.AuthProxyHeader() != "" {
-		if len(config.Opts.TrustedReverseProxyNetworks()) == 0 {
-			printErrorAndExit(errors.New("TRUSTED_REVERSE_PROXY_NETWORKS must be configured when AUTH_PROXY_HEADER is used"))
-		}
+	if err := config.Opts.Validate(); err != nil {
+		printErrorAndExit(err)
 	}
 
 	if flagConfigDump {
