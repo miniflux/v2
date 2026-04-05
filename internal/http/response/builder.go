@@ -4,18 +4,38 @@
 package response // import "miniflux.app/v2/internal/http/response"
 
 import (
-	"compress/flate"
-	"compress/gzip"
 	"io"
 	"log/slog"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/andybalholm/brotli"
+	"github.com/klauspost/compress/flate"
+	"github.com/klauspost/compress/gzip"
+	"github.com/klauspost/compress/zstd"
 )
 
 const compressionThreshold = 1024
+
+// zstd encoder is initialized once and reused because creating an encoder is expensive.
+// EncodeAll is safe for concurrent use on a single encoder.
+var (
+	zstdEncoderInit sync.Once
+	zstdEncoder     *zstd.Encoder
+)
+
+func getZstdEncoder() *zstd.Encoder {
+	zstdEncoderInit.Do(func() {
+		var err error
+		zstdEncoder, err = zstd.NewWriter(nil, zstd.WithEncoderLevel(zstd.SpeedDefault))
+		if err != nil {
+			slog.Error("Unable to create zstd encoder", slog.Any("error", err))
+		}
+	})
+	return zstdEncoder
+}
 
 // Builder generates HTTP responses.
 type Builder struct {
@@ -129,6 +149,15 @@ func (b *Builder) compress(data []byte) {
 		b.headers["Vary"] = "Accept-Encoding"
 		acceptEncoding := b.r.Header.Get("Accept-Encoding")
 		switch {
+		case strings.Contains(acceptEncoding, "zstd"):
+			if enc := getZstdEncoder(); enc != nil {
+				b.headers["Content-Encoding"] = "zstd"
+				b.writeHeaders()
+				b.w.Write(enc.EncodeAll(data, nil))
+				return
+			}
+			// Fall through to next best encoding if zstd encoder is unavailable.
+			fallthrough
 		case strings.Contains(acceptEncoding, "br"):
 			b.headers["Content-Encoding"] = "br"
 			b.writeHeaders()
