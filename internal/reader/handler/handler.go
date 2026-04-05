@@ -332,7 +332,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		// We also skip updating existing entries if the feed has ignore_entry_updates enabled.
 		// Unless it is forced to refresh.
 		updateExistingEntries := forceRefresh || (!originalFeed.Crawler && !originalFeed.IgnoreEntryUpdates)
-		newEntries, storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, updateExistingEntries)
+		newEntries, updatedEntries, storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, updateExistingEntries)
 		if storeErr != nil {
 			localizedError := locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
 			return getTranslatedLocalizedError(store, userID, originalFeed, localizedError)
@@ -345,8 +345,13 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 				slog.Int64("feed_id", feedID),
 				slog.Any("error", intErr),
 			)
-		} else if userIntegrations != nil && len(newEntries) > 0 {
-			go integration.PushEntries(originalFeed, newEntries, userIntegrations)
+		} else if userIntegrations != nil {
+			if len(newEntries) > 0 {
+				go integration.PushEntries(originalFeed, newEntries, userIntegrations)
+			}
+			if len(updatedEntries) > 0 {
+				go integration.PushUpdatedEntries(originalFeed, updatedEntries, userIntegrations)
+			}
 		}
 
 		originalFeed.EtagHeader = responseHandler.ETag()

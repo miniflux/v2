@@ -507,6 +507,45 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 	}
 }
 
+// PushUpdatedEntries notifies integrations about entries that were already known but whose
+// content has changed during a feed refresh (title, body, author, etc.).
+//
+// Unlike PushEntries, notification channels (Telegram, Pushover, Ntfy, etc.) are intentionally
+// skipped to avoid duplicate or noisy alerts for entries the user has already seen.
+// Only integrations that benefit from receiving fresh content — currently the webhook — are invoked.
+func PushUpdatedEntries(feed *model.Feed, entries model.Entries, userIntegrations *model.Integration) {
+	if len(entries) == 0 {
+		return
+	}
+
+	if userIntegrations.WebhookEnabled {
+		var webhookURL string
+		if feed.WebhookURL != "" {
+			webhookURL = feed.WebhookURL
+		} else {
+			webhookURL = userIntegrations.WebhookURL
+		}
+
+		slog.Debug("Sending updated entries to Webhook",
+			slog.Int64("user_id", userIntegrations.UserID),
+			slog.Int("nb_entries", len(entries)),
+			slog.Int64("feed_id", feed.ID),
+			slog.String("webhook_url", webhookURL),
+		)
+
+		webhookClient := webhook.NewClient(webhookURL, userIntegrations.WebhookSecret)
+		if err := webhookClient.SendUpdatedEntriesWebhookEvent(feed, entries); err != nil {
+			slog.Warn("Unable to send updated entries to Webhook",
+				slog.Int64("user_id", userIntegrations.UserID),
+				slog.Int("nb_entries", len(entries)),
+				slog.Int64("feed_id", feed.ID),
+				slog.String("webhook_url", webhookURL),
+				slog.Any("error", err),
+			)
+		}
+	}
+}
+
 // PushEntries pushes a list of entries to activated third-party providers during feed refreshes.
 func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *model.Integration) {
 	if userIntegrations.MatrixBotEnabled {

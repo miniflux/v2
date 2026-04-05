@@ -377,7 +377,9 @@ func (s *Storage) ClearRemovedEntriesContent(limit int) (int64, error) {
 }
 
 // RefreshFeedEntries updates feed entries while refreshing a feed.
-func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (newEntries model.Entries, err error) {
+// It returns two slices: newEntries (entries created for the first time) and
+// updatedEntries (pre-existing entries whose content changed in the feed).
+func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (newEntries model.Entries, updatedEntries model.Entries, err error) {
 	entryHashes := make([]string, 0, len(entries))
 
 	for _, entry := range entries {
@@ -386,20 +388,23 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 
 		tx, err := s.db.Begin()
 		if err != nil {
-			return nil, fmt.Errorf(`store: unable to start transaction: %v`, err)
+			return nil, nil, fmt.Errorf(`store: unable to start transaction: %v`, err)
 		}
 
 		entryExists, err := s.entryExists(tx, entry)
 		if err != nil {
 			if rollbackErr := tx.Rollback(); rollbackErr != nil {
-				return nil, fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
+				return nil, nil, fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
 			}
-			return nil, err
+			return nil, nil, err
 		}
 
 		if entryExists {
 			if updateExistingEntries {
 				err = s.updateEntry(tx, entry)
+				if err == nil {
+					updatedEntries = append(updatedEntries, entry)
+				}
 			}
 		} else {
 			err = s.createEntry(tx, entry)
@@ -410,13 +415,13 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 
 		if err != nil {
 			if rollbackErr := tx.Rollback(); rollbackErr != nil {
-				return nil, fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
+				return nil, nil, fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
 			}
-			return nil, err
+			return nil, nil, err
 		}
 
 		if err := tx.Commit(); err != nil {
-			return nil, fmt.Errorf(`store: unable to commit transaction: %v`, err)
+			return nil, nil, fmt.Errorf(`store: unable to commit transaction: %v`, err)
 		}
 
 		entryHashes = append(entryHashes, entry.Hash)
@@ -432,7 +437,7 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 		}
 	}()
 
-	return newEntries, nil
+	return newEntries, updatedEntries, nil
 }
 
 // ArchiveEntries changes the status of entries to "removed" after the interval (24h minimum).
