@@ -65,7 +65,6 @@ func newRouter(store *storage.Storage, pool *worker.Pool) http.Handler {
 	rootMux.HandleFunc("/healthz", livenessProbe)
 	rootMux.HandleFunc("/readiness", readinessProbe)
 	rootMux.HandleFunc("/readyz", readinessProbe)
-	
 
 	basePath := config.Opts.BasePath()
 	if basePath != "" {

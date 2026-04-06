@@ -4,8 +4,8 @@
 package webpush // import "miniflux.app/v2/internal/reader/webpush"
 
 import (
-	"log/slog"
 	"encoding/json"
+	"log/slog"
 
 	"miniflux.app/v2/internal/model"
 
