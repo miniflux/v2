@@ -9,3 +9,8 @@ type WebPushSubscription struct {
 	Key      string `json:"key"`
 	Auth     string `json:"auth"`
 }
+
+type Notification struct {
+	FeedTitle 		string `json:"feed_title"`
+	EntryTitle 		string `json:"entry_content"`
+}

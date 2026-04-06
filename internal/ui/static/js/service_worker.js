@@ -45,11 +45,11 @@ self.addEventListener("fetch", (event) => {
 
 
 self.addEventListener('push', event => {
+	let notification = event.data.json();
+	const title = 'Miniflux: ' + notification.feed_title;
+	const options = {
+		body: notification.entry_title
+	};
 
-  const title = 'Miniflux';
-  const options = {
-    body: event.data.text(),
-  };
-
-  event.waitUntil(self.registration.showNotification(title, options));
+	event.waitUntil(self.registration.showNotification(title, options));
 });
