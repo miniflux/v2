@@ -13,7 +13,7 @@ import (
 )
 
 func (h *handler) registerWebpush(w http.ResponseWriter, r *http.Request) {
-	var WebPushSubscriptionRequest model.WebPushSubscriptionRequest
+	var WebPushSubscriptionRequest model.WebPushSubscription
 	if err := json_parser.NewDecoder(r.Body).Decode(&WebPushSubscriptionRequest); err != nil {
 		response.JSONBadRequest(w, r, err)
 		return

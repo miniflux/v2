@@ -20,7 +20,7 @@ func (s *Storage) GetVAPIDKeys() (string, string, error) {
 }
 
 // Register a new subscription
-func (s *Storage) RegisterWebPushSubscription(userID int64, request model.WebPushSubscriptionRequest) error {
+func (s *Storage) RegisterWebPushSubscription(userID int64, request model.WebPushSubscription) error {
 	query := `
 		INSERT INTO webpush_subscriptions
 			(user_id, endpoint, auth, p256dh)
