@@ -3,29 +3,30 @@ updates:
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    groups:
+      gomod:
+        patterns:
+          - "*"
 
   - package-ecosystem: "docker"
-    directory: "/packaging/docker/alpine"
+    directories:
+      - "/packaging/docker/alpine"
+      - "/packaging/docker/distroless"
+      - "/packaging/debian"
+      - "/packaging/rpm"
     schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "docker"
-    directory: "/packaging/docker/distroless"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "docker"
-    directory: "packaging/debian"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "docker"
-    directory: "packaging/rpm"
-    schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      docker:
+        patterns:
+          - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
