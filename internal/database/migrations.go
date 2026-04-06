@@ -1454,6 +1454,9 @@ var migrations = [...]func(tx *sql.Tx) error{
 			return err
 		}
 		privateKey, publicKey, err := webpush.GenerateVAPIDKeys()
+		if err != nil {
+			return err
+		}
 		_, err = tx.Exec(`
 			INSERT INTO vapid_key (private_key, public_key)
 			VALUES ($1, $2) `,

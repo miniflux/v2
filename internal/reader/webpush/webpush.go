@@ -19,7 +19,6 @@ func SendPush(subscriptions []model.WebPushSubscription, notification model.Noti
 	)
 
 	for index := range subscriptions {
-
 		var subs webpush.Subscription
 		subs.Endpoint = subscriptions[index].Endpoint
 		subs.Keys.Auth = subscriptions[index].Auth
@@ -40,7 +39,6 @@ func SendPush(subscriptions []model.WebPushSubscription, notification model.Noti
 			return err
 		}
 		slog.Debug("Sent WebPush notification")
-
 	}
 	return nil
 }

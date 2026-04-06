@@ -12,7 +12,6 @@ import (
 
 // Get the VAPID keys from the database
 func (s *Storage) GetVAPIDKeys() (string, string, error) {
-
 	var privateKey string
 	var publicKey string
 	query := `SELECT private_key, public_key FROM vapid_key`
