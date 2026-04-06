@@ -11,6 +11,7 @@ type WebPushSubscription struct {
 }
 
 type Notification struct {
-	FeedTitle 		string `json:"feed_title"`
-	EntryTitle 		string `json:"entry_content"`
+	FeedTitle    string `json:"feed_title"`
+	EntryTitle   string `json:"entry_title"`
+	EntryContent string `json:"entry_content"`
 }
