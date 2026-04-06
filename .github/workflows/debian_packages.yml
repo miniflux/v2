@@ -11,6 +11,7 @@ on:
     branches: [ main ]
     paths:
       - 'packaging/debian/**' # Only run on changes to the debian packaging files
+      - '.github/workflows/debian_packages.yml'
 jobs:
   test-packages:
     if: (github.event_name == 'schedule' && github.repository_owner == 'miniflux')
