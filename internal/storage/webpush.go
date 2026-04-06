@@ -4,6 +4,9 @@
 package storage // import "miniflux.app/v2/internal/storage"
 
 import (
+	"fmt"
+	"log/slog"
+
 	"miniflux.app/v2/internal/model"
 )
 
@@ -31,4 +34,38 @@ func (s *Storage) RegisterWebPushSubscription(userID int64, request model.WebPus
 	_, err := s.db.Exec(query, userID, request.Endpoint, request.Auth, request.Key)
 
 	return err
+}
+
+func (s *Storage) GetUserSubscriptions(userID int64) ([]model.WebPushSubscription, error) {
+	query := `
+		SELECT endpoint, auth, p256dh
+		FROM webpush_subscriptions
+		WHERE user_id=$1
+	`
+	rows, err := s.db.Query(query, userID)
+	if err != nil {
+		return nil, fmt.Errorf(`store: unable to fetch user webpush subscriptions: %v`, err)
+	}
+	defer rows.Close()
+
+	var subscriptions []model.WebPushSubscription
+	for rows.Next() {
+		var subscription model.WebPushSubscription
+		err := rows.Scan(
+			&subscription.Endpoint,
+			&subscription.Auth,
+			&subscription.Key,
+		)
+		slog.Debug("Subscription found",
+			slog.String("endpoint", subscription.Endpoint),
+			slog.String("auth", subscription.Auth),
+			slog.String("key", subscription.Key),
+		)
+		if err != nil {
+			return nil, fmt.Errorf(`store: unable to fetch user webpush subscriptions: %v`, err)
+		}
+		subscriptions = append(subscriptions, subscription)
+	}
+
+	return subscriptions, nil
 }
