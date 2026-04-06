@@ -1111,11 +1111,17 @@ function initializeServiceWorker() {
 				if (!subscription) {
 					subscribeWebpush();
 				} else {
+					let authScheme = 'vapid';
+					const userAgent = navigator.userAgent;
+					if (userAgent.indexOf("Chrome") > -1 && userAgent.indexOf("Edg") === -1) {
+						authScheme = 'webpush';
+					}
 					console.log('Existing subscription found.');
 					sendPOSTRequest('/register-webpush', {
 						endpoint: subscription.endpoint,
 						key: _arrayBufferToBase64(subscription.getKey("p256dh")),
 						auth: _arrayBufferToBase64(subscription.getKey("auth")),
+						authscheme: authScheme,
 					})
 				}
 			});
@@ -1322,8 +1328,9 @@ function subscribeWebpush() {
 			}
 			sendPOSTRequest('/register-webpush', {
 				endpoint: subscription.endpoint,
-				key: subscription.options.applicationServerKey,
-				auth: authScheme,
+				key: _arrayBufferToBase64(subscription.getKey("p256dh")),
+				auth: _arrayBufferToBase64(subscription.getKey("auth")),
+				authscheme: authScheme,
 			})
 		})
 		.catch(err => console.error(err));

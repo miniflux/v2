@@ -26,19 +26,19 @@ func (s *Storage) GetVAPIDKeys() (string, string, error) {
 func (s *Storage) RegisterWebPushSubscription(userID int64, request model.WebPushSubscription) error {
 	query := `
 		INSERT INTO webpush_subscriptions
-			(user_id, endpoint, auth, p256dh)
+			(user_id, endpoint, auth, p256dh, authscheme)
 		VALUES
-			($1, $2, $3, $4)
+			($1, $2, $3, $4, $5)
 		ON CONFLICT(endpoint) DO NOTHING
 	`
-	_, err := s.db.Exec(query, userID, request.Endpoint, request.Auth, request.Key)
+	_, err := s.db.Exec(query, userID, request.Endpoint, request.Auth, request.Key, request.AuthScheme)
 
 	return err
 }
 
 func (s *Storage) GetUserSubscriptions(userID int64) ([]model.WebPushSubscription, error) {
 	query := `
-		SELECT endpoint, auth, p256dh
+		SELECT endpoint, auth, p256dh, authscheme
 		FROM webpush_subscriptions
 		WHERE user_id=$1
 	`
@@ -55,6 +55,7 @@ func (s *Storage) GetUserSubscriptions(userID int64) ([]model.WebPushSubscriptio
 			&subscription.Endpoint,
 			&subscription.Auth,
 			&subscription.Key,
+			&subscription.AuthScheme,
 		)
 		slog.Debug("Subscription found",
 			slog.String("endpoint", subscription.Endpoint),

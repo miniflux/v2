@@ -5,9 +5,10 @@ package model // import "miniflux.app/v2/internal/model"
 
 // A request to subscribe to a new webpush
 type WebPushSubscription struct {
-	Endpoint string `json:"endpoint"`
-	Key      string `json:"key"`
-	Auth     string `json:"auth"`
+	Endpoint   string `json:"endpoint"`
+	Key        string `json:"key"`
+	Auth       string `json:"auth"`
+	AuthScheme string `json:"authscheme"`
 }
 
 type Notification struct {
