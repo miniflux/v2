@@ -41,11 +41,12 @@ func StartWebServer(store *storage.Storage, pool *worker.Pool) []*http.Server {
 
 	for _, t := range targets {
 		srv := &http.Server{
-			Addr:         t.address,
-			ReadTimeout:  config.Opts.HTTPServerTimeout(),
-			WriteTimeout: config.Opts.HTTPServerTimeout(),
-			IdleTimeout:  config.Opts.HTTPServerTimeout(),
-			Handler:      newRouter(store, pool),
+			Addr:              t.address,
+			ReadTimeout:       config.Opts.HTTPServerTimeout(),
+			WriteTimeout:      config.Opts.HTTPServerTimeout(),
+			IdleTimeout:       config.Opts.HTTPServerTimeout(),
+			ReadHeaderTimeout: config.Opts.HTTPServerTimeout(),
+			Handler:           newRouter(store, pool),
 		}
 
 		switch t.mode {
