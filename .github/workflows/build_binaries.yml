@@ -6,6 +6,14 @@ on:
   push:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/build_binaries.yml'
+      - 'Makefile'
+      - 'go.mod'
+      - 'go.sum'
+      - '**.go'
 jobs:
   build:
     name: Build
@@ -24,6 +32,7 @@ jobs:
           CGO_ENABLED: 0
         run: make build
       - name: Upload binaries
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
           name: binaries
