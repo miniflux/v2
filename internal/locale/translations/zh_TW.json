@@ -103,6 +103,7 @@
     "error.http_bad_gateway": "此網站目前因閘道錯誤無法使用，問題不在 Miniflux，請稍後重試。",
     "error.http_body_read": "無法讀取 HTTP 本體內容：%v。",
     "error.http_client_error": "HTTP 客戶端錯誤：%v。",
+    "error.http_cloudflare_challenge": "此網站受 Cloudflare 機器人驗證（CAPTCHA 或 JavaScript 驗證）保護。Miniflux 無法自動通過此驗證。",
     "error.http_empty_response": "HTTP 回應內容為空，可能該網站有防護機制。",
     "error.http_empty_response_body": "HTTP 回應本體為空。",
     "error.http_forbidden": "拒絕存取此網站，可能該網站有防護機制。",

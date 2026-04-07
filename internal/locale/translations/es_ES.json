@@ -106,6 +106,7 @@
     "error.http_bad_gateway": "El sitio web no está disponible en este momento debido a un error en la puerta de enlace. El problema no está en el lado de Miniflux. Por favor, inténtalo de nuevo más tarde.",
     "error.http_body_read": "Imposible leer el cuerpo HTTP: %v.",
     "error.http_client_error": "Error cliente HTTP: %v.",
+    "error.http_cloudflare_challenge": "Este sitio web está protegido por un desafío de bot de Cloudflare (CAPTCHA o verificación de JavaScript). Miniflux no puede resolver este desafío automáticamente.",
     "error.http_empty_response": "La respuesta HTTP está vacía. ¿Quizás este sitio web tiene un mecanismo de protección contra bots?",
     "error.http_empty_response_body": "El cuerpo de la respuesta HTTP está vacío.",
     "error.http_forbidden": "El acceso a este sitio web está prohibido. ¿Quizás este sitio web tiene un mecanismo de protección contra bots?",

@@ -119,6 +119,7 @@
     "error.http_bad_gateway": "الموقع غير متاح حالياً بسبب خطأ في البوابة (Bad Gateway). المشكلة ليست من جانب Miniflux. يرجى المحاولة لاحقاً.",
     "error.http_body_read": "تعذر قراءة محتوى استجابة HTTP: %v.",
     "error.http_client_error": "خطأ في عميل HTTP: %v.",
+    "error.http_cloudflare_challenge": "هذا الموقع محمي بآلية تحدي Cloudflare (اختبار CAPTCHA أو التحقق عبر JavaScript). لا يستطيع Miniflux حل هذا التحدي تلقائياً.",
     "error.http_empty_response": "استجابة HTTP فارغة. ربما يستخدم هذا الموقع آلية حماية ضد الروبوتات؟",
     "error.http_empty_response_body": "محتوى استجابة HTTP فارغ.",
     "error.http_forbidden": "الوصول إلى هذا الموقع ممنوع. ربما يوجد آلية حماية ضد الروبوتات؟",

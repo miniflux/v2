@@ -109,6 +109,7 @@
     "error.http_bad_gateway": "Acest site web nu este disponibil momentan din cauza unei erori generată de gateway. Problema nu este de la Miniflux. Vă rugăm să reîncercați mai târziu.",
     "error.http_body_read": "Nu pot citi corpul HTTP: %v.",
     "error.http_client_error": "Eroare client HTTP: %v.",
+    "error.http_cloudflare_challenge": "Acest site web este protejat de o provocare bot Cloudflare (CAPTCHA sau verificare JavaScript). Miniflux nu poate rezolva această provocare în mod automat.",
     "error.http_empty_response": "Răspunsul HTTP este gol. Poate acest site web utilizează un mecanism împotriva boților?",
     "error.http_empty_response_body": "Corpul răspunsului HTTP este gol.",
     "error.http_forbidden": "Accesul la acest site web este interzis. Poate acesta utilizează un mecanism împotriva boților?",

@@ -103,6 +103,7 @@
     "error.http_bad_gateway": "Chit ê bāng-chām chit-má in-ūi gateway ū būn-tôe bô-hoat-tō͘ iōng, m̄ sī Miniflux chia ê būn-tôe, chhiáⁿ tán--chi̍t-ē chiah koh chhì-khòaⁿ-māi.",
     "error.http_body_read": "Bô-hoat-tō͘ tha̍k HTTP body lōe-iông: %v。",
     "error.http_client_error": "HTTP kheh-hō͘ thâu ū m̄-tio̍h: %v.",
+    "error.http_cloudflare_challenge": "Chit ê bāng-chām hō͘ Cloudflare ê bot thiau-chiàn (CAPTCHA ah-sī JavaScript giām-chèng) pó-hō͘. Miniflux bô-hoat-tō͘ chū-tōng kái-koat chit ê thiau-chiàn.",
     "error.http_empty_response": "HTTP hôe-èng lōe-iông sī khang--ê, ū khó-lêng sī hit ê bāng-chām ū pó-hō͘ ki-chè.",
     "error.http_empty_response_body": "HTTP hôe-èng body sī khang--ê.",
     "error.http_forbidden": "Hō͘ kū-choa̍t chûn-chhú chit ê bāng-chām, ū khó-lêng chit ê bāng-chām ū pó-hō͘ ki-chè.",

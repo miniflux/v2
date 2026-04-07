@@ -103,6 +103,7 @@
     "error.http_bad_gateway": "由于网关错误，网站暂不可用。这不是 Miniflux 的问题，请稍后重试。",
     "error.http_body_read": "无法读取 HTTP 正文：%v。",
     "error.http_client_error": "HTTP 客户端错误：%v。",
+    "error.http_cloudflare_challenge": "此网站受 Cloudflare 机器人验证（CAPTCHA 或 JavaScript 验证）保护。Miniflux 无法自动通过此验证。",
     "error.http_empty_response": "HTTP 响应为空，该网站可能使用了反爬虫机制。",
     "error.http_empty_response_body": "HTTP 响应正文为空。",
     "error.http_forbidden": "禁止访问该网站。可能该网站使用了反爬虫机制？",

@@ -106,6 +106,7 @@
     "error.http_bad_gateway": "खराब गेटवे त्रुटि के कारण वेबसाइट फिलहाल उपलब्ध नहीं है। समस्या Miniflux की तरफ नहीं है। कृपया बाद में फिर से कोशिश करें।",
     "error.http_body_read": "HTTP बॉडी पढ़ने में असमर्थ: %v।",
     "error.http_client_error": "HTTP क्लाइंट त्रुटि: %v।",
+    "error.http_cloudflare_challenge": "यह वेबसाइट Cloudflare बॉट चैलेंज (CAPTCHA या JavaScript सत्यापन) द्वारा सुरक्षित है। Miniflux इस चैलेंज को स्वचालित रूप से हल नहीं कर सकता।",
     "error.http_empty_response": "HTTP प्रतिक्रिया खाली है। शायद यह वेबसाइट बॉट सुरक्षा तंत्र का उपयोग कर रही है?",
     "error.http_empty_response_body": "HTTP प्रतिक्रिया बॉडी खाली है।",
     "error.http_forbidden": "इस वेबसाइट तक पहुंच वर्जित है। शायद इस वेबसाइट में बॉट सुरक्षा तंत्र है?",

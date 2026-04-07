@@ -106,6 +106,7 @@
     "error.http_bad_gateway": "Kötü ağ geçidi hatası nedeniyle bu website şu anda kullanılamıyor. Sorun Miniflux tarafında değil. Lütfen daha sonra tekrar deneyiniz.",
     "error.http_body_read": "HTTP gövdesi okunamıyor: %v.",
     "error.http_client_error": "HTTP istemci hatası: %v.",
+    "error.http_cloudflare_challenge": "Bu web sitesi bir Cloudflare bot doğrulaması (CAPTCHA veya JavaScript doğrulaması) ile korunmaktadır. Miniflux bu doğrulamayı otomatik olarak çözemez.",
     "error.http_empty_response": "HTTP yanıtı boş. Belki bu web sitesi bir bot koruma mekanizması kullanıyordur?",
     "error.http_empty_response_body": "HTTP yanıt gövdesi boş.",
     "error.http_forbidden": "Bu siteye erişim yasak. Belki bu web sitesinin bir bot koruma mekanizması vardır?",

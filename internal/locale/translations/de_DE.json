@@ -106,6 +106,7 @@
     "error.http_bad_gateway": "Die Webseite ist aufgrund eines Bad-Gateway-Fehlers derzeit nicht verfügbar. Das Problem liegt nicht bei Miniflux. Bitte versuchen Sie es später erneut.",
     "error.http_body_read": "Der HTTP-Inhalt kann nicht gelesen werden: %v",
     "error.http_client_error": "HTTP-Client-Fehler: %v.",
+    "error.http_cloudflare_challenge": "Diese Webseite ist durch eine Cloudflare-Bot-Abfrage (CAPTCHA oder JavaScript-Verifizierung) geschützt. Miniflux kann diese Abfrage nicht automatisch lösen.",
     "error.http_empty_response": "Die HTTP-Antwort ist leer. Vielleicht versucht die Webseite, sich vor Bots zu schützen?",
     "error.http_empty_response_body": "Der Inhalt der HTTP-Antwort ist leer.",
     "error.http_forbidden": "Der Zugriff auf diese Webseite ist verboten. Vielleicht versucht die Webseite, sich vor Bots zu schützen?",
