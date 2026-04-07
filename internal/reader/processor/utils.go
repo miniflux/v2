@@ -14,6 +14,20 @@ import (
 	"github.com/tdewolff/minify/v2/html"
 )
 
+var htmlMinifier = newHTMLMinifier()
+
+func newHTMLMinifier() *minify.M {
+	m := minify.New()
+	m.Add("text/html", &html.Minifier{
+		KeepEndTags:         true,
+		KeepQuotes:          true,
+		KeepComments:        false,
+		KeepSpecialComments: false,
+		KeepDefaultAttrVals: false,
+	})
+	return m
+}
+
 // parseISO8601Duration parses a subset of ISO8601 durations, mainly for youtube video.
 func parseISO8601Duration(duration string) (time.Duration, error) {
 	after, ok := strings.CutPrefix(duration, "PT")
@@ -60,20 +74,7 @@ func parseISO8601Duration(duration string) (time.Duration, error) {
 }
 
 func minifyContent(content string) string {
-	m := minify.New()
-
-	// Options required to avoid breaking the HTML content.
-	m.Add("text/html", &html.Minifier{
-		KeepEndTags:         true,
-		KeepQuotes:          true,
-		KeepComments:        false,
-		KeepSpecialComments: false,
-		KeepDefaultAttrVals: false,
-	})
-
-	if minifiedHTML, err := m.String("text/html", content); err == nil {
-		content = minifiedHTML
-	}
-
-	return content
+	// when an error occurs, String returns the original content.
+	ret, _ := htmlMinifier.String("text/html", content)
+	return ret
 }
