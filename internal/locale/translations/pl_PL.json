@@ -109,6 +109,7 @@
     "error.http_bad_gateway": "Strona jest w tej chwili niedostępna z powodu błędu nieprawidłowej bramy. Problem nie leży po stronie Miniflux. Spróbuj ponownie później.",
     "error.http_body_read": "Nie można odczytać treści HTTP: %v.",
     "error.http_client_error": "Błąd klienta HTTP: %v.",
+    "error.http_cloudflare_challenge": "Ta strona jest chroniona przez wyzwanie botowe Cloudflare (CAPTCHA lub weryfikacja JavaScript). Miniflux nie może rozwiązać tego wyzwania automatycznie.",
     "error.http_empty_response": "Odpowiedź HTTP jest pusta. Być może ta witryna korzysta z mechanizmu ochrony przed botami?",
     "error.http_empty_response_body": "Treść odpowiedzi HTTP jest pusta.",
     "error.http_forbidden": "Dostęp do tej strony jest zabroniony. Być może ta strona ma mechanizm zabezpieczający przed botami?",

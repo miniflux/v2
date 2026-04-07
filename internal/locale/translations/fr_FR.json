@@ -106,6 +106,7 @@
     "error.http_bad_gateway": "Le site web n'est pas disponible pour le moment à cause d'une erreur de passerelle réseau. Le problème ne vient pas de Miniflux. Veuillez réessayer plus tard.",
     "error.http_body_read": "Impossible de lire le corps de la réponse HTTP : %v.",
     "error.http_client_error": "Erreur du client HTTP : %v.",
+    "error.http_cloudflare_challenge": "Ce site web est protégé par un défi anti-bot Cloudflare (CAPTCHA ou vérification JavaScript). Miniflux ne peut pas résoudre ce défi automatiquement.",
     "error.http_empty_response": "La réponse HTTP est vide. Peut-être que ce site web bloque Miniflux avec une protection anti-bot ?",
     "error.http_empty_response_body": "Le corps de la réponse HTTP est vide.",
     "error.http_forbidden": "Accès interdit à ce site web. Il se peut que ce site web bloque Miniflux avec une protection anti-bot.",

@@ -107,6 +107,7 @@
     "error.http_bad_gateway": "O sitio web non está dispoñible debido a un erro na pasarela. O problema non está en Miniflux. Por favor, inténtao máis tarde.",
     "error.http_body_read": "Non se pode ler o corpo HTTP: %v.",
     "error.http_client_error": "Erro HTTP no cliente: %v.",
+    "error.http_cloudflare_challenge": "Este sitio web está protexido por un desafío de bot de Cloudflare (CAPTCHA ou verificación de JavaScript). Miniflux non pode resolver este desafío automaticamente.",
     "error.http_empty_response": "A resposta HTTP está baleira. Podería o sitio web estar usando unha protección contra robots?",
     "error.http_empty_response_body": "O corpo da resposta HTTP está baleiro.",
     "error.http_forbidden": "Esta prohibido o acceso a esta páxina web. Podería estar usando unha protección contra robots?",

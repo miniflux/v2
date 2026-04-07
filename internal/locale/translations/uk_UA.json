@@ -109,6 +109,7 @@
     "error.http_bad_gateway": "Сайт наразі недоступний через помилку шлюзу. Проблема не на стороні Miniflux. Будь ласка, спробуйте пізніше.",
     "error.http_body_read": "Не вдалося прочитати HTTP-вміст: %v.",
     "error.http_client_error": "Помилка HTTP-клієнта: %v.",
+    "error.http_cloudflare_challenge": "Цей сайт захищено перевіркою Cloudflare на ботів (CAPTCHA або перевірка JavaScript). Miniflux не може пройти цю перевірку автоматично.",
     "error.http_empty_response": "Відповідь HTTP порожня. Можливо, цей сайт використовує захист від ботів?",
     "error.http_empty_response_body": "Тіло відповіді HTTP порожнє.",
     "error.http_forbidden": "Доступ до цього сайту заборонено. Можливо, сайт має захист від ботів?",

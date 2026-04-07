@@ -106,6 +106,7 @@
     "error.http_bad_gateway": "De website is momenteel niet beschikbaar vanwege een slechte-gateway-fout. De oorzaak hiervan ligt niet bij Miniflux. Probeer het later nogmaals aub.",
     "error.http_body_read": "Kan de HTTP-body niet lezen: %v.",
     "error.http_client_error": "HTTP-client-fout: %v.",
+    "error.http_cloudflare_challenge": "Deze website wordt beschermd door een Cloudflare-botuitdaging (CAPTCHA of JavaScript-verificatie). Miniflux kan deze uitdaging niet automatisch oplossen.",
     "error.http_empty_response": "De HTTP-respons is leeg. Misschien gebruikt deze website een botbeveiligingsmechanisme?",
     "error.http_empty_response_body": "De HTTP-respons body is leeg.",
     "error.http_forbidden": "Toegang tot deze website is verboden. Misschien heeft deze website een botbeveiligingsmechanisme?",

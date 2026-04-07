@@ -103,6 +103,7 @@
     "error.http_bad_gateway": "Situs ini tidak tersedia saat ini karena kesalahan akses peladen situs. Masalah ini bukan pada sisi Miniflux. Coba lagi nanti.",
     "error.http_body_read": "Tidak dapat membaca badan HTTP: %v.",
     "error.http_client_error": "Galat klien HTTP: %v.",
+    "error.http_cloudflare_challenge": "Situs web ini dilindungi oleh tantangan bot Cloudflare (CAPTCHA atau verifikasi JavaScript). Miniflux tidak dapat menyelesaikan tantangan ini secara otomatis.",
     "error.http_empty_response": "Balasan HTTP kosong. Mungkin, situs ini menggunakan mekanisme perlindungan dari bot?",
     "error.http_empty_response_body": "Badan balasan HTTP kosong.",
     "error.http_forbidden": "Akses ke situs ini terlarang. Mungkin, situs ini menggunakan mekanisme perlindungan dari bot?",

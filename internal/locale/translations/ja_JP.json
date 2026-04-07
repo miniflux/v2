@@ -103,6 +103,7 @@
     "error.http_bad_gateway": "ウェブサイトは、不正なゲートウェイエラーのため現在利用できません。問題はMiniflux側にはありません。後でもう一度お試しください。",
     "error.http_body_read": "HTTP本文を読み取れません: %v。",
     "error.http_client_error": "HTTPクライアントエラー: %v。",
+    "error.http_cloudflare_challenge": "このウェブサイトは Cloudflare のボットチャレンジ（CAPTCHA または JavaScript 検証）によって保護されています。Miniflux はこのチャレンジを自動的に解くことができません。",
     "error.http_empty_response": "HTTP応答が空です。おそらく、このウェブサイトはボット保護メカニズムを使用していますか？",
     "error.http_empty_response_body": "HTTP応答本文が空です。",
     "error.http_forbidden": "このウェブサイトへのアクセスは禁止されています。おそらく、このウェブサイトはボット保護メカニズムを持っていますか？",

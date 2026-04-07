@@ -189,6 +189,10 @@ func (r *ResponseHandler) LocalizedError() *locale.LocalizedErrorWrapper {
 		}
 	}
 
+	if r.isCloudflareChallenge() {
+		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: blocked by Cloudflare challenge (%d status code)", r.httpResponse.StatusCode), "error.http_cloudflare_challenge")
+	}
+
 	switch r.httpResponse.StatusCode {
 	case http.StatusUnauthorized:
 		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: access unauthorized (401 status code)"), "error.http_not_authorized")
@@ -222,6 +226,20 @@ func (r *ResponseHandler) LocalizedError() *locale.LocalizedErrorWrapper {
 	}
 
 	return nil
+}
+
+// isCloudflareChallenge reports whether the response looks like a Cloudflare
+// bot/captcha interstitial rather than a genuine error from the origin. It
+// relies on response headers only (no body read) to keep the check cheap and
+// to run before ReadBody is called.
+func (r *ResponseHandler) isCloudflareChallenge() bool {
+	if r.httpResponse == nil {
+		return false
+	}
+
+	return r.httpResponse.StatusCode == http.StatusForbidden &&
+		strings.EqualFold(r.httpResponse.Header.Get("cf-mitigated"), "challenge") &&
+		strings.HasPrefix(strings.ToLower(r.ContentType()), "text/html")
 }
 
 func isNetworkError(err error) bool {
