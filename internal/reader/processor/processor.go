@@ -179,7 +179,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 				EntryTitle:   entry.Title,
 				EntryContent: strings.TrimSpace(fmt.Sprintf("%.200s", sanitizer.StripTags(entry.Content))),
 			}
-			err := webpush.SendPush(subscriptions, notification, vapidPublicKey, vapidPrivateKey)
+			err := webpush.SendPush(subscriptions, notification, vapidPublicKey, vapidPrivateKey, userID, store)
 			if err != nil {
 				slog.Error("Could not send webpush notification", slog.Any("error", err))
 			}

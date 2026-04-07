@@ -8,11 +8,12 @@ import (
 	"log/slog"
 
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/storage"
 
 	"github.com/SherClockHolmes/webpush-go"
 )
 
-func SendPush(subscriptions []model.WebPushSubscription, notification model.Notification, vapidPublicKey string, vapidPrivateKey string) error {
+func SendPush(subscriptions []model.WebPushSubscription, notification model.Notification, vapidPublicKey string, vapidPrivateKey string, userID int64, store *storage.Storage) error {
 	slog.Debug(
 		"Number of webpush subscriptions",
 		slog.Int("length", len(subscriptions)),
@@ -28,17 +29,24 @@ func SendPush(subscriptions []model.WebPushSubscription, notification model.Noti
 		if err != nil {
 			return err
 		}
-		_, err = webpush.SendNotification([]byte(notificationJSON), &subs, &webpush.Options{
+		response, err := webpush.SendNotification([]byte(notificationJSON), &subs, &webpush.Options{
 			// AuthScheme:      "vapid", // Not yet supported by the lib
 			Subscriber:      "example@example.com", // Do not include "mailto:"
 			VAPIDPublicKey:  vapidPublicKey,
 			VAPIDPrivateKey: vapidPrivateKey,
 			TTL:             30,
 		})
-		if err != nil {
-			return err
-		}
 		slog.Debug("Sent WebPush notification")
+
+		// If we get a 401, 404 or 410 return codes, that means that the
+		// subscription is invalid and needs to be removed.
+		if response.StatusCode == 401 || response.StatusCode == 404 || response.StatusCode == 410 || err != nil {
+			store.RemoveUserSubscription(userID, subs.Endpoint)
+			slog.Debug(
+				"Removed webpush subscription",
+				slog.String("endpoint", subs.Endpoint),
+			)
+		}
 	}
 	return nil
 }

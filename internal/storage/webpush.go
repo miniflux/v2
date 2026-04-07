@@ -69,3 +69,14 @@ func (s *Storage) GetUserSubscriptions(userID int64) ([]model.WebPushSubscriptio
 
 	return subscriptions, nil
 }
+
+func (s *Storage) RemoveUserSubscription(userID int64, endpoint string) error {
+	query := `
+		DELETE FROM webpush_subscriptions
+		WHERE user_id=$1
+		AND endpoint=$2
+	`
+	_, err := s.db.Exec(query, userID, endpoint)
+
+	return err
+}
