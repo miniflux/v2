@@ -66,6 +66,10 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 		}
 	}
 
+	// Track GUIDs already seen in this feed to disambiguate items from
+	// non-conformant feeds that reuse the same <guid> for every entry.
+	seenGUIDs := make(map[string]int)
+
 	for _, item := range r.rss.Channel.Items {
 		entry := model.NewEntry()
 		entry.Date = findEntryDate(&item)
@@ -105,9 +109,24 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 		}
 
 		// Generate the entry hash.
+		//
+		// The RSS 2.0 spec requires <guid> to uniquely identify the item, but
+		// some feeds ship the same GUID for every entry. Keep the first
+		// occurrence stable (so existing stored entries still match) and
+		// disambiguate later collisions using the entry URL or, as a last
+		// resort, the item position.
 		switch {
 		case item.GUID.Data != "":
-			entry.Hash = crypto.SHA256(item.GUID.Data)
+			n := seenGUIDs[item.GUID.Data]
+			seenGUIDs[item.GUID.Data] = n + 1
+			switch {
+			case n == 0:
+				entry.Hash = crypto.SHA256(item.GUID.Data)
+			case entry.URL != "":
+				entry.Hash = crypto.SHA256(item.GUID.Data + "|" + entry.URL)
+			default:
+				entry.Hash = crypto.SHA256(item.GUID.Data + "|" + strconv.Itoa(n))
+			}
 		case entryURL != "":
 			entry.Hash = crypto.SHA256(entryURL)
 		default:
