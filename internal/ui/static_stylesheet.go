@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/http/response"
-
 	"miniflux.app/v2/internal/ui/static"
 )
 
@@ -20,8 +19,14 @@ func (h *handler) showStylesheet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.NewBuilder(w, r).WithCaching(stylesheetBundle.Checksum, 48*time.Hour, func(b *response.Builder) {
+		body, encoding := stylesheetBundle.Negotiate(r.Header.Get("Accept-Encoding"))
+		b.WithoutCompression()
 		b.WithHeader("Content-Type", "text/css; charset=utf-8")
-		b.WithBodyAsBytes(stylesheetBundle.Data)
+		b.WithHeader("Vary", "Accept-Encoding")
+		if encoding != "" {
+			b.WithHeader("Content-Encoding", encoding)
+		}
+		b.WithBodyAsBytes(body)
 		b.Write()
 	})
 }

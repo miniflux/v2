@@ -5,22 +5,45 @@ package static // import "miniflux.app/v2/internal/ui/static"
 
 import (
 	"bytes"
+	"compress/gzip"
 	"embed"
+	"fmt"
 	"log/slog"
 	"slices"
 	"strings"
 
 	"miniflux.app/v2/internal/crypto"
 
+	"github.com/andybalholm/brotli"
 	"github.com/tdewolff/minify/v2"
 	"github.com/tdewolff/minify/v2/css"
 	"github.com/tdewolff/minify/v2/js"
 	"github.com/tdewolff/minify/v2/svg"
 )
 
+const licensePrefix = "//@license magnet:?xt=urn:btih:8e4f440f4c65981c5bf93c76d35135ba5064d8b7&dn=apache-2.0.txt Apache-2.0\n"
+const licenseSuffix = "\n//@license-end"
+
 type asset struct {
-	Data     []byte
-	Checksum string
+	Data       []byte
+	Checksum   string
+	BrotliData []byte
+	GzipData   []byte
+}
+
+// Negotiate selects the best pre-compressed representation of the
+// asset based on the Accept-Encoding request header value.  It returns
+// the bytes to write and the Content-Encoding value ("br", "gzip", or
+// "" for identity).
+func (a asset) Negotiate(acceptEncoding string) (body []byte, encoding string) {
+	switch {
+	case a.BrotliData != nil && strings.Contains(acceptEncoding, "br"):
+		return a.BrotliData, "br"
+	case a.GzipData != nil && strings.Contains(acceptEncoding, "gzip"):
+		return a.GzipData, "gzip"
+	default:
+		return a.Data, ""
+	}
 }
 
 // Static assets.
@@ -38,6 +61,24 @@ var stylesheetFiles embed.FS
 
 //go:embed js/*.js
 var javascriptFiles embed.FS
+
+// precompress produces brotli and gzip compressed variants of data.
+// Best compression levels are used because this only runs once at
+// startup; the resulting byte slices are served directly on every
+// request, avoiding any per-request compression work.
+func precompress(data []byte) (brotliData, gzipData []byte) {
+	var br bytes.Buffer
+	bw := brotli.NewWriterV2(&br, brotli.BestCompression)
+	bw.Write(data)
+	bw.Close()
+
+	var gz bytes.Buffer
+	gw, _ := gzip.NewWriterLevel(&gz, gzip.BestCompression)
+	gw.Write(data)
+	gw.Close()
+
+	return br.Bytes(), gz.Bytes()
+}
 
 func GenerateBinaryBundles() error {
 	dirEntries, err := binaryFiles.ReadDir("bin")
@@ -66,10 +107,16 @@ func GenerateBinaryBundles() error {
 			}
 		}
 
-		BinaryBundles[name] = asset{
+		a := asset{
 			Data:     data,
 			Checksum: crypto.HashFromBytes(data),
 		}
+
+		if strings.HasSuffix(name, ".svg") {
+			a.BrotliData, a.GzipData = precompress(data)
+		}
+
+		BinaryBundles[name] = a
 	}
 
 	return nil
@@ -108,9 +155,12 @@ func GenerateStylesheetsBundles() error {
 			return err
 		}
 
+		br, gz := precompress(minifiedData)
 		StylesheetBundles[bundleName+".css"] = asset{
-			Data:     minifiedData,
-			Checksum: crypto.HashFromBytes(minifiedData),
+			Data:       minifiedData,
+			Checksum:   crypto.HashFromBytes(minifiedData),
+			BrotliData: br,
+			GzipData:   gz,
 		}
 	}
 
@@ -118,7 +168,8 @@ func GenerateStylesheetsBundles() error {
 }
 
 // GenerateJavascriptBundles creates JS bundles.
-func GenerateJavascriptBundles(webauthnEnabled bool) error {
+// basePath is prepended to route paths embedded in the service worker bundle.
+func GenerateJavascriptBundles(webauthnEnabled bool, basePath string) error {
 	var bundles = map[string][]string{
 		"app": {
 			"js/touch_handler.js",
@@ -158,9 +209,22 @@ func GenerateJavascriptBundles(webauthnEnabled bool) error {
 			return err
 		}
 
+		var buf bytes.Buffer
+		buf.WriteString(licensePrefix)
+		if bundleName == "service-worker" {
+			fmt.Fprintf(&buf, "const OFFLINE_URL=%q;", basePath+"/offline")
+		}
+		buf.Write(minifiedData)
+		buf.WriteString(licenseSuffix)
+
+		contents := buf.Bytes()
+		br, gz := precompress(contents)
+
 		JavascriptBundles[bundleName+".js"] = asset{
-			Data:     minifiedData,
-			Checksum: crypto.HashFromBytes(minifiedData),
+			Data:       contents,
+			Checksum:   crypto.HashFromBytes(contents),
+			BrotliData: br,
+			GzipData:   gz,
 		}
 	}
 
