@@ -1085,6 +1085,16 @@ function initializeServiceWorker() {
     if ("serviceWorker" in navigator) {
         const serviceWorkerURL = document.body.dataset.serviceWorkerUrl;
         if (serviceWorkerURL) {
+            const expectedURL = new URL(serviceWorkerURL, window.location.origin).href;
+            navigator.serviceWorker.getRegistrations().then((registrations) => {
+                for (const registration of registrations) {
+                    const activeWorker = registration.active || registration.installing || registration.waiting;
+                    if (activeWorker && activeWorker.scriptURL !== expectedURL) {
+                        registration.unregister();
+                    }
+                }
+            });
+
             const ttpolicy = trustedTypes.createPolicy('url', {createScriptURL: src => src});
             navigator.serviceWorker.register(ttpolicy.createScriptURL(serviceWorkerURL), {
                 type: "module"
