@@ -15,11 +15,6 @@ import (
 )
 
 func SendPush(subscriptions []model.WebPushSubscription, notification model.Notification, vapidPublicKey string, vapidPrivateKey string, userID int64, store *storage.Storage) error {
-	slog.Debug(
-		"Number of webpush subscriptions",
-		slog.Int("length", len(subscriptions)),
-	)
-
 	for index := range subscriptions {
 		var subs webpush.Subscription
 		subs.Endpoint = subscriptions[index].Endpoint
@@ -37,7 +32,7 @@ func SendPush(subscriptions []model.WebPushSubscription, notification model.Noti
 			VAPIDPrivateKey: vapidPrivateKey,
 			TTL:             30,
 		})
-		slog.Debug("Sent WebPush notification")
+		slog.Debug("Sent WebPush notification", slog.String("endpoint", subs.Endpoint))
 
 		// If we get a 401, 404 or 410 return codes, that means that the
 		// subscription is invalid and needs to be removed.
