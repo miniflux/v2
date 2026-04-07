@@ -89,6 +89,12 @@ func NewConfigOptions() *configOptions {
 				valueType:         secretFileType,
 				targetKey:         "ADMIN_USERNAME",
 			},
+			"ADMIN_EMAIL": {
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
+				targetKey:         "ADMIN_EMAIL",
+			},
 			"AUTH_PROXY_HEADER": {
 				parsedStringValue: "",
 				rawValue:          "",
@@ -614,6 +620,10 @@ func (c *configOptions) AdminPassword() string {
 
 func (c *configOptions) AdminUsername() string {
 	return c.options["ADMIN_USERNAME"].parsedStringValue
+}
+
+func (c *configOptions) AdminEmail() string {
+	return c.options["ADMIN_EMAIL"].parsedStringValue
 }
 
 func (c *configOptions) AuthProxyHeader() string {

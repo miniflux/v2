@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"log/slog"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 
@@ -31,7 +32,7 @@ func SendPush(subscriptions []model.WebPushSubscription, notification model.Noti
 		}
 		response, err := webpush.SendNotification([]byte(notificationJSON), &subs, &webpush.Options{
 			// AuthScheme:      "vapid", // Not yet supported by the lib
-			Subscriber:      "example@example.com", // Do not include "mailto:"
+			Subscriber:      config.Opts.AdminEmail(),
 			VAPIDPublicKey:  vapidPublicKey,
 			VAPIDPrivateKey: vapidPrivateKey,
 			TTL:             30,
