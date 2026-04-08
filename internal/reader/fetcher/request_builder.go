@@ -237,7 +237,7 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	if r.disableCompression {
 		req.Header.Set("Accept-Encoding", "identity")
 	} else {
-		req.Header.Set("Accept-Encoding", "br,gzip")
+		req.Header.Set("Accept-Encoding", "zstd,gzip")
 	}
 
 	// Set default Accept header if not already set.

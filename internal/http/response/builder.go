@@ -6,6 +6,7 @@ package response // import "miniflux.app/v2/internal/http/response"
 import (
 	"compress/flate"
 	"compress/gzip"
+	"fmt"
 	"io"
 	"log/slog"
 	"mime"
@@ -13,10 +14,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/andybalholm/brotli"
+	"github.com/klauspost/compress/zstd"
 )
 
 const compressionThreshold = 1024
+
+// zstd encoder is initialized once and reused because creating an encoder is expensive.
+// EncodeAll is safe for concurrent use on a single encoder.
+var zstdEncoder = getZstdEncoder()
+
+func getZstdEncoder() *zstd.Encoder {
+	zstdEncoder, err := zstd.NewWriter(nil, zstd.WithEncoderLevel(zstd.SpeedDefault))
+	if err != nil {
+		panic(fmt.Sprintf("Unable to create zstd encoder: %v", err))
+	}
+	return zstdEncoder
+}
 
 // Builder generates HTTP responses.
 type Builder struct {
@@ -136,13 +149,10 @@ func (b *Builder) compress(data []byte) {
 		b.headers["Vary"] = "Accept-Encoding"
 		acceptEncoding := b.r.Header.Get("Accept-Encoding")
 		switch {
-		case strings.Contains(acceptEncoding, "br"):
-			b.headers["Content-Encoding"] = "br"
+		case strings.Contains(acceptEncoding, "zstd"):
+			b.headers["Content-Encoding"] = "zstd"
 			b.writeHeaders()
-
-			brotliWriter := brotli.NewWriterV2(b.w, brotli.DefaultCompression)
-			brotliWriter.Write(data)
-			brotliWriter.Close()
+			b.w.Write(zstdEncoder.EncodeAll(data, nil))
 			return
 		case strings.Contains(acceptEncoding, "gzip"):
 			b.headers["Content-Encoding"] = "gzip"

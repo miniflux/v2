@@ -303,8 +303,8 @@ func TestRequestBuilder_WithoutCompression(t *testing.T) {
 
 func TestRequestBuilder_WithCompression(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Header.Get("Accept-Encoding") != "br,gzip" {
-			t.Errorf("Expected Accept-Encoding to be 'br,gzip', got '%s'", r.Header.Get("Accept-Encoding"))
+		if r.Header.Get("Accept-Encoding") != "zstd,gzip" {
+			t.Errorf("Expected Accept-Encoding to be 'zstd,gzip', got '%s'", r.Header.Get("Accept-Encoding"))
 		}
 		w.WriteHeader(http.StatusOK)
 	}))

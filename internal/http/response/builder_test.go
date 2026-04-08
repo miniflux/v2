@@ -11,6 +11,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/klauspost/compress/zstd"
 )
 
 func TestResponseHasCommonHeaders(t *testing.T) {
@@ -355,30 +357,6 @@ func TestIfNoneMatch(t *testing.T) {
 	}
 }
 
-func TestBuildResponseWithBrotliCompression(t *testing.T) {
-	body := strings.Repeat("a", compressionThreshold+1)
-	r, err := http.NewRequest("GET", "/", nil)
-	r.Header.Set("Accept-Encoding", "gzip, deflate, br")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	w := httptest.NewRecorder()
-
-	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		NewBuilder(w, r).WithBodyAsString(body).Write()
-	})
-
-	handler.ServeHTTP(w, r)
-	resp := w.Result()
-
-	expected := "br"
-	actual := resp.Header.Get("Content-Encoding")
-	if actual != expected {
-		t.Fatalf(`Unexpected header value, got %q instead of %q`, actual, expected)
-	}
-}
-
 func TestBuildResponseWithGzipCompression(t *testing.T) {
 	body := strings.Repeat("a", compressionThreshold+1)
 	r, err := http.NewRequest("GET", "/", nil)
@@ -522,6 +500,30 @@ func TestBuildResponseWithoutCompressionHeader(t *testing.T) {
 	}
 }
 
+func TestBuildResponseWithZstdCompression(t *testing.T) {
+	body := strings.Repeat("a", compressionThreshold+1)
+	r, err := http.NewRequest("GET", "/", nil)
+	r.Header.Set("Accept-Encoding", "zstd, gzip, br")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	w := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		NewBuilder(w, r).WithBodyAsString(body).Write()
+	})
+
+	handler.ServeHTTP(w, r)
+	resp := w.Result()
+
+	expected := "zstd"
+	actual := resp.Header.Get("Content-Encoding")
+	if actual != expected {
+		t.Fatalf(`Unexpected header value, got %q instead of %q`, actual, expected)
+	}
+}
+
 func TestBuildResponseWithReaderBody(t *testing.T) {
 	r, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
@@ -538,5 +540,42 @@ func TestBuildResponseWithReaderBody(t *testing.T) {
 
 	if actualBody := w.Body.String(); actualBody != "body" {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, "body")
+	}
+}
+
+func TestBuildResponseWithZstdCompressionRoundTrip(t *testing.T) {
+	body := strings.Repeat("hello world ", 200)
+	r, err := http.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	r.Header.Set("Accept-Encoding", "zstd")
+
+	w := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		NewBuilder(w, r).WithBodyAsString(body).Write()
+	})
+
+	handler.ServeHTTP(w, r)
+	resp := w.Result()
+
+	if resp.Header.Get("Content-Encoding") != "zstd" {
+		t.Fatalf("Expected Content-Encoding zstd, got %q", resp.Header.Get("Content-Encoding"))
+	}
+
+	decoder, err := zstd.NewReader(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer decoder.Close()
+
+	decompressed, err := decoder.DecodeAll(w.Body.Bytes(), nil)
+	if err != nil {
+		t.Fatalf("Failed to decompress zstd response: %v", err)
+	}
+
+	if string(decompressed) != body {
+		t.Fatalf("Round-trip mismatch: got %d bytes, want %d bytes", len(decompressed), len(body))
 	}
 }

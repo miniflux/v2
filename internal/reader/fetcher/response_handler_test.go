@@ -4,11 +4,15 @@
 package fetcher // import "miniflux.app/v2/internal/reader/fetcher"
 
 import (
+	"bytes"
 	"errors"
 	"io"
 	"net/http"
+	"net/url"
 	"testing"
 	"time"
+
+	"github.com/klauspost/compress/zstd"
 )
 
 type testReadCloser struct {
@@ -290,5 +294,43 @@ func TestResponseHandlerCloseClosesBodyOnClientError(t *testing.T) {
 
 	if !body.closed {
 		t.Error("Expected response body to be closed")
+	}
+}
+
+func TestGetReaderWithZstdContentEncoding(t *testing.T) {
+	original := []byte("The quick brown fox jumps over the lazy dog")
+
+	var compressed bytes.Buffer
+	encoder, err := zstd.NewWriter(&compressed)
+	if err != nil {
+		t.Fatalf("Failed to create zstd encoder: %v", err)
+	}
+	if _, err := encoder.Write(original); err != nil {
+		t.Fatalf("Failed to write zstd data: %v", err)
+	}
+	if err := encoder.Close(); err != nil {
+		t.Fatalf("Failed to close zstd encoder: %v", err)
+	}
+
+	header := http.Header{}
+	header.Set("Content-Encoding", "zstd")
+	rh := ResponseHandler{
+		httpResponse: &http.Response{
+			Header: header,
+			Body:   io.NopCloser(bytes.NewReader(compressed.Bytes())),
+			Request: &http.Request{
+				URL: &url.URL{Scheme: "https", Host: "example.com", Path: "/feed"},
+			},
+		},
+	}
+
+	reader := rh.getReader(1024 * 1024)
+	result, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatalf("Failed to read from getReader: %v", err)
+	}
+
+	if !bytes.Equal(result, original) {
+		t.Errorf("Expected %q, got %q", original, result)
 	}
 }

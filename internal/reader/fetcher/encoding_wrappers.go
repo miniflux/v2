@@ -7,28 +7,8 @@ import (
 	"compress/gzip"
 	"io"
 
-	"github.com/andybalholm/brotli"
+	"github.com/klauspost/compress/zstd"
 )
-
-type brotliReadCloser struct {
-	body         io.ReadCloser
-	brotliReader io.Reader
-}
-
-func NewBrotliReadCloser(body io.ReadCloser) *brotliReadCloser {
-	return &brotliReadCloser{
-		body:         body,
-		brotliReader: brotli.NewReader(body),
-	}
-}
-
-func (b *brotliReadCloser) Read(p []byte) (n int, err error) {
-	return b.brotliReader.Read(p)
-}
-
-func (b *brotliReadCloser) Close() error {
-	return b.body.Close()
-}
 
 type gzipReadCloser struct {
 	body       io.ReadCloser
@@ -55,4 +35,34 @@ func (gz *gzipReadCloser) Read(p []byte) (n int, err error) {
 
 func (gz *gzipReadCloser) Close() error {
 	return gz.body.Close()
+}
+
+type zstdReadCloser struct {
+	body    io.ReadCloser
+	decoder *zstd.Decoder
+	zstdErr error
+}
+
+func NewZstdReadCloser(body io.ReadCloser) *zstdReadCloser {
+	return &zstdReadCloser{body: body}
+}
+
+func (z *zstdReadCloser) Read(p []byte) (n int, err error) {
+	if z.decoder == nil {
+		if z.zstdErr == nil {
+			z.decoder, z.zstdErr = zstd.NewReader(z.body)
+		}
+		if z.zstdErr != nil {
+			return 0, z.zstdErr
+		}
+	}
+
+	return z.decoder.Read(p)
+}
+
+func (z *zstdReadCloser) Close() error {
+	if z.decoder != nil {
+		z.decoder.Close()
+	}
+	return z.body.Close()
 }

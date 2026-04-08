@@ -141,8 +141,8 @@ func (r *ResponseHandler) getReader(maxBodySize int64) io.ReadCloser {
 
 	reader := r.httpResponse.Body
 	switch contentEncoding {
-	case "br":
-		reader = NewBrotliReadCloser(reader)
+	case "zstd":
+		reader = NewZstdReadCloser(reader)
 	case "gzip":
 		reader = NewGzipReadCloser(reader)
 	}
