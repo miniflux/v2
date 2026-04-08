@@ -192,6 +192,7 @@ func csp(user *model.User, nonce string) string {
 	}
 
 	var policy strings.Builder
+	policy.Grow(350)
 	for key, value := range policies {
 		policy.WriteString(key)
 		policy.WriteString(" ")
