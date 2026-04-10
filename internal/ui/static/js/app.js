@@ -1077,6 +1077,17 @@ function initializeMediaPlayerHandlers() {
     });
 }
 
+
+function _arrayBufferToBase64( buffer ) {
+    var binary = '';
+    var bytes = new Uint8Array( buffer );
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode( bytes[ i ] );
+    }
+    return window.btoa( binary );
+}
+
 /**
  * Initialize the service worker and PWA installation prompt.
  */
@@ -1092,7 +1103,29 @@ function initializeServiceWorker() {
                 console.error("Service Worker registration failed:", error);
             });
         }
-    }
+		navigator.serviceWorker.getRegistrations()
+			.then(function(registration) {
+				return registration[0].pushManager.getSubscription();
+			})
+			.then(function(subscription) {
+				if (!subscription) {
+					subscribeWebpush();
+				} else {
+					let authScheme = 'vapid';
+					const userAgent = navigator.userAgent;
+					if (userAgent.indexOf("Chrome") > -1 && userAgent.indexOf("Edg") === -1) {
+						authScheme = 'webpush';
+					}
+					console.log('Existing subscription found.');
+					sendPOSTRequest('/register-webpush', {
+						endpoint: subscription.endpoint,
+						key: _arrayBufferToBase64(subscription.getKey("p256dh")),
+						auth: _arrayBufferToBase64(subscription.getKey("auth")),
+						authscheme: authScheme,
+					})
+				}
+			});
+	}
 
     // PWA installation prompt handling
     window.addEventListener("beforeinstallprompt", (event) => {
@@ -1265,6 +1298,42 @@ function initializeClickHandlers() {
             handleOriginalLink(event);
         }
     }, true);
+}
+
+function urlBase64ToUint8Array(base64String) {
+	const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+	const base64 = (base64String + padding)
+	.replace(/\-/g, '+')
+	.replace(/_/g, '/');
+	const rawData = window.atob(base64);
+	return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
+}
+
+function subscribeWebpush() {
+	navigator.serviceWorker.getRegistrations()
+		.then(function(registration) {
+			return fetch('/vapid').then(response => response.text()).then(vapidPublicKey => {
+				return registration[0].pushManager.subscribe({
+					userVisibleOnly: true,
+					applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+				});
+			})
+		})
+		.then(function(subscription) {
+			// Send the subscription to the server
+			let authScheme = 'vapid';
+			const userAgent = navigator.userAgent;
+			if (userAgent.indexOf("Chrome") > -1 && userAgent.indexOf("Edg") === -1) {
+				authScheme = 'webpush';
+			}
+			sendPOSTRequest('/register-webpush', {
+				endpoint: subscription.endpoint,
+				key: _arrayBufferToBase64(subscription.getKey("p256dh")),
+				auth: _arrayBufferToBase64(subscription.getKey("auth")),
+				authscheme: authScheme,
+			})
+		})
+		.catch(err => console.error(err));
 }
 
 // Initialize application handlers

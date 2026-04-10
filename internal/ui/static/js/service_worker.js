@@ -42,3 +42,14 @@ self.addEventListener("fetch", (event) => {
         );
     }
 });
+
+
+self.addEventListener('push', event => {
+	let notification = event.data.json();
+	const title = 'Miniflux: ' + notification.feed_title;
+	const options = {
+		body: notification.entry_title + "\n" + notification.entry_content
+	};
+
+	event.waitUntil(self.registration.showNotification(title, options));
+});

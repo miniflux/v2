@@ -4,9 +4,11 @@
 package processor // import "miniflux.app/v2/internal/reader/processor"
 
 import (
+	"fmt"
 	"log/slog"
 	"net/url"
 	"slices"
+	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -20,6 +22,7 @@ import (
 	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/reader/scraper"
 	"miniflux.app/v2/internal/reader/urlcleaner"
+	"miniflux.app/v2/internal/reader/webpush"
 	"miniflux.app/v2/internal/storage"
 )
 
@@ -165,6 +168,22 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 		entry.Content = sanitizer.SanitizeHTML(webpageBaseURL, entry.Content, &sanitizer.SanitizerOptions{OpenLinksInNewTab: user.OpenExternalLinksInNewTab})
 
 		updateEntryReadingTime(store, feed, entry, entryIsNew, user)
+
+		if entryIsNew {
+			// Send Wepbush Notification on new entries
+			subscriptions, _ := store.GetUserSubscriptions(userID)
+			vapidPrivateKey, vapidPublicKey, _ := store.GetVAPIDKeys()
+
+			notification := model.Notification{
+				FeedTitle:    feed.Title,
+				EntryTitle:   entry.Title,
+				EntryContent: strings.TrimSpace(fmt.Sprintf("%.200s", sanitizer.StripTags(entry.Content))),
+			}
+			err := webpush.SendPush(subscriptions, notification, vapidPublicKey, vapidPrivateKey, userID, store)
+			if err != nil {
+				slog.Error("Could not send webpush notification", slog.Any("error", err))
+			}
+		}
 
 		filteredEntries = append(filteredEntries, entry)
 	}

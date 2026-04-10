@@ -6,6 +6,7 @@ package database // import "miniflux.app/v2/internal/database"
 import (
 	"database/sql"
 
+	"github.com/SherClockHolmes/webpush-go"
 	"miniflux.app/v2/internal/crypto"
 )
 
@@ -118,6 +119,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 				foreign key (feed_id) references feeds(id) on delete cascade,
 				foreign key (icon_id) references icons(id) on delete cascade
 			);
+
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -1429,6 +1431,36 @@ var migrations = [...]func(tx *sql.Tx) error{
 	},
 	func(tx *sql.Tx) (err error) {
 		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN ignore_entry_updates bool default 'f'`)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			CREATE TABLE webpush_subscriptions (
+				user_id int not null,
+				endpoint text not null,
+				auth text,
+				p256dh text,
+				authscheme text,
+				foreign key (user_id) references users(id) on delete cascade,
+				primary key (endpoint)
+			);
+
+			CREATE TABLE vapid_key (
+				private_key text not null,
+				public_key text not null
+			);
+		`)
+		if err != nil {
+			return err
+		}
+		privateKey, publicKey, err := webpush.GenerateVAPIDKeys()
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec(`
+			INSERT INTO vapid_key (private_key, public_key)
+			VALUES ($1, $2) `,
+			privateKey, publicKey)
 		return err
 	},
 }

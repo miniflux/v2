@@ -173,6 +173,9 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 		mux.HandleFunc("POST /webauthn/{credentialHandle}/save", handler.saveCredential)
 	}
 
+	// Webpush
+	mux.HandleFunc("POST /register-webpush", handler.registerWebpush)
+
 	// robots.txt
 	mux.HandleFunc("GET /robots.txt", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
