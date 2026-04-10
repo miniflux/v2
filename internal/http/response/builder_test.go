@@ -5,6 +5,7 @@ package response // import "miniflux.app/v2/internal/http/response"
 
 import (
 	"bytes"
+	"mime"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -102,6 +103,90 @@ func TestBuildResponseWithAttachment(t *testing.T) {
 	actual := resp.Header.Get("Content-Disposition")
 	if actual != expected {
 		t.Fatalf(`Unexpected header value, got %q instead of %q`, actual, expected)
+	}
+}
+
+func TestBuildResponseWithAttachmentEscapesFilename(t *testing.T) {
+	r, err := http.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	w := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		NewBuilder(w, r).WithAttachment(`a";filename="malware.exe`).Write()
+	})
+
+	handler.ServeHTTP(w, r)
+	resp := w.Result()
+
+	actual := resp.Header.Get("Content-Disposition")
+	mediaType, params, err := mime.ParseMediaType(actual)
+	if err != nil {
+		t.Fatalf("Unexpected parse error for %q: %v", actual, err)
+	}
+
+	if mediaType != "attachment" {
+		t.Fatalf(`Unexpected media type, got %q instead of %q`, mediaType, "attachment")
+	}
+
+	if params["filename"] != `a";filename="malware.exe` {
+		t.Fatalf(`Unexpected filename, got %q instead of %q`, params["filename"], `a";filename="malware.exe`)
+	}
+}
+
+func TestBuildResponseWithInlineEscapesFilename(t *testing.T) {
+	r, err := http.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	w := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		NewBuilder(w, r).WithInline(`a";filename="malware.exe`).Write()
+	})
+
+	handler.ServeHTTP(w, r)
+	resp := w.Result()
+
+	actual := resp.Header.Get("Content-Disposition")
+	mediaType, params, err := mime.ParseMediaType(actual)
+	if err != nil {
+		t.Fatalf("Unexpected parse error for %q: %v", actual, err)
+	}
+
+	if mediaType != "inline" {
+		t.Fatalf(`Unexpected media type, got %q instead of %q`, mediaType, "inline")
+	}
+
+	if params["filename"] != `a";filename="malware.exe` {
+		t.Fatalf(`Unexpected filename, got %q instead of %q`, params["filename"], `a";filename="malware.exe`)
+	}
+}
+
+func TestFormatContentDisposition(t *testing.T) {
+	tests := []struct {
+		name            string
+		dispositionType string
+		filename        string
+		expected        string
+	}{
+		{"empty filename returns bare type", "inline", "", "inline"},
+		{"simple filename", "attachment", "photo.jpg", `attachment; filename=photo.jpg`},
+		{"filename with double quote", "inline", `a";filename="malware.exe`, `inline; filename="a\";filename=\"malware.exe"`},
+		{"filename with spaces", "attachment", "my file.txt", `attachment; filename="my file.txt"`},
+		{"non-ASCII filename", "attachment", "café.png", `attachment; filename*=utf-8''caf%C3%A9.png`},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual := formatContentDisposition(tt.dispositionType, tt.filename)
+			if actual != tt.expected {
+				t.Fatalf(`formatContentDisposition(%q, %q) = %q, want %q`, tt.dispositionType, tt.filename, actual, tt.expected)
+			}
+		})
 	}
 }
 
