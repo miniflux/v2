@@ -10,12 +10,10 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/http/cookie"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/ui/session"
 )
 
 func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
@@ -33,12 +31,17 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	sess := request.WebSession(r)
+
 	state := request.QueryStringParam(r, "state", "")
-	if subtle.ConstantTimeCompare([]byte(state), []byte(request.OAuth2State(r))) == 0 {
+	if subtle.ConstantTimeCompare([]byte(state), []byte(sess.OAuth2State())) == 0 {
 		slog.Warn("Invalid OAuth2 state value received")
 		response.HTMLRedirect(w, r, h.routePath("/"))
 		return
 	}
+
+	codeVerifier := sess.OAuth2CodeVerifier()
+	sess.ClearOAuth2Flow()
 
 	authProvider, err := getOAuth2Manager(r.Context()).FindProvider(provider)
 	if err != nil {
@@ -50,7 +53,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	profile, err := authProvider.Profile(r.Context(), code, request.OAuth2CodeVerifier(r))
+	profile, err := authProvider.Profile(r.Context(), code, codeVerifier)
 	if err != nil {
 		slog.Warn("Unable to get OAuth2 profile from provider",
 			slog.String("provider", provider),
@@ -60,11 +63,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess := session.New(h.store, request.SessionID(r))
-	sess.SetOAuth2State("")
-	sess.SetOAuth2CodeVerifier("")
-
-	printer := locale.NewPrinter(request.UserLanguage(r))
+	printer := locale.NewPrinter(sess.Language())
 
 	if request.IsAuthenticated(r) {
 		loggedUser, err := h.store.UserByID(request.UserID(r))
@@ -79,7 +78,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 				slog.String("oauth2_provider", provider),
 				slog.String("oauth2_profile_id", profile.ID),
 			)
-			sess.NewFlashErrorMessage(printer.Print("error.duplicate_linked_account"))
+			sess.SetErrorMessage(printer.Print("error.duplicate_linked_account"))
 			response.HTMLRedirect(w, r, h.routePath("/settings"))
 			return
 		}
@@ -92,7 +91,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 				slog.String("existing_profile_id", existingProfileID),
 				slog.String("new_profile_id", profile.ID),
 			)
-			sess.NewFlashErrorMessage(printer.Print("error.duplicate_linked_account"))
+			sess.SetErrorMessage(printer.Print("error.duplicate_linked_account"))
 			response.HTMLRedirect(w, r, h.routePath("/settings"))
 			return
 		}
@@ -103,7 +102,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		sess.NewFlashMessage(printer.Print("alert.account_linked"))
+		sess.SetSuccessMessage(printer.Print("alert.account_linked"))
 		response.HTMLRedirect(w, r, h.routePath("/settings"))
 		return
 	}
@@ -135,31 +134,19 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	clientIP := request.ClientIP(r)
-	sessionToken, _, err := h.store.CreateUserSessionFromUsername(user.Username, r.UserAgent(), clientIP)
-	if err != nil {
-		response.HTMLServerError(w, r, err)
-		return
-	}
-
 	slog.Info("User authenticated successfully using OAuth2",
 		slog.Bool("authentication_successful", true),
-		slog.String("client_ip", clientIP),
+		slog.String("client_ip", request.ClientIP(r)),
 		slog.String("user_agent", r.UserAgent()),
 		slog.Int64("user_id", user.ID),
 		slog.String("username", user.Username),
 	)
 
 	h.store.SetLastLogin(user.ID)
-	sess.SetLanguage(user.Language)
-	sess.SetTheme(user.Theme)
-
-	http.SetCookie(w, cookie.New(
-		cookie.CookieUserSessionID,
-		sessionToken,
-		config.Opts.HTTPS(),
-		config.Opts.BasePath(),
-	))
+	if err := authenticateWebSession(w, r, h.store, user); err != nil {
+		response.HTMLServerError(w, r, err)
+		return
+	}
 
 	response.HTMLRedirect(w, r, h.basePath+"/"+user.DefaultHomePage)
 }

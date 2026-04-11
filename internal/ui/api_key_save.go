@@ -10,7 +10,6 @@ import (
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
-	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 	"miniflux.app/v2/internal/validator"
 )
@@ -28,8 +27,7 @@ func (h *handler) saveAPIKey(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if validationErr := validator.ValidateAPIKeyCreation(h.store, user.ID, apiKeyCreationRequest); validationErr != nil {
-		sess := session.New(h.store, request.SessionID(r))
-		view := view.New(h.tpl, r, sess)
+		view := view.New(h.tpl, r)
 		view.Set("form", apiKeyForm)
 		view.Set("menu", "settings")
 		view.Set("user", user)

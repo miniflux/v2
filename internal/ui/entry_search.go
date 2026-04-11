@@ -10,7 +10,6 @@ import (
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
-	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 )
 
@@ -81,8 +80,7 @@ func (h *handler) showSearchEntryPage(w http.ResponseWriter, r *http.Request) {
 		prevEntryRoute = h.routePath("/search/entry/%d", prevEntry.ID)
 	}
 
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
+	view := view.New(h.tpl, r)
 	view.Set("searchQuery", searchQuery)
 	view.Set("searchUnreadOnly", unreadOnly)
 	view.Set("entry", entry)

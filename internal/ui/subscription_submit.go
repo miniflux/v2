@@ -16,7 +16,6 @@ import (
 	feedHandler "miniflux.app/v2/internal/reader/handler"
 	"miniflux.app/v2/internal/reader/subscription"
 	"miniflux.app/v2/internal/ui/form"
-	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 )
 
@@ -33,8 +32,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess := session.New(h.store, request.SessionID(r))
-	v := view.New(h.tpl, r, sess)
+	v := view.New(h.tpl, r)
 	v.Set("categories", categories)
 	v.Set("menu", "feeds")
 	v.Set("user", user)
@@ -155,7 +153,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 
 		response.HTMLRedirect(w, r, h.routePath("/feed/%d/entries", feed.ID))
 	case n > 1:
-		view := view.New(h.tpl, r, sess)
+		view := view.New(h.tpl, r)
 		view.Set("subscriptions", subscriptions)
 		view.Set("form", subscriptionForm)
 		view.Set("menu", "feeds")

@@ -12,7 +12,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/locale"
-	"miniflux.app/v2/internal/ui/session"
 )
 
 func (h *handler) refreshCategoryEntriesPage(w http.ResponseWriter, r *http.Request) {
@@ -27,13 +26,13 @@ func (h *handler) refreshCategoryFeedsPage(w http.ResponseWriter, r *http.Reques
 
 func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) int64 {
 	categoryID := request.RouteInt64Param(r, "categoryID")
-	printer := locale.NewPrinter(request.UserLanguage(r))
-	sess := session.New(h.store, request.SessionID(r))
+	sess := request.WebSession(r)
+	printer := locale.NewPrinter(sess.Language())
 
 	// Avoid accidental and excessive refreshes.
-	if time.Since(request.LastForceRefresh(r)) < config.Opts.ForceRefreshInterval() {
+	if time.Since(sess.LastForceRefresh()) < config.Opts.ForceRefreshInterval() {
 		interval := int(config.Opts.ForceRefreshInterval().Minutes())
-		sess.NewFlashErrorMessage(printer.Plural("alert.too_many_feeds_refresh", interval, interval))
+		sess.SetErrorMessage(printer.Plural("alert.too_many_feeds_refresh", interval, interval))
 	} else {
 		userID := request.UserID(r)
 		// We allow the end-user to force refresh all its feeds in this category
@@ -59,8 +58,8 @@ func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) int64 
 
 		go h.pool.Push(jobs)
 
-		sess.SetLastForceRefresh()
-		sess.NewFlashMessage(printer.Print("alert.background_feed_refresh"))
+		sess.MarkForceRefreshed()
+		sess.SetSuccessMessage(printer.Print("alert.background_feed_refresh"))
 	}
 
 	return categoryID

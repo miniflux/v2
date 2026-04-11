@@ -76,7 +76,7 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 		labelSearchMenu = printer.Print("menu.search")
 		labelSettingsMenu = printer.Print("menu.settings")
 	}
-	themeColor := model.ThemeColor(request.UserTheme(r), "light")
+	themeColor := model.ThemeColor(request.WebSession(r).Theme(), "light")
 	manifest := &webManifest{
 		Name:            "Miniflux",
 		ShortName:       "Miniflux",

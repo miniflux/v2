@@ -16,7 +16,9 @@ import (
 // The returned handler expects the base path to be stripped from the request URL.
 func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 	basePath := config.Opts.BasePath()
-	middleware := newMiddleware(basePath, store)
+	webSessionMiddleware := newWebSessionMiddleware(basePath, store)
+	csrfMiddleware := newCSRFMiddleware(basePath)
+	authProxyMiddleware := newAuthProxyMiddleware(basePath, store)
 
 	templateEngine := template.NewEngine(basePath)
 	templateEngine.ParseTemplates()
@@ -159,7 +161,7 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 	// Authentication pages.
 	mux.HandleFunc("POST /login", handler.checkLogin)
 	mux.HandleFunc("GET /logout", handler.logout)
-	mux.Handle("GET /{$}", middleware.handleAuthProxy(http.HandlerFunc(handler.showLoginPage)))
+	mux.Handle("GET /{$}", authProxyMiddleware.handle(http.HandlerFunc(handler.showLoginPage)))
 
 	// WebAuthn flow.
 	if config.Opts.WebAuthn() {
@@ -179,6 +181,6 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 		w.Write([]byte("User-agent: *\nDisallow: /"))
 	})
 
-	// Apply middleware chain: user session then app session.
-	return middleware.handleUserSession(middleware.handleAppSession(mux))
+	// Apply middleware chain: web session -> CSRF validation -> handlers.
+	return webSessionMiddleware.handle(csrfMiddleware.handle(mux))
 }
