@@ -1431,4 +1431,30 @@ var migrations = [...]func(tx *sql.Tx) error{
 		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN ignore_entry_updates bool default 'f'`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			DROP TABLE IF EXISTS sessions;
+			DROP TABLE IF EXISTS user_sessions;
+
+			CREATE TABLE web_sessions (
+				id text not null,
+				secret_hash bytea not null,
+				user_id int references users(id) on delete cascade,
+				created_at timestamp with time zone not null default now(),
+				user_agent text not null default '',
+				ip inet,
+				state jsonb not null default '{}'::jsonb,
+				primary key (id),
+				check (jsonb_typeof(state) = 'object')
+			);
+
+			CREATE INDEX web_sessions_user_id_idx
+				ON web_sessions (user_id)
+				WHERE user_id IS NOT NULL;
+
+			CREATE INDEX web_sessions_created_at_idx
+				ON web_sessions (created_at);
+		`)
+		return err
+	},
 }

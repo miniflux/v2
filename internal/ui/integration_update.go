@@ -13,12 +13,11 @@ import (
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/ui/form"
-	"miniflux.app/v2/internal/ui/session"
 )
 
 func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
-	printer := locale.NewPrinter(request.UserLanguage(r))
-	sess := session.New(h.store, request.SessionID(r))
+	sess := request.WebSession(r)
+	printer := locale.NewPrinter(sess.Language())
 	userID := request.UserID(r)
 
 	integration, err := h.store.Integration(userID)
@@ -31,7 +30,7 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 	integrationForm.Merge(integration)
 
 	if integration.FeverUsername != "" && h.store.HasDuplicateFeverUsername(userID, integration.FeverUsername) {
-		sess.NewFlashErrorMessage(printer.Print("error.duplicate_fever_username"))
+		sess.SetErrorMessage(printer.Print("error.duplicate_fever_username"))
 		response.HTMLRedirect(w, r, h.routePath("/integrations"))
 		return
 	}
@@ -45,7 +44,7 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if integration.GoogleReaderUsername != "" && h.store.HasDuplicateGoogleReaderUsername(userID, integration.GoogleReaderUsername) {
-		sess.NewFlashErrorMessage(printer.Print("error.duplicate_googlereader_username"))
+		sess.SetErrorMessage(printer.Print("error.duplicate_googlereader_username"))
 		response.HTMLRedirect(w, r, h.routePath("/integrations"))
 		return
 	}
@@ -76,7 +75,7 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 
 	if integrationForm.LinktacoEnabled {
 		if integrationForm.LinktacoAPIToken == "" || integrationForm.LinktacoOrgSlug == "" {
-			sess.NewFlashErrorMessage(printer.Print("error.linktaco_missing_required_fields"))
+			sess.SetErrorMessage(printer.Print("error.linktaco_missing_required_fields"))
 			response.HTMLRedirect(w, r, h.routePath("/integrations"))
 			return
 		}
@@ -91,6 +90,6 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess.NewFlashMessage(printer.Print("alert.prefs_saved"))
+	sess.SetSuccessMessage(printer.Print("alert.prefs_saved"))
 	response.HTMLRedirect(w, r, h.routePath("/integrations"))
 }

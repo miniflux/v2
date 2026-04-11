@@ -6,6 +6,7 @@ package ui // import "miniflux.app/v2/internal/ui"
 import (
 	"bytes"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -16,13 +17,11 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/http/cookie"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
-	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 )
 
@@ -112,8 +111,7 @@ func (h *handler) beginRegistration(w http.ResponseWriter, r *http.Request) {
 		response.JSONServerError(w, r, err)
 		return
 	}
-	s := session.New(h.store, request.SessionID(r))
-	s.SetWebAuthnSessionData(&model.WebAuthnSession{SessionData: sessionData})
+	request.WebSession(r).SetWebAuthn(sessionData)
 	response.JSON(w, r, options)
 }
 
@@ -133,9 +131,13 @@ func (h *handler) finishRegistration(w http.ResponseWriter, r *http.Request) {
 		response.JSONServerError(w, r, err)
 		return
 	}
-	sessionData := request.WebAuthnSessionData(r)
+	sessionData := request.WebSession(r).ConsumeWebAuthnSession()
+	if sessionData == nil {
+		response.JSONBadRequest(w, r, errors.New("missing webauthn session data"))
+		return
+	}
 	webAuthnUser := WebAuthnUser{user, sessionData.UserID, nil}
-	cred, err := web.FinishRegistration(webAuthnUser, *sessionData.SessionData, r)
+	cred, err := web.FinishRegistration(webAuthnUser, *sessionData, r)
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
@@ -190,8 +192,7 @@ func (h *handler) beginLogin(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	s := session.New(h.store, request.SessionID(r))
-	s.SetWebAuthnSessionData(&model.WebAuthnSession{SessionData: sessionData})
+	request.WebSession(r).SetWebAuthn(sessionData)
 	response.JSON(w, r, assertion)
 }
 
@@ -216,7 +217,11 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 		slog.Bool("has_backup_state", parsedResponse.Response.AuthenticatorData.Flags.HasBackupState()),
 	)
 
-	sessionData := request.WebAuthnSessionData(r)
+	sessionData := request.WebSession(r).ConsumeWebAuthnSession()
+	if sessionData == nil {
+		response.JSONBadRequest(w, r, errors.New("missing webauthn session data"))
+		return
+	}
 
 	var user *model.User
 	username := request.QueryStringParam(r, "username", "")
@@ -255,7 +260,7 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 			)
 		}
 
-		credCredential, err := web.ValidateLogin(webAuthUser, *sessionData.SessionData, parsedResponse)
+		credCredential, err := web.ValidateLogin(webAuthUser, *sessionData, parsedResponse)
 		if err != nil {
 			slog.Warn("WebAuthn: ValidateLogin failed", slog.Any("error", err))
 			response.JSONUnauthorized(w, r)
@@ -298,18 +303,12 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 			return WebAuthnUser{user, userHandle, []model.WebAuthnCredential{*matchingCredential}}, nil
 		}
 
-		_, err = web.ValidateDiscoverableLogin(userByHandle, *sessionData.SessionData, parsedResponse)
+		_, err = web.ValidateDiscoverableLogin(userByHandle, *sessionData, parsedResponse)
 		if err != nil {
 			slog.Warn("WebAuthn: ValidateDiscoverableLogin failed", slog.Any("error", err))
 			response.JSONUnauthorized(w, r)
 			return
 		}
-	}
-
-	sessionToken, _, err := h.store.CreateUserSessionFromUsername(user.Username, r.UserAgent(), request.ClientIP(r))
-	if err != nil {
-		response.JSONServerError(w, r, err)
-		return
 	}
 
 	h.store.WebAuthnSaveLogin(matchingCredential.Handle)
@@ -323,23 +322,16 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 	)
 	h.store.SetLastLogin(user.ID)
 
-	sess := session.New(h.store, request.SessionID(r))
-	sess.SetLanguage(user.Language)
-	sess.SetTheme(user.Theme)
-
-	http.SetCookie(w, cookie.New(
-		cookie.CookieUserSessionID,
-		sessionToken,
-		config.Opts.HTTPS(),
-		config.Opts.BasePath(),
-	))
+	if err := authenticateWebSession(w, r, h.store, user); err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
 
 	response.NoContent(w, r)
 }
 
 func (h *handler) renameCredential(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
+	view := view.New(h.tpl, r)
 
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {

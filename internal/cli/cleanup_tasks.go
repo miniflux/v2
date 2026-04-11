@@ -14,12 +14,13 @@ import (
 )
 
 func runCleanupTasks(store *storage.Storage) {
-	nbSessions := store.CleanOldSessions(config.Opts.CleanupRemoveSessionsInterval())
-	nbUserSessions := store.CleanOldUserSessions(config.Opts.CleanupRemoveSessionsInterval())
-	slog.Info("Sessions cleanup completed",
-		slog.Int64("application_sessions_removed", nbSessions),
-		slog.Int64("user_sessions_removed", nbUserSessions),
-	)
+	if nbWebSessions, err := store.CleanOldWebSessions(config.Opts.CleanupRemoveSessionsInterval()); err != nil {
+		slog.Error("Unable to clean old web sessions", slog.Any("error", err))
+	} else {
+		slog.Info("Sessions cleanup completed",
+			slog.Int64("web_sessions_removed", nbWebSessions),
+		)
+	}
 
 	startTime := time.Now()
 	if rowsAffected, err := store.ArchiveEntries(model.EntryStatusRead, config.Opts.CleanupArchiveReadInterval(), config.Opts.CleanupArchiveBatchSize()); err != nil {

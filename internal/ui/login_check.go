@@ -4,24 +4,22 @@
 package ui // import "miniflux.app/v2/internal/ui"
 
 import (
+	"errors"
 	"log/slog"
 	"net/http"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/http/cookie"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/ui/form"
-	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 	"miniflux.app/v2/internal/urllib"
 )
 
 func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 	clientIP := request.ClientIP(r)
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
+	view := view.New(h.tpl, r)
 	redirectURL := r.FormValue("redirect_url")
 	view.Set("redirectURL", redirectURL)
 
@@ -35,11 +33,11 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	authForm := form.NewAuthForm(r)
-	view.Set("errorMessage", locale.NewLocalizedError("error.bad_credentials").Translate(request.UserLanguage(r)))
+	view.Set("errorMessage", locale.NewLocalizedError("error.bad_credentials").Translate(request.WebSession(r).Language()))
 	view.Set("form", authForm)
 
 	if validationErr := authForm.Validate(); validationErr != nil {
-		translatedErrorMessage := validationErr.Translate(request.UserLanguage(r))
+		translatedErrorMessage := validationErr.Translate(request.WebSession(r).Language())
 		slog.Warn("Validation error during login check",
 			slog.Bool("authentication_failed", true),
 			slog.String("client_ip", clientIP),
@@ -63,9 +61,13 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessionToken, userID, err := h.store.CreateUserSessionFromUsername(authForm.Username, r.UserAgent(), clientIP)
+	user, err := h.store.UserByUsername(authForm.Username)
 	if err != nil {
 		response.HTMLServerError(w, r, err)
+		return
+	}
+	if user == nil {
+		response.HTMLServerError(w, r, errors.New("authenticated user not found"))
 		return
 	}
 
@@ -73,27 +75,15 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 		slog.Bool("authentication_successful", true),
 		slog.String("client_ip", clientIP),
 		slog.String("user_agent", r.UserAgent()),
-		slog.Int64("user_id", userID),
+		slog.Int64("user_id", user.ID),
 		slog.String("username", authForm.Username),
 	)
 
-	h.store.SetLastLogin(userID)
-
-	user, err := h.store.UserByID(userID)
-	if err != nil {
+	h.store.SetLastLogin(user.ID)
+	if err := authenticateWebSession(w, r, h.store, user); err != nil {
 		response.HTMLServerError(w, r, err)
 		return
 	}
-
-	sess.SetLanguage(user.Language)
-	sess.SetTheme(user.Theme)
-
-	http.SetCookie(w, cookie.New(
-		cookie.CookieUserSessionID,
-		sessionToken,
-		config.Opts.HTTPS(),
-		config.Opts.BasePath(),
-	))
 
 	if redirectURL != "" && urllib.IsRelativePath(redirectURL) {
 		response.HTMLRedirect(w, r, redirectURL)

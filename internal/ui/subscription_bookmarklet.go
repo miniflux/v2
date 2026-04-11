@@ -11,7 +11,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/ui/form"
-	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 )
 
@@ -44,8 +43,7 @@ func (h *handler) bookmarklet(w http.ResponseWriter, r *http.Request) {
 		bookmarkletURL = urlRe.FindString(text)
 	}
 
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
+	view := view.New(h.tpl, r)
 	view.Set("form", form.SubscriptionForm{URL: bookmarkletURL})
 	view.Set("categories", categories)
 	view.Set("menu", "feeds")

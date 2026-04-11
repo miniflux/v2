@@ -9,7 +9,6 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/template"
-	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/static"
 )
 
@@ -32,18 +31,20 @@ func (v *view) Render(template string) []byte {
 }
 
 // New returns a new view with default parameters.
-func New(tpl *template.Engine, r *http.Request, sess *session.Session) *view {
-	theme := request.UserTheme(r)
+func New(tpl *template.Engine, r *http.Request) *view {
+	webSession := request.WebSession(r)
+	theme := webSession.Theme()
+	successMessage, errorMessage := webSession.ConsumeMessages()
 	return &view{tpl, r, map[string]any{
-		"menu":              "",
-		"csrf":              request.CSRF(r),
-		"flashMessage":      sess.FlashMessage(request.FlashMessage(r)),
-		"flashErrorMessage": sess.FlashErrorMessage(request.FlashErrorMessage(r)),
-		"theme":             theme,
-		"language":          request.UserLanguage(r),
-		"theme_checksum":    static.StylesheetBundles[theme+".css"].Checksum,
-		"app_js_checksum":   static.JavascriptBundles["app.js"].Checksum,
-		"sw_js_checksum":    static.JavascriptBundles["service-worker.js"].Checksum,
-		"webAuthnEnabled":   config.Opts.WebAuthn(),
+		"menu":            "",
+		"csrf":            webSession.CSRF(),
+		"successMessage":  successMessage,
+		"errorMessage":    errorMessage,
+		"theme":           theme,
+		"language":        webSession.Language(),
+		"theme_checksum":  static.StylesheetBundles[theme+".css"].Checksum,
+		"app_js_checksum": static.JavascriptBundles["app.js"].Checksum,
+		"sw_js_checksum":  static.JavascriptBundles["service-worker.js"].Checksum,
+		"webAuthnEnabled": config.Opts.WebAuthn(),
 	}}
 }

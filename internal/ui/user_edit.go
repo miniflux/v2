@@ -9,7 +9,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/ui/form"
-	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 )
 
@@ -43,8 +42,7 @@ func (h *handler) showEditUserPage(w http.ResponseWriter, r *http.Request) {
 		IsAdmin:  selectedUser.IsAdmin,
 	}
 
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
+	view := view.New(h.tpl, r)
 	view.Set("form", userForm)
 	view.Set("selected_user", selectedUser)
 	view.Set("menu", "settings")

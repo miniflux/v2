@@ -16,12 +16,12 @@
         <th>{{ t "page.sessions.table.actions" }}</th>
     </tr>
     {{ range .sessions }}
-    <tr {{ if eq .Token $.currentSessionToken }}class="row-highlighted"{{ end }}>
+    <tr {{ if eq .ID $.currentSessionID }}class="row-highlighted"{{ end }}>
         <td class="column-20" title="{{ isodate .CreatedAt }}">{{ elapsed $.user.Timezone .CreatedAt }}</td>
         <td class="column-20" title="{{ .IP }}">{{ .IP }}</td>
         <td title="{{ .UserAgent }}">{{ .UserAgent }}</td>
         <td class="column-20">
-            {{ if eq .Token $.currentSessionToken }}
+            {{ if eq .ID $.currentSessionID }}
                 {{ t "page.sessions.table.current_session" }}
             {{ else }}
                 <a href="#"
@@ -30,7 +30,7 @@
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
-                    data-url="{{ routePath "/sessions/%d/remove" .ID }}">{{ icon "delete" }}{{ t "action.remove" }}</a>
+                    data-url="{{ routePath "/sessions/%s/remove" .ID }}">{{ icon "delete" }}{{ t "action.remove" }}</a>
             {{ end }}
         </td>
     </tr>

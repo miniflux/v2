@@ -12,7 +12,6 @@ import (
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/timezone"
 	"miniflux.app/v2/internal/ui/form"
-	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 	"miniflux.app/v2/internal/validator"
 )
@@ -32,8 +31,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 
 	settingsForm := form.NewSettingsForm(r)
 
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
+	view := view.New(h.tpl, r)
 	view.Set("form", settingsForm)
 	view.Set("readBehaviors", map[string]any{
 		"NoAutoMarkAsRead":                           form.NoAutoMarkAsRead,
@@ -92,8 +90,8 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess.SetLanguage(user.Language)
-	sess.SetTheme(user.Theme)
-	sess.NewFlashMessage(locale.NewPrinter(request.UserLanguage(r)).Printf("alert.prefs_saved"))
+	sess := request.WebSession(r)
+	sess.SetUser(user)
+	sess.SetSuccessMessage(locale.NewPrinter(sess.Language()).Printf("alert.prefs_saved"))
 	response.HTMLRedirect(w, r, h.routePath("/settings"))
 }

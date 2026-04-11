@@ -15,7 +15,6 @@ import (
 	"miniflux.app/v2/internal/proxyrotator"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/opml"
-	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 )
 
@@ -44,8 +43,7 @@ func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
 		slog.Int64("file_size", fileHeader.Size),
 	)
 
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
+	view := view.New(h.tpl, r)
 	view.Set("menu", "feeds")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
@@ -84,8 +82,7 @@ func (h *handler) fetchOPML(w http.ResponseWriter, r *http.Request) {
 		slog.String("opml_file_url", opmlFileURL),
 	)
 
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
+	view := view.New(h.tpl, r)
 	view.Set("menu", "feeds")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
