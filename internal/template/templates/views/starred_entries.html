@@ -27,7 +27,7 @@
         >
             <header class="item-header" dir="auto">
                 <h2 id="entry-title-{{ .ID }}" class="item-title">
-                    <a href="{{ routePath "/starred/entry/%d" .ID }}">
+                    <a href="{{ routePath "/starred/entry/%d" .ID }}" {{ if and $.user.AlwaysOpenExternalLinks $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
                         {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ routePath "/feed-icon/%s" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
                         {{ end }}
