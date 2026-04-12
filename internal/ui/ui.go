@@ -181,6 +181,6 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 		w.Write([]byte("User-agent: *\nDisallow: /"))
 	})
 
-	// Apply middleware chain: web session -> CSRF validation -> handlers.
-	return webSessionMiddleware.handle(csrfMiddleware.handle(mux))
+	// Apply middleware chain: cross-origin protection -> web session -> CSRF validation -> handlers.
+	return http.NewCrossOriginProtection().Handler(webSessionMiddleware.handle(csrfMiddleware.handle(mux)))
 }
