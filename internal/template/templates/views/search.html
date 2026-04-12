@@ -33,7 +33,7 @@
             >
                 <header class="item-header" dir="auto">
                     <h2 id="entry-title-{{ .ID }}" class="item-title">
-                        <a href="{{ routePath "/search/entry/%d" .ID }}{{ queryString (dict "q" $.searchQuery "unread" $.searchUnreadOnly) }}">
+                        <a href="{{ routePath "/search/entry/%d" .ID }}{{ queryString (dict "q" $.searchQuery "unread" $.searchUnreadOnly) }}" {{ if and $.user.AlwaysOpenExternalLinks $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
                             {{ if ne .Feed.Icon.IconID 0 }}
                             <img src="{{ routePath "/feed-icon/%s" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
                             {{ else }}

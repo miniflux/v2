@@ -102,6 +102,7 @@
                         {{ else }}
                         href="{{ routePath "/category/%d/entry/%d" .Feed.Category.ID .ID }}"
                         {{ end }}
+                        {{ if and $.user.AlwaysOpenExternalLinks $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}
                     >
                         {{ if ne .Feed.Icon.IconID 0 }}
                             <img src="{{ routePath "/feed-icon/%s" .Feed.Icon.ExternalIconID }}" width="16" height="16" loading="lazy" alt="">
