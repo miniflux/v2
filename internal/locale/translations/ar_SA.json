@@ -385,6 +385,7 @@
     "form.prefs.label.show_reading_time": "إظهار الوقت المقدر للقراءة للمقالات",
     "form.prefs.label.theme": "السمة",
     "form.prefs.label.timezone": "المنطقة الزمنية",
+    "form.prefs.label.disable_bulk_operations_confirmations": "تعطيل التأكيدات للعمليات الجماعية (تعليم الجميع كمقروء، تعليم الصفحة كمقروء)",
     "form.prefs.select.alphabetical": "أبجدي",
     "form.prefs.select.browser": "المتصفح",
     "form.prefs.select.created_time": "وقت إنشاء المقال",

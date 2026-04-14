@@ -373,6 +373,7 @@
     "form.prefs.label.show_reading_time": "Geschätzte Lesezeit für Artikel anzeigen",
     "form.prefs.label.theme": "Thema",
     "form.prefs.label.timezone": "Zeitzone",
+    "form.prefs.label.disable_bulk_operations_confirmations": "Bestätigungsaufforderungen für Massenvorgänge deaktivieren (alle als gelesen markieren, Seite als gelesen markieren)",
     "form.prefs.select.alphabetical": "Alphabetisch",
     "form.prefs.select.browser": "Systembrowser",
     "form.prefs.select.created_time": "Artikel erstellt am",

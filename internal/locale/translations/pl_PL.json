@@ -376,6 +376,7 @@
     "form.prefs.label.show_reading_time": "Pokaż szacowany czas czytania wpisów",
     "form.prefs.label.theme": "Wygląd",
     "form.prefs.label.timezone": "Strefa czasowa",
+    "form.prefs.label.disable_bulk_operations_confirmations": "Wyłącz potwierdzenia dla operacji zbiorczych (oznacz wszystko jako przeczytane, oznacz stronę jako przeczytaną)",
     "form.prefs.select.alphabetical": "Alfabetycznie",
     "form.prefs.select.browser": "Przeglądarkowy",
     "form.prefs.select.created_time": "Czas utworzenia wpisu",

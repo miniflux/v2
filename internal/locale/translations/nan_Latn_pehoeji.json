@@ -370,6 +370,7 @@
     "form.prefs.label.show_reading_time": "Hián-sī siau-sit àn-sǹg ài gōa-kú lâi tha̍k",
     "form.prefs.label.theme": "Chú-tôe",
     "form.prefs.label.timezone": "Sî-khu",
+    "form.prefs.label.disable_bulk_operations_confirmations": "Hip ê chènghoat chhiam-miâ úi tō-hōn chok-iŭ (àn sóŭ Ů chiút chèn chò hoat-thǎk, àn iáh chiút chèn chò hoat-thǎk)",
     "form.prefs.select.alphabetical": "Chiàu lī-bú pâi",
     "form.prefs.select.browser": "Iû-lâm-khì",
     "form.prefs.select.created_time": "Siau-sit kiàn-li̍p sî-kan",

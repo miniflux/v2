@@ -373,6 +373,7 @@
     "form.prefs.label.show_reading_time": "Toon geschatte leestijd van artikelen",
     "form.prefs.label.theme": "Thema",
     "form.prefs.label.timezone": "Tijdzone",
+    "form.prefs.label.disable_bulk_operations_confirmations": "Bevestigingsprompts uitschakelen voor bulkoperaties (markeer alles als gelezen, markeer pagina als gelezen)",
     "form.prefs.select.alphabetical": "Alfabetisch",
     "form.prefs.select.browser": "Systeembrowser",
     "form.prefs.select.created_time": "Tijdstip van aanmaken artikel",

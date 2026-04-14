@@ -1457,4 +1457,8 @@ var migrations = [...]func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`ALTER TABLE users ADD COLUMN disable_bulk_operations_confirmations bool default 'f'`)
+		return err
+	},
 }

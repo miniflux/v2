@@ -370,6 +370,7 @@
     "form.prefs.label.show_reading_time": "Tampilkan perkiraan waktu baca untuk artikel",
     "form.prefs.label.theme": "Tema",
     "form.prefs.label.timezone": "Zona Waktu",
+    "form.prefs.label.disable_bulk_operations_confirmations": "Nonaktifkan konfirmasi untuk operasi massal (tandai semua sebagai dibaca, tandai halaman sebagai dibaca)",
     "form.prefs.select.alphabetical": "Secara alfabet",
     "form.prefs.select.browser": "Peramban",
     "form.prefs.select.created_time": "Waktu entri dibuat",

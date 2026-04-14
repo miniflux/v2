@@ -15,20 +15,20 @@
                     class="page-button"
                     data-action="markPageAsRead"
                     data-show-only-unread="1"
-                    data-label-question="{{ t "confirm.question" }}"
-                    data-label-yes="{{ t "confirm.yes" }}"
-                    data-label-no="{{ t "confirm.no" }}"
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-question="{{ t "confirm.question" }}"{{ end }}
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-yes="{{ t "confirm.yes" }}"{{ end }}
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-no="{{ t "confirm.no" }}"{{ end }}
                     data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</button>
             </li>
             <li>
                 <button
                     class="page-button"
-                    data-confirm="true"
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-confirm="true"{{ end }}
                     data-url="{{ routePath "/mark-all-as-read" }}"
                     data-redirect-url="{{ routePath "/unread" }}"
-                    data-label-question="{{ t "confirm.question" }}"
-                    data-label-yes="{{ t "confirm.yes" }}"
-                    data-label-no="{{ t "confirm.no" }}"
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-question="{{ t "confirm.question" }}"{{ end }}
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-yes="{{ t "confirm.yes" }}"{{ end }}
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-no="{{ t "confirm.no" }}"{{ end }}
                     data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</button>
             </li>
         </ul>
@@ -78,9 +78,9 @@
                 <button
                     class="page-button"
                     data-action="markPageAsRead"
-                    data-label-question="{{ t "confirm.question" }}"
-                    data-label-yes="{{ t "confirm.yes" }}"
-                    data-label-no="{{ t "confirm.no" }}"
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-question="{{ t "confirm.question" }}"{{ end }}
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-yes="{{ t "confirm.yes" }}"{{ end }}
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-no="{{ t "confirm.no" }}"{{ end }}
                     data-label-loading="{{ t "confirm.loading" }}"
                 >
                     {{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}

@@ -373,6 +373,7 @@
     "form.prefs.label.show_reading_time": "Mostra il tempo di lettura stimato per gli articoli",
     "form.prefs.label.theme": "Tema",
     "form.prefs.label.timezone": "Fuso orario",
+    "form.prefs.label.disable_bulk_operations_confirmations": "Disabilita le richieste di conferma per le operazioni in blocco (segna tutto come letto, segna pagina come letta)",
     "form.prefs.select.alphabetical": "In ordine alfabetico",
     "form.prefs.select.browser": "Browser",
     "form.prefs.select.created_time": "Tempo di creazione dell'entrata",
