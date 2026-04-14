@@ -34,17 +34,17 @@ func (v *view) Render(template string) []byte {
 func New(tpl *template.Engine, r *http.Request) *view {
 	webSession := request.WebSession(r)
 	theme := webSession.Theme()
-	successMessage, errorMessage := webSession.ConsumeMessages()
+	flashSuccessMessage, flashErrorMessage := webSession.ConsumeMessages()
 	return &view{tpl, r, map[string]any{
-		"menu":            "",
-		"csrf":            webSession.CSRF(),
-		"successMessage":  successMessage,
-		"errorMessage":    errorMessage,
-		"theme":           theme,
-		"language":        webSession.Language(),
-		"theme_checksum":  static.StylesheetBundles[theme+".css"].Checksum,
-		"app_js_checksum": static.JavascriptBundles["app.js"].Checksum,
-		"sw_js_checksum":  static.JavascriptBundles["service-worker.js"].Checksum,
-		"webAuthnEnabled": config.Opts.WebAuthn(),
+		"menu":                "",
+		"csrf":                webSession.CSRF(),
+		"flashSuccessMessage": flashSuccessMessage,
+		"flashErrorMessage":   flashErrorMessage,
+		"theme":               theme,
+		"language":            webSession.Language(),
+		"theme_checksum":      static.StylesheetBundles[theme+".css"].Checksum,
+		"app_js_checksum":     static.JavascriptBundles["app.js"].Checksum,
+		"sw_js_checksum":      static.JavascriptBundles["service-worker.js"].Checksum,
+		"webAuthnEnabled":     config.Opts.WebAuthn(),
 	}}
 }

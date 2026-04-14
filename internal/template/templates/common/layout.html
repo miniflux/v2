@@ -114,11 +114,11 @@
         </nav>
     </header>
     {{ end }}
-    {{ if .successMessage }}
-        <div role="alert" class="flash-message alert alert-success">{{ .successMessage }}</div>
+    {{ if .flashSuccessMessage }}
+        <div role="alert" class="flash-message alert alert-success">{{ .flashSuccessMessage }}</div>
     {{ end }}
-    {{ if .errorMessage }}
-        <div role="alert" class="flash-error-message alert alert-error">{{ .errorMessage }}</div>
+    {{ if .flashErrorMessage }}
+        <div role="alert" class="flash-error-message alert alert-error">{{ .flashErrorMessage }}</div>
     {{ end }}
 
     {{template "page_header" .}}
