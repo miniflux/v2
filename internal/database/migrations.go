@@ -1457,4 +1457,33 @@ var migrations = [...]func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			CREATE TABLE entry_tombstones (
+				feed_id bigint not null references feeds(id) on delete cascade,
+				hash text not null check (hash <> ''),
+				deleted_at timestamp with time zone not null default now(),
+				primary key (feed_id, hash)
+			);
+
+			CREATE INDEX entry_tombstones_deleted_at_idx
+				ON entry_tombstones (deleted_at);
+
+			INSERT INTO entry_tombstones (feed_id, hash, deleted_at)
+				SELECT feed_id, hash, changed_at
+				FROM entries
+				WHERE status = 'removed' AND hash <> ''
+				ON CONFLICT (feed_id, hash) DO NOTHING;
+
+			DELETE FROM entries WHERE status = 'removed';
+
+			-- The "removed" status is no longer used, so drop the partial
+			-- predicate so the planner can use the index for every search.
+			DROP INDEX document_vectors_idx;
+			CREATE INDEX document_vectors_idx
+				ON entries
+				USING gin(document_vectors);
+		`)
+		return err
+	},
 }

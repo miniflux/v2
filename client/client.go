@@ -1079,14 +1079,14 @@ func (c *Client) FetchCountersContext(ctx context.Context) (*FeedCounters, error
 	return &result, nil
 }
 
-// FlushHistory changes all entries with the status "read" to "removed".
+// FlushHistory deletes all entries with the status "read".
 func (c *Client) FlushHistory() error {
 	ctx, cancel := withDefaultTimeout()
 	defer cancel()
 	return c.FlushHistoryContext(ctx)
 }
 
-// FlushHistoryContext changes all entries with the status "read" to "removed".
+// FlushHistoryContext deletes all entries with the status "read".
 func (c *Client) FlushHistoryContext(ctx context.Context) error {
 	_, err := c.request.Put(ctx, "/v1/flush-history", nil)
 	return err

@@ -11,7 +11,6 @@ import (
 const (
 	EntryStatusUnread       = "unread"
 	EntryStatusRead         = "read"
-	EntryStatusRemoved      = "removed"
 	DefaultSortingOrder     = "published_at"
 	DefaultSortingDirection = "asc"
 )

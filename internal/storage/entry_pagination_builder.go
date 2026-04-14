@@ -188,8 +188,8 @@ func (e *entryPaginationBuilder) getEntry(tx *sql.Tx, entryID int64) (*model.Ent
 func NewEntryPaginationBuilder(store *Storage, userID, entryID int64, order, direction string) *entryPaginationBuilder {
 	return &entryPaginationBuilder{
 		store:      store,
-		args:       []any{userID, "removed"},
-		conditions: []string{"e.user_id = $1", "e.status <> $2"},
+		args:       []any{userID},
+		conditions: []string{"e.user_id = $1"},
 		entryID:    entryID,
 		order:      order,
 		direction:  direction,

@@ -8,7 +8,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/view"
 )
 
@@ -36,7 +35,6 @@ func (h *handler) showCategoryEntriesStarredPage(w http.ResponseWriter, r *http.
 	builder.WithCategoryID(category.ID)
 	builder.WithSorting(user.EntryOrder, user.EntryDirection)
 	builder.WithSorting("id", user.EntryDirection)
-	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStarred(true)
 	builder.WithoutContent()
 	builder.WithOffset(offset)

@@ -239,7 +239,6 @@ func (h *feverHandler) handleItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 
 	builder := h.store.NewEntryQueryBuilder(userID)
-	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithLimit(50)
 
 	switch {
@@ -294,7 +293,6 @@ func (h *feverHandler) handleItems(w http.ResponseWriter, r *http.Request) {
 	}
 
 	builder = h.store.NewEntryQueryBuilder(userID)
-	builder.WithoutStatus(model.EntryStatusRemoved)
 	result.Total, err = builder.CountEntries()
 	if err != nil {
 		response.JSONServerError(w, r, err)
@@ -414,7 +412,6 @@ func (h *feverHandler) handleWriteItems(w http.ResponseWriter, r *http.Request) 
 
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithEntryID(entryID)
-	builder.WithoutStatus(model.EntryStatusRemoved)
 
 	entry, err := builder.GetEntry()
 	if err != nil {

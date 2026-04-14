@@ -10,9 +10,8 @@ import (
 
 // Entry statuses.
 const (
-	EntryStatusUnread  = "unread"
-	EntryStatusRead    = "read"
-	EntryStatusRemoved = "removed"
+	EntryStatusUnread = "unread"
+	EntryStatusRead   = "read"
 )
 
 // User represents a user in the system.

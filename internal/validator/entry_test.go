@@ -35,10 +35,14 @@ func TestValidateEntriesStatusUpdateRequest(t *testing.T) {
 }
 
 func TestValidateEntryStatus(t *testing.T) {
-	for _, status := range []string{model.EntryStatusRead, model.EntryStatusUnread, model.EntryStatusRemoved} {
+	for _, status := range []string{model.EntryStatusRead, model.EntryStatusUnread} {
 		if err := ValidateEntryStatus(status); err != nil {
 			t.Error(`A valid status should not generate any error`)
 		}
+	}
+
+	if err := ValidateEntryStatus("removed"); err == nil {
+		t.Error(`The "removed" status is no longer accepted`)
 	}
 
 	if err := ValidateEntryStatus("invalid"); err == nil {

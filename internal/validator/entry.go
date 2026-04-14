@@ -22,11 +22,11 @@ func ValidateEntriesStatusUpdateRequest(request *model.EntriesStatusUpdateReques
 // ValidateEntryStatus makes sure the entry status is valid.
 func ValidateEntryStatus(status string) error {
 	switch status {
-	case model.EntryStatusRead, model.EntryStatusUnread, model.EntryStatusRemoved:
+	case model.EntryStatusRead, model.EntryStatusUnread:
 		return nil
 	}
 
-	return fmt.Errorf(`invalid entry status, valid status values are: "%s", "%s" and "%s"`, model.EntryStatusRead, model.EntryStatusUnread, model.EntryStatusRemoved)
+	return fmt.Errorf(`invalid entry status, valid status values are: %q and %q`, model.EntryStatusRead, model.EntryStatusUnread)
 }
 
 // ValidateEntryOrder makes sure the sorting order is valid.

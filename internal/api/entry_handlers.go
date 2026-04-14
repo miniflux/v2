@@ -58,7 +58,6 @@ func (h *handler) getFeedEntryHandler(w http.ResponseWriter, r *http.Request) {
 	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithFeedID(feedID)
 	builder.WithEntryID(entryID)
-	builder.WithoutStatus(model.EntryStatusRemoved)
 
 	h.getEntryFromBuilder(w, r, builder)
 }
@@ -79,7 +78,6 @@ func (h *handler) getCategoryEntryHandler(w http.ResponseWriter, r *http.Request
 	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithCategoryID(categoryID)
 	builder.WithEntryID(entryID)
-	builder.WithoutStatus(model.EntryStatusRemoved)
 
 	h.getEntryFromBuilder(w, r, builder)
 }
@@ -93,7 +91,6 @@ func (h *handler) getEntryHandler(w http.ResponseWriter, r *http.Request) {
 
 	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
-	builder.WithoutStatus(model.EntryStatusRemoved)
 
 	h.getEntryFromBuilder(w, r, builder)
 }
@@ -173,7 +170,6 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	builder.WithLimit(limit)
 	builder.WithTags(tags)
 	builder.WithEnclosures()
-	builder.WithoutStatus(model.EntryStatusRemoved)
 
 	if request.HasQueryParam(r, "globally_visible") {
 		globallyVisible := request.QueryBoolParam(r, "globally_visible", true)
@@ -242,7 +238,6 @@ func (h *handler) saveEntryHandler(w http.ResponseWriter, r *http.Request) {
 
 	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
-	builder.WithoutStatus(model.EntryStatusRemoved)
 
 	if !h.store.HasSaveEntry(request.UserID(r)) {
 		response.JSONBadRequest(w, r, errors.New("no third-party integration enabled"))
@@ -292,7 +287,6 @@ func (h *handler) updateEntryHandler(w http.ResponseWriter, r *http.Request) {
 	loggedUserID := request.UserID(r)
 	entryBuilder := h.store.NewEntryQueryBuilder(loggedUserID)
 	entryBuilder.WithEntryID(entryID)
-	entryBuilder.WithoutStatus(model.EntryStatusRemoved)
 
 	entry, err := entryBuilder.GetEntry()
 	if err != nil {
@@ -412,6 +406,10 @@ func (h *handler) importFeedEntryHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	created, err := h.store.InsertEntryForFeed(userID, feedID, entry)
+	if errors.Is(err, storage.ErrEntryTombstoned) {
+		response.JSONBadRequest(w, r, err)
+		return
+	}
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
@@ -449,7 +447,6 @@ func (h *handler) fetchContentHandler(w http.ResponseWriter, r *http.Request) {
 
 	entryBuilder := h.store.NewEntryQueryBuilder(loggedUserID)
 	entryBuilder.WithEntryID(entryID)
-	entryBuilder.WithoutStatus(model.EntryStatusRemoved)
 
 	entry, err := entryBuilder.GetEntry()
 	if err != nil {

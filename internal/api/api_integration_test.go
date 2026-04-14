@@ -2413,64 +2413,6 @@ func TestGetGlobalEntriesEndpoint(t *testing.T) {
 	}
 }
 
-func TestCannotGetRemovedEntries(t *testing.T) {
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
-
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
-
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: testConfig.testFeedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	feedEntries, err := regularUserClient.Entries(&miniflux.Filter{FeedID: feedID})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if feedEntries.Total == 0 {
-		t.Fatalf(`Expected at least one entry, got none`)
-	}
-
-	if err := regularUserClient.UpdateEntries([]int64{feedEntries.Entries[0].ID}, miniflux.EntryStatusRemoved); err != nil {
-		t.Fatal(err)
-	}
-
-	if _, err := regularUserClient.Entry(feedEntries.Entries[0].ID); err != miniflux.ErrNotFound {
-		t.Fatalf(`Expected entry to be not found, got %v`, err)
-	}
-
-	if _, err := regularUserClient.FeedEntry(feedID, feedEntries.Entries[0].ID); err != miniflux.ErrNotFound {
-		t.Fatalf(`Expected entry to be not found, got %v`, err)
-	}
-
-	if _, err := regularUserClient.CategoryEntry(feedEntries.Entries[0].Feed.Category.ID, feedEntries.Entries[0].ID); err != miniflux.ErrNotFound {
-		t.Fatalf(`Expected entry to be not found, got %v`, err)
-	}
-
-	updatedFeedEntries, err := regularUserClient.Entries(&miniflux.Filter{FeedID: feedID})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if updatedFeedEntries.Total != feedEntries.Total-1 {
-		t.Fatalf(`Expected %d entries, got %d`, feedEntries.Total-1, updatedFeedEntries.Total)
-	}
-}
-
 func TestUpdateEnclosureEndpoint(t *testing.T) {
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
