@@ -16,6 +16,10 @@ import (
 	"github.com/lib/pq"
 )
 
+// ErrEntryTombstoned is returned when an entry cannot be created because its
+// (feed_id, hash) pair has a tombstone recording a prior deletion.
+var ErrEntryTombstoned = errors.New("store: entry is tombstoned")
+
 // CountAllEntries returns the number of entries for each status in the database.
 func (s *Storage) CountAllEntries() (map[string]int64, error) {
 	rows, err := s.db.Query(`SELECT status, count(*) FROM entries GROUP BY status`)
@@ -27,7 +31,6 @@ func (s *Storage) CountAllEntries() (map[string]int64, error) {
 	results := make(map[string]int64)
 	results[model.EntryStatusUnread] = 0
 	results[model.EntryStatusRead] = 0
-	results[model.EntryStatusRemoved] = 0
 
 	for rows.Next() {
 		var status string
@@ -40,7 +43,7 @@ func (s *Storage) CountAllEntries() (map[string]int64, error) {
 		results[status] = count
 	}
 
-	results["total"] = results[model.EntryStatusUnread] + results[model.EntryStatusRead] + results[model.EntryStatusRemoved]
+	results["total"] = results[model.EntryStatusUnread] + results[model.EntryStatusRead]
 	return results, nil
 }
 
@@ -100,6 +103,9 @@ func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 // createEntry add a new entry.
 func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
+	// The WHERE NOT EXISTS guard makes the tombstone check atomic with the insert, so a
+	// concurrent archive committing between an earlier existence check and this statement
+	// cannot bring a deleted entry back as unread.
 	query := `
 		INSERT INTO entries
 			(
@@ -117,22 +123,23 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				document_vectors,
 				tags
 			)
-		VALUES
-			(
-				$1,
-				$2,
-				$3,
-				$4,
-				$5,
-				$6,
-				$7,
-				$8,
-				$9,
-				$10,
-				now(),
-				setweight(to_tsvector($11), 'A') || setweight(to_tsvector($12), 'B'),
-				$13
-			)
+		SELECT
+			$1,
+			$2,
+			$3,
+			$4,
+			$5,
+			$6,
+			$7,
+			$8,
+			$9,
+			$10,
+			now(),
+			setweight(to_tsvector($11), 'A') || setweight(to_tsvector($12), 'B'),
+			$13
+		WHERE NOT EXISTS (
+			SELECT 1 FROM entry_tombstones WHERE feed_id=$9 AND hash=$2
+		)
 		RETURNING
 			id, status, created_at, changed_at
 	`
@@ -157,6 +164,9 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		&entry.CreatedAt,
 		&entry.ChangedAt,
 	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return ErrEntryTombstoned
+	}
 	if err != nil {
 		return fmt.Errorf(`store: unable to create entry %q (feed #%d): %v`, entry.URL, entry.FeedID, err)
 	}
@@ -289,9 +299,20 @@ func (s *Storage) InsertEntryForFeed(userID, feedID int64, entry *model.Entry) (
 }
 
 func (s *Storage) IsNewEntry(feedID int64, entryHash string) bool {
-	var result bool
-	s.db.QueryRow(`SELECT true FROM entries WHERE feed_id=$1 AND hash=$2 LIMIT 1`, feedID, entryHash).Scan(&result)
-	return !result
+	// An entry is new only if it is neither stored nor tombstoned; otherwise
+	// callers (such as the crawler) would do expensive work on every refresh
+	// for items that will be discarded.
+	query := `
+		SELECT
+			EXISTS (
+				SELECT 1 FROM entries WHERE feed_id=$1 AND hash=$2
+			) OR EXISTS (
+				SELECT 1 FROM entry_tombstones WHERE feed_id=$1 AND hash=$2
+			)
+	`
+	var known bool
+	s.db.QueryRow(query, feedID, entryHash).Scan(&known)
+	return !known
 }
 
 func (s *Storage) GetReadTime(feedID int64, entryHash string) int {
@@ -313,73 +334,8 @@ func (s *Storage) GetReadTime(feedID int64, entryHash string) int {
 	return result
 }
 
-// cleanupRemovedEntriesNotInFeed deletes from the database entries marked as "removed" and not visible anymore in the feed.
-func (s *Storage) cleanupRemovedEntriesNotInFeed(feedID int64, entryHashes []string) error {
-	// Acquire locks in id order and skip already-locked rows to avoid deadlocks with
-	// ClearRemovedEntriesContent, which also updates removed entries concurrently.
-	query := `
-		WITH to_delete AS (
-			SELECT id
-			FROM entries
-			WHERE
-				feed_id=$1 AND
-				status=$2 AND
-				NOT (hash=ANY($3))
-			ORDER BY id
-			FOR UPDATE SKIP LOCKED
-		)
-		DELETE FROM entries
-		USING to_delete
-		WHERE entries.id = to_delete.id
-	`
-	if _, err := s.db.Exec(query, feedID, model.EntryStatusRemoved, pq.Array(entryHashes)); err != nil {
-		return fmt.Errorf(`store: unable to remove entries not in feed: %v`, err)
-	}
-
-	return nil
-}
-
-// ClearRemovedEntriesContent clears the content fields of entries marked as "removed", keeping only their metadata.
-func (s *Storage) ClearRemovedEntriesContent(limit int) (int64, error) {
-	// Skip locked rows so this batch scrubber doesn't block or deadlock with the
-	// concurrent cleanup that deletes removed entries in the same table.
-	query := `
-		UPDATE
-			entries
-		SET
-			title='',
-			content=NULL,
-			url='',
-			author=NULL,
-			comments_url=NULL,
-			document_vectors=NULL
-		WHERE id IN (
-			SELECT id
-			FROM entries
-			WHERE status = $1 AND content IS NOT NULL
-			ORDER BY id ASC
-			FOR UPDATE SKIP LOCKED
-			LIMIT $2
-		)
-	`
-
-	result, err := s.db.Exec(query, model.EntryStatusRemoved, limit)
-	if err != nil {
-		return 0, fmt.Errorf(`store: unable to clear content from removed entries: %v`, err)
-	}
-
-	count, err := result.RowsAffected()
-	if err != nil {
-		return 0, fmt.Errorf(`store: unable to get the number of rows affected while clearing content from removed entries: %v`, err)
-	}
-
-	return count, nil
-}
-
 // RefreshFeedEntries updates feed entries while refreshing a feed.
 func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (newEntries model.Entries, err error) {
-	entryHashes := make([]string, 0, len(entries))
-
 	for _, entry := range entries {
 		entry.UserID = userID
 		entry.FeedID = feedID
@@ -403,7 +359,10 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 			}
 		} else {
 			err = s.createEntry(tx, entry)
-			if err == nil {
+			switch {
+			case errors.Is(err, ErrEntryTombstoned):
+				err = nil
+			case err == nil:
 				newEntries = append(newEntries, entry)
 			}
 		}
@@ -418,55 +377,43 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 		if err := tx.Commit(); err != nil {
 			return nil, fmt.Errorf(`store: unable to commit transaction: %v`, err)
 		}
-
-		entryHashes = append(entryHashes, entry.Hash)
 	}
-
-	go func() {
-		if err := s.cleanupRemovedEntriesNotInFeed(feedID, entryHashes); err != nil {
-			slog.Error("Unable to cleanup removed entries",
-				slog.Int64("user_id", userID),
-				slog.Int64("feed_id", feedID),
-				slog.Any("error", err),
-			)
-		}
-	}()
 
 	return newEntries, nil
 }
 
-// ArchiveEntries changes the status of entries to "removed" after the interval (24h minimum).
+// ArchiveEntries deletes entries older than the given interval and records tombstones so they are not re-ingested.
 func (s *Storage) ArchiveEntries(status string, interval time.Duration, limit int) (int64, error) {
 	if interval < 0 || limit <= 0 {
 		return 0, nil
 	}
 
 	query := `
-		UPDATE
-			entries
-		SET
-			status=$1
-		WHERE
-			id IN (
-				SELECT
-					id
-				FROM
-					entries
-				WHERE
-					status=$2 AND
-					starred is false AND
-					share_code='' AND
-					created_at < now () - $3::interval
-				ORDER BY
-					created_at ASC
-				FOR UPDATE SKIP LOCKED
-				LIMIT $4
-				)
+		WITH to_delete AS (
+			SELECT id, feed_id, hash
+			FROM entries
+			WHERE
+				status=$1 AND
+				starred is false AND
+				share_code='' AND
+				created_at < now() - $2::interval
+			ORDER BY created_at ASC
+			FOR UPDATE SKIP LOCKED
+			LIMIT $3
+		), deleted AS (
+			DELETE FROM entries
+			USING to_delete
+			WHERE entries.id = to_delete.id
+			RETURNING entries.feed_id, entries.hash
+		)
+		INSERT INTO entry_tombstones (feed_id, hash)
+		SELECT feed_id, hash FROM deleted WHERE hash <> ''
+		ON CONFLICT (feed_id, hash) DO NOTHING
 	`
 
 	days := max(int(interval/(24*time.Hour)), 1)
 
-	result, err := s.db.Exec(query, model.EntryStatusRemoved, status, fmt.Sprintf("%d days", days), limit)
+	result, err := s.db.Exec(query, status, fmt.Sprintf("%d days", days), limit)
 	if err != nil {
 		return 0, fmt.Errorf(`store: unable to archive %s entries: %v`, status, err)
 	}
@@ -481,7 +428,6 @@ func (s *Storage) ArchiveEntries(status string, interval time.Duration, limit in
 
 // SetEntriesStatus update the status of the given list of entries.
 func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string) error {
-	// Entries that have the model.EntryStatusRemoved status are immutable.
 	query := `
 		UPDATE
 			entries
@@ -490,10 +436,9 @@ func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string
 			changed_at=now()
 		WHERE
 			user_id=$2 AND
-			id=ANY($3) AND
-			status!=$4
+			id=ANY($3)
 		`
-	if _, err := s.db.Exec(query, status, userID, pq.Array(entryIDs), model.EntryStatusRemoved); err != nil {
+	if _, err := s.db.Exec(query, status, userID, pq.Array(entryIDs)); err != nil {
 		return fmt.Errorf(`store: unable to update entries statuses %v: %v`, entryIDs, err)
 	}
 
@@ -564,19 +509,19 @@ func (s *Storage) ToggleStarred(userID int64, entryID int64) error {
 	return nil
 }
 
-// FlushHistory changes all entries with the status "read" to "removed".
+// FlushHistory deletes all read entries (non-starred, non-shared) and records tombstones to prevent re-ingestion.
 func (s *Storage) FlushHistory(userID int64) error {
 	query := `
-		UPDATE
-			entries
-		SET
-			status=$1,
-			changed_at=now()
-		WHERE
-			user_id=$2 AND status=$3 AND starred is false AND share_code=''
+		WITH deleted AS (
+			DELETE FROM entries
+			WHERE user_id=$1 AND status=$2 AND starred is false AND share_code=''
+			RETURNING feed_id, hash
+		)
+		INSERT INTO entry_tombstones (feed_id, hash)
+		SELECT feed_id, hash FROM deleted WHERE hash <> ''
+		ON CONFLICT (feed_id, hash) DO NOTHING
 	`
-	_, err := s.db.Exec(query, model.EntryStatusRemoved, userID, model.EntryStatusRead)
-	if err != nil {
+	if _, err := s.db.Exec(query, userID, model.EntryStatusRead); err != nil {
 		return fmt.Errorf(`store: unable to flush history: %v`, err)
 	}
 

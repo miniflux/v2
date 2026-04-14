@@ -47,18 +47,4 @@ func runCleanupTasks(store *storage.Storage) {
 			metric.ArchiveEntriesDuration.WithLabelValues(model.EntryStatusUnread).Observe(time.Since(startTime).Seconds())
 		}
 	}
-
-	if enclosuresAffected, err := store.DeleteEnclosuresOfRemovedEntries(); err != nil {
-		slog.Error("Unable to delete enclosures from removed entries", slog.Any("error", err))
-	} else {
-		slog.Info("Deleting enclosures from removed entries completed",
-			slog.Int64("removed_entries_enclosures_deleted", enclosuresAffected))
-	}
-
-	if contentAffected, err := store.ClearRemovedEntriesContent(config.Opts.CleanupArchiveBatchSize()); err != nil {
-		slog.Error("Unable to clear content from removed entries", slog.Any("error", err))
-	} else {
-		slog.Info("Clearing content from removed entries completed",
-			slog.Int64("removed_entries_content_cleared", contentAffected))
-	}
 }

@@ -9,7 +9,6 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/view"
 )
 
@@ -28,7 +27,6 @@ func (h *handler) showTagEntriesAllPage(w http.ResponseWriter, r *http.Request) 
 
 	offset := request.QueryIntParam(r, "offset", 0)
 	builder := h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithTags([]string{tagName})
 	builder.WithSorting("status", "asc")
 	builder.WithSorting(user.EntryOrder, user.EntryDirection)
