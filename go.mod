@@ -1,6 +1,10 @@
 module miniflux.app/v2
 
+// When changing version here don't forget to also upgrade CONTRIBUTING.md
+
 // +heroku goVersion go1.26
+go 1.26.0
+
 
 require (
 	github.com/PuerkitoBio/goquery v1.12.0
@@ -45,5 +49,3 @@ require (
 	golang.org/x/sys v0.43.0 // indirect
 	google.golang.org/protobuf v1.36.8 // indirect
 )
-
-go 1.26.0
