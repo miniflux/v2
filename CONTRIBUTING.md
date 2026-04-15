@@ -35,7 +35,7 @@ When reporting bugs:
 ### Requirements
 
 - **Git**
-- **Go >= 1.24**
+- **Go >= 1.26**
 - **PostgreSQL**
 
 ### Getting Started
