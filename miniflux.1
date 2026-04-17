@@ -165,6 +165,8 @@ Default is empty.
 .B AUTH_PROXY_USER_CREATION
 Set to 1 to create users based on proxy authentication information\&.
 .br
+When disabled, users must already exist in Miniflux to sign in through the proxy\&.
+.br
 Disabled by default\&.
 .TP
 .B BASE_URL
@@ -266,6 +268,10 @@ Disable local authentication\&.
 .br
 When set to true, the username/password form is hidden from the login screen, and the
 options to change username/password or unlink OAuth2 account are hidden from the settings page.
+.br
+This option requires an alternative authentication source such as OAuth2 or auth proxy\&.
+.br
+If remote user creation is disabled, only existing users can sign in\&.
 .br
 Default is false\&.
 .TP
@@ -501,6 +507,8 @@ Default is empty\&.
 .TP
 .B OAUTH2_USER_CREATION
 Set to 1 to authorize OAuth2 user creation\&.
+.br
+When disabled, users must already exist in Miniflux or have a linked OAuth2 account to sign in\&.
 .br
 Disabled by default\&.
 .TP

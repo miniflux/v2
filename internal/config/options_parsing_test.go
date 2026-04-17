@@ -1799,8 +1799,8 @@ func TestValidateDisableLocalAuthWithOAuth2ButNoUserCreation(t *testing.T) {
 	}); err != nil {
 		t.Fatalf("Unexpected parse error: %v", err)
 	}
-	if err := configParser.options.Validate(); err == nil {
-		t.Fatal("Expected error when local auth is disabled with OAuth2 but without user creation")
+	if err := configParser.options.Validate(); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
 	}
 }
 
@@ -1829,8 +1829,8 @@ func TestValidateDisableLocalAuthWithAuthProxyButNoUserCreation(t *testing.T) {
 	}); err != nil {
 		t.Fatalf("Unexpected parse error: %v", err)
 	}
-	if err := configParser.options.Validate(); err == nil {
-		t.Fatal("Expected error when local auth is disabled with auth proxy but without user creation")
+	if err := configParser.options.Validate(); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
 	}
 }
 
