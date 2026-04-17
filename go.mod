@@ -5,7 +5,6 @@ module miniflux.app/v2
 // +heroku goVersion go1.26
 go 1.26.0
 
-
 require (
 	github.com/PuerkitoBio/goquery v1.12.0
 	github.com/andybalholm/brotli v1.2.1

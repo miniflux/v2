@@ -57,13 +57,8 @@ func (c *configOptions) Validate() error {
 	}
 
 	if c.DisableLocalAuth() {
-		switch {
-		case c.OAuth2Provider() == "" && c.AuthProxyHeader() == "":
+		if c.OAuth2Provider() == "" && c.AuthProxyHeader() == "" {
 			return errors.New("DISABLE_LOCAL_AUTH is enabled but neither OAUTH2_PROVIDER nor AUTH_PROXY_HEADER is set. Please enable at least one authentication source")
-		case c.OAuth2Provider() != "" && !c.IsOAuth2UserCreationAllowed():
-			return errors.New("DISABLE_LOCAL_AUTH is enabled and an OAUTH2_PROVIDER is configured, but OAUTH2_USER_CREATION is not enabled")
-		case c.AuthProxyHeader() != "" && !c.IsAuthProxyUserCreationAllowed():
-			return errors.New("DISABLE_LOCAL_AUTH is enabled and an AUTH_PROXY_HEADER is configured, but AUTH_PROXY_USER_CREATION is not enabled")
 		}
 	}
 
