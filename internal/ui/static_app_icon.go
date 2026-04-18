@@ -16,21 +16,26 @@ import (
 
 func (h *handler) showAppIcon(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "filename")
-	value, ok := static.BinaryBundles[filename]
+	bundle, ok := static.BinaryBundles[filename]
 	if !ok {
 		response.HTMLNotFound(w, r)
 		return
 	}
 
-	response.NewBuilder(w, r).WithCaching(value.Checksum, 72*time.Hour, func(b *response.Builder) {
+	response.NewBuilder(w, r).WithCaching(bundle.Checksum, 72*time.Hour, func(b *response.Builder) {
+		body, encoding := bundle.Negotiate(r.Header.Get("Accept-Encoding"))
+		b.WithoutCompression() // No need to compress already-compressed data.
+		if encoding != "" {
+			b.WithHeader("Content-Encoding", encoding)
+			b.WithHeader("Vary", "Accept-Encoding")
+		}
 		switch filepath.Ext(filename) {
 		case ".png":
-			b.WithoutCompression()
 			b.WithHeader("Content-Type", "image/png")
 		case ".svg":
 			b.WithHeader("Content-Type", "image/svg+xml")
 		}
-		b.WithBodyAsBytes(value.Data)
+		b.WithBodyAsBytes(body)
 		b.Write()
 	})
 }
