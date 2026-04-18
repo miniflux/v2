@@ -373,6 +373,7 @@
     "form.prefs.label.show_reading_time": "Mostrar el tiempo estimado de lectura de los artículos",
     "form.prefs.label.theme": "Tema",
     "form.prefs.label.timezone": "Zona horaria",
+    "form.prefs.label.disable_bulk_operations_confirmations": "Deshabilitar mensajes de confirmación para operaciones masivas (marcar todo como leído, marcar página como leída)",
     "form.prefs.select.alphabetical": "Alfabético",
     "form.prefs.select.browser": "Navegador",
     "form.prefs.select.created_time": "Hora de creación del artículo",

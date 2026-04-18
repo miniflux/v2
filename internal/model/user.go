@@ -41,8 +41,9 @@ type User struct {
 	MediaPlaybackRate               float64    `json:"media_playback_rate"`
 	BlockFilterEntryRules           string     `json:"block_filter_entry_rules"`
 	KeepFilterEntryRules            string     `json:"keep_filter_entry_rules"`
-	AlwaysOpenExternalLinks         bool       `json:"always_open_external_links"`
-	OpenExternalLinksInNewTab       bool       `json:"open_external_links_in_new_tab"`
+	AlwaysOpenExternalLinks              bool       `json:"always_open_external_links"`
+	OpenExternalLinksInNewTab            bool       `json:"open_external_links_in_new_tab"`
+	DisableBulkOperationsConfirmations   bool       `json:"disable_bulk_operations_confirmations"`
 }
 
 // UserCreationRequest represents the request to create a user.
@@ -84,8 +85,9 @@ type UserModificationRequest struct {
 	MediaPlaybackRate               *float64 `json:"media_playback_rate"`
 	BlockFilterEntryRules           *string  `json:"block_filter_entry_rules"`
 	KeepFilterEntryRules            *string  `json:"keep_filter_entry_rules"`
-	AlwaysOpenExternalLinks         *bool    `json:"always_open_external_links"`
-	OpenExternalLinksInNewTab       *bool    `json:"open_external_links_in_new_tab"`
+	AlwaysOpenExternalLinks              *bool    `json:"always_open_external_links"`
+	OpenExternalLinksInNewTab            *bool    `json:"open_external_links_in_new_tab"`
+	DisableBulkOperationsConfirmations   *bool    `json:"disable_bulk_operations_confirmations"`
 }
 
 // Patch updates the User object with the modification request.
@@ -208,6 +210,10 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.OpenExternalLinksInNewTab != nil {
 		user.OpenExternalLinksInNewTab = *u.OpenExternalLinksInNewTab
+	}
+
+	if u.DisableBulkOperationsConfirmations != nil {
+		user.DisableBulkOperationsConfirmations = *u.DisableBulkOperationsConfirmations
 	}
 }
 

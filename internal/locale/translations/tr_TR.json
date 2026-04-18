@@ -373,6 +373,7 @@
     "form.prefs.label.show_reading_time": "Makaleler için tahmini okuma süresini göster",
     "form.prefs.label.theme": "Tema",
     "form.prefs.label.timezone": "Saat Dilimi",
+    "form.prefs.label.disable_bulk_operations_confirmations": "Toplu işlemler için onay istemlerini devre dışı bırak (tümünü okundu olarak işaretle, sayfayı okundu olarak işaretle)",
     "form.prefs.select.alphabetical": "Alfabetik",
     "form.prefs.select.browser": "Tarayıcı",
     "form.prefs.select.created_time": "İçeriğin oluşturulma zamanı",

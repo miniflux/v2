@@ -69,10 +69,10 @@
                       <li class="item-meta-icons-mark-as-read">
                         <button
                             aria-describedby="category-title-{{ .ID }}"
-                            data-confirm="true"
-                            data-label-question="{{ t "confirm.question" }}"
-                            data-label-yes="{{ t "confirm.yes" }}"
-                            data-label-no="{{ t "confirm.no" }}"
+                            {{ if not $.user.DisableBulkOperationsConfirmations }}data-confirm="true"{{ end }}
+                            {{ if not $.user.DisableBulkOperationsConfirmations }}data-label-question="{{ t "confirm.question" }}"{{ end }}
+                            {{ if not $.user.DisableBulkOperationsConfirmations }}data-label-yes="{{ t "confirm.yes" }}"{{ end }}
+                            {{ if not $.user.DisableBulkOperationsConfirmations }}data-label-no="{{ t "confirm.no" }}"{{ end }}
                             data-label-loading="{{ t "confirm.loading" }}"
                             data-url="{{ routePath "/category/%d/mark-all-as-read" .ID }}">{{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></button>
                       </li>

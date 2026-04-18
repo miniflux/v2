@@ -376,6 +376,7 @@
     "form.prefs.label.show_reading_time": "Afișare timp estimat de citire pentru înregistrări",
     "form.prefs.label.theme": "Temă",
     "form.prefs.label.timezone": "Fus orar",
+    "form.prefs.label.disable_bulk_operations_confirmations": "Dezactivează confirmările pentru operațiunile în masă (marchează tot ca citit, marchează pagina ca citită)",
     "form.prefs.select.alphabetical": "Alfabetic",
     "form.prefs.select.browser": "Browser",
     "form.prefs.select.created_time": "Dată creare înregistrare",

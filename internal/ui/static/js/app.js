@@ -910,6 +910,19 @@ function handleConfirmationMessage(linkElement, callback) {
         linkElement = linkElement.parentNode;
     }
 
+    // If confirmation labels are not present, execute callback immediately
+    // (user has disabled confirmation prompts in settings)
+    if (linkElement.dataset.labelQuestion === undefined) {
+        const url = linkElement.dataset.url;
+        const redirectUrl = linkElement.dataset.redirectUrl;
+        if (url) {
+            callback(url, redirectUrl);
+        } else {
+            callback();
+        }
+        return;
+    }
+
     linkElement.style.display = "none";
 
     const containerElement = linkElement.parentNode;

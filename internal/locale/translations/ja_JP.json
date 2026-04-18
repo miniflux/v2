@@ -370,6 +370,7 @@
     "form.prefs.label.show_reading_time": "記事の推定読書時間を表示する",
     "form.prefs.label.theme": "テーマ",
     "form.prefs.label.timezone": "タイムゾーン",
+    "form.prefs.label.disable_bulk_operations_confirmations": "一括操作の確認ダイアログを無効化する（全て既読にする、ページを既読にする）",
     "form.prefs.select.alphabetical": "アルファベット順",
     "form.prefs.select.browser": "ブラウザ",
     "form.prefs.select.created_time": "記事の取得時刻",

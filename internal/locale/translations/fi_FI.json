@@ -373,6 +373,7 @@
     "form.prefs.label.show_reading_time": "Näytä artikkeleiden arvioitu lukuaika",
     "form.prefs.label.theme": "Teema",
     "form.prefs.label.timezone": "Aikavyöhyke",
+    "form.prefs.label.disable_bulk_operations_confirmations": "Poista vahvistuskehotteet massatoiminnoista (merkitse kaikki luetuiksi, merkitse sivu luetuksi)",
     "form.prefs.select.alphabetical": "Aakkosjärjestys",
     "form.prefs.select.browser": "Selain",
     "form.prefs.select.created_time": "Luomisaika",

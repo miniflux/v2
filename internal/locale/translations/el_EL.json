@@ -373,6 +373,7 @@
     "form.prefs.label.show_reading_time": "Εμφάνιση εκτιμώμενου χρόνου ανάγνωσης για άρθρα",
     "form.prefs.label.theme": "Θέμα",
     "form.prefs.label.timezone": "Ζώνη Ώρας",
+    "form.prefs.label.disable_bulk_operations_confirmations": "Απενεργοποίηση προτροπών επιβεβαίωσης για μαζικές λειτουργίες (σήμανση όλων ως διαβασμένα, σήμανση σελίδας ως διαβασμένη)",
     "form.prefs.select.alphabetical": "Αλφαβητική σειρά",
     "form.prefs.select.browser": "Περιηγητής",
     "form.prefs.select.created_time": "Χρόνος δημιουργίας καταχώρησης",

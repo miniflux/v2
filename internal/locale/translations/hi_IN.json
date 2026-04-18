@@ -373,6 +373,7 @@
     "form.prefs.label.show_reading_time": "विषय के लिए अनुमानित पढ़ने का समय दिखाएं",
     "form.prefs.label.theme": "थीम",
     "form.prefs.label.timezone": "समय क्षेत्र",
+    "form.prefs.label.disable_bulk_operations_confirmations": "ब्यूक संचालनों के लिए पुष्टि स्वीकृत अस्वीकार करें (सभी को पढ़ा हुआ चिह्नित करें, पृष्ठ को पढ़ा हुआ चिह्नित करें)",
     "form.prefs.select.alphabetical": "वर्णक्रम",
     "form.prefs.select.browser": "ब्राउज़र",
     "form.prefs.select.created_time": "प्रवेश बनाया समय",

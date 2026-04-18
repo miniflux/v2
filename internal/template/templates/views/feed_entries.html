@@ -20,19 +20,19 @@
                 <button
                     class="page-button"
                     data-action="markPageAsRead"
-                    data-label-question="{{ t "confirm.question" }}"
-                    data-label-yes="{{ t "confirm.yes" }}"
-                    data-label-no="{{ t "confirm.no" }}"
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-question="{{ t "confirm.question" }}"{{ end }}
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-yes="{{ t "confirm.yes" }}"{{ end }}
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-no="{{ t "confirm.no" }}"{{ end }}
                     data-label-loading="{{ t "confirm.loading" }}"
                     data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</button>
             </li>
             <li>
                 <button
                     class="page-button"
-                    data-confirm="true"
-                    data-label-question="{{ t "confirm.question" }}"
-                    data-label-yes="{{ t "confirm.yes" }}"
-                    data-label-no="{{ t "confirm.no" }}"
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-confirm="true"{{ end }}
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-question="{{ t "confirm.question" }}"{{ end }}
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-yes="{{ t "confirm.yes" }}"{{ end }}
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-no="{{ t "confirm.no" }}"{{ end }}
                     data-label-loading="{{ t "confirm.loading" }}"
                     data-url="{{ routePath "/feed/%d/mark-all-as-read" .feed.ID }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</button>
             </li>
@@ -139,9 +139,9 @@
                 <button
                     class="page-button"
                     data-action="markPageAsRead"
-                    data-label-question="{{ t "confirm.question" }}"
-                    data-label-yes="{{ t "confirm.yes" }}"
-                    data-label-no="{{ t "confirm.no" }}"
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-question="{{ t "confirm.question" }}"{{ end }}
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-yes="{{ t "confirm.yes" }}"{{ end }}
+                    {{ if not .user.DisableBulkOperationsConfirmations }}data-label-no="{{ t "confirm.no" }}"{{ end }}
                     data-label-loading="{{ t "confirm.loading" }}"
                     data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</button>
             </li>

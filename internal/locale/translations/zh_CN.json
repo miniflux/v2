@@ -370,6 +370,7 @@
     "form.prefs.label.show_reading_time": "显示条目的预计阅读时间",
     "form.prefs.label.theme": "主题",
     "form.prefs.label.timezone": "时区",
+    "form.prefs.label.disable_bulk_operations_confirmations": "Disable confirmation prompts for bulk operations (mark all as read, mark page as read)",
     "form.prefs.select.alphabetical": "字母顺序",
     "form.prefs.select.browser": "浏览器",
     "form.prefs.select.created_time": "条目创建时间",
