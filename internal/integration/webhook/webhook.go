@@ -21,8 +21,9 @@ import (
 const (
 	defaultClientTimeout = 10 * time.Second
 
-	NewEntriesEventType = "new_entries"
-	SaveEntryEventType  = "save_entry"
+	NewEntriesEventType     = "new_entries"
+	UpdatedEntriesEventType = "updated_entries"
+	SaveEntryEventType      = "save_entry"
 )
 
 type Client struct {
@@ -114,6 +115,50 @@ func (c *Client) SendNewEntriesWebhookEvent(feed *model.Feed, entries model.Entr
 	})
 }
 
+func (c *Client) SendUpdatedEntriesWebhookEvent(feed *model.Feed, entries model.Entries) error {
+	if len(entries) == 0 {
+		return nil
+	}
+
+	webhookEntries := make([]*WebhookEntry, 0, len(entries))
+	for _, entry := range entries {
+		webhookEntries = append(webhookEntries, &WebhookEntry{
+			ID:          entry.ID,
+			UserID:      entry.UserID,
+			FeedID:      entry.FeedID,
+			Status:      entry.Status,
+			Hash:        entry.Hash,
+			Title:       entry.Title,
+			URL:         entry.URL,
+			CommentsURL: entry.CommentsURL,
+			Date:        entry.Date,
+			CreatedAt:   entry.CreatedAt,
+			ChangedAt:   entry.ChangedAt,
+			Content:     entry.Content,
+			Author:      entry.Author,
+			ShareCode:   entry.ShareCode,
+			Starred:     entry.Starred,
+			ReadingTime: entry.ReadingTime,
+			Enclosures:  entry.Enclosures,
+			Tags:        entry.Tags,
+		})
+	}
+	return c.makeRequest(UpdatedEntriesEventType, &WebhookUpdatedEntriesEvent{
+		EventType: UpdatedEntriesEventType,
+		Feed: &WebhookFeed{
+			ID:         feed.ID,
+			UserID:     feed.UserID,
+			CategoryID: feed.Category.ID,
+			Category:   &WebhookCategory{ID: feed.Category.ID, Title: feed.Category.Title},
+			FeedURL:    feed.FeedURL,
+			SiteURL:    feed.SiteURL,
+			Title:      feed.Title,
+			CheckedAt:  feed.CheckedAt,
+		},
+		Entries: webhookEntries,
+	})
+}
+
 func (c *Client) makeRequest(eventType string, payload any) error {
 	if c.webhookURL == "" {
 		return errors.New(`webhook: missing webhook URL`)
@@ -187,6 +232,12 @@ type WebhookEntry struct {
 }
 
 type WebhookNewEntriesEvent struct {
+	EventType string          `json:"event_type"`
+	Feed      *WebhookFeed    `json:"feed"`
+	Entries   []*WebhookEntry `json:"entries"`
+}
+
+type WebhookUpdatedEntriesEvent struct {
 	EventType string          `json:"event_type"`
 	Feed      *WebhookFeed    `json:"feed"`
 	Entries   []*WebhookEntry `json:"entries"`
