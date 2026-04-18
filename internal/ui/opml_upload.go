@@ -46,8 +46,9 @@ func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
 	view := view.New(h.tpl, r)
 	view.Set("menu", "feeds")
 	view.Set("user", user)
-	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+	countUnread, countErrorFeeds, _ := h.store.GetNavMetadata(user.ID)
+	view.Set("countUnread", countUnread)
+	view.Set("countErrorFeeds", countErrorFeeds)
 
 	if fileHeader.Size == 0 {
 		view.Set("errorMessage", locale.NewLocalizedError("error.empty_file").Translate(user.Language))
@@ -85,8 +86,9 @@ func (h *handler) fetchOPML(w http.ResponseWriter, r *http.Request) {
 	view := view.New(h.tpl, r)
 	view.Set("menu", "feeds")
 	view.Set("user", user)
-	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+	countUnread, countErrorFeeds, _ := h.store.GetNavMetadata(user.ID)
+	view.Set("countUnread", countUnread)
+	view.Set("countErrorFeeds", countErrorFeeds)
 
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())

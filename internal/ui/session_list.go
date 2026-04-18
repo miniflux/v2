@@ -33,8 +33,9 @@ func (h *handler) showSessionsPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("sessions", sessions)
 	view.Set("menu", "settings")
 	view.Set("user", user)
-	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+	countUnread, countErrorFeeds, _ := h.store.GetNavMetadata(user.ID)
+	view.Set("countUnread", countUnread)
+	view.Set("countErrorFeeds", countErrorFeeds)
 
 	response.HTML(w, r, view.Render("sessions"))
 }
