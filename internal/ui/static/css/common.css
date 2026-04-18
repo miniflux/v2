@@ -1103,11 +1103,15 @@ article.category-has-unread {
 
 .entry-content img {
     height: auto;
+    display: block;
+    margin: auto;
 }
 
 .entry-content figure {
     margin-top: 15px;
     margin-bottom: 15px;
+    display: block;
+    text-align: center;
 }
 
 .entry-content figure img {
