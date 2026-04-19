@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log/slog"
 	"sort"
 	"time"
 
@@ -52,7 +51,7 @@ func (s *Storage) CheckedAt(userID, feedID int64) (time.Time, error) {
 	return result, nil
 }
 
-// CategoryFeedExists returns true if the given feed exists that belongs to the given category.
+// CategoryFeedExists returns true if the given feed exists and belongs to the given category.
 func (s *Storage) CategoryFeedExists(userID, categoryID, feedID int64) bool {
 	var result bool
 	query := `SELECT true FROM feeds WHERE user_id=$1 AND category_id=$2 AND id=$3 LIMIT 1`
@@ -60,7 +59,7 @@ func (s *Storage) CategoryFeedExists(userID, categoryID, feedID int64) bool {
 	return result
 }
 
-// FeedURLExists checks if feed URL already exists.
+// FeedURLExists returns true if the given feed URL already exists for the user.
 func (s *Storage) FeedURLExists(userID int64, feedURL string) bool {
 	var result bool
 	query := `SELECT true FROM feeds WHERE user_id=$1 AND feed_url=$2 LIMIT 1`
@@ -68,7 +67,7 @@ func (s *Storage) FeedURLExists(userID int64, feedURL string) bool {
 	return result
 }
 
-// AnotherFeedURLExists checks if the user a duplicated feed.
+// AnotherFeedURLExists returns true if another feed with the same URL exists for the user.
 func (s *Storage) AnotherFeedURLExists(userID, feedID int64, feedURL string) bool {
 	var result bool
 	query := `SELECT true FROM feeds WHERE id <> $1 AND user_id=$2 AND feed_url=$3 LIMIT 1`
@@ -76,7 +75,7 @@ func (s *Storage) AnotherFeedURLExists(userID, feedID int64, feedURL string) boo
 	return result
 }
 
-// CountAllFeeds returns the number of feeds in the database.
+// CountAllFeeds returns the number of feeds keyed by enabled, disabled, and total.
 func (s *Storage) CountAllFeeds() (map[string]int64, error) {
 	rows, err := s.db.Query(`SELECT disabled, count(*) FROM feeds GROUP BY disabled`)
 	if err != nil {
@@ -141,7 +140,7 @@ func (s *Storage) CountAllFeedsWithErrors() (int, error) {
 	return result, nil
 }
 
-// Feeds returns all feeds that belongs to the given user.
+// Feeds returns all feeds that belong to the given user.
 func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 	builder := NewFeedQueryBuilder(s, userID)
 	builder.WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection)
@@ -157,7 +156,7 @@ func getFeedsSorted(builder *feedQueryBuilder) (model.Feeds, error) {
 	return result, err
 }
 
-// FeedsWithCounters returns all feeds of the given user with counters of read and unread entries.
+// FeedsWithCounters returns all feeds of the given user with read and unread entry counters.
 func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
 	builder := NewFeedQueryBuilder(s, userID)
 	builder.WithCounters()
@@ -165,7 +164,7 @@ func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
 	return getFeedsSorted(builder)
 }
 
-// FetchCounters returns read and unread count.
+// FetchCounters returns the per-feed read and unread entry counts for the given user.
 func (s *Storage) FetchCounters(userID int64) (model.FeedCounters, error) {
 	builder := NewFeedQueryBuilder(s, userID)
 	builder.WithCounters()
@@ -173,7 +172,7 @@ func (s *Storage) FetchCounters(userID int64) (model.FeedCounters, error) {
 	return model.FeedCounters{ReadCounters: reads, UnreadCounters: unreads}, err
 }
 
-// FeedsByCategoryWithCounters returns all feeds of the given user/category with counters of read and unread entries.
+// FeedsByCategoryWithCounters returns all feeds in the given category for the given user with read and unread entry counters.
 func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.Feeds, error) {
 	builder := NewFeedQueryBuilder(s, userID)
 	builder.WithCategoryID(categoryID)
@@ -214,7 +213,7 @@ func (s *Storage) WeeklyFeedEntryCount(userID, feedID int64) (int, error) {
 	return weeklyCount, nil
 }
 
-// FeedByID returns a feed by the ID.
+// FeedByID returns the feed with the given ID.
 func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 	builder := NewFeedQueryBuilder(s, userID)
 	builder.WithFeedID(feedID)
@@ -442,7 +441,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 	return nil
 }
 
-// UpdateFeedError updates feed errors.
+// UpdateFeedError persists the parsing error fields for the given feed.
 func (s *Storage) UpdateFeedError(feed *model.Feed) (err error) {
 	query := `
 		UPDATE
@@ -471,45 +470,21 @@ func (s *Storage) UpdateFeedError(feed *model.Feed) (err error) {
 	return nil
 }
 
-// RemoveFeed removes a feed and all entries.
-// This operation can takes time if the feed has lot of entries.
+// RemoveFeed removes the given feed along with its entries and enclosures.
 func (s *Storage) RemoveFeed(userID, feedID int64) error {
-	rows, err := s.db.Query(`SELECT id FROM entries WHERE user_id=$1 AND feed_id=$2`, userID, feedID)
-	if err != nil {
-		return fmt.Errorf(`store: unable to get user feed entries: %v`, err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var entryID int64
-		if err := rows.Scan(&entryID); err != nil {
-			return fmt.Errorf(`store: unable to read user feed entry ID: %v`, err)
-		}
-
-		slog.Debug("Deleting entry",
-			slog.Int64("user_id", userID),
-			slog.Int64("feed_id", feedID),
-			slog.Int64("entry_id", entryID),
-		)
-
-		if _, err := s.db.Exec(`DELETE FROM entries WHERE id=$1 AND user_id=$2`, entryID, userID); err != nil {
-			return fmt.Errorf(`store: unable to delete user feed entries #%d: %v`, entryID, err)
-		}
-	}
-
 	if _, err := s.db.Exec(`DELETE FROM feeds WHERE id=$1 AND user_id=$2`, feedID, userID); err != nil {
 		return fmt.Errorf(`store: unable to delete feed #%d: %v`, feedID, err)
 	}
-
 	return nil
 }
 
-// ResetFeedErrors removes all feed errors.
+// ResetFeedErrors clears the parsing error fields for all feeds.
 func (s *Storage) ResetFeedErrors() error {
 	_, err := s.db.Exec(`UPDATE feeds SET parsing_error_count=0, parsing_error_msg=''`)
 	return err
 }
 
+// ResetNextCheckAt schedules all feeds to be checked immediately.
 func (s *Storage) ResetNextCheckAt() error {
 	_, err := s.db.Exec(`UPDATE feeds SET next_check_at=now()`)
 	return err
