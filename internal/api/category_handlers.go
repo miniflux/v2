@@ -115,7 +115,12 @@ func (h *handler) getCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	includeCounts := request.QueryStringParam(r, "counts", "false")
 
 	if includeCounts == "true" {
-		categories, err = h.store.CategoriesWithFeedCount(request.UserID(r))
+		user, userErr := h.store.UserByID(request.UserID(r))
+		if userErr != nil {
+			response.JSONServerError(w, r, userErr)
+			return
+		}
+		categories, err = h.store.CategoriesWithFeedCount(user.ID, user.CategoriesSortingOrder)
 	} else {
 		categories, err = h.store.Categories(request.UserID(r))
 	}
