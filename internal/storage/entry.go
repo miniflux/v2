@@ -445,27 +445,29 @@ func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string
 	return nil
 }
 
-func (s *Storage) SetEntriesStatusCount(userID int64, entryIDs []int64, status string) (int, error) {
-	if err := s.SetEntriesStatus(userID, entryIDs, status); err != nil {
-		return 0, err
-	}
-
+// SetEntriesStatusAndCountVisible updates the status of the given entries and returns how many are visible in global views.
+func (s *Storage) SetEntriesStatusAndCountVisible(userID int64, entryIDs []int64, status string) (int, error) {
 	query := `
+		WITH updated AS (
+			UPDATE entries
+			SET
+				status=$1,
+				changed_at=now()
+			WHERE
+				user_id=$2 AND
+				id=ANY($3)
+			RETURNING feed_id
+		)
 		SELECT count(*)
-		FROM entries e
-		    JOIN feeds f ON (f.id = e.feed_id)
-		    JOIN categories c ON (c.id = f.category_id)
-		WHERE e.user_id = $1
-			AND e.id = ANY($2)
-			AND NOT f.hide_globally
-			AND NOT c.hide_globally
+		FROM updated u
+			JOIN feeds f ON (f.id = u.feed_id)
+			JOIN categories c ON (c.id = f.category_id)
+		WHERE NOT f.hide_globally AND NOT c.hide_globally
 	`
-	row := s.db.QueryRow(query, userID, pq.Array(entryIDs))
-	visible := 0
-	if err := row.Scan(&visible); err != nil {
-		return 0, fmt.Errorf(`store: unable to query entries visibility %v: %v`, entryIDs, err)
+	var visible int
+	if err := s.db.QueryRow(query, status, userID, pq.Array(entryIDs)).Scan(&visible); err != nil {
+		return 0, fmt.Errorf(`store: unable to update entries status %v: %v`, entryIDs, err)
 	}
-
 	return visible, nil
 }
 
