@@ -1486,4 +1486,14 @@ var migrations = [...]func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			DELETE FROM integrations WHERE user_id NOT IN (SELECT id FROM users);
+
+			ALTER TABLE integrations
+				ADD CONSTRAINT integrations_user_id_fkey
+				FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+		`)
+		return err
+	},
 }

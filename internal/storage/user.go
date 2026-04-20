@@ -6,8 +6,6 @@ package storage // import "miniflux.app/v2/internal/storage"
 import (
 	"database/sql"
 	"fmt"
-	"log/slog"
-	"runtime"
 	"strings"
 
 	"miniflux.app/v2/internal/crypto"
@@ -28,7 +26,7 @@ func (s *Storage) CountUsers() (int, error) {
 	return result, nil
 }
 
-// SetLastLogin updates the last login date of a user.
+// SetLastLogin sets the user's last login timestamp to the current time.
 func (s *Storage) SetLastLogin(userID int64) error {
 	query := `UPDATE users SET last_login_at=now() WHERE id=$1`
 	_, err := s.db.Exec(query, userID)
@@ -39,14 +37,14 @@ func (s *Storage) SetLastLogin(userID int64) error {
 	return nil
 }
 
-// UserExists checks if a user exists by using the given username.
+// UserExists returns true if a user with the given username exists.
 func (s *Storage) UserExists(username string) bool {
 	var result bool
 	s.db.QueryRow(`SELECT true FROM users WHERE username=LOWER($1) LIMIT 1`, username).Scan(&result)
 	return result
 }
 
-// AnotherUserExists checks if another user exists with the given username.
+// AnotherUserExists returns true if a user other than userID has the given username.
 func (s *Storage) AnotherUserExists(userID int64, username string) bool {
 	var result bool
 	s.db.QueryRow(`SELECT true FROM users WHERE id != $1 AND username=LOWER($2) LIMIT 1`, userID, username).Scan(&result)
@@ -330,7 +328,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 	return nil
 }
 
-// UserLanguage returns the language of the given user.
+// UserLanguage returns the language of the given user, or "en_US" if the lookup fails.
 func (s *Storage) UserLanguage(userID int64) (language string) {
 	err := s.db.QueryRow(`SELECT language FROM users WHERE id = $1`, userID).Scan(&language)
 	if err != nil {
@@ -426,7 +424,7 @@ func (s *Storage) UserByUsername(username string) (*model.User, error) {
 	return s.fetchUser(query, username)
 }
 
-// UserByField finds a user by a field value.
+// UserByField returns the user matching the given column name and value.
 func (s *Storage) UserByField(field, value string) (*model.User, error) {
 	query := `
 		SELECT
@@ -469,7 +467,7 @@ func (s *Storage) UserByField(field, value string) (*model.User, error) {
 	return s.fetchUser(fmt.Sprintf(query, pq.QuoteIdentifier(field)), value)
 }
 
-// AnotherUserWithFieldExists returns true if a user has the value set for the given field.
+// AnotherUserWithFieldExists returns true if a user other than userID has the given value in the given column.
 func (s *Storage) AnotherUserWithFieldExists(userID int64, field, value string) bool {
 	var result bool
 	query := `SELECT true FROM users WHERE id <> $1 AND ` + pq.QuoteIdentifier(field) + `=$2 LIMIT 1`
@@ -477,7 +475,7 @@ func (s *Storage) AnotherUserWithFieldExists(userID int64, field, value string) 
 	return result
 }
 
-// UserByAPIKey returns a User from an API Key.
+// UserByAPIKey returns the user associated with the given API key.
 func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 	query := `
 		SELECT
@@ -567,73 +565,11 @@ func (s *Storage) fetchUser(query string, args ...any) (*model.User, error) {
 	return &user, nil
 }
 
-// RemoveUser deletes a user.
+// RemoveUser deletes a user and all related data.
 func (s *Storage) RemoveUser(userID int64) error {
-	tx, err := s.db.Begin()
-	if err != nil {
-		return fmt.Errorf(`store: unable to start transaction: %v`, err)
-	}
-
-	if _, err := tx.Exec(`DELETE FROM users WHERE id=$1`, userID); err != nil {
-		tx.Rollback()
+	if _, err := s.db.Exec(`DELETE FROM users WHERE id=$1`, userID); err != nil {
 		return fmt.Errorf(`store: unable to remove user #%d: %v`, userID, err)
 	}
-
-	if _, err := tx.Exec(`DELETE FROM integrations WHERE user_id=$1`, userID); err != nil {
-		tx.Rollback()
-		return fmt.Errorf(`store: unable to remove integration settings for user #%d: %v`, userID, err)
-	}
-
-	if err := tx.Commit(); err != nil {
-		return fmt.Errorf(`store: unable to commit transaction: %v`, err)
-	}
-
-	return nil
-}
-
-// RemoveUserAsync deletes user data without locking the database.
-func (s *Storage) RemoveUserAsync(userID int64) {
-	go func() {
-		if err := s.deleteUserFeeds(userID); err != nil {
-			slog.Error("Unable to delete user feeds",
-				slog.Int64("user_id", userID),
-				slog.Any("error", err),
-			)
-			return
-		}
-
-		s.db.Exec(`DELETE FROM users WHERE id=$1`, userID)
-		s.db.Exec(`DELETE FROM integrations WHERE user_id=$1`, userID)
-
-		slog.Debug("User deleted",
-			slog.Int64("user_id", userID),
-			slog.Int("goroutines", runtime.NumGoroutine()),
-		)
-	}()
-}
-
-func (s *Storage) deleteUserFeeds(userID int64) error {
-	rows, err := s.db.Query(`SELECT id FROM feeds WHERE user_id=$1`, userID)
-	if err != nil {
-		return fmt.Errorf(`store: unable to get user feeds: %v`, err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var feedID int64
-		rows.Scan(&feedID)
-
-		slog.Debug("Deleting feed",
-			slog.Int64("user_id", userID),
-			slog.Int64("feed_id", feedID),
-			slog.Int("goroutines", runtime.NumGoroutine()),
-		)
-
-		if err := s.RemoveFeed(userID, feedID); err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -729,7 +665,7 @@ func (s *Storage) Users() (model.Users, error) {
 	return users, nil
 }
 
-// CheckPassword validate the hashed password.
+// CheckPassword returns nil if the given password matches the user's stored hash.
 func (s *Storage) CheckPassword(username, password string) error {
 	var hash string
 	username = strings.ToLower(username)
@@ -748,7 +684,7 @@ func (s *Storage) CheckPassword(username, password string) error {
 	return nil
 }
 
-// HasPassword returns true if the given user has a password defined.
+// HasPassword returns true if the given user exists and has a non-empty password.
 func (s *Storage) HasPassword(userID int64) (bool, error) {
 	var result bool
 	query := `SELECT true FROM users WHERE id=$1 AND password <> '' LIMIT 1`
