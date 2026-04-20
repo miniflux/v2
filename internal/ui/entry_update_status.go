@@ -25,7 +25,7 @@ func (h *handler) updateEntriesStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	count, err := h.store.SetEntriesStatusCount(request.UserID(r), entriesStatusUpdateRequest.EntryIDs, entriesStatusUpdateRequest.Status)
+	count, err := h.store.SetEntriesStatusAndCountVisible(request.UserID(r), entriesStatusUpdateRequest.EntryIDs, entriesStatusUpdateRequest.Status)
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
