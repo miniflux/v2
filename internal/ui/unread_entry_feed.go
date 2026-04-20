@@ -11,6 +11,7 @@ import (
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/view"
+	"miniflux.app/v2/internal/urllib"
 )
 
 func (h *handler) showUnreadFeedEntryPage(w http.ResponseWriter, r *http.Request) {
@@ -85,7 +86,7 @@ func (h *handler) showUnreadFeedEntryPage(w http.ResponseWriter, r *http.Request
 		}
 	}
 
-	if user.AlwaysOpenExternalLinks {
+	if user.AlwaysOpenExternalLinks && urllib.IsSafeExternalURL(entry.URL) {
 		response.HTMLRedirect(w, r, entry.URL)
 		return
 	}

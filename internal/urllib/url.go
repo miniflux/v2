@@ -119,6 +119,26 @@ func IsHTTPS(websiteURL string) bool {
 	return strings.EqualFold(parsedURL.Scheme, "https")
 }
 
+// IsSafeExternalURL reports whether rawURL is safe to use as the target of a
+// server-issued HTTP redirect. Entry URLs come from arbitrary remote feeds,
+// so they may contain dangerous schemes such as javascript: or data: which
+// would execute on the Miniflux origin if returned in a Location header.
+// Only absolute http(s) URLs with a non-empty host are accepted.
+func IsSafeExternalURL(rawURL string) bool {
+	if rawURL == "" {
+		return false
+	}
+	u, err := url.Parse(rawURL)
+	if err != nil || u.Host == "" {
+		return false
+	}
+	switch u.Scheme {
+	case "http", "https":
+		return true
+	}
+	return false
+}
+
 // Domain returns the host component of the given URL.
 func Domain(websiteURL string) string {
 	parsedURL, err := url.Parse(websiteURL)
