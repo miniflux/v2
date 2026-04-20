@@ -18,7 +18,7 @@ func (h *handler) showCategoryListPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	categories, err := h.store.CategoriesWithFeedCount(user.ID)
+	categories, err := h.store.CategoriesWithFeedCount(user.ID, user.CategoriesSortingOrder)
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
