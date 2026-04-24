@@ -133,6 +133,32 @@ func matchesEntryRegexRules(regexPattern string, feed *model.Feed, entry *model.
 		return false, true // No pattern means rule is valid but doesn't match
 	}
 
+	valid := false
+
+	for line := range strings.SplitSeq(regexPattern, "\n") {
+		pattern := strings.TrimSpace(line)
+		if pattern == "" {
+			continue
+		}
+
+		match, patternValid := matchesSingleRegexPattern(pattern, feed, entry)
+		if !patternValid {
+			continue // Invalid regex pattern
+		}
+
+		valid = true
+
+		if match {
+			return true, true // Pattern matches and is valid
+		}
+	}
+
+	return false, valid
+}
+
+// matchesSingleRegexPattern checks if a single regex pattern matches the entry.
+// It returns true if the entry matches the pattern, and a boolean indicating if the pattern is a valid regex.
+func matchesSingleRegexPattern(regexPattern string, feed *model.Feed, entry *model.Entry) (bool, bool) {
 	compiledRegex := cachedRegex(regexPattern)
 	if compiledRegex == nil {
 		return false, false // Invalid regex pattern
