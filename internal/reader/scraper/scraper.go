@@ -84,11 +84,17 @@ func findContentUsingCustomRules(page io.Reader, rules string) (baseURL string, 
 	}
 
 	var buf strings.Builder
-	document.Find(rules).Each(func(i int, s *goquery.Selection) {
-		if content, err := goquery.OuterHtml(s); err == nil {
-			buf.WriteString(content)
+	for rule := range strings.SplitSeq(strings.TrimSpace(rules), "\n") {
+		rule = strings.TrimSpace(rule)
+		if rule == "" {
+			continue
 		}
-	})
+		document.Find(rule).Each(func(i int, s *goquery.Selection) {
+			if content, err := goquery.OuterHtml(s); err == nil {
+				buf.WriteString(content)
+			}
+		})
+	}
 
 	return baseURL, buf.String(), nil
 }
