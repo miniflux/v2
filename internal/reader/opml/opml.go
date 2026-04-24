@@ -29,6 +29,27 @@ type opmlOutline struct {
 	SiteURL     string                `xml:"htmlUrl,attr,omitempty"`
 	Description string                `xml:"description,attr,omitempty"`
 	Outlines    opmlOutlineCollection `xml:"outline,omitempty"`
+
+	// Miniflux-specific feed settings
+	ScraperRules                string `xml:"scraperRules,attr,omitempty"`
+	RewriteRules                string `xml:"rewriteRules,attr,omitempty"`
+	UrlRewriteRules             string `xml:"urlRewriteRules,attr,omitempty"`
+	BlocklistRules              string `xml:"blocklistRules,attr,omitempty"`
+	KeeplistRules               string `xml:"keeplistRules,attr,omitempty"`
+	BlockFilterEntryRules       string `xml:"blockFilterEntryRules,attr,omitempty"`
+	KeepFilterEntryRules        string `xml:"keepFilterEntryRules,attr,omitempty"`
+	UserAgent                   string `xml:"userAgent,attr,omitempty"`
+	Cookie                      string `xml:"cookie,attr,omitempty"`
+	ProxyURL                    string `xml:"proxyUrl,attr,omitempty"`
+	Crawler                     bool   `xml:"crawler,attr,omitempty"`
+	IgnoreHTTPCache             bool   `xml:"ignoreHTTPCache,attr,omitempty"`
+	FetchViaProxy               bool   `xml:"fetchViaProxy,attr,omitempty"`
+	Disabled                    bool   `xml:"disabled,attr,omitempty"`
+	NoMediaPlayer               bool   `xml:"noMediaPlayer,attr,omitempty"`
+	HideGlobally                bool   `xml:"hideGlobally,attr,omitempty"`
+	AllowSelfSignedCertificates bool   `xml:"allowSelfSignedCertificates,attr,omitempty"`
+	DisableHTTP2                bool   `xml:"disableHTTP2,attr,omitempty"`
+	IgnoreEntryUpdates          bool   `xml:"ignoreEntryUpdates,attr,omitempty"`
 }
 
 func (o opmlOutline) MarshalXML(e *xml.Encoder, start xml.StartElement) error {

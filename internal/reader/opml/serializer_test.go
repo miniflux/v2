@@ -38,6 +38,82 @@ func TestSerialize(t *testing.T) {
 	}
 }
 
+func TestSerializeWithMinifluxSettings(t *testing.T) {
+	input := subcription{
+		Title:                       "Feed 1",
+		FeedURL:                     "http://example.org/feed/1",
+		SiteURL:                     "http://example.org/1",
+		CategoryName:                "Category 1",
+		ScraperRules:                `article [class^="content"]`,
+		RewriteRules:                `replace("foo"|"bar")`,
+		UrlRewriteRules:             `rewrite("^https://old"|"https://new")`,
+		BlocklistRules:              "sponsored",
+		KeeplistRules:               "important",
+		BlockFilterEntryRules:       `EntryTitle=~"ad"`,
+		KeepFilterEntryRules:        `EntryTitle=~"news"`,
+		UserAgent:                   "CustomAgent/1.0",
+		Cookie:                      "session=abc",
+		ProxyURL:                    "http://proxy.example.org",
+		Crawler:                     true,
+		IgnoreHTTPCache:             true,
+		FetchViaProxy:               true,
+		Disabled:                    true,
+		NoMediaPlayer:               true,
+		HideGlobally:                true,
+		AllowSelfSignedCertificates: true,
+		DisableHTTP2:                true,
+		IgnoreEntryUpdates:          true,
+	}
+
+	output := serialize([]subcription{input})
+	feeds, err := parse(bytes.NewBufferString(output))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feeds) != 1 {
+		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(feeds), 1)
+	}
+
+	if feeds[0] != input {
+		t.Errorf("Round-trip failed:\ngot:  %+v\nwant: %+v", feeds[0], input)
+	}
+}
+
+func TestSerializePreservesNewlinesInRules(t *testing.T) {
+	input := subcription{
+		Title:                 "Feed 1",
+		FeedURL:               "http://example.org/feed/1",
+		SiteURL:               "http://example.org/1",
+		CategoryName:          "Category 1",
+		RewriteRules:          "replace(\"foo\"|\"bar\")\nadd_youtube_video",
+		ScraperRules:          "article.content\np.body",
+		BlockFilterEntryRules: "EntryTitle=~\"ad\"\nEntryURL=~\"click\"",
+	}
+
+	output := serialize([]subcription{input})
+	feeds, err := parse(bytes.NewBufferString(output))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feeds) != 1 {
+		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(feeds), 1)
+	}
+
+	if feeds[0].RewriteRules != input.RewriteRules {
+		t.Errorf("RewriteRules newlines not preserved:\ngot:  %q\nwant: %q", feeds[0].RewriteRules, input.RewriteRules)
+	}
+
+	if feeds[0].ScraperRules != input.ScraperRules {
+		t.Errorf("ScraperRules newlines not preserved:\ngot:  %q\nwant: %q", feeds[0].ScraperRules, input.ScraperRules)
+	}
+
+	if feeds[0].BlockFilterEntryRules != input.BlockFilterEntryRules {
+		t.Errorf("BlockFilterEntryRules newlines not preserved:\ngot:  %q\nwant: %q", feeds[0].BlockFilterEntryRules, input.BlockFilterEntryRules)
+	}
+}
+
 func TestNormalizedCategoriesOrder(t *testing.T) {
 	var orderTests = []struct {
 		naturalOrderName string

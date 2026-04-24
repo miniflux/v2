@@ -53,6 +53,26 @@ func convertSubscriptionsToOPML(subscriptions []subcription) *opmlDocument {
 				FeedURL:     subscription.FeedURL,
 				SiteURL:     subscription.SiteURL,
 				Description: subscription.Description,
+
+				ScraperRules:                subscription.ScraperRules,
+				RewriteRules:                subscription.RewriteRules,
+				UrlRewriteRules:             subscription.UrlRewriteRules,
+				BlocklistRules:              subscription.BlocklistRules,
+				KeeplistRules:               subscription.KeeplistRules,
+				BlockFilterEntryRules:       subscription.BlockFilterEntryRules,
+				KeepFilterEntryRules:        subscription.KeepFilterEntryRules,
+				UserAgent:                   subscription.UserAgent,
+				Cookie:                      subscription.Cookie,
+				ProxyURL:                    subscription.ProxyURL,
+				Crawler:                     subscription.Crawler,
+				IgnoreHTTPCache:             subscription.IgnoreHTTPCache,
+				FetchViaProxy:               subscription.FetchViaProxy,
+				Disabled:                    subscription.Disabled,
+				NoMediaPlayer:               subscription.NoMediaPlayer,
+				HideGlobally:                subscription.HideGlobally,
+				AllowSelfSignedCertificates: subscription.AllowSelfSignedCertificates,
+				DisableHTTP2:                subscription.DisableHTTP2,
+				IgnoreEntryUpdates:          subscription.IgnoreEntryUpdates,
 			})
 		}
 
