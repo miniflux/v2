@@ -38,6 +38,26 @@ func getSubscriptionsFromOutlines(outlines opmlOutlineCollection, category strin
 				SiteURL:      outline.GetSiteURL(),
 				Description:  outline.Description,
 				CategoryName: category,
+
+				ScraperRules:                outline.ScraperRules,
+				RewriteRules:                outline.RewriteRules,
+				UrlRewriteRules:             outline.UrlRewriteRules,
+				BlocklistRules:              outline.BlocklistRules,
+				KeeplistRules:               outline.KeeplistRules,
+				BlockFilterEntryRules:       outline.BlockFilterEntryRules,
+				KeepFilterEntryRules:        outline.KeepFilterEntryRules,
+				UserAgent:                   outline.UserAgent,
+				Cookie:                      outline.Cookie,
+				ProxyURL:                    outline.ProxyURL,
+				Crawler:                     outline.Crawler,
+				IgnoreHTTPCache:             outline.IgnoreHTTPCache,
+				FetchViaProxy:               outline.FetchViaProxy,
+				Disabled:                    outline.Disabled,
+				NoMediaPlayer:               outline.NoMediaPlayer,
+				HideGlobally:                outline.HideGlobally,
+				AllowSelfSignedCertificates: outline.AllowSelfSignedCertificates,
+				DisableHTTP2:                outline.DisableHTTP2,
+				IgnoreEntryUpdates:          outline.IgnoreEntryUpdates,
 			})
 		} else if outline.Outlines.HasChildren() {
 			subscriptions = append(subscriptions, getSubscriptionsFromOutlines(outline.Outlines, outline.GetTitle())...)
