@@ -57,6 +57,61 @@ func TestRewriteEntryURL(t *testing.T) {
 			description: "Should rewrite URL according to the regex pattern",
 		},
 		{
+			name: "ValidRewriteRuleWithTrailingNewline",
+			feed: &model.Feed{
+				ID:              1,
+				FeedURL:         "https://example.com/feed.xml",
+				UrlRewriteRules: "rewrite(\"^https://example.com/article/(.+)\"|\"https://example.com/full-article/$1\")\n",
+			},
+			entry: &model.Entry{
+				URL: "https://example.com/article/123",
+			},
+			expectedURL: "https://example.com/full-article/123",
+			description: "Should tolerate trailing newlines from textarea input",
+		},
+		{
+			name: "MultipleRewriteRules",
+			feed: &model.Feed{
+				ID:      1,
+				FeedURL: "https://example.com/feed.xml",
+				UrlRewriteRules: "rewrite(\"^https://example.com/article/(.+)\"|\"https://example.com/full-article/$1\")\n" +
+					"rewrite(\"^https://example.com/story/(.+)\"|\"https://example.com/full-story/$1\")",
+			},
+			entry: &model.Entry{
+				URL: "https://example.com/story/456",
+			},
+			expectedURL: "https://example.com/full-story/456",
+			description: "Should evaluate each newline-delimited rewrite rule",
+		},
+		{
+			name: "AbortsOnMalformedRuleInMultiline",
+			feed: &model.Feed{
+				ID:      1,
+				FeedURL: "https://example.com/feed.xml",
+				UrlRewriteRules: "rewrite(\"^https://example.com/article/(.+)\"|\"https://example.com/full-article/$1\")\n" +
+					"not-a-rewrite-rule",
+			},
+			entry: &model.Entry{
+				URL: "https://example.com/article/123",
+			},
+			expectedURL: "https://example.com/article/123",
+			description: "Should return the original URL when any rule is malformed",
+		},
+		{
+			name: "AbortsOnInvalidRegexInMultiline",
+			feed: &model.Feed{
+				ID:      1,
+				FeedURL: "https://example.com/feed.xml",
+				UrlRewriteRules: "rewrite(\"^https://example.com/article/(.+)\"|\"https://example.com/full-article/$1\")\n" +
+					`rewrite("^https://example.com/[invalid"|"https://rewritten.com/$1")`,
+			},
+			entry: &model.Entry{
+				URL: "https://example.com/article/123",
+			},
+			expectedURL: "https://example.com/article/123",
+			description: "Should return the original URL when any rule contains an invalid regex",
+		},
+		{
 			name: "ComplexRegexRewrite",
 			feed: &model.Feed{
 				ID:              1,
