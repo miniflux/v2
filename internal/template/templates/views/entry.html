@@ -135,6 +135,20 @@
                         >{{ icon "comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>
                 </li>
                 {{ end }}
+                <li>
+                    {{ if .prevEntry }}
+                    <a href="{{ .prevEntryRoute }}{{ queryString (dict "q" .searchQuery "unread" .searchUnreadOnly) }}" title="{{ .prevEntry.Title }}" class="page-button" data-page="previous" rel="prev">{{ icon "chevron-left" }}<span class="icon-label">{{ t "pagination.previous" }}</span></a>
+                    {{ else }}
+                    <a class="page-button" aria-disabled="true" tabindex="-1">{{ icon "chevron-left" }}<span class="icon-label">{{ t "pagination.previous" }}</span></a>
+                    {{ end }}
+                </li>
+                <li>
+                    {{ if .nextEntry }}
+                    <a href="{{ .nextEntryRoute }}{{ queryString (dict "q" .searchQuery "unread" .searchUnreadOnly) }}" title="{{ .nextEntry.Title }}" class="page-button" data-page="next" rel="next">{{ icon "chevron-right" }}<span class="icon-label">{{ t "pagination.next" }}</span></a>
+                    {{ else }}
+                    <a class="page-button" aria-disabled="true" tabindex="-1">{{ icon "chevron-right" }}<span class="icon-label">{{ t "pagination.next" }}</span></a>
+                    {{ end }}
+                </li>
             </ul>
         </div>
         {{ end }}
@@ -229,13 +243,6 @@
 
 
 {{ define "content"}}
-{{ if gt (len .entry.Content) 120 }}
-{{ if .user }}
-<div class="pagination-entry-top">
-    {{ template "entry_pagination" . }}
-</div>
-{{ end }}
-{{ end }}
 <article class="entry-content {{ if ne $.user.GestureNav "none" }}gesture-nav-{{ $.user.GestureNav }}{{ end }}" dir="auto">
     {{ if not .entry.Feed.NoMediaPlayer }}
         {{ $mediaPlayerEnclosure := .entry.Enclosures.FindMediaPlayerEnclosure }}

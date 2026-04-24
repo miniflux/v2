@@ -212,6 +212,13 @@ a:hover {
     translate: 1px 1px;
 }
 
+.page-button[aria-disabled="true"] {
+    color: var(--text-color-muted, #ccc);
+    cursor: default;
+    opacity: 0.4;
+    pointer-events: none;
+}
+
 /* Logo */
 .logo {
     text-align: center;
