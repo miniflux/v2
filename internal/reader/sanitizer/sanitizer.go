@@ -180,6 +180,7 @@ var (
 		"sftp:",
 		"sip:",
 		"sips:",
+		"shortcuts:",
 		"skype:",
 		"spotify:",
 		"ssh:",
