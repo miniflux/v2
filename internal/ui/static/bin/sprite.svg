@@ -12,9 +12,19 @@ Source: https://github.com/tabler/tabler-icons
         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
         <path d="M15 6l-6 6l6 6"/>
     </symbol>
+    <symbol id="icon-chevrons-left" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+        <path d="M11 7l-5 5l5 5"/>
+        <path d="M17 7l-5 5l5 5"/>
+    </symbol>
     <symbol id="icon-chevron-right" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
         <path d="M9 6l6 6l-6 6"/>
+    </symbol>
+    <symbol id="icon-chevrons-right" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+        <path d="M7 7l5 5l-5 5"/>
+        <path d="M13 7l5 5l-5 5"/>
     </symbol>
     <symbol id="icon-read" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>

@@ -72,6 +72,9 @@
                     data-url="{{ routePath "/feed/%d/remove" .feed.ID }}"
                     data-redirect-url="{{ routePath "/feeds" }}">{{ icon "delete" }}{{ t "action.remove_feed" }}</button>
             </li>
+            {{ if .entries }}
+            {{ template "pagination_header" .pagination }}
+            {{ end }}
         </ul>
     </nav>
 </section>
@@ -92,9 +95,6 @@
         <p role="alert" class="alert">{{ t "alert.no_feed_entry" }}</p>
     {{ end }}
 {{ else }}
-    <div class="pagination-top">
-        {{ template "pagination" .pagination }}
-    </div>
     <div class="items">
         {{ range .entries }}
         <article

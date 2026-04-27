@@ -3,6 +3,13 @@
 {{ define "page_header"}}
 <section class="page-header" aria-labelledby="page-header-title">
     <h1 id="page-header-title">{{ t "page.search.title" }} ({{ .total }})</h1>
+    {{ if and $.searchQuery .entries }}
+    <nav aria-label="{{ t "page.search.title" }} {{ t "menu.title" }}">
+        <ul>
+            {{ template "pagination_header" .pagination }}
+        </ul>
+    </nav>
+    {{ end }}
 </section>
 {{ end }}
 
@@ -21,9 +28,6 @@
     {{ if not .entries }}
         <p role="alert" class="alert alert-info">{{ t "alert.no_search_result" }}</p>
     {{ else }}
-        <div class="pagination-top">
-            {{ template "pagination" .pagination }}
-        </div>
         <div class="items">
             {{ range .entries }}
             <article

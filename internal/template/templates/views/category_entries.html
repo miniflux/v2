@@ -72,6 +72,9 @@
                     </button>
                 </form>
             </li>
+            {{ if .entries }}
+            {{ template "pagination_header" .pagination }}
+            {{ end }}
         </ul>
     </nav>
 </section>
@@ -81,9 +84,6 @@
 {{ if not .entries }}
     <p role="alert" class="alert">{{ t "alert.no_category_entry" }}</p>
 {{ else }}
-    <div class="pagination-top">
-        {{ template "pagination" .pagination }}
-    </div>
     <div class="items">
         {{ range .entries }}
         <article

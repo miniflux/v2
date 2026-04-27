@@ -39,3 +39,34 @@
     </div>
 </div>
 {{ end }}
+
+{{ define "pagination_header" }}
+<li>
+    {{ if .ShowFirst }}
+        <a class="page-button" href="{{ .Route }}{{ queryString (dict "offset" .FirstOffset "q" .SearchQuery "unread" .UnreadOnly) }}" data-page="first">{{ icon "chevrons-left" }}<span class="icon-label">{{ t "pagination.first" }}</span></a>
+    {{ else }}
+        <a class="page-button" aria-disabled="true" tabindex="-1">{{ icon "chevrons-left" }}<span class="icon-label">{{ t "pagination.first" }}</span></a>
+    {{ end }}
+</li>
+<li>
+    {{ if .ShowPrev }}
+        <a class="page-button" href="{{ .Route }}{{ queryString (dict "offset" .PrevOffset "q" .SearchQuery "unread" .UnreadOnly) }}" data-page="previous" rel="prev">{{ icon "chevron-left" }}<span class="icon-label">{{ t "pagination.previous" }}</span></a>
+    {{ else }}
+        <a class="page-button" aria-disabled="true" tabindex="-1">{{ icon "chevron-left" }}<span class="icon-label">{{ t "pagination.previous" }}</span></a>
+    {{ end }}
+</li>
+<li>
+    {{ if .ShowNext }}
+        <a class="page-button" href="{{ .Route }}{{ queryString (dict "offset" .NextOffset "q" .SearchQuery "unread" .UnreadOnly) }}" data-page="next" rel="next">{{ icon "chevron-right" }}<span class="icon-label">{{ t "pagination.next" }}</span></a>
+    {{ else }}
+        <a class="page-button" aria-disabled="true" tabindex="-1">{{ icon "chevron-right" }}<span class="icon-label">{{ t "pagination.next" }}</span></a>
+    {{ end }}
+</li>
+<li>
+    {{ if .ShowLast }}
+        <a class="page-button" href="{{ .Route }}{{ queryString (dict "offset" .LastOffset "q" .SearchQuery "unread" .UnreadOnly) }}" data-page="last">{{ icon "chevrons-right" }}<span class="icon-label">{{ t "pagination.last" }}</span></a>
+    {{ else }}
+        <a class="page-button" aria-disabled="true" tabindex="-1">{{ icon "chevrons-right" }}<span class="icon-label">{{ t "pagination.last" }}</span></a>
+    {{ end }}
+</li>
+{{ end }}

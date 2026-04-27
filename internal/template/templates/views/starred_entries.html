@@ -7,6 +7,13 @@
         <span aria-hidden="true"> ({{ .total }})</span>
     </h1>
     <span id="page-header-title-count" class="sr-only">{{ plural "page.starred_entry_count" .total .total }}</span>
+    {{ if .entries }}
+    <nav aria-label="{{ t "page.starred.title" }} {{ t "menu.title" }}">
+        <ul>
+            {{ template "pagination_header" .pagination }}
+        </ul>
+    </nav>
+    {{ end }}
 </section>
 {{ end }}
 
@@ -14,9 +21,6 @@
 {{ if not .entries }}
     <p role="alert" class="alert alert-info">{{ t "alert.no_starred" }}</p>
 {{ else }}
-    <div class="pagination-top">
-        {{ template "pagination" .pagination }}
-    </div>
     <div class="items">
         {{ range .entries }}
         <article

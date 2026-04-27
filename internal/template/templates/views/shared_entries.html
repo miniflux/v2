@@ -23,6 +23,7 @@
             <li>
                 <a class="page-link" href="{{ routePath "/shares" }}">{{ icon "share" }}{{ t "menu.shared_entries" }}</a>
             </li>
+            {{ template "pagination_header" .pagination }}
         </ul>
     </nav>
     {{ end }}
@@ -33,9 +34,6 @@
 {{ if not .entries }}
     <p role="alert" class="alert alert-info">{{ t "alert.no_shared_entry" }}</p>
 {{ else }}
-    <div class="pagination-top">
-        {{ template "pagination" .pagination }}
-    </div>
     <div class="items">
         {{ range .entries }}
         <article
