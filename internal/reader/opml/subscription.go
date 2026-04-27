@@ -20,7 +20,6 @@ type subcription struct {
 	BlockFilterEntryRules       string
 	KeepFilterEntryRules        string
 	UserAgent                   string
-	Cookie                      string
 	ProxyURL                    string
 	Crawler                     bool
 	IgnoreHTTPCache             bool

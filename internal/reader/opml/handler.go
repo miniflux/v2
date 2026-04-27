@@ -9,6 +9,7 @@ import (
 
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
+	"miniflux.app/v2/internal/validator"
 )
 
 // Handler handles the logic for OPML import/export.
@@ -40,7 +41,6 @@ func (h *Handler) Export(userID int64) (string, error) {
 			BlockFilterEntryRules:       feed.BlockFilterEntryRules,
 			KeepFilterEntryRules:        feed.KeepFilterEntryRules,
 			UserAgent:                   feed.UserAgent,
-			Cookie:                      feed.Cookie,
 			ProxyURL:                    feed.ProxyURL,
 			Crawler:                     feed.Crawler,
 			IgnoreHTTPCache:             feed.IgnoreHTTPCache,
@@ -72,6 +72,10 @@ func (h *Handler) Import(userID int64, data io.Reader) error {
 		category, err := h.resolveCategory(userID, subscription.CategoryName)
 		if err != nil {
 			return err
+		}
+
+		if validationErr := validateSubscription(userID, category.ID, h.store, subscription); validationErr != nil {
+			return fmt.Errorf(`opml: invalid feed settings for %q: %w`, subscription.FeedURL, validationErr)
 		}
 
 		feed := &model.Feed{
@@ -124,7 +128,6 @@ func applySubscriptionSettings(feed *model.Feed, s subcription) {
 	feed.BlockFilterEntryRules = s.BlockFilterEntryRules
 	feed.KeepFilterEntryRules = s.KeepFilterEntryRules
 	feed.UserAgent = s.UserAgent
-	feed.Cookie = s.Cookie
 	feed.ProxyURL = s.ProxyURL
 	feed.Crawler = s.Crawler
 	feed.IgnoreHTTPCache = s.IgnoreHTTPCache
@@ -135,6 +138,37 @@ func applySubscriptionSettings(feed *model.Feed, s subcription) {
 	feed.AllowSelfSignedCertificates = s.AllowSelfSignedCertificates
 	feed.DisableHTTP2 = s.DisableHTTP2
 	feed.IgnoreEntryUpdates = s.IgnoreEntryUpdates
+}
+
+func validateSubscription(userID, categoryID int64, store *storage.Storage, s subcription) error {
+	feedCreationRequest := &model.FeedCreationRequest{
+		FeedURL:                     s.FeedURL,
+		CategoryID:                  categoryID,
+		UserAgent:                   s.UserAgent,
+		Crawler:                     s.Crawler,
+		IgnoreEntryUpdates:          s.IgnoreEntryUpdates,
+		Disabled:                    s.Disabled,
+		NoMediaPlayer:               s.NoMediaPlayer,
+		IgnoreHTTPCache:             s.IgnoreHTTPCache,
+		AllowSelfSignedCertificates: s.AllowSelfSignedCertificates,
+		FetchViaProxy:               s.FetchViaProxy,
+		HideGlobally:                s.HideGlobally,
+		DisableHTTP2:                s.DisableHTTP2,
+		ScraperRules:                s.ScraperRules,
+		RewriteRules:                s.RewriteRules,
+		BlocklistRules:              s.BlocklistRules,
+		KeeplistRules:               s.KeeplistRules,
+		BlockFilterEntryRules:       s.BlockFilterEntryRules,
+		KeepFilterEntryRules:        s.KeepFilterEntryRules,
+		UrlRewriteRules:             s.UrlRewriteRules,
+		ProxyURL:                    s.ProxyURL,
+	}
+
+	if validationErr := validator.ValidateFeedCreation(store, userID, feedCreationRequest); validationErr != nil {
+		return validationErr.Error()
+	}
+
+	return nil
 }
 
 // NewHandler creates a new handler for OPML files.

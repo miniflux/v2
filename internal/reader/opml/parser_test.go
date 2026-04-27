@@ -278,7 +278,7 @@ func TestParseInvalidXML(t *testing.T) {
 
 func TestParseOpmlWithMinifluxSettings(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
-	<opml version="2.0">
+	<opml version="2.0" xmlns:miniflux="https://miniflux.app/opml">
 		<head><title>Miniflux</title></head>
 		<body>
 			<outline text="My Category">
@@ -287,25 +287,24 @@ func TestParseOpmlWithMinifluxSettings(t *testing.T) {
 					title="Feed 1"
 					xmlUrl="http://example.org/feed1/"
 					htmlUrl="http://example.org/1"
-					scraperRules="article.content"
-					rewriteRules="replace(&quot;foo&quot;|&quot;bar&quot;)"
-					urlRewriteRules="rewrite(&quot;^https://old&quot;|&quot;https://new&quot;)"
-					blocklistRules="sponsored"
-					keeplistRules="important"
-					blockFilterEntryRules="EntryTitle=~&quot;ad&quot;"
-					keepFilterEntryRules="EntryTitle=~&quot;news&quot;"
-					userAgent="CustomAgent/1.0"
-					cookie="session=abc"
-					proxyUrl="http://proxy.example.org"
-					crawler="true"
-					ignoreHTTPCache="true"
-					fetchViaProxy="true"
-					disabled="true"
-					noMediaPlayer="true"
-					hideGlobally="true"
-					allowSelfSignedCertificates="true"
-					disableHTTP2="true"
-					ignoreEntryUpdates="true"
+					miniflux:scraperRules="article.content"
+					miniflux:rewriteRules="replace(&quot;foo&quot;|&quot;bar&quot;)"
+					miniflux:urlRewriteRules="rewrite(&quot;^https://old&quot;|&quot;https://new&quot;)"
+					miniflux:blocklistRules="sponsored"
+					miniflux:keeplistRules="important"
+					miniflux:blockFilterEntryRules="EntryTitle=~&quot;ad&quot;"
+					miniflux:keepFilterEntryRules="EntryTitle=~&quot;news&quot;"
+					miniflux:userAgent="CustomAgent/1.0"
+					miniflux:proxyUrl="http://proxy.example.org"
+					miniflux:crawler="true"
+					miniflux:ignoreHTTPCache="true"
+					miniflux:fetchViaProxy="true"
+					miniflux:disabled="true"
+					miniflux:noMediaPlayer="true"
+					miniflux:hideGlobally="true"
+					miniflux:allowSelfSignedCertificates="true"
+					miniflux:disableHTTP2="true"
+					miniflux:ignoreEntryUpdates="true"
 				/>
 			</outline>
 		</body>
@@ -325,7 +324,6 @@ func TestParseOpmlWithMinifluxSettings(t *testing.T) {
 		BlockFilterEntryRules:       `EntryTitle=~"ad"`,
 		KeepFilterEntryRules:        `EntryTitle=~"news"`,
 		UserAgent:                   "CustomAgent/1.0",
-		Cookie:                      "session=abc",
 		ProxyURL:                    "http://proxy.example.org",
 		Crawler:                     true,
 		IgnoreHTTPCache:             true,

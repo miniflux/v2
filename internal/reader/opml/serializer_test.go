@@ -5,6 +5,7 @@ package opml // import "miniflux.app/v2/internal/reader/opml"
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 )
 
@@ -52,7 +53,6 @@ func TestSerializeWithMinifluxSettings(t *testing.T) {
 		BlockFilterEntryRules:       `EntryTitle=~"ad"`,
 		KeepFilterEntryRules:        `EntryTitle=~"news"`,
 		UserAgent:                   "CustomAgent/1.0",
-		Cookie:                      "session=abc",
 		ProxyURL:                    "http://proxy.example.org",
 		Crawler:                     true,
 		IgnoreHTTPCache:             true,
@@ -66,6 +66,22 @@ func TestSerializeWithMinifluxSettings(t *testing.T) {
 	}
 
 	output := serialize([]subcription{input})
+	if !strings.Contains(output, `xmlns:miniflux="https://miniflux.app/opml"`) {
+		t.Fatal("Miniflux OPML namespace is missing")
+	}
+
+	if !strings.Contains(output, `miniflux:crawler="true"`) {
+		t.Fatal("Miniflux settings are not serialized with the Miniflux namespace")
+	}
+
+	if !strings.Contains(output, `miniflux:proxyUrl="http://proxy.example.org"`) {
+		t.Fatal("Proxy URL is not serialized with the Miniflux namespace")
+	}
+
+	if strings.Contains(output, "cookie") {
+		t.Fatal("Sensitive feed settings should not be serialized")
+	}
+
 	feeds, err := parse(bytes.NewBufferString(output))
 	if err != nil {
 		t.Fatal(err)
