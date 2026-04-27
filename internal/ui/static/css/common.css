@@ -187,9 +187,14 @@ a:hover {
     white-space: nowrap;
 }
 
-#header-menu .icon,
-.page-header ul a .icon {
+#header-menu .icon {
     margin-bottom: 2px;
+}
+
+.page-header ul .icon,
+.page-header ul .icon-label {
+    vertical-align: middle;
+    margin-bottom: 0;
 }
 
 .page-header-action-form {
@@ -1019,6 +1024,7 @@ article.category-has-unread {
     line-height: 1.7em;
 }
 
+.entry-actions .icon,
 .entry-actions .icon-label {
     vertical-align: middle;
 }
