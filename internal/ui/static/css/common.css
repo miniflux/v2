@@ -664,10 +664,18 @@ template {
 }
 
 dialog {
-    max-height: none;
-    height: 100vh;
+    box-sizing: border-box;
+    inline-size: fit-content;
+    max-inline-size: calc(100vw - 2rem);
+    max-block-size: 80vh;
     border: none;
-    padding: 1%;
+    margin: 10vh auto auto;
+    padding: 1rem;
+    overflow: auto;
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .btn-close-modal {
@@ -1276,18 +1284,16 @@ details.entry-enclosures {
     word-wrap: break-word;
 }
 
-/* Confirmation */
-.confirm {
+#confirmation-modal-question {
+    margin: 0 0 0.75rem;
     font-weight: 500;
-    color: #ed2d04;
+    text-align: center;
 }
 
-.confirm button {
-    color: #ed2d04;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    font-size: inherit;
+.confirmation-modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
 }
 
 .loading {
