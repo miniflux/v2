@@ -78,6 +78,47 @@ func TestSelectorRules(t *testing.T) {
 	}
 }
 
+func TestSelectorRulesWithMultilineInput(t *testing.T) {
+	html := `<html><body><main><article><p>Article</p><img src="image.jpg"><iframe src="video.html"></iframe></article></main></body></html>`
+
+	_, actualResult, err := findContentUsingCustomRules(strings.NewReader(html), "article > img\narticle > iframe\n")
+	if err != nil {
+		t.Fatalf(`Scraping error: %v`, err)
+	}
+
+	expectedResult := `<img src="image.jpg"/><iframe src="video.html"></iframe>`
+	if actualResult != expectedResult {
+		t.Errorf(`Unexpected result for multiline selectors, got %q instead of %q`, actualResult, expectedResult)
+	}
+}
+
+func TestSelectorRulesPreserveExistingCSSSelectorSyntax(t *testing.T) {
+	html := `<html><body><main><article><p>Article</p><img src="image.jpg"><iframe src="video.html"></iframe></article></main></body></html>`
+
+	tests := map[string]string{
+		"comma separated selector group": `<p>Article</p><img src="image.jpg"/>`,
+		"whitespace descendant selector": `<img src="image.jpg"/>`,
+	}
+
+	rules := map[string]string{
+		"comma separated selector group": "article > p, article > img",
+		"whitespace descendant selector": "main article img",
+	}
+
+	for name, rule := range rules {
+		t.Run(name, func(t *testing.T) {
+			_, actualResult, err := findContentUsingCustomRules(strings.NewReader(html), rule)
+			if err != nil {
+				t.Fatalf(`Scraping error: %v`, err)
+			}
+
+			if actualResult != tests[name] {
+				t.Errorf(`Unexpected result for %q, got %q instead of %q`, rule, actualResult, tests[name])
+			}
+		})
+	}
+}
+
 func TestParseBaseURLWithCustomRules(t *testing.T) {
 	html := `<html><head><base href="https://example.com/"></head><body><img src="image.jpg"></body></html>`
 	baseURL, _, err := findContentUsingCustomRules(strings.NewReader(html), "img")
