@@ -241,6 +241,26 @@ func TestQueryString(t *testing.T) {
 	}
 }
 
+func TestConfirmationModalDefaultsToCancelAction(t *testing.T) {
+	contents, err := commonTemplateFiles.ReadFile("templates/common/layout.html")
+	if err != nil {
+		t.Fatalf(`Unable to read layout template: %v`, err)
+	}
+
+	layout := string(contents)
+	if !strings.Contains(layout, `<dialog id="confirmation-modal">`) {
+		t.Fatal(`The confirmation modal should be present in the base layout`)
+	}
+
+	if !strings.Contains(layout, `<button value="no" id="confirmation-modal-no" class="button" autofocus>`) {
+		t.Fatal(`The confirmation modal should focus the cancel action by default`)
+	}
+
+	if strings.Contains(layout, `<button value="yes" id="confirmation-modal-yes" class="button button-primary" autofocus>`) {
+		t.Fatal(`The confirmation modal should not focus the confirm action by default`)
+	}
+}
+
 func TestCSPExternalFont(t *testing.T) {
 	want := []string{
 		`default-src 'none';`,

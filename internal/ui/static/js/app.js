@@ -895,68 +895,53 @@ function updateUnreadCounterValue(delta) {
 }
 
 /**
- * Handle confirmation messages for actions that require user confirmation.
+ * Handle confirmation dialogs for actions that require user confirmation.
  *
- * This function modifies the link element to show a confirmation question with "Yes" and "No" buttons.
  * If the user clicks "Yes", it calls the provided callback with the URL and redirect URL.
- * If the user clicks "No", it either redirects to a no-action URL or restores the link element.
+ * If the user clicks "No", it either redirects to a no-action URL or cancels the action.
  *
  * @param {Element} linkElement - The link or button element that triggered the confirmation.
  * @param {function} callback - The callback function to execute if the user confirms the action.
  * @returns {void}
  */
 function handleConfirmationMessage(linkElement, callback) {
-    if (linkElement.tagName !== 'A' && linkElement.tagName !== "BUTTON") {
-        linkElement = linkElement.parentNode;
-    }
-
-    linkElement.style.display = "none";
-
-    const containerElement = linkElement.parentNode;
-    const questionElement = document.createElement("span");
+    linkElement = linkElement.closest("a, button");
+    if (!linkElement) return;
 
     function createLoadingElement() {
         const loadingElement = document.createElement("span");
         loadingElement.className = "loading";
         loadingElement.appendChild(document.createTextNode(linkElement.dataset.labelLoading));
 
-        questionElement.remove();
-        containerElement.appendChild(loadingElement);
+        linkElement.style.display = "none";
+        linkElement.parentNode.appendChild(loadingElement);
     }
 
-    const yesElement = document.createElement("button");
-    yesElement.appendChild(document.createTextNode(linkElement.dataset.labelYes));
-    yesElement.onclick = (event) => {
-        event.preventDefault();
+    const dialogElement = document.getElementById("confirmation-modal");
+    const questionElement = document.getElementById("confirmation-modal-question");
+    const yesElement = document.getElementById("confirmation-modal-yes");
+    const noElement = document.getElementById("confirmation-modal-no");
 
-        createLoadingElement();
+    questionElement.textContent = linkElement.dataset.labelQuestion;
+    yesElement.textContent = linkElement.dataset.labelYes;
+    noElement.textContent = linkElement.dataset.labelNo;
+    dialogElement.returnValue = "";
 
-        callback(linkElement.dataset.url, linkElement.dataset.redirectUrl);
-    };
-
-    const noElement = document.createElement("button");
-    noElement.appendChild(document.createTextNode(linkElement.dataset.labelNo));
-    noElement.onclick = (event) => {
-        event.preventDefault();
-
-        const noActionUrl = linkElement.dataset.noActionUrl;
-        if (noActionUrl) {
+    dialogElement.onclose = () => {
+        dialogElement.onclose = null;
+        if (dialogElement.returnValue === "yes") {
             createLoadingElement();
+            callback(linkElement.dataset.url, linkElement.dataset.redirectUrl);
+            return;
+        }
 
-            callback(noActionUrl, linkElement.dataset.redirectUrl);
-        } else {
-            linkElement.style.display = "inline";
-            questionElement.remove();
+        if (dialogElement.returnValue === "no" && linkElement.dataset.noActionUrl) {
+            createLoadingElement();
+            callback(linkElement.dataset.noActionUrl, linkElement.dataset.redirectUrl);
         }
     };
 
-    questionElement.className = "confirm";
-    questionElement.appendChild(document.createTextNode(`${linkElement.dataset.labelQuestion} `));
-    questionElement.appendChild(yesElement);
-    questionElement.appendChild(document.createTextNode(", "));
-    questionElement.appendChild(noElement);
-
-    containerElement.appendChild(questionElement);
+    dialogElement.showModal();
 }
 
 /**
