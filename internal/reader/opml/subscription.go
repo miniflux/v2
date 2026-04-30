@@ -10,4 +10,24 @@ type subcription struct {
 	FeedURL      string
 	CategoryName string
 	Description  string
+
+	// Miniflux-specific feed settings
+	ScraperRules                string
+	RewriteRules                string
+	UrlRewriteRules             string
+	BlocklistRules              string
+	KeeplistRules               string
+	BlockFilterEntryRules       string
+	KeepFilterEntryRules        string
+	UserAgent                   string
+	ProxyURL                    string
+	Crawler                     bool
+	IgnoreHTTPCache             bool
+	FetchViaProxy               bool
+	Disabled                    bool
+	NoMediaPlayer               bool
+	HideGlobally                bool
+	AllowSelfSignedCertificates bool
+	DisableHTTP2                bool
+	IgnoreEntryUpdates          bool
 }

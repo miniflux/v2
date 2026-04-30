@@ -34,6 +34,7 @@ func serialize(subscriptions []subcription) string {
 func convertSubscriptionsToOPML(subscriptions []subcription) *opmlDocument {
 	opmlDocument := &opmlDocument{}
 	opmlDocument.Version = "2.0"
+	opmlDocument.MinifluxNamespace = minifluxOPMLNamespace
 	opmlDocument.Header.Title = "Miniflux"
 	opmlDocument.Header.DateCreated = time.Now().Format("Mon, 02 Jan 2006 15:04:05 MST")
 
@@ -53,6 +54,25 @@ func convertSubscriptionsToOPML(subscriptions []subcription) *opmlDocument {
 				FeedURL:     subscription.FeedURL,
 				SiteURL:     subscription.SiteURL,
 				Description: subscription.Description,
+
+				ScraperRules:                subscription.ScraperRules,
+				RewriteRules:                subscription.RewriteRules,
+				UrlRewriteRules:             subscription.UrlRewriteRules,
+				BlocklistRules:              subscription.BlocklistRules,
+				KeeplistRules:               subscription.KeeplistRules,
+				BlockFilterEntryRules:       subscription.BlockFilterEntryRules,
+				KeepFilterEntryRules:        subscription.KeepFilterEntryRules,
+				UserAgent:                   subscription.UserAgent,
+				ProxyURL:                    subscription.ProxyURL,
+				Crawler:                     subscription.Crawler,
+				IgnoreHTTPCache:             subscription.IgnoreHTTPCache,
+				FetchViaProxy:               subscription.FetchViaProxy,
+				Disabled:                    subscription.Disabled,
+				NoMediaPlayer:               subscription.NoMediaPlayer,
+				HideGlobally:                subscription.HideGlobally,
+				AllowSelfSignedCertificates: subscription.AllowSelfSignedCertificates,
+				DisableHTTP2:                subscription.DisableHTTP2,
+				IgnoreEntryUpdates:          subscription.IgnoreEntryUpdates,
 			})
 		}
 

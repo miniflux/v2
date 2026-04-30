@@ -8,13 +8,6 @@ import (
 	"testing"
 )
 
-// equals compare two subscriptions.
-func (s subcription) equals(subscription subcription) bool {
-	return s.Title == subscription.Title && s.SiteURL == subscription.SiteURL &&
-		s.FeedURL == subscription.FeedURL && s.CategoryName == subscription.CategoryName &&
-		s.Description == subscription.Description
-}
-
 func TestParseOpmlWithoutCategories(t *testing.T) {
 	data := `<?xml version="1.0" encoding="ISO-8859-1"?>
 	<opml version="2.0">
@@ -51,7 +44,7 @@ func TestParseOpmlWithoutCategories(t *testing.T) {
 		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 13)
 	}
 
-	if !subscriptions[0].equals(expected[0]) {
+	if subscriptions[0] != expected[0] {
 		t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[0], expected[0])
 	}
 }
@@ -89,7 +82,7 @@ func TestParseOpmlWithCategories(t *testing.T) {
 	}
 
 	for i := range len(subscriptions) {
-		if !subscriptions[i].equals(expected[i]) {
+		if subscriptions[i] != expected[i] {
 			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
 	}
@@ -122,7 +115,7 @@ func TestParseOpmlWithEmptyTitleAndEmptySiteURL(t *testing.T) {
 	}
 
 	for i := range len(subscriptions) {
-		if !subscriptions[i].equals(expected[i]) {
+		if subscriptions[i] != expected[i] {
 			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
 	}
@@ -160,7 +153,7 @@ func TestParseOpmlVersion1(t *testing.T) {
 	}
 
 	for i := range len(subscriptions) {
-		if !subscriptions[i].equals(expected[i]) {
+		if subscriptions[i] != expected[i] {
 			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
 	}
@@ -194,7 +187,7 @@ func TestParseOpmlVersion1WithoutOuterOutline(t *testing.T) {
 	}
 
 	for i := range len(subscriptions) {
-		if !subscriptions[i].equals(expected[i]) {
+		if subscriptions[i] != expected[i] {
 			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
 	}
@@ -236,7 +229,7 @@ func TestParseOpmlVersion1WithSeveralNestedOutlines(t *testing.T) {
 	}
 
 	for i := range len(subscriptions) {
-		if !subscriptions[i].equals(expected[i]) {
+		if subscriptions[i] != expected[i] {
 			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
 	}
@@ -269,7 +262,7 @@ func TestParseOpmlWithInvalidCharacterEntity(t *testing.T) {
 	}
 
 	for i := range len(subscriptions) {
-		if !subscriptions[i].equals(expected[i]) {
+		if subscriptions[i] != expected[i] {
 			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
 	}
@@ -280,5 +273,79 @@ func TestParseInvalidXML(t *testing.T) {
 	_, err := parse(bytes.NewBufferString(data))
 	if err == nil {
 		t.Error("Parse should generate an error")
+	}
+}
+
+func TestParseOpmlWithMinifluxSettings(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<opml version="2.0" xmlns:miniflux="https://miniflux.app/opml">
+		<head><title>Miniflux</title></head>
+		<body>
+			<outline text="My Category">
+				<outline type="rss"
+					text="Feed 1"
+					title="Feed 1"
+					xmlUrl="http://example.org/feed1/"
+					htmlUrl="http://example.org/1"
+					miniflux:scraperRules="article.content"
+					miniflux:rewriteRules="replace(&quot;foo&quot;|&quot;bar&quot;)"
+					miniflux:urlRewriteRules="rewrite(&quot;^https://old&quot;|&quot;https://new&quot;)"
+					miniflux:blocklistRules="sponsored"
+					miniflux:keeplistRules="important"
+					miniflux:blockFilterEntryRules="EntryTitle=~&quot;ad&quot;"
+					miniflux:keepFilterEntryRules="EntryTitle=~&quot;news&quot;"
+					miniflux:userAgent="CustomAgent/1.0"
+					miniflux:proxyUrl="http://proxy.example.org"
+					miniflux:crawler="true"
+					miniflux:ignoreHTTPCache="true"
+					miniflux:fetchViaProxy="true"
+					miniflux:disabled="true"
+					miniflux:noMediaPlayer="true"
+					miniflux:hideGlobally="true"
+					miniflux:allowSelfSignedCertificates="true"
+					miniflux:disableHTTP2="true"
+					miniflux:ignoreEntryUpdates="true"
+				/>
+			</outline>
+		</body>
+	</opml>
+	`
+
+	expected := subcription{
+		Title:                       "Feed 1",
+		FeedURL:                     "http://example.org/feed1/",
+		SiteURL:                     "http://example.org/1",
+		CategoryName:                "My Category",
+		ScraperRules:                "article.content",
+		RewriteRules:                `replace("foo"|"bar")`,
+		UrlRewriteRules:             `rewrite("^https://old"|"https://new")`,
+		BlocklistRules:              "sponsored",
+		KeeplistRules:               "important",
+		BlockFilterEntryRules:       `EntryTitle=~"ad"`,
+		KeepFilterEntryRules:        `EntryTitle=~"news"`,
+		UserAgent:                   "CustomAgent/1.0",
+		ProxyURL:                    "http://proxy.example.org",
+		Crawler:                     true,
+		IgnoreHTTPCache:             true,
+		FetchViaProxy:               true,
+		Disabled:                    true,
+		NoMediaPlayer:               true,
+		HideGlobally:                true,
+		AllowSelfSignedCertificates: true,
+		DisableHTTP2:                true,
+		IgnoreEntryUpdates:          true,
+	}
+
+	subscriptions, err := parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(subscriptions) != 1 {
+		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 1)
+	}
+
+	if subscriptions[0] != expected {
+		t.Errorf("Subscription is different:\ngot:  %+v\nwant: %+v", subscriptions[0], expected)
 	}
 }

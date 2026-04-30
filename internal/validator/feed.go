@@ -36,6 +36,18 @@ func ValidateFeedCreation(store *storage.Storage, userID int64, request *model.F
 		return locale.NewLocalizedError("error.feed_invalid_keeplist_rule")
 	}
 
+	if request.BlockFilterEntryRules != "" {
+		if err := isValidFilterRules(request.BlockFilterEntryRules, "block"); err != nil {
+			return err
+		}
+	}
+
+	if request.KeepFilterEntryRules != "" {
+		if err := isValidFilterRules(request.KeepFilterEntryRules, "keep"); err != nil {
+			return err
+		}
+	}
+
 	if request.ProxyURL != "" && !urllib.IsAbsoluteURL(request.ProxyURL) {
 		return locale.NewLocalizedError("error.invalid_feed_proxy_url")
 	}
@@ -90,6 +102,18 @@ func ValidateFeedModification(store *storage.Storage, userID, feedID int64, requ
 	if request.KeeplistRules != nil {
 		if !IsValidRegex(*request.KeeplistRules) {
 			return locale.NewLocalizedError("error.feed_invalid_keeplist_rule")
+		}
+	}
+
+	if request.BlockFilterEntryRules != nil && *request.BlockFilterEntryRules != "" {
+		if err := isValidFilterRules(*request.BlockFilterEntryRules, "block"); err != nil {
+			return err
+		}
+	}
+
+	if request.KeepFilterEntryRules != nil && *request.KeepFilterEntryRules != "" {
+		if err := isValidFilterRules(*request.KeepFilterEntryRules, "keep"); err != nil {
+			return err
 		}
 	}
 
