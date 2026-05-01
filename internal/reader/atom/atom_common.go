@@ -33,8 +33,8 @@ func (a *AtomPerson) PersonName() string {
 type atomPersons []*AtomPerson
 
 func (a atomPersons) personNames() []string {
-	var names []string
-	authorNamesMap := make(map[string]bool)
+	names := make([]string, 0, len(a))
+	authorNamesMap := make(map[string]bool, len(a))
 
 	for _, person := range a {
 		personName := person.PersonName()

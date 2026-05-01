@@ -181,7 +181,8 @@ func findFeedAuthor(rssChannel *rssChannel) string {
 }
 
 func findFeedTags(rssChannel *rssChannel) []string {
-	tags := make([]string, 0)
+	itunesCategories := rssChannel.GetItunesCategories()
+	tags := make([]string, 0, len(rssChannel.Categories)+len(itunesCategories)+1)
 
 	for _, tag := range rssChannel.Categories {
 		tag = strings.TrimSpace(tag)
@@ -190,7 +191,7 @@ func findFeedTags(rssChannel *rssChannel) []string {
 		}
 	}
 
-	for _, tag := range rssChannel.GetItunesCategories() {
+	for _, tag := range itunesCategories {
 		tag = strings.TrimSpace(tag)
 		if tag != "" {
 			tags = append(tags, tag)
@@ -299,7 +300,8 @@ func findEntryAuthor(rssItem *rssItem) string {
 }
 
 func findEntryTags(rssItem *rssItem) []string {
-	tags := make([]string, 0)
+	mediaLabels := rssItem.MediaCategories.Labels()
+	tags := make([]string, 0, len(rssItem.Categories)+len(mediaLabels))
 
 	for _, tag := range rssItem.Categories {
 		tag = strings.TrimSpace(tag)
@@ -308,7 +310,7 @@ func findEntryTags(rssItem *rssItem) []string {
 		}
 	}
 
-	for _, tag := range rssItem.MediaCategories.Labels() {
+	for _, tag := range mediaLabels {
 		tag = strings.TrimSpace(tag)
 		if tag != "" {
 			tags = append(tags, tag)
@@ -319,10 +321,14 @@ func findEntryTags(rssItem *rssItem) []string {
 }
 
 func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
-	enclosures := make(model.EnclosureList, 0)
-	duplicates := make(map[string]bool)
+	mediaThumbnails := rssItem.AllMediaThumbnails()
+	mediaContents := rssItem.AllMediaContents()
+	mediaPeerLinks := rssItem.AllMediaPeerLinks()
+	capacity := len(mediaThumbnails) + len(rssItem.Enclosures) + len(mediaContents) + len(mediaPeerLinks)
+	enclosures := make(model.EnclosureList, 0, capacity)
+	duplicates := make(map[string]bool, capacity)
 
-	for _, mediaThumbnail := range rssItem.AllMediaThumbnails() {
+	for _, mediaThumbnail := range mediaThumbnails {
 		mediaURL := strings.TrimSpace(mediaThumbnail.URL)
 		if mediaURL == "" {
 			continue
@@ -375,7 +381,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 		}
 	}
 
-	for _, mediaContent := range rssItem.AllMediaContents() {
+	for _, mediaContent := range mediaContents {
 		mediaURL := strings.TrimSpace(mediaContent.URL)
 		if mediaURL == "" {
 			continue
@@ -399,7 +405,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 		}
 	}
 
-	for _, mediaPeerLink := range rssItem.AllMediaPeerLinks() {
+	for _, mediaPeerLink := range mediaPeerLinks {
 		mediaURL := strings.TrimSpace(mediaPeerLink.URL)
 		if mediaURL == "" {
 			continue
