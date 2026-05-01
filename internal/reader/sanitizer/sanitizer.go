@@ -592,10 +592,14 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 					continue
 				}
 
-				// TODO use feedURL instead of baseURL twice.
-				parsedValueUrl, _ := url.Parse(value)
-				if cleanedURL, err := urlcleaner.RemoveTrackingParameters(parsedBaseUrl, parsedBaseUrl, parsedValueUrl); err == nil {
-					value = cleanedURL
+				// Skip the parse + RemoveTrackingParameters round trip when there
+				// is no query string to clean, which is common for <img>.
+				if strings.IndexByte(value, '?') >= 0 {
+					parsedValueUrl, _ := url.Parse(value)
+					// TODO use feedURL instead of baseURL twice.
+					if cleanedURL, err := urlcleaner.RemoveTrackingParameters(parsedBaseUrl, parsedBaseUrl, parsedValueUrl); err == nil {
+						value = cleanedURL
+					}
 				}
 			}
 		}
