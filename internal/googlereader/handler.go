@@ -254,7 +254,7 @@ func (h *greaderHandler) editTagHandler(w http.ResponseWriter, r *http.Request) 
 		if read, exists := tags[ReadStream]; exists {
 			if read && entry.Status == model.EntryStatusUnread {
 				readEntryIDs = append(readEntryIDs, entry.ID)
-			} else if entry.Status == model.EntryStatusRead {
+			} else if !read && entry.Status == model.EntryStatusRead {
 				unreadEntryIDs = append(unreadEntryIDs, entry.ID)
 			}
 		}
@@ -264,7 +264,7 @@ func (h *greaderHandler) editTagHandler(w http.ResponseWriter, r *http.Request) 
 				// filter the original array
 				entries[n] = entry
 				n++
-			} else if entry.Starred {
+			} else if !starred && entry.Starred {
 				unstarredEntryIDs = append(unstarredEntryIDs, entry.ID)
 			}
 		}
