@@ -505,7 +505,20 @@ func trackAttributes(s *mandatoryAttributesStruct, attributeName string) {
 }
 
 func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []html.Attribute, sanitizerOptions *SanitizerOptions) (string, bool) {
-	htmlAttrs := make([]string, 0, len(attributes))
+	var htmlAttrs strings.Builder
+	// Rough estimate: most attributes are short; ~24 bytes (key + ="value") is
+	// a reasonable starting point. Avoids early grows for typical elements.
+	htmlAttrs.Grow(len(attributes) * 24)
+
+	// writeAttr appends key="value" to htmlAttrs, prefixing with a single
+	// space when not the first written attribute. value is HTML-escaped.
+	writeAttr := func(key, value string) {
+		htmlAttrs.WriteByte(' ')
+		htmlAttrs.WriteString(key)
+		htmlAttrs.WriteString(`="`)
+		htmlAttrs.WriteString(html.EscapeString(value))
+		htmlAttrs.WriteByte('"')
+	}
 
 	// Keep track of mandatory attributes for some tags
 	mandatoryAttributes := mandatoryAttributesStruct{false, false, false}
@@ -605,7 +618,7 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 		}
 
 		trackAttributes(&mandatoryAttributes, attribute.Key)
-		htmlAttrs = append(htmlAttrs, attribute.Key+`="`+html.EscapeString(value)+`"`)
+		writeAttr(attribute.Key, value)
 	}
 
 	if !hasRequiredAttributes(&mandatoryAttributes, tagName) {
@@ -615,27 +628,29 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 	if !isAnchorLink {
 		switch tagName {
 		case "a":
-			htmlAttrs = append(htmlAttrs, `rel="noopener noreferrer"`, `referrerpolicy="no-referrer"`)
+			writeAttr("rel", "noopener noreferrer")
+			writeAttr("referrerpolicy", "no-referrer")
 			if sanitizerOptions.OpenLinksInNewTab {
-				htmlAttrs = append(htmlAttrs, `target="_blank"`)
+				writeAttr("target", "_blank")
 			}
 		case "video", "audio":
-			htmlAttrs = append(htmlAttrs, "controls")
+			htmlAttrs.WriteString(" controls")
 		case "iframe":
-			htmlAttrs = append(htmlAttrs, `sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"`, `loading="lazy"`)
+			writeAttr("sandbox", "allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox")
+			writeAttr("loading", "lazy")
 
 			// Note: the referrerpolicy seems to be required to avoid YouTube error 153 video player configuration error
 			// See https://developers.google.com/youtube/terms/required-minimum-functionality#embedded-player-api-client-identity
 			if isYouTubeEmbed {
-				htmlAttrs = append(htmlAttrs, `referrerpolicy="strict-origin-when-cross-origin"`)
+				writeAttr("referrerpolicy", "strict-origin-when-cross-origin")
 			}
 
 		case "img":
-			htmlAttrs = append(htmlAttrs, `loading="lazy"`)
+			writeAttr("loading", "lazy")
 		}
 	}
 
-	return strings.Join(htmlAttrs, " "), true
+	return strings.TrimLeft(htmlAttrs.String(), " "), true
 }
 
 func sanitizeSrcsetAttr(parsedBaseURL *url.URL, value string) string {
