@@ -20,6 +20,7 @@ import (
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/timezone"
 	"miniflux.app/v2/internal/ui/static"
 	"miniflux.app/v2/internal/urllib"
@@ -56,9 +57,7 @@ func (f *funcMap) Map() template.FuncMap {
 			}
 			return f.basePath + format
 		},
-		"safeURL": func(url string) template.URL {
-			return template.URL(url)
-		},
+		"untrustedURL": untrustedURL,
 		"safeCSS": func(str string) template.CSS {
 			return template.CSS(str)
 		},
@@ -240,6 +239,20 @@ func truncate(str string, max int) string {
 func isEmail(str string) bool {
 	_, err := mail.ParseAddress(str)
 	return err == nil
+}
+
+// untrustedURL validates a feed-supplied URL against the sanitizer's scheme
+// allowlist before exposing it to html/template. Returns "#" for unsafe URLs
+// (e.g. javascript:, data:) so anchors render as inert links.
+//
+// Go's built-in html/template URL filter only allows http(s), mailto, and
+// relative URLs — too narrow for feeds which legitimately use schemes like
+// magnet:, feed:, webcal:, and tel:.
+func untrustedURL(rawURL string) template.URL {
+	if !sanitizer.HasValidURIScheme(rawURL) {
+		return template.URL("#")
+	}
+	return template.URL(rawURL)
 }
 
 // Returns the duration in human readable format (hours and minutes).

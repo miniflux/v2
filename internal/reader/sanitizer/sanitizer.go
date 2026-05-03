@@ -148,54 +148,6 @@ var (
 		"x.com/share",
 	}
 
-	// See https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
-	validURISchemes = []string{
-		// Most commong schemes on top.
-		"https:",
-		"http:",
-
-		// Then the rest.
-		"apt:",
-		"bitcoin:",
-		"callto:",
-		"dav:",
-		"davs:",
-		"ed2k:",
-		"facetime:",
-		"feed:",
-		"ftp:",
-		"geo:",
-		"git:",
-		"gopher:",
-		"irc:",
-		"irc6:",
-		"ircs:",
-		"itms-apps:",
-		"itms:",
-		"magnet:",
-		"mailto:",
-		"news:",
-		"nntp:",
-		"rtmp:",
-		"sftp:",
-		"sip:",
-		"sips:",
-		"shortcuts:",
-		"skype:",
-		"spotify:",
-		"ssh:",
-		"steam:",
-		"svn:",
-		"svn+ssh:",
-		"tel:",
-		"webcal:",
-		"xmpp:",
-
-		// iOS Apps
-		"opener:", // https://www.opener.link
-		"hack:",   // https://apps.apple.com/it/app/hack-for-hacker-news-reader/id1464477788?l=en-GB
-	}
-
 	dataAttributeAllowedPrefixes = []string{
 		"data:image/avif",
 		"data:image/apng",
@@ -349,15 +301,6 @@ func hasRequiredAttributes(s *mandatoryAttributesStruct, tagName string) bool {
 		return s.src || s.srcset
 	}
 	return true
-}
-
-func hasValidURIScheme(absoluteURL string) bool {
-	for _, scheme := range validURISchemes {
-		if strings.HasPrefix(absoluteURL, scheme) {
-			return true
-		}
-	}
-	return false
 }
 
 func isBlockedResource(absoluteURL string) bool {
@@ -588,7 +531,7 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 					continue
 				}
 
-				if !hasValidURIScheme(value) {
+				if !HasValidURIScheme(value) {
 					continue
 				}
 
@@ -652,7 +595,7 @@ func sanitizeSrcsetAttr(parsedBaseURL *url.URL, value string) string {
 			continue
 		}
 
-		if !hasValidURIScheme(absoluteURL) || isBlockedResource(absoluteURL) {
+		if !HasValidURIScheme(absoluteURL) || isBlockedResource(absoluteURL) {
 			continue
 		}
 

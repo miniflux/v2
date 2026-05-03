@@ -67,14 +67,14 @@
             </li>
         {{ end -}}
         <li class="item-meta-icons-external-url">
-            <a href="{{ .entry.URL | safeURL  }}"
+            <a href="{{ .entry.URL | untrustedURL }}"
                 aria-describedby="entry-title-{{ .entry.ID }}"
                 {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ else }}rel="noopener"{{ end }}
                 data-original-link="{{ .user.MarkReadOnView }}">{{ icon "external-link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
         </li>
         {{ if .entry.CommentsURL }}
             <li class="item-meta-icons-comments">
-                <a href="{{ .entry.CommentsURL | safeURL  }}"
+                <a href="{{ .entry.CommentsURL }}"
                     aria-describedby="entry-title-{{ .entry.ID }}"
                     title="{{ t "entry.comments.title" }}"
                     {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ else }}rel="noopener"{{ end }}

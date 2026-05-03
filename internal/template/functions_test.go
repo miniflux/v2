@@ -4,6 +4,7 @@
 package template // import "miniflux.app/v2/internal/template"
 
 import (
+	"html/template"
 	"strings"
 	"testing"
 	"time"
@@ -123,6 +124,36 @@ func TestIsEmail(t *testing.T) {
 
 	if isEmail("invalid") {
 		t.Fatal(`This email is not valid and should returns false`)
+	}
+}
+
+func TestUntrustedURL(t *testing.T) {
+	scenarios := map[string]template.URL{
+		// Pass-through: schemes accepted by the sanitizer allowlist.
+		"https://example.org/article": "https://example.org/article",
+		"http://example.org/article":  "http://example.org/article",
+		"mailto:author@example.org":   "mailto:author@example.org",
+		"magnet:?xt=urn:btih:abc":     "magnet:?xt=urn:btih:abc",
+		"feed:https://example.org/":   "feed:https://example.org/",
+
+		// Rewritten to "#": schemes that enable script execution or
+		// local-resource access, plus malformed inputs.
+		"javascript:alert(1)":                      "#",
+		"JavaScript:alert(1)":                      "#",
+		"data:text/html,<script>alert(1)</script>": "#",
+		"vbscript:msgbox(1)":                       "#",
+		"file:///etc/passwd":                       "#",
+		"//evil.example.org/path":                  "#",
+		"/relative/path":                           "#",
+		"":                                         "#",
+	}
+
+	for input, expected := range scenarios {
+		t.Run(input, func(t *testing.T) {
+			if actual := untrustedURL(input); actual != expected {
+				t.Errorf("untrustedURL(%q) = %q, want %q", input, actual, expected)
+			}
+		})
 	}
 }
 
