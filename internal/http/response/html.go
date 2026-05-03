@@ -4,11 +4,13 @@
 package response // import "miniflux.app/v2/internal/http/response"
 
 import (
+	"fmt"
 	"html"
 	"log/slog"
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
+	"miniflux.app/v2/internal/urllib"
 )
 
 // HTML creates a new HTML response with a 200 status code.
@@ -117,8 +119,12 @@ func HTMLNotFound(w http.ResponseWriter, r *http.Request) {
 	builder.Write()
 }
 
-// HTMLRedirect redirects the user to another location.
+// HTMLRedirect redirects the user to a relative path or an absolute http(s) URL.
 func HTMLRedirect(w http.ResponseWriter, r *http.Request, uri string) {
+	if !urllib.IsRelativePath(uri) && !urllib.IsAbsoluteURL(uri) {
+		HTMLBadRequest(w, r, fmt.Errorf("invalid redirect URL: %q", uri))
+		return
+	}
 	http.Redirect(w, r, uri, http.StatusFound)
 }
 

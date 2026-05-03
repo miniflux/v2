@@ -183,6 +183,75 @@ func TestHTMLRedirectResponse(t *testing.T) {
 	}
 }
 
+func TestHTMLRedirectAcceptedTargets(t *testing.T) {
+	scenarios := []string{
+		"/feeds",
+		"/category/1/entries",
+		"https://example.org/article",
+		"http://example.org/article",
+	}
+
+	for _, target := range scenarios {
+		t.Run(target, func(t *testing.T) {
+			r, err := http.NewRequest("GET", "/", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			w := httptest.NewRecorder()
+			HTMLRedirect(w, r, target)
+
+			resp := w.Result()
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusFound {
+				t.Fatalf(`Unexpected status code for %q, got %d instead of %d`, target, resp.StatusCode, http.StatusFound)
+			}
+
+			if actualResult := resp.Header.Get("Location"); actualResult != target {
+				t.Fatalf(`Unexpected redirect location, got %q instead of %q`, actualResult, target)
+			}
+		})
+	}
+}
+
+func TestHTMLRedirectRejectsUnsafeTargets(t *testing.T) {
+	scenarios := []string{
+		"javascript:alert(1)",
+		"JAVASCRIPT:alert(1)",
+		"data:text/html,<script>alert(1)</script>",
+		"vbscript:msgbox(1)",
+		"file:///etc/passwd",
+		"mailto:victim@example.org",
+		"//evil.example.org/path",
+		"ftp://example.org/file",
+		"",
+	}
+
+	for _, target := range scenarios {
+		t.Run(target, func(t *testing.T) {
+			r, err := http.NewRequest("GET", "/", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			w := httptest.NewRecorder()
+			HTMLRedirect(w, r, target)
+
+			resp := w.Result()
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusBadRequest {
+				t.Fatalf(`Expected 400 for %q, got %d`, target, resp.StatusCode)
+			}
+
+			if location := resp.Header.Get("Location"); location != "" {
+				t.Fatalf(`Expected no Location header for %q, got %q`, target, location)
+			}
+		})
+	}
+}
+
 func TestHTMLRequestedRangeNotSatisfiable(t *testing.T) {
 	r, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
