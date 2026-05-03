@@ -31,10 +31,14 @@ func TestHasValidURIScheme(t *testing.T) {
 		"/relative/path":          false,
 		"//evil.example.org/path": false,
 
-		// Rejected: case-sensitive match (callers are expected to pass
-		// already-normalized URLs, e.g. via net/url which lowercases the scheme).
-		"HTTPS://example.org": false,
+		// Allowed: scheme matching is case-insensitive (RFC 3986 §3.1).
+		"HTTPS://example.org":   true,
+		"MailTo:author@host":    true,
+		"SVN+SSH://example.org": true,
+
+		// Rejected: case-insensitive match still rejects disallowed schemes.
 		"JavaScript:alert(1)": false,
+		"VBScript:msgbox(1)":  false,
 	}
 
 	for input, expected := range scenarios {
