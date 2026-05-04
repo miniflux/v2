@@ -216,7 +216,7 @@ func (e *EntryQueryBuilder) WithSorting(column, direction string) *EntryQueryBui
 // WithLimit set the limit.
 func (e *EntryQueryBuilder) WithLimit(limit int) *EntryQueryBuilder {
 	if limit > 0 {
-		e.limit = limit
+		e.limit = min(limit, model.MaxEntryLimit)
 	}
 	return e
 }

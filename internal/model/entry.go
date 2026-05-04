@@ -15,6 +15,10 @@ const (
 	DefaultSortingDirection = "asc"
 )
 
+// MaxEntryLimit is the maximum allowed value for the "limit" query parameter
+// and for the user "entries_per_page" preference.
+const MaxEntryLimit = 1000
+
 // Entry represents a feed item in the system.
 type Entry struct {
 	ID          int64         `json:"id"`

@@ -212,7 +212,7 @@ func validateTimezone(timezoneValue string) *locale.LocalizedError {
 }
 
 func validateEntriesPerPage(entriesPerPage int) *locale.LocalizedError {
-	if entriesPerPage < 1 {
+	if entriesPerPage < 1 || entriesPerPage > model.MaxEntryLimit {
 		return locale.NewLocalizedError("error.entries_per_page_invalid")
 	}
 	return nil

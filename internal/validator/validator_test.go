@@ -3,7 +3,11 @@
 
 package validator // import "miniflux.app/v2/internal/validator"
 
-import "testing"
+import (
+	"testing"
+
+	"miniflux.app/v2/internal/model"
+)
 
 func TestValidateRange(t *testing.T) {
 	if err := ValidateRange(-1, 0); err == nil {
@@ -14,8 +18,16 @@ func TestValidateRange(t *testing.T) {
 		t.Error(`An invalid limit should generate a error`)
 	}
 
+	if err := ValidateRange(0, model.MaxEntryLimit+1); err == nil {
+		t.Error(`A limit above MaxEntryLimit should generate an error`)
+	}
+
 	if err := ValidateRange(42, 42); err != nil {
 		t.Error(`A valid offset and limit should not generate any error`)
+	}
+
+	if err := ValidateRange(0, model.MaxEntryLimit); err != nil {
+		t.Error(`A limit equal to MaxEntryLimit should not generate an error`)
 	}
 }
 

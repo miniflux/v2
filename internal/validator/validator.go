@@ -5,8 +5,11 @@ package validator // import "miniflux.app/v2/internal/validator"
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strings"
+
+	"miniflux.app/v2/internal/model"
 )
 
 var domainRegex = regexp.MustCompile(`^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$`)
@@ -19,6 +22,10 @@ func ValidateRange(offset, limit int) error {
 
 	if limit < 0 {
 		return errors.New(`limit value should be >= 0`)
+	}
+
+	if limit > model.MaxEntryLimit {
+		return fmt.Errorf(`limit value should be <= %d`, model.MaxEntryLimit)
 	}
 
 	return nil
