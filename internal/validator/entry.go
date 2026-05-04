@@ -6,6 +6,7 @@ package validator // import "miniflux.app/v2/internal/validator"
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"miniflux.app/v2/internal/model"
 )
@@ -47,6 +48,16 @@ func ValidateEntryModification(request *model.EntryUpdateRequest) error {
 
 	if request.Content != nil && *request.Content == "" {
 		return errors.New(`the entry content cannot be empty`)
+	}
+
+	if request.Tags != nil {
+		for i, tag := range *request.Tags {
+			tag = strings.TrimSpace(tag)
+			if tag == "" {
+				return errors.New(`entry tags cannot contain empty values`)
+			}
+			(*request.Tags)[i] = tag
+		}
 	}
 
 	return nil

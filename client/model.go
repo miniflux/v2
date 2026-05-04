@@ -270,8 +270,9 @@ type Entry struct {
 
 // EntryModificationRequest represents a request to modify an entry.
 type EntryModificationRequest struct {
-	Title   *string `json:"title"`
-	Content *string `json:"content"`
+	Title   *string   `json:"title"`
+	Content *string   `json:"content"`
+	Tags    *[]string `json:"tags,omitempty"`
 }
 
 // Entries represents a list of entries.

@@ -100,6 +100,56 @@ func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 	return nil
 }
 
+// UpdateEntryTags updates entry tags.
+func (s *Storage) UpdateEntryTags(entry *model.Entry) error {
+	query := `
+		UPDATE
+			entries
+		SET
+			tags=$1
+		WHERE
+			id=$2 AND user_id=$3
+	`
+
+	if _, err := s.db.Exec(query, pq.Array(entry.Tags), entry.ID, entry.UserID); err != nil {
+		return fmt.Errorf(`store: unable to update entry #%d tags: %v`, entry.ID, err)
+	}
+
+	return nil
+}
+
+// UpdateEntryTitleContentAndTags updates entry title, content and tags.
+func (s *Storage) UpdateEntryTitleContentAndTags(entry *model.Entry) error {
+	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
+	query := `
+		UPDATE
+			entries
+		SET
+			title=$1,
+			content=$2,
+			reading_time=$3,
+			document_vectors = setweight(to_tsvector($4), 'A') || setweight(to_tsvector($5), 'B'),
+			tags=$6
+		WHERE
+			id=$7 AND user_id=$8
+	`
+
+	if _, err := s.db.Exec(
+		query,
+		entry.Title,
+		entry.Content,
+		entry.ReadingTime,
+		truncatedTitle,
+		truncatedContent,
+		pq.Array(entry.Tags),
+		entry.ID,
+		entry.UserID); err != nil {
+		return fmt.Errorf(`store: unable to update entry #%d: %v`, entry.ID, err)
+	}
+
+	return nil
+}
+
 // createEntry add a new entry.
 func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
