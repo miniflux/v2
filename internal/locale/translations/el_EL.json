@@ -25,6 +25,7 @@
     "alert.no_search_result": "Δεν υπάρχουν αποτελέσματα για αυτήν την αναζήτηση.",
     "alert.no_shared_entry": "Δεν υπάρχει κοινόχρηστη καταχώρηση.",
     "alert.no_tag_entry": "Δεν υπάρχουν αντικείμενα που να ταιριάζουν με αυτή την ετικέτα.",
+    "alert.no_tag": "Δεν υπάρχει ετικέτα.",
     "alert.no_unread_entry": "Δεν υπάρχουν μη αναγνωσμένα άρθρα.",
     "alert.no_user": "Είστε ο μόνος χρήστης.",
     "alert.prefs_saved": "Οι προτιμήσεις αποθηκεύτηκαν!",
@@ -459,6 +460,7 @@
     "page.categories.feeds": "Συνδρομές",
     "page.categories.no_feed": "Καμία ροή.",
     "page.categories.title": "Κατηγορίες",
+    "page.tags.title": "Ετικέτες",
     "page.categories_count": [
         "%d κατηγορία",
         "%d κατηγορίες"

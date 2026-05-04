@@ -25,6 +25,7 @@
     "alert.no_search_result": "Bô hû-ha̍p ê chhiau-chhē kiat-kó",
     "alert.no_shared_entry": "Chit-má ah bô hun-hióng ê siau-sit",
     "alert.no_tag_entry": "Bô kah chit ê khan-á ū hû-ha̍p ê siau-sit",
+    "alert.no_tag": "Bô khan-á.",
     "alert.no_unread_entry": "Chit-má ah-bô tha̍k kè ê siau-sit",
     "alert.no_user": "Lí sī ûi-it ê sú-iōng-lâng",
     "alert.prefs_saved": "Siat-tēng í-keng pó-chûn--ah!",
@@ -455,6 +456,7 @@
     "page.categories.feeds": "Siau-sit lâi-goân",
     "page.categories.no_feed": "Ah-bô siau-sit lâi-goân",
     "page.categories.title": "Lūi-pia̍t",
+    "page.tags.title": "Khan-á",
     "page.categories_count": [
         "%d ê lūi-pia̍t"
     ],

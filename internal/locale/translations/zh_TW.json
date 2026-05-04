@@ -25,6 +25,7 @@
     "alert.no_search_result": "沒有符合搜尋的結果",
     "alert.no_shared_entry": "沒有分享文章。",
     "alert.no_tag_entry": "沒有與此標籤相符的文章。",
+    "alert.no_tag": "沒有標籤。",
     "alert.no_unread_entry": "目前沒有未讀文章",
     "alert.no_user": "您是唯一的使用者",
     "alert.prefs_saved": "設定已儲存！",
@@ -455,6 +456,7 @@
     "page.categories.feeds": "檢視 Feeds",
     "page.categories.no_feed": "沒有 Feed",
     "page.categories.title": "分類",
+    "page.tags.title": "標籤",
     "page.categories_count": [
         "%d 個分類"
     ],

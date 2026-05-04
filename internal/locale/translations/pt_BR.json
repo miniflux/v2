@@ -25,6 +25,7 @@
     "alert.no_search_result": "Não há resultados para essa busca.",
     "alert.no_shared_entry": "Não há itens compartilhados.",
     "alert.no_tag_entry": "Não há itens que correspondam a esta etiqueta.",
+    "alert.no_tag": "Não há etiquetas.",
     "alert.no_unread_entry": "Não há itens não lidos.",
     "alert.no_user": "Você é o único usuário.",
     "alert.prefs_saved": "Suas preferências foram salvas!",
@@ -459,6 +460,7 @@
     "page.categories.feeds": "Inscrições",
     "page.categories.no_feed": "Sem fonte.",
     "page.categories.title": "Categorias",
+    "page.tags.title": "Etiquetas",
     "page.categories_count": [
         "%d categoria",
         "%d categorias"

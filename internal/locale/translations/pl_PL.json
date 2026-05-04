@@ -25,6 +25,7 @@
     "alert.no_search_result": "Brak wyników tego wyszukiwania.",
     "alert.no_shared_entry": "Brak udostępnionego wpisu.",
     "alert.no_tag_entry": "Brak wpisów pasujących do tego znacznika.",
+    "alert.no_tag": "Brak znaczników.",
     "alert.no_unread_entry": "Nie ma żadnych nieprzeczytanych wpisów.",
     "alert.no_user": "Jesteś jedynym użytkownikiem.",
     "alert.prefs_saved": "Ustawienia zapisane!",
@@ -463,6 +464,7 @@
     "page.categories.feeds": "Kanały",
     "page.categories.no_feed": "Brak kanałów.",
     "page.categories.title": "Kategorie",
+    "page.tags.title": "Znaczniki",
     "page.categories_count": [
         "%d kategoria",
         "%d kategorie",

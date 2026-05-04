@@ -96,8 +96,10 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 	mux.HandleFunc("POST /category/{categoryID}/mark-all-as-read", handler.markCategoryAsRead)
 
 	// Tag pages.
+	mux.HandleFunc("GET /tags", handler.showTagListPage)
 	mux.HandleFunc("GET /tags/{tagName}/entries/all", handler.showTagEntriesAllPage)
 	mux.HandleFunc("GET /tags/{tagName}/entry/{entryID}", handler.showTagEntryPage)
+	mux.HandleFunc("POST /tags/{tagName}/mark-all-as-read", handler.markTagAsRead)
 
 	// Entry pages.
 	mux.HandleFunc("POST /entry/status", handler.updateEntriesStatus)

@@ -25,6 +25,7 @@
     "alert.no_search_result": "La ricerca non ha prodotto risultati.",
     "alert.no_shared_entry": "Non ci sono voci condivise.",
     "alert.no_tag_entry": "Non ci sono voci corrispondenti a questo tag.",
+    "alert.no_tag": "Non ci sono tag.",
     "alert.no_unread_entry": "Nessun articolo da leggere.",
     "alert.no_user": "Tu sei l'unico utente.",
     "alert.prefs_saved": "Preferenze salvate!",
@@ -459,6 +460,7 @@
     "page.categories.feeds": "Abbonamenti",
     "page.categories.no_feed": "Nessun feed.",
     "page.categories.title": "Categorie",
+    "page.tags.title": "Tag",
     "page.categories_count": [
         "%d categoria",
         "%d categorie"

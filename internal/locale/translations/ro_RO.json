@@ -25,6 +25,7 @@
     "alert.no_search_result": "Nu există înregistrări pentru această căutare.",
     "alert.no_shared_entry": "Nu sunt înregistrări partajate.",
     "alert.no_tag_entry": "Nu sunt înregistrări pentru această etichetă.",
+    "alert.no_tag": "Nu există etichete.",
     "alert.no_unread_entry": "Nu sunt intrări necitite.",
     "alert.no_user": "Sunteți singurul utilizator.",
     "alert.prefs_saved": "Preferințe salvate!",
@@ -463,6 +464,7 @@
     "page.categories.feeds": "Fluxuri",
     "page.categories.no_feed": "Nici un flux.",
     "page.categories.title": "Categorii",
+    "page.tags.title": "Etichete",
     "page.categories_count": [
         "%d categorie",
         "%d categorii",

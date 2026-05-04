@@ -25,6 +25,7 @@
     "alert.no_search_result": "Немає результатів для цього пошуку.",
     "alert.no_shared_entry": "Немає спільного запису.",
     "alert.no_tag_entry": "Немає записів, що відповідають цьому тегу.",
+    "alert.no_tag": "Немає тегів.",
     "alert.no_unread_entry": "Немає непрочитаних статей.",
     "alert.no_user": "Ви єдиний користувач.",
     "alert.prefs_saved": "Уподобання збережено!",
@@ -463,6 +464,7 @@
     "page.categories.feeds": "Підписки",
     "page.categories.no_feed": "Немає стрічки.",
     "page.categories.title": "Категорії",
+    "page.tags.title": "Теги",
     "page.categories_count": [
         "%d категорія",
         "%d категорії",

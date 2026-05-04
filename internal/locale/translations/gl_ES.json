@@ -25,6 +25,7 @@
     "alert.no_search_result": "Non hai resultados para esta busca.",
     "alert.no_shared_entry": "Non hai artigos compartidos.",
     "alert.no_tag_entry": "Non hai artigos con esta etiqueta.",
+    "alert.no_tag": "Non hai etiquetas.",
     "alert.no_unread_entry": "Non hai artigos sen ler.",
     "alert.no_user": "Es a única conta usuaria.",
     "alert.prefs_saved": "Gardáronse as preferencias!",
@@ -459,6 +460,7 @@
     "page.categories.feeds": "Canles",
     "page.categories.no_feed": "No hai canles.",
     "page.categories.title": "Categorías",
+    "page.tags.title": "Etiquetas",
     "page.categories_count": [
         "%d categoría",
         "%d categorías"

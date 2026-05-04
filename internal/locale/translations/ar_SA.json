@@ -25,6 +25,7 @@
     "alert.no_search_result": "لا توجد نتائج لهذا البحث.",
     "alert.no_shared_entry": "لا توجد مشاركات.",
     "alert.no_tag_entry": "لا توجد مقالات تطابق هذا الوسم.",
+    "alert.no_tag": "لا يوجد وسم.",
     "alert.no_unread_entry": "لا توجد مقالات غير مقروءة.",
     "alert.no_user": "أنت المستخدم الوحيد.",
     "alert.prefs_saved": "تم حفظ التفضيلات!",
@@ -475,6 +476,7 @@
     "page.categories.feeds": "المصادر",
     "page.categories.no_feed": "لا يوجد مصدر.",
     "page.categories.title": "الفئات",
+    "page.tags.title": "الوسوم",
     "page.categories_count": [
         "%d فئة",
         "فئة واحدة",

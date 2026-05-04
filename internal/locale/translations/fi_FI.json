@@ -25,6 +25,7 @@
     "alert.no_search_result": "Ei hakua vastaavia tuloksia.",
     "alert.no_shared_entry": "Jaettua artikkelia ei ole.",
     "alert.no_tag_entry": "Tätä tunnistetta vastaavia merkintöjä ei ole.",
+    "alert.no_tag": "Tunnisteita ei ole.",
     "alert.no_unread_entry": "Ei ole lukemattomia artikkeleita.",
     "alert.no_user": "Olet ainoa käyttäjä.",
     "alert.prefs_saved": "Asetukset tallennettu!",
@@ -459,6 +460,7 @@
     "page.categories.feeds": "Tilaukset",
     "page.categories.no_feed": "Ei syötettä.",
     "page.categories.title": "Kategoriat",
+    "page.tags.title": "Tunnisteet",
     "page.categories_count": [
         "%d kategoria",
         "%d kategoriaa"

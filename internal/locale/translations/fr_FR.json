@@ -25,6 +25,7 @@
     "alert.no_search_result": "Il n'y a aucun résultat pour cette recherche.",
     "alert.no_shared_entry": "Il n'y a pas d'article partagé.",
     "alert.no_tag_entry": "Il n'y a aucun article correspondant à ce tag.",
+    "alert.no_tag": "Il n'y a aucun libellé.",
     "alert.no_unread_entry": "Il n'y a rien de nouveau à lire.",
     "alert.no_user": "Vous êtes le seul utilisateur.",
     "alert.prefs_saved": "Préférences sauvegardées !",
@@ -459,6 +460,7 @@
     "page.categories.feeds": "Abonnements",
     "page.categories.no_feed": "Aucun abonnement.",
     "page.categories.title": "Catégories",
+    "page.tags.title": "Libellés",
     "page.categories_count": [
         "%d catégorie",
         "%d catégories"
