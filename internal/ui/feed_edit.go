@@ -38,6 +38,11 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	refreshIntervalMinutes := 0
+	if feed.RefreshIntervalMinutes != nil {
+		refreshIntervalMinutes = *feed.RefreshIntervalMinutes
+	}
+
 	feedForm := form.FeedForm{
 		SiteURL:                     feed.SiteURL,
 		FeedURL:                     feed.FeedURL,
@@ -73,6 +78,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		PushoverEnabled:             feed.PushoverEnabled,
 		PushoverPriority:            feed.PushoverPriority,
 		ProxyURL:                    feed.ProxyURL,
+		RefreshIntervalMinutes:      refreshIntervalMinutes,
 	}
 
 	view := view.New(h.tpl, r)

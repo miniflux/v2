@@ -177,7 +177,8 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			f.pushover_enabled,
 			f.pushover_priority,
 			f.proxy_url,
-			f.ignore_entry_updates
+			f.ignore_entry_updates,
+			f.refresh_interval_minutes
 		FROM
 			feeds f
 		LEFT JOIN
@@ -210,6 +211,7 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 		var feed model.Feed
 		var iconID sql.NullInt64
 		var externalIconID sql.NullString
+		var refreshIntervalMinutes sql.NullInt64
 		var tz string
 		feed.Category = &model.Category{}
 
@@ -260,10 +262,16 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.PushoverPriority,
 			&feed.ProxyURL,
 			&feed.IgnoreEntryUpdates,
+			&refreshIntervalMinutes,
 		)
 
 		if err != nil {
 			return nil, fmt.Errorf(`store: unable to fetch feeds row: %w`, err)
+		}
+
+		if refreshIntervalMinutes.Valid {
+			value := int(refreshIntervalMinutes.Int64)
+			feed.RefreshIntervalMinutes = &value
 		}
 
 		if iconID.Valid && externalIconID.Valid {

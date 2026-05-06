@@ -10,6 +10,21 @@ import (
 	"miniflux.app/v2/internal/urllib"
 )
 
+// MinFeedRefreshIntervalMinutes is the smallest per-feed refresh interval
+// that can be configured. The cap prevents users from accidentally hammering
+// publishers (and getting rate limited) when the global polling frequency is
+// higher than this value.
+const MinFeedRefreshIntervalMinutes = 5
+
+// MaxFeedRefreshIntervalMinutes is one week. Larger values are accepted by
+// the database column but are unlikely to be intentional, and the round-robin
+// scheduler also caps the global interval at one week.
+const MaxFeedRefreshIntervalMinutes = 7 * 24 * 60
+
+func isValidRefreshInterval(value int) bool {
+	return value >= MinFeedRefreshIntervalMinutes && value <= MaxFeedRefreshIntervalMinutes
+}
+
 // ValidateFeedCreation validates feed creation.
 func ValidateFeedCreation(store *storage.Storage, userID int64, request *model.FeedCreationRequest) *locale.LocalizedError {
 	if request.FeedURL == "" || request.CategoryID <= 0 {
@@ -38,6 +53,10 @@ func ValidateFeedCreation(store *storage.Storage, userID int64, request *model.F
 
 	if request.ProxyURL != "" && !urllib.IsAbsoluteURL(request.ProxyURL) {
 		return locale.NewLocalizedError("error.invalid_feed_proxy_url")
+	}
+
+	if request.RefreshIntervalMinutes != nil && *request.RefreshIntervalMinutes != 0 && !isValidRefreshInterval(*request.RefreshIntervalMinutes) {
+		return locale.NewLocalizedError("error.feed_invalid_refresh_interval", MinFeedRefreshIntervalMinutes, MaxFeedRefreshIntervalMinutes)
 	}
 
 	return nil
@@ -101,6 +120,10 @@ func ValidateFeedModification(store *storage.Storage, userID, feedID int64, requ
 		if !urllib.IsAbsoluteURL(*request.ProxyURL) {
 			return locale.NewLocalizedError("error.invalid_feed_proxy_url")
 		}
+	}
+
+	if request.RefreshIntervalMinutes != nil && *request.RefreshIntervalMinutes > 0 && !isValidRefreshInterval(*request.RefreshIntervalMinutes) {
+		return locale.NewLocalizedError("error.feed_invalid_refresh_interval", MinFeedRefreshIntervalMinutes, MaxFeedRefreshIntervalMinutes)
 	}
 
 	return nil

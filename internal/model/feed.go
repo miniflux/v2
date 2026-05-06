@@ -62,6 +62,7 @@ type Feed struct {
 	NtfyTopic                   string    `json:"ntfy_topic"`
 	PushoverPriority            int       `json:"pushover_priority"`
 	ProxyURL                    string    `json:"proxy_url"`
+	RefreshIntervalMinutes      *int      `json:"refresh_interval_minutes"`
 
 	// Non-persisted attributes
 	Category *Category `json:"category,omitempty"`
@@ -120,6 +121,16 @@ func (f *Feed) CheckedNow() {
 
 // ScheduleNextCheck set "next_check_at" of a feed based on the scheduler selected from the configuration.
 func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelay time.Duration) time.Duration {
+	// A per-feed override takes precedence over the global scheduler. The
+	// HTTP refresh delay (RSS TTL, Retry-After, Cache-Control, Expires) is
+	// still honoured to avoid hitting servers more often than they request.
+	if f.RefreshIntervalMinutes != nil && *f.RefreshIntervalMinutes > 0 {
+		interval := time.Duration(*f.RefreshIntervalMinutes) * time.Minute
+		interval = max(interval, refreshDelay)
+		f.NextCheckAt = time.Now().Add(interval)
+		return interval
+	}
+
 	// Default to the global config Polling Frequency.
 	interval := config.Opts.SchedulerRoundRobinMinInterval()
 
@@ -173,6 +184,7 @@ type FeedCreationRequest struct {
 	KeepFilterEntryRules        string `json:"keep_filter_entry_rules"`
 	UrlRewriteRules             string `json:"urlrewrite_rules"`
 	ProxyURL                    string `json:"proxy_url"`
+	RefreshIntervalMinutes      *int   `json:"refresh_interval_minutes"`
 }
 
 type FeedCreationRequestFromSubscriptionDiscovery struct {
@@ -211,6 +223,7 @@ type FeedModificationRequest struct {
 	HideGlobally                *bool   `json:"hide_globally"`
 	DisableHTTP2                *bool   `json:"disable_http2"`
 	ProxyURL                    *string `json:"proxy_url"`
+	RefreshIntervalMinutes      *int    `json:"refresh_interval_minutes"`
 }
 
 // Patch updates a feed with modified values.
@@ -317,6 +330,17 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 
 	if f.ProxyURL != nil {
 		feed.ProxyURL = *f.ProxyURL
+	}
+
+	if f.RefreshIntervalMinutes != nil {
+		// A non-positive value clears the override and lets the global
+		// scheduler take over again.
+		if *f.RefreshIntervalMinutes > 0 {
+			value := *f.RefreshIntervalMinutes
+			feed.RefreshIntervalMinutes = &value
+		} else {
+			feed.RefreshIntervalMinutes = nil
+		}
 	}
 }
 
