@@ -73,6 +73,10 @@
             <label><input type="checkbox" name="no_media_player" {{ if .form.NoMediaPlayer }}checked{{ end }} value="1" >  {{ t "form.feed.label.no_media_player" }} </label>
             <label><input type="checkbox" name="disabled" value="1" {{ if .form.Disabled }}checked{{ end }}> {{ t "form.feed.label.disabled" }}</label>
 
+            <label for="form-refresh-interval-minutes">{{ t "form.feed.label.refresh_interval_minutes" }}</label>
+            <input type="number" name="refresh_interval_minutes" id="form-refresh-interval-minutes" min="0" max="10080" step="1" value="{{ if gt .form.RefreshIntervalMinutes 0 }}{{ .form.RefreshIntervalMinutes }}{{ end }}" placeholder="0">
+            <p class="form-help">{{ t "form.feed.help.refresh_interval_minutes" }}</p>
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>
