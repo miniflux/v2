@@ -76,6 +76,8 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 				slog.String("entry_url", entryURL),
 			)
 		}
+	case "add_enclosure_links":
+		entry.Content = addEnclosureLinks(entry)
 	case "add_castopod_episode":
 		entry.Content = addCastopodEpisode(entryURL, entry.Content)
 	case "base64_decode":
