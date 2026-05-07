@@ -13,12 +13,27 @@ import (
 	"miniflux.app/v2/internal/urllib"
 )
 
+// RewriteContext carries optional inputs collected by earlier stages of the
+// reader pipeline. It is passed to rewrite rules that need more than the
+// entry content alone (for example, OpenGraph values extracted from the
+// page's <head>).
+//
+// All fields are optional; rules that depend on them must degrade gracefully
+// when the value is missing.
+type RewriteContext struct {
+	// Metadata holds key/value pairs collected from <meta> tags in the
+	// scraped page. Keys keep their original prefix ("og:", "twitter:") and
+	// are normalized to lowercase. The map can be nil when no scraping took
+	// place (for example, when the feed crawler is disabled).
+	Metadata map[string]string
+}
+
 type rule struct {
 	name string
 	args []string
 }
 
-func (rule rule) applyRule(entryURL string, entry *model.Entry) {
+func (rule rule) applyRule(entryURL string, entry *model.Entry, ctx *RewriteContext) {
 	switch rule.name {
 	case "add_image_title":
 		entry.Content = addImageTitle(entry.Content)
@@ -96,10 +111,35 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 		entry.Content = fixGhostCards(entry.Content)
 	case "remove_img_blur_params":
 		entry.Content = removeImgBlurParams(entry.Content)
+	case "add_open_graph":
+		// Format: add_open_graph("description","image",...)
+		// Without arguments, falls back to the most useful defaults.
+		properties := rule.args
+		if len(properties) == 0 {
+			properties = defaultOpenGraphProperties
+		}
+		entry.Content = addMetaPreview(entry.Content, ctx.metadataLookup(), "og:", properties)
+	case "add_twitter_card":
+		// Format: add_twitter_card("description","image",...)
+		properties := rule.args
+		if len(properties) == 0 {
+			properties = defaultTwitterCardProperties
+		}
+		entry.Content = addMetaPreview(entry.Content, ctx.metadataLookup(), "twitter:", properties)
 	}
 }
 
-func ApplyContentRewriteRules(entry *model.Entry, customRewriteRules string) {
+// metadataLookup returns the metadata map for the current rewrite context,
+// returning an empty (but non-nil) map when the context or its Metadata field
+// is nil. This keeps rule implementations free of nil checks.
+func (ctx *RewriteContext) metadataLookup() map[string]string {
+	if ctx == nil || ctx.Metadata == nil {
+		return map[string]string{}
+	}
+	return ctx.Metadata
+}
+
+func ApplyContentRewriteRules(entry *model.Entry, customRewriteRules string, ctx *RewriteContext) {
 	rulesList := getPredefinedRewriteRules(entry.URL)
 	if customRewriteRules != "" {
 		rulesList = customRewriteRules
@@ -114,7 +154,7 @@ func ApplyContentRewriteRules(entry *model.Entry, customRewriteRules string) {
 	)
 
 	for _, rule := range rules {
-		rule.applyRule(entry.URL, entry)
+		rule.applyRule(entry.URL, entry, ctx)
 	}
 }
 

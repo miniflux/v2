@@ -4,6 +4,7 @@
 package scraper // import "miniflux.app/v2/internal/reader/scraper"
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log/slog"
@@ -18,17 +19,31 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-func ScrapeWebsite(requestBuilder *fetcher.RequestBuilder, pageURL, rules string) (baseURL string, extractedContent string, err error) {
+// ScrapeResult holds the artifacts collected while scraping an entry URL.
+//
+// Metadata contains OpenGraph and Twitter Card values collected from the
+// page's <head>. It can be empty when the page does not expose any preview
+// metadata or when scraping was not performed (for example when the feed has
+// the crawler disabled).
+type ScrapeResult struct {
+	BaseURL          string
+	ExtractedContent string
+	Metadata         map[string]string
+}
+
+func ScrapeWebsite(requestBuilder *fetcher.RequestBuilder, pageURL, rules string) (ScrapeResult, error) {
+	result := ScrapeResult{Metadata: map[string]string{}}
+
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(pageURL))
 	defer responseHandler.Close()
 
 	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
 		slog.Warn("Unable to scrape website", slog.String("website_url", pageURL), slog.Any("error", localizedError.Error()))
-		return "", "", localizedError.Error()
+		return result, localizedError.Error()
 	}
 
 	if !isAllowedContentType(responseHandler.ContentType()) {
-		return "", "", fmt.Errorf("scraper: this resource is not a HTML document (%s)", responseHandler.ContentType())
+		return result, fmt.Errorf("scraper: this resource is not a HTML document (%s)", responseHandler.ContentType())
 	}
 
 	// The entry URL could redirect somewhere else.
@@ -45,7 +60,14 @@ func ScrapeWebsite(requestBuilder *fetcher.RequestBuilder, pageURL, rules string
 	)
 
 	if err != nil {
-		return "", "", fmt.Errorf("scraper: unable to read HTML document with charset reader: %v", err)
+		return result, fmt.Errorf("scraper: unable to read HTML document with charset reader: %v", err)
+	}
+
+	// Buffer the document so we can both run the chosen extraction strategy
+	// and parse <head> meta tags without re-fetching the page.
+	htmlBytes, err := io.ReadAll(htmlDocumentReader)
+	if err != nil {
+		return result, fmt.Errorf("scraper: unable to read HTML document body: %v", err)
 	}
 
 	if sameSite && rules != "" {
@@ -53,21 +75,32 @@ func ScrapeWebsite(requestBuilder *fetcher.RequestBuilder, pageURL, rules string
 			"url", pageURL,
 			"rules", rules,
 		)
-		baseURL, extractedContent, err = findContentUsingCustomRules(htmlDocumentReader, rules)
+		result.BaseURL, result.ExtractedContent, err = findContentUsingCustomRules(bytes.NewReader(htmlBytes), rules)
 	} else {
 		slog.Debug("Extracting content with readability",
 			"url", pageURL,
 		)
-		baseURL, extractedContent, err = readability.ExtractContent(htmlDocumentReader)
+		result.BaseURL, result.ExtractedContent, err = readability.ExtractContent(bytes.NewReader(htmlBytes))
 	}
 
-	if baseURL == "" {
-		baseURL = pageURL
+	if err != nil {
+		slog.Debug("Content extraction returned an error",
+			"url", pageURL,
+			"error", err,
+		)
+	}
+
+	if metadataDoc, metadataErr := goquery.NewDocumentFromReader(bytes.NewReader(htmlBytes)); metadataErr == nil {
+		result.Metadata = ExtractHeadMetadata(metadataDoc)
+	}
+
+	if result.BaseURL == "" {
+		result.BaseURL = pageURL
 	} else {
-		slog.Debug("Using base URL from HTML document", "base_url", baseURL)
+		slog.Debug("Using base URL from HTML document", "base_url", result.BaseURL)
 	}
 
-	return baseURL, extractedContent, nil
+	return result, nil
 }
 
 func findContentUsingCustomRules(page io.Reader, rules string) (baseURL string, extractedContent string, err error) {

@@ -26,6 +26,14 @@ var (
 	textLinkRegex  = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 )
 
+// defaultOpenGraphProperties is the suffix list applied when add_open_graph
+// is invoked without explicit arguments.
+var defaultOpenGraphProperties = []string{"description", "image"}
+
+// defaultTwitterCardProperties is the suffix list applied when add_twitter_card
+// is invoked without explicit arguments.
+var defaultTwitterCardProperties = []string{"description", "image"}
+
 // titlelize returns a copy of the string s with all Unicode letters that begin words
 // mapped to their Unicode title case.
 func titlelize(s string) string {
@@ -548,6 +556,114 @@ func fixGhostCards(entryContent string) string {
 
 	output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 	return strings.TrimSpace(output)
+}
+
+// addMetaPreview prepends a small block of preview content built from the
+// supplied metadata map. The keyPrefix selects which family of values to read
+// ("og:" for OpenGraph, "twitter:" for Twitter Cards) and properties is the
+// list of suffixes to render ("description", "image", "title", ...).
+//
+// The block is rendered as a <figure> when an image suffix is requested and
+// the metadata contains a value for it; otherwise a single <p> tag is
+// emitted. When no requested property has a value the original content is
+// returned unchanged so the rule is a no-op.
+func addMetaPreview(entryContent string, metadata map[string]string, keyPrefix string, properties []string) string {
+	if len(metadata) == 0 || len(properties) == 0 {
+		return entryContent
+	}
+
+	var (
+		imageURL    string
+		imageAlt    string
+		title       string
+		description string
+		extraLines  []string
+	)
+
+	for _, prop := range properties {
+		prop = strings.TrimSpace(strings.ToLower(prop))
+		if prop == "" {
+			continue
+		}
+		// Allow callers to pass either the bare suffix ("description") or
+		// the fully-qualified key ("og:description"). When a fully-qualified
+		// key is given, only honor it if the prefix matches the rule family.
+		key := prop
+		if strings.HasPrefix(prop, "og:") || strings.HasPrefix(prop, "twitter:") {
+			if !strings.HasPrefix(prop, keyPrefix) {
+				continue
+			}
+		} else {
+			key = keyPrefix + prop
+		}
+
+		value, ok := metadata[key]
+		if !ok || value == "" {
+			continue
+		}
+
+		shortKey := strings.TrimPrefix(key, keyPrefix)
+		switch shortKey {
+		case "image", "image:url", "image:secure_url":
+			if imageURL == "" {
+				imageURL = value
+			}
+		case "image:alt":
+			if imageAlt == "" {
+				imageAlt = value
+			}
+		case "title":
+			if title == "" {
+				title = value
+			}
+		case "description":
+			if description == "" {
+				description = value
+			}
+		default:
+			extraLines = append(extraLines, fmt.Sprintf(
+				`<p><strong>%s:</strong> %s</p>`,
+				html.EscapeString(shortKey),
+				html.EscapeString(value),
+			))
+		}
+	}
+
+	var preview strings.Builder
+
+	if title != "" {
+		preview.WriteString("<p><strong>")
+		preview.WriteString(html.EscapeString(title))
+		preview.WriteString("</strong></p>")
+	}
+
+	if imageURL != "" {
+		preview.WriteString(`<figure><img src="`)
+		preview.WriteString(html.EscapeString(imageURL))
+		preview.WriteString(`" alt="`)
+		preview.WriteString(html.EscapeString(imageAlt))
+		preview.WriteString(`"/>`)
+		if description != "" {
+			preview.WriteString("<figcaption><p>")
+			preview.WriteString(html.EscapeString(description))
+			preview.WriteString("</p></figcaption>")
+		}
+		preview.WriteString("</figure>")
+	} else if description != "" {
+		preview.WriteString("<p>")
+		preview.WriteString(html.EscapeString(description))
+		preview.WriteString("</p>")
+	}
+
+	for _, line := range extraLines {
+		preview.WriteString(line)
+	}
+
+	if preview.Len() == 0 {
+		return entryContent
+	}
+
+	return preview.String() + entryContent
 }
 
 func removeImgBlurParams(entryContent string) string {
