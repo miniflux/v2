@@ -21,7 +21,15 @@ func EstimateReadingTime(content string, defaultReadingSpeed, cjkReadingSpeed in
 	if isCJK(sanitizedContent[:truncationPoint]) {
 		return int(math.Ceil(float64(utf8.RuneCountInString(sanitizedContent)) / float64(cjkReadingSpeed)))
 	}
-	return int(math.Ceil(float64(len(strings.Fields(sanitizedContent))) / float64(defaultReadingSpeed)))
+	return int(math.Ceil(float64(countWords(sanitizedContent)) / float64(defaultReadingSpeed)))
+}
+
+func countWords(s string) int {
+	n := 0
+	for range strings.FieldsSeq(s) {
+		n++
+	}
+	return n
 }
 
 func isCJK(text string) bool {

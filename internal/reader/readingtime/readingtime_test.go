@@ -86,3 +86,14 @@ func BenchmarkEstimateReadingTime(b *testing.B) {
 		}
 	}
 }
+
+func TestCountWordsZeroAllocs(t *testing.T) {
+	allocs := testing.AllocsPerRun(10, func() {
+		for _, sample := range samples {
+			countWords(sample)
+		}
+	})
+	if allocs != 0 {
+		t.Errorf("countWords allocated %v times, expected 0", allocs)
+	}
+}
