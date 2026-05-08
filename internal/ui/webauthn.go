@@ -370,7 +370,8 @@ func (h *handler) renameCredential(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) saveCredential(w http.ResponseWriter, r *http.Request) {
-	_, err := h.store.UserByID(request.UserID(r))
+	userID := request.UserID(r)
+	_, err := h.store.UserByID(userID)
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
@@ -384,9 +385,13 @@ func (h *handler) saveCredential(w http.ResponseWriter, r *http.Request) {
 	}
 
 	newName := r.FormValue("name")
-	err = h.store.WebAuthnUpdateName(credentialHandle, newName)
+	changed, err := h.store.WebAuthnUpdateName(userID, credentialHandle, newName)
 	if err != nil {
 		response.HTMLServerError(w, r, err)
+		return
+	}
+	if changed == 0 {
+		response.HTMLNotFound(w, r)
 		return
 	}
 
