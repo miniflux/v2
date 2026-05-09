@@ -8,6 +8,86 @@
 {{ end }}
 
 {{ define "content"}}
+{{ if and (not disableLocalAuth) (hasOAuth2Provider "google") }}
+<fieldset>
+    <legend>{{ t "form.prefs.fieldset.google_authentication" }}</legend>
+    {{ if .user.GoogleID }}
+    <form method="post" action="{{ routePath "/oauth2/%s/unlink" "google" }}">
+        <input type="hidden" name="csrf" value="{{ .csrf }}">
+        <button type="submit" class="button button-danger" data-label-loading="{{ t "form.submit.saving" }}">{{ t "page.settings.unlink_google_account" }}</button>
+    </form>
+    {{ else }}
+    <p>
+        <a href="{{ routePath "/oauth2/%s/redirect" "google" }}">{{ t "page.settings.link_google_account" }}</a>
+    </p>
+    {{ end }}
+</fieldset>
+{{ else if and (not disableLocalAuth) (hasOAuth2Provider "oidc") }}
+<fieldset>
+    <legend>{{ t "form.prefs.fieldset.oidc_authentication" oidcProviderName }}</legend>
+    {{ if .user.OpenIDConnectID }}
+    <form method="post" action="{{ routePath "/oauth2/%s/unlink" "oidc" }}">
+        <input type="hidden" name="csrf" value="{{ .csrf }}">
+        <button type="submit" class="button button-danger" data-label-loading="{{ t "form.submit.saving" }}">{{ t "page.settings.unlink_oidc_account" oidcProviderName }}</button>
+    </form>
+    {{ else }}
+    <p>
+        <a href="{{ routePath "/oauth2/%s/redirect" "oidc" }}">{{ t "page.settings.link_oidc_account" oidcProviderName }}</a>
+    </p>
+    {{ end }}
+</fieldset>
+{{ end }}
+{{ if .webAuthnEnabled }}
+<fieldset>
+    <legend>{{ t "page.settings.webauthn.passkeys" }}</legend>
+
+    <template id="webauthn-error">
+        <div role="alert" class="alert alert-error" id="webauthn-error-alert">
+            <h4>{{ t "page.settings.webauthn.register.error" }}</h4>
+            <p id="webauthn-error-message"></p>
+        </div>
+    </template>
+
+    {{ if .webAuthnCerts}}
+    <table>
+        <tr>
+            <th>{{ t "page.settings.webauthn.passkey_name" }}</th>
+            <th>{{ t "page.settings.webauthn.added_on" }}</th>
+            <th>{{ t "page.settings.webauthn.last_seen_on" }}</th>
+            <th>{{ t "page.settings.webauthn.actions" }}</th>
+        </tr>
+        {{ range .webAuthnCerts }}
+        <tr>
+            <td>{{ .Name }}</td>
+            <td>{{ elapsed $.user.Timezone .AddedOn }}</td>
+            <td>{{ elapsed $.user.Timezone .LastSeenOn }}</td>
+            <td>
+                <a href="#"
+                    data-confirm="true"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}"
+                    data-url="{{ routePath "/webauthn/%s/delete" .HandleEncoded }}">{{ icon "delete" }}{{ t "action.remove" }}</a>
+                <a href="{{ routePath "/webauthn/%s/rename" .HandleEncoded }}">{{ icon "edit" }} {{ t "action.edit" }}</a>
+            </td>
+        </tr>
+        {{ end }}
+    </table>
+    {{ end }}
+
+    <div class="buttons">
+        <button type="button" class="button button-primary" id="webauthn-register" disabled>
+            {{ t "page.settings.webauthn.register" }}
+        </button>
+        {{ if gt .countWebAuthnCerts 0}}
+        <button type="button" class="button button-danger" id="webauthn-delete">
+            {{ plural "page.settings.webauthn.delete" .countWebAuthnCerts .countWebAuthnCerts }}
+        </button>
+        {{ end }}
+    </div>
+</fieldset>
+{{ end }}
 <form method="post" autocomplete="off" action="{{ routePath "/settings" }}">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
@@ -28,78 +108,8 @@
         <label for="form-confirmation">{{ t "form.user.label.confirmation" }}</label>
         <input type="password" name="confirmation" id="form-confirmation" value="{{ .form.Confirmation }}" autocomplete="new-password">
 
-        {{ if hasOAuth2Provider "google" }}
-        <p>
-            {{ if .user.GoogleID }}
-                <a href="{{ routePath "/oauth2/%s/unlink" "google" }}">{{ t "page.settings.unlink_google_account" }}</a>
-            {{ else }}
-                <a href="{{ routePath "/oauth2/%s/redirect" "google" }}">{{ t "page.settings.link_google_account" }}</a>
-            {{ end }}
-        </p>
-        {{ else if hasOAuth2Provider "oidc" }}
-        <p>
-            {{ if .user.OpenIDConnectID }}
-                <a href="{{ routePath "/oauth2/%s/unlink" "oidc" }}">{{ t "page.settings.unlink_oidc_account" oidcProviderName }}</a>
-            {{ else }}
-                <a href="{{ routePath "/oauth2/%s/redirect" "oidc" }}">{{ t "page.settings.link_oidc_account" oidcProviderName }}</a>
-            {{ end }}
-        </p>
-        {{ end }}
-
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-        </div>
-    </fieldset>
-    {{ end }}
-
-    {{ if .webAuthnEnabled }}
-    <fieldset>
-        <legend>{{ t "page.settings.webauthn.passkeys" }}</legend>
-
-        <template id="webauthn-error">
-            <div role="alert" class="alert alert-error" id="webauthn-error-alert">
-                <h4>{{ t "page.settings.webauthn.register.error" }}</h4>
-                <p id="webauthn-error-message"></p>
-            </div>
-        </template>
-
-        {{ if .webAuthnCerts}}
-        <table>
-            <tr>
-                <th>{{ t "page.settings.webauthn.passkey_name" }}</th>
-                <th>{{ t "page.settings.webauthn.added_on" }}</th>
-                <th>{{ t "page.settings.webauthn.last_seen_on" }}</th>
-                <th>{{ t "page.settings.webauthn.actions" }}</th>
-            </tr>
-            {{ range .webAuthnCerts }}
-            <tr>
-                <td>{{ .Name }}</td>
-                <td>{{ elapsed $.user.Timezone .AddedOn }}</td>
-                <td>{{ elapsed $.user.Timezone .LastSeenOn }}</td>
-                <td>
-                    <a href="#"
-                        data-confirm="true"
-                        data-label-question="{{ t "confirm.question" }}"
-                        data-label-yes="{{ t "confirm.yes" }}"
-                        data-label-no="{{ t "confirm.no" }}"
-                        data-label-loading="{{ t "confirm.loading" }}"
-                        data-url="{{ routePath "/webauthn/%s/delete" .HandleEncoded }}">{{ icon "delete" }}{{ t "action.remove" }}</a>
-                    <a href="{{ routePath "/webauthn/%s/rename" .HandleEncoded }}">{{ icon "edit" }} {{ t "action.edit" }}</a>
-                </td>
-            </tr>
-            {{ end }}
-        </table>
-        {{ end }}
-
-        <div class="buttons">
-            <button class="button button-primary" id="webauthn-register" disabled>
-                {{ t "page.settings.webauthn.register" }}
-            </button>
-            {{ if gt .countWebAuthnCerts 0}}
-            <button class="button button-danger" id="webauthn-delete">
-                {{ plural "page.settings.webauthn.delete" .countWebAuthnCerts .countWebAuthnCerts }}
-            </button>
-            {{ end }}
         </div>
     </fieldset>
     {{ end }}

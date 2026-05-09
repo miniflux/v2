@@ -149,7 +149,7 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 
 	// OAuth2 flow.
 	if config.Opts.OAuth2Provider() != "" {
-		mux.HandleFunc("GET /oauth2/{provider}/unlink", handler.oauth2Unlink)
+		mux.HandleFunc("POST /oauth2/{provider}/unlink", handler.oauth2Unlink)
 		mux.HandleFunc("GET /oauth2/{provider}/redirect", handler.oauth2Redirect)
 		mux.HandleFunc("GET /oauth2/{provider}/callback", handler.oauth2Callback)
 	}
