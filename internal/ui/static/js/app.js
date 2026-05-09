@@ -658,12 +658,18 @@ function toggleEntryStatus(element, toasting) {
 /**
  * Handle the refresh of all feeds.
  *
- * This function redirects the user to the URL specified in the data-refresh-all-feeds-url attribute of the body element.
+ * This function POSTs to the URL specified in the data-refresh-all-feeds-url attribute of the body element.
  */
 function handleRefreshAllFeedsAction() {
     const refreshAllFeedsUrl = document.body.dataset.refreshAllFeedsUrl;
     if (refreshAllFeedsUrl) {
-        window.location.href = refreshAllFeedsUrl;
+        sendPOSTRequest(refreshAllFeedsUrl).then((response) => {
+            if (response?.redirected && response.url) {
+                window.location.href = response.url;
+            } else {
+                window.location.reload();
+            }
+        });
     }
 }
 

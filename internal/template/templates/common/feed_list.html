@@ -51,9 +51,12 @@
                 </ul>
                 <ul class="item-meta-icons">
                     <li class="item-meta-icons-refresh">
-                        <a href="{{ routePath "/feed/%d/refresh" .ID }}" aria-describedby="feed-title-{{ .ID }}">
-                            {{ icon "refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span>
-                        </a>
+                        <form action="{{ routePath "/feed/%d/refresh" .ID }}" method="post">
+                            <input type="hidden" name="csrf" value="{{ $.csrf }}">
+                            <button aria-describedby="feed-title-{{ .ID }}">
+                                {{ icon "refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span>
+                            </button>
+                        </form>
                     </li>
                     <li class="item-meta-icons-edit">
                         <a href="{{ routePath "/feed/%d/edit" .ID }}" aria-describedby="feed-title-{{ .ID }}">

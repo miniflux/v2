@@ -910,13 +910,17 @@ dialog {
     margin-right: 0;
 }
 
-.item-meta-icons li > :is(a, button) {
+.item-meta-icons li :is(a, button) {
     color: #777;
     text-decoration: none;
     font-size: 0.8rem;
     border: none;
     background-color: transparent;
     cursor: pointer;
+}
+
+.item-meta-icons li form {
+    display: contents;
 }
 
 .item-meta-icons a span {
