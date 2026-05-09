@@ -160,7 +160,7 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 
 	// Authentication pages.
 	mux.HandleFunc("POST /login", handler.checkLogin)
-	mux.HandleFunc("GET /logout", handler.logout)
+	mux.HandleFunc("POST /logout", handler.logout)
 	mux.Handle("GET /{$}", authProxyMiddleware.handle(http.HandlerFunc(handler.showLoginPage)))
 
 	// WebAuthn flow.

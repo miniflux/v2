@@ -132,16 +132,27 @@ a:hover {
     border-bottom: 1px dotted var(--header-list-border-color);
 }
 
-.header li a:hover {
+.header li :is(a, .logout-button):hover {
     color: #888;
 }
 
-.header :is(a, summary) {
+.header :is(a, summary, .logout-button) {
     font-size: 0.9em;
     color: var(--header-link-color);
     text-decoration: none;
     border: none;
     font-weight: 400;
+}
+
+.header .logout-form {
+    display: inline;
+}
+
+.header .logout-button {
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .header .active a {
