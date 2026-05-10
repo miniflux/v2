@@ -56,13 +56,13 @@ func (u WebAuthnUser) WebAuthnCredentials() []webauthn.Credential {
 }
 
 func newWebAuthn() (*webauthn.WebAuthn, error) {
-	url, err := url.Parse(config.Opts.BaseURL())
+	baseURL, err := url.Parse(config.Opts.BaseURL())
 	if err != nil {
 		return nil, err
 	}
 	return webauthn.New(&webauthn.Config{
 		RPDisplayName: "Miniflux",
-		RPID:          url.Hostname(),
+		RPID:          baseURL.Hostname(),
 		RPOrigins:     []string{config.Opts.RootURL()},
 	})
 }
@@ -78,26 +78,24 @@ func (h *handler) beginRegistration(w http.ResponseWriter, r *http.Request) {
 		response.JSONServerError(w, r, err)
 		return
 	}
-	var creds []model.WebAuthnCredential
 
-	creds, err = h.store.WebAuthnCredentialsByUserID(user.ID)
+	credentials, err := h.store.WebAuthnCredentialsByUserID(user.ID)
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
 	}
 
-	credsDescriptors := make([]protocol.CredentialDescriptor, len(creds))
-	for i, cred := range creds {
-		credsDescriptors[i] = cred.Credential.Descriptor()
+	credentialDescriptors := make([]protocol.CredentialDescriptor, len(credentials))
+	for i, credential := range credentials {
+		credentialDescriptors[i] = credential.Credential.Descriptor()
 	}
 
 	options, sessionData, err := web.BeginRegistration(
 		WebAuthnUser{
-			user,
-			crypto.GenerateRandomBytes(32),
-			nil,
+			User:    user,
+			AuthnID: crypto.GenerateRandomBytes(32),
 		},
-		webauthn.WithExclusions(credsDescriptors),
+		webauthn.WithExclusions(credentialDescriptors),
 		webauthn.WithResidentKeyRequirement(protocol.ResidentKeyRequirementPreferred),
 		webauthn.WithExtensions(protocol.AuthenticationExtensions{"credProps": true}),
 	)
@@ -116,8 +114,8 @@ func (h *handler) finishRegistration(w http.ResponseWriter, r *http.Request) {
 		response.JSONServerError(w, r, err)
 		return
 	}
-	uid := request.UserID(r)
-	user, err := h.store.UserByID(uid)
+	userID := request.UserID(r)
+	user, err := h.store.UserByID(userID)
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
@@ -127,14 +125,14 @@ func (h *handler) finishRegistration(w http.ResponseWriter, r *http.Request) {
 		response.JSONBadRequest(w, r, errors.New("missing webauthn session data"))
 		return
 	}
-	webAuthnUser := WebAuthnUser{user, sessionData.UserID, nil}
-	cred, err := web.FinishRegistration(webAuthnUser, *sessionData, r)
+	webAuthnUser := WebAuthnUser{User: user, AuthnID: sessionData.UserID}
+	credential, err := web.FinishRegistration(webAuthnUser, *sessionData, r)
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
 	}
 
-	err = h.store.AddWebAuthnCredential(uid, sessionData.UserID, cred)
+	err = h.store.AddWebAuthnCredential(userID, sessionData.UserID, credential)
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
@@ -165,12 +163,12 @@ func (h *handler) beginLogin(w http.ResponseWriter, r *http.Request) {
 	var assertion *protocol.CredentialAssertion
 	var sessionData *webauthn.SessionData
 	if user != nil {
-		creds, err := h.store.WebAuthnCredentialsByUserID(user.ID)
+		credentials, err := h.store.WebAuthnCredentialsByUserID(user.ID)
 		if err != nil {
 			response.JSONServerError(w, r, err)
 			return
 		}
-		assertion, sessionData, err = web.BeginLogin(WebAuthnUser{user, nil, creds})
+		assertion, sessionData, err = web.BeginLogin(WebAuthnUser{User: user, Credentials: credentials})
 		if err != nil {
 			response.JSONServerError(w, r, err)
 			return
@@ -233,25 +231,29 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 		}
 
 		sessionData.UserID = parsedResponse.Response.UserHandle
-		webAuthUser := WebAuthnUser{user, parsedResponse.Response.UserHandle, storedCredentials}
+		webAuthnUser := WebAuthnUser{
+			User:        user,
+			AuthnID:     parsedResponse.Response.UserHandle,
+			Credentials: storedCredentials,
+		}
 
 		// Since go-webauthn v0.11.0, the backup eligibility flag is strictly validated, but Miniflux does not store this flag.
 		// This workaround set the flag based on the parsed response, and avoid "BackupEligible flag inconsistency detected during login validation" error.
 		// See https://github.com/go-webauthn/webauthn/pull/240
-		for index := range webAuthUser.Credentials {
-			webAuthUser.Credentials[index].Credential.Flags.BackupEligible = parsedResponse.Response.AuthenticatorData.Flags.HasBackupEligible()
+		for index := range webAuthnUser.Credentials {
+			webAuthnUser.Credentials[index].Credential.Flags.BackupEligible = parsedResponse.Response.AuthenticatorData.Flags.HasBackupEligible()
 		}
 
-		for _, webAuthCredential := range webAuthUser.WebAuthnCredentials() {
+		for _, cred := range webAuthnUser.WebAuthnCredentials() {
 			slog.Debug("WebAuthn: stored credential flags",
-				slog.Bool("user_present", webAuthCredential.Flags.UserPresent),
-				slog.Bool("user_verified", webAuthCredential.Flags.UserVerified),
-				slog.Bool("backup_eligible", webAuthCredential.Flags.BackupEligible),
-				slog.Bool("backup_state", webAuthCredential.Flags.BackupState),
+				slog.Bool("user_present", cred.Flags.UserPresent),
+				slog.Bool("user_verified", cred.Flags.UserVerified),
+				slog.Bool("backup_eligible", cred.Flags.BackupEligible),
+				slog.Bool("backup_state", cred.Flags.BackupState),
 			)
 		}
 
-		credCredential, err := web.ValidateLogin(webAuthUser, *sessionData, parsedResponse)
+		validatedCredential, err := web.ValidateLogin(webAuthnUser, *sessionData, parsedResponse)
 		if err != nil {
 			slog.Warn("WebAuthn: ValidateLogin failed", slog.Any("error", err))
 			response.JSONUnauthorized(w, r)
@@ -259,26 +261,26 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for _, storedCredential := range storedCredentials {
-			if bytes.Equal(credCredential.ID, storedCredential.Credential.ID) {
+			if bytes.Equal(validatedCredential.ID, storedCredential.Credential.ID) {
 				matchingCredential = &storedCredential
 			}
 		}
 
 		if matchingCredential == nil {
-			response.JSONServerError(w, r, fmt.Errorf("no matching credential for %v", credCredential))
+			response.JSONServerError(w, r, fmt.Errorf("no matching credential for %v", validatedCredential))
 			return
 		}
 	} else {
 		userByHandle := func(rawID, userHandle []byte) (webauthn.User, error) {
-			var uid int64
-			uid, matchingCredential, err = h.store.WebAuthnCredentialByHandle(userHandle)
+			var userID int64
+			userID, matchingCredential, err = h.store.WebAuthnCredentialByHandle(userHandle)
 			if err != nil {
 				return nil, err
 			}
-			if uid == 0 {
+			if userID == 0 {
 				return nil, fmt.Errorf("no user found for handle %x", userHandle)
 			}
-			user, err = h.store.UserByID(uid)
+			user, err = h.store.UserByID(userID)
 			if err != nil {
 				return nil, err
 			}
@@ -291,7 +293,11 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 			// See https://github.com/go-webauthn/webauthn/pull/240
 			matchingCredential.Credential.Flags.BackupEligible = parsedResponse.Response.AuthenticatorData.Flags.HasBackupEligible()
 
-			return WebAuthnUser{user, userHandle, []model.WebAuthnCredential{*matchingCredential}}, nil
+			return WebAuthnUser{
+				User:        user,
+				AuthnID:     userHandle,
+				Credentials: []model.WebAuthnCredential{*matchingCredential},
+			}, nil
 		}
 
 		_, err = web.ValidateDiscoverableLogin(userByHandle, *sessionData, parsedResponse)
@@ -336,21 +342,21 @@ func (h *handler) renameCredential(w http.ResponseWriter, r *http.Request) {
 		response.HTMLServerError(w, r, err)
 		return
 	}
-	cred_uid, cred, err := h.store.WebAuthnCredentialByHandle(credentialHandle)
+	credUserID, credential, err := h.store.WebAuthnCredentialByHandle(credentialHandle)
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
 	}
 
-	if cred_uid != user.ID {
+	if credUserID != user.ID {
 		response.HTMLForbidden(w, r)
 		return
 	}
 
-	webauthnForm := form.WebauthnForm{Name: cred.Name}
+	webauthnForm := form.WebauthnForm{Name: credential.Name}
 
 	view.Set("form", webauthnForm)
-	view.Set("cred", cred)
+	view.Set("cred", credential)
 	view.Set("menu", "settings")
 	view.Set("user", user)
 	navMetadata, _ := h.store.GetNavMetadata(user.ID)
