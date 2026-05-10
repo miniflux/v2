@@ -1625,6 +1625,70 @@ func TestUpdateFeedEndpoint(t *testing.T) {
 	}
 }
 
+func TestUpdateFeedRefreshInterval(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feed, err := regularUserClient.Feed(feedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if feed.RefreshIntervalMinutes != nil {
+		t.Fatalf(`A new feed must inherit the global polling frequency, got refresh_interval_minutes=%d`, *feed.RefreshIntervalMinutes)
+	}
+
+	updated, err := regularUserClient.UpdateFeed(feedID, &miniflux.FeedModificationRequest{
+		RefreshIntervalMinutes: new(120),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if updated.RefreshIntervalMinutes == nil || *updated.RefreshIntervalMinutes != 120 {
+		got := "<nil>"
+		if updated.RefreshIntervalMinutes != nil {
+			got = fmt.Sprintf("%d", *updated.RefreshIntervalMinutes)
+		}
+		t.Fatalf(`Expected refresh_interval_minutes=120 after update, got %s`, got)
+	}
+
+	// Setting it back to zero must clear the override.
+	cleared, err := regularUserClient.UpdateFeed(feedID, &miniflux.FeedModificationRequest{
+		RefreshIntervalMinutes: new(0),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cleared.RefreshIntervalMinutes != nil {
+		t.Fatalf(`Expected refresh_interval_minutes to be cleared, got %d`, *cleared.RefreshIntervalMinutes)
+	}
+
+	// Below the minimum should be rejected.
+	if _, err := regularUserClient.UpdateFeed(feedID, &miniflux.FeedModificationRequest{
+		RefreshIntervalMinutes: new(1),
+	}); err == nil {
+		t.Fatal(`Expected an error when refresh_interval_minutes is below the minimum`)
+	}
+}
+
 func TestCannotHaveDuplicateFeedWhenUpdatingFeed(t *testing.T) {
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {

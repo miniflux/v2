@@ -46,6 +46,7 @@ type FeedForm struct {
 	PushoverEnabled             bool
 	PushoverPriority            int
 	ProxyURL                    string
+	RefreshIntervalMinutes      int
 }
 
 // Merge updates the fields of the given feed.
@@ -85,6 +86,12 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.PushoverEnabled = f.PushoverEnabled
 	feed.PushoverPriority = f.PushoverPriority
 	feed.ProxyURL = f.ProxyURL
+	if f.RefreshIntervalMinutes > 0 {
+		value := f.RefreshIntervalMinutes
+		feed.RefreshIntervalMinutes = &value
+	} else {
+		feed.RefreshIntervalMinutes = nil
+	}
 	return feed
 }
 
@@ -103,6 +110,11 @@ func NewFeedForm(r *http.Request) *FeedForm {
 	pushoverPriority, err := strconv.Atoi(r.FormValue("pushover_priority"))
 	if err != nil {
 		pushoverPriority = 0
+	}
+
+	refreshIntervalMinutes, err := strconv.Atoi(r.FormValue("refresh_interval_minutes"))
+	if err != nil {
+		refreshIntervalMinutes = 0
 	}
 
 	return &FeedForm{
@@ -139,5 +151,6 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		PushoverEnabled:             r.FormValue("pushover_enabled") == "1",
 		PushoverPriority:            pushoverPriority,
 		ProxyURL:                    r.FormValue("proxy_url"),
+		RefreshIntervalMinutes:      refreshIntervalMinutes,
 	}
 }
