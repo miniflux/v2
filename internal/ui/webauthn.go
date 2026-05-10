@@ -255,14 +255,20 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 
 		validatedCredential, err := web.ValidateLogin(webAuthnUser, *sessionData, parsedResponse)
 		if err != nil {
-			slog.Warn("WebAuthn: ValidateLogin failed", slog.Any("error", err))
+			slog.Warn("WebAuthn: ValidateLogin failed",
+				slog.String("client_ip", request.ClientIP(r)),
+				slog.String("user_agent", r.UserAgent()),
+				slog.String("username", user.Username),
+				slog.Any("error", err),
+			)
 			response.JSONUnauthorized(w, r)
 			return
 		}
 
-		for _, storedCredential := range storedCredentials {
-			if bytes.Equal(validatedCredential.ID, storedCredential.Credential.ID) {
-				matchingCredential = &storedCredential
+		for index := range storedCredentials {
+			if bytes.Equal(validatedCredential.ID, storedCredentials[index].Credential.ID) {
+				matchingCredential = &storedCredentials[index]
+				break
 			}
 		}
 
@@ -271,44 +277,58 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
+		var resolvedUser *model.User
+		var resolvedCredential *model.WebAuthnCredential
+
 		userByHandle := func(rawID, userHandle []byte) (webauthn.User, error) {
-			var userID int64
-			userID, matchingCredential, err = h.store.WebAuthnCredentialByHandle(userHandle)
+			userID, credential, err := h.store.WebAuthnCredentialByHandle(userHandle)
 			if err != nil {
 				return nil, err
 			}
-			if userID == 0 {
+			if userID == 0 || credential == nil {
 				return nil, fmt.Errorf("no user found for handle %x", userHandle)
 			}
-			user, err = h.store.UserByID(userID)
+			loadedUser, err := h.store.UserByID(userID)
 			if err != nil {
 				return nil, err
 			}
-			if user == nil {
+			if loadedUser == nil {
 				return nil, fmt.Errorf("no user found for handle %x", userHandle)
 			}
 
 			// Since go-webauthn v0.11.0, the backup eligibility flag is strictly validated, but Miniflux does not store this flag.
 			// This workaround set the flag based on the parsed response, and avoid "BackupEligible flag inconsistency detected during login validation" error.
 			// See https://github.com/go-webauthn/webauthn/pull/240
-			matchingCredential.Credential.Flags.BackupEligible = parsedResponse.Response.AuthenticatorData.Flags.HasBackupEligible()
+			credential.Credential.Flags.BackupEligible = parsedResponse.Response.AuthenticatorData.Flags.HasBackupEligible()
 
+			resolvedUser = loadedUser
+			resolvedCredential = credential
 			return WebAuthnUser{
-				User:        user,
+				User:        loadedUser,
 				AuthnID:     userHandle,
-				Credentials: []model.WebAuthnCredential{*matchingCredential},
+				Credentials: []model.WebAuthnCredential{*credential},
 			}, nil
 		}
 
-		_, err = web.ValidateDiscoverableLogin(userByHandle, *sessionData, parsedResponse)
-		if err != nil {
-			slog.Warn("WebAuthn: ValidateDiscoverableLogin failed", slog.Any("error", err))
+		if _, err := web.ValidateDiscoverableLogin(userByHandle, *sessionData, parsedResponse); err != nil {
+			slog.Warn("WebAuthn: ValidateDiscoverableLogin failed",
+				slog.String("client_ip", request.ClientIP(r)),
+				slog.String("user_agent", r.UserAgent()),
+				slog.Any("error", err),
+			)
 			response.JSONUnauthorized(w, r)
 			return
 		}
+		user = resolvedUser
+		matchingCredential = resolvedCredential
 	}
 
-	h.store.WebAuthnSaveLogin(matchingCredential.Handle)
+	if err := h.store.WebAuthnSaveLogin(matchingCredential.Handle); err != nil {
+		slog.Warn("WebAuthn: unable to update last seen date for credential",
+			slog.Int64("user_id", user.ID),
+			slog.Any("error", err),
+		)
+	}
 
 	slog.Info("User authenticated successfully with webauthn",
 		slog.Bool("authentication_successful", true),
@@ -317,7 +337,12 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 		slog.Int64("user_id", user.ID),
 		slog.String("username", user.Username),
 	)
-	h.store.SetLastLogin(user.ID)
+	if err := h.store.SetLastLogin(user.ID); err != nil {
+		slog.Warn("Unable to update last login date",
+			slog.Int64("user_id", user.ID),
+			slog.Any("error", err),
+		)
+	}
 
 	if err := authenticateWebSession(w, r, h.store, user); err != nil {
 		response.JSONServerError(w, r, err)
@@ -353,9 +378,7 @@ func (h *handler) renameCredential(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	webauthnForm := form.WebauthnForm{Name: credential.Name}
-
-	view.Set("form", webauthnForm)
+	view.Set("form", form.WebauthnForm{Name: credential.Name})
 	view.Set("cred", credential)
 	view.Set("menu", "settings")
 	view.Set("user", user)
@@ -367,13 +390,6 @@ func (h *handler) renameCredential(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) saveCredential(w http.ResponseWriter, r *http.Request) {
-	userID := request.UserID(r)
-	_, err := h.store.UserByID(userID)
-	if err != nil {
-		response.HTMLServerError(w, r, err)
-		return
-	}
-
 	credentialHandleEncoded := request.RouteStringParam(r, "credentialHandle")
 	credentialHandle, err := hex.DecodeString(credentialHandleEncoded)
 	if err != nil {
@@ -382,12 +398,12 @@ func (h *handler) saveCredential(w http.ResponseWriter, r *http.Request) {
 	}
 
 	newName := r.FormValue("name")
-	changed, err := h.store.WebAuthnUpdateName(userID, credentialHandle, newName)
+	rowsAffected, err := h.store.WebAuthnUpdateName(request.UserID(r), credentialHandle, newName)
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
 	}
-	if changed == 0 {
+	if rowsAffected == 0 {
 		response.HTMLNotFound(w, r)
 		return
 	}
