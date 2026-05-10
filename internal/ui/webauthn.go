@@ -73,12 +73,7 @@ func (h *handler) beginRegistration(w http.ResponseWriter, r *http.Request) {
 		response.JSONServerError(w, r, err)
 		return
 	}
-	uid := request.UserID(r)
-	if uid == 0 {
-		response.JSONUnauthorized(w, r)
-		return
-	}
-	user, err := h.store.UserByID(uid)
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
@@ -122,10 +117,6 @@ func (h *handler) finishRegistration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	uid := request.UserID(r)
-	if uid == 0 {
-		response.JSONUnauthorized(w, r)
-		return
-	}
 	user, err := h.store.UserByID(uid)
 	if err != nil {
 		response.JSONServerError(w, r, err)
@@ -399,12 +390,6 @@ func (h *handler) saveCredential(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) deleteCredential(w http.ResponseWriter, r *http.Request) {
-	uid := request.UserID(r)
-	if uid == 0 {
-		response.JSONUnauthorized(w, r)
-		return
-	}
-
 	credentialHandleEncoded := request.RouteStringParam(r, "credentialHandle")
 	credentialHandle, err := hex.DecodeString(credentialHandleEncoded)
 	if err != nil {
@@ -412,7 +397,7 @@ func (h *handler) deleteCredential(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.store.DeleteCredentialByHandle(uid, credentialHandle)
+	err = h.store.DeleteCredentialByHandle(request.UserID(r), credentialHandle)
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
