@@ -36,39 +36,32 @@ func parseISO8601Duration(duration string) (time.Duration, error) {
 	}
 
 	var d time.Duration
-	num := ""
+	start := 0
 
-	for _, char := range after {
-		var val int
-		var err error
+	for i := 0; i < len(after); i++ {
+		var unit time.Duration
 
-		switch char {
+		switch after[i] {
 		case 'Y', 'W', 'D':
-			return 0, fmt.Errorf("the '%c' specifier isn't supported", char)
+			return 0, fmt.Errorf("the '%c' specifier isn't supported", after[i])
 		case 'H':
-			if val, err = strconv.Atoi(num); err != nil {
-				return 0, err
-			}
-			d += time.Duration(val) * time.Hour
-			num = ""
+			unit = time.Hour
 		case 'M':
-			if val, err = strconv.Atoi(num); err != nil {
-				return 0, err
-			}
-			d += time.Duration(val) * time.Minute
-			num = ""
+			unit = time.Minute
 		case 'S':
-			if val, err = strconv.Atoi(num); err != nil {
-				return 0, err
-			}
-			d += time.Duration(val) * time.Second
-			num = ""
+			unit = time.Second
 		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-			num += string(char)
 			continue
 		default:
 			return 0, errors.New("invalid character in the period")
 		}
+
+		val, err := strconv.Atoi(after[start:i])
+		if err != nil {
+			return 0, err
+		}
+		d += time.Duration(val) * unit
+		start = i + 1
 	}
 	return d, nil
 }
