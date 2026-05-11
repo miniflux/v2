@@ -145,6 +145,25 @@ func (s *Storage) StoreFeedIcon(feedID int64, icon *model.Icon) error {
 	return nil
 }
 
+// CleanupOrphanIcons removes icons that are no longer associated with any
+// feed. Such rows accumulate when feeds are deleted (the cascade only removes
+// the feed_icons mapping, not the dedup-by-hash icons row) or when a feed's
+// icon is replaced by StoreFeedIcon.
+func (s *Storage) CleanupOrphanIcons() (int64, error) {
+	result, err := s.db.Exec(`
+		DELETE FROM icons
+		WHERE NOT EXISTS (
+			SELECT 1 FROM feed_icons WHERE feed_icons.icon_id = icons.id
+		)
+	`)
+	if err != nil {
+		return 0, fmt.Errorf(`store: unable to clean orphan icons: %v`, err)
+	}
+
+	n, _ := result.RowsAffected()
+	return n, nil
+}
+
 // Icons lists all icons currently associated with any feed owned by the given user.
 func (s *Storage) Icons(userID int64) (model.Icons, error) {
 	query := `
