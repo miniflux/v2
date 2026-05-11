@@ -144,11 +144,6 @@ func JoinBaseURLAndPath(baseURL, path string) (string, error) {
 		return "", errors.New("empty path")
 	}
 
-	_, err := url.Parse(baseURL)
-	if err != nil {
-		return "", fmt.Errorf("invalid base URL: %w", err)
-	}
-
 	finalURL, err := url.JoinPath(baseURL, path)
 	if err != nil {
 		return "", fmt.Errorf("unable to join base URL %s and path %s: %w", baseURL, path, err)

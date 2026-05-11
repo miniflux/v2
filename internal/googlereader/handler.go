@@ -246,10 +246,10 @@ func (h *greaderHandler) editTagHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	n := 0
-	readEntryIDs := make([]int64, 0)
-	unreadEntryIDs := make([]int64, 0)
-	starredEntryIDs := make([]int64, 0)
-	unstarredEntryIDs := make([]int64, 0)
+	var readEntryIDs []int64
+	var unreadEntryIDs []int64
+	var starredEntryIDs []int64
+	var unstarredEntryIDs []int64
 	for _, entry := range entries {
 		if read, exists := tags[ReadStream]; exists {
 			if read && entry.Status == model.EntryStatusUnread {
