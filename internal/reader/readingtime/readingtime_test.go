@@ -3,7 +3,10 @@
 
 package readingtime
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 var samples = map[string]string{
 	"shortenglish": `This is a short paragraph in english, less than 250 chars.`,
@@ -76,6 +79,20 @@ func TestEstimateReadingTime(t *testing.T) {
 		if got != want {
 			t.Errorf(`Wrong reading time, got %d instead of %d for %s`, got, want, language)
 		}
+	}
+}
+
+func TestEmptyEstimateReadingTime(t *testing.T) {
+	got := EstimateReadingTime("", 200, 500)
+	if got != 0 {
+		t.Errorf(`Wrong reading time, got %d instead of %d`, got, 0)
+	}
+}
+
+func TestRepeatedEstimateReadingTime(t *testing.T) {
+	got := EstimateReadingTime(strings.Repeat("word ", 200), 200, 500)
+	if got != 1 {
+		t.Errorf(`Wrong reading time, got %d instead of %d`, got, 1)
 	}
 }
 

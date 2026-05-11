@@ -5,7 +5,6 @@
 package readingtime
 
 import (
-	"math"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -19,9 +18,9 @@ func EstimateReadingTime(content string, defaultReadingSpeed, cjkReadingSpeed in
 	truncationPoint := min(len(sanitizedContent), 50)
 
 	if isCJK(sanitizedContent[:truncationPoint]) {
-		return int(math.Ceil(float64(utf8.RuneCountInString(sanitizedContent)) / float64(cjkReadingSpeed)))
+		return (utf8.RuneCountInString(sanitizedContent) + cjkReadingSpeed - 1) / cjkReadingSpeed
 	}
-	return int(math.Ceil(float64(countWords(sanitizedContent)) / float64(defaultReadingSpeed)))
+	return (countWords(sanitizedContent) + defaultReadingSpeed - 1) / defaultReadingSpeed
 }
 
 func countWords(s string) int {
