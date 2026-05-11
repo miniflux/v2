@@ -5,6 +5,7 @@ package storage // import "miniflux.app/v2/internal/storage"
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -556,7 +557,7 @@ func (s *Storage) fetchUser(query string, args ...any) (*model.User, error) {
 		&user.OpenExternalLinksInNewTab,
 	)
 
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	} else if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch user: %v`, err)
@@ -671,7 +672,7 @@ func (s *Storage) CheckPassword(username, password string) error {
 	username = strings.ToLower(username)
 
 	err := s.db.QueryRow("SELECT password FROM users WHERE username=$1", username).Scan(&hash)
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return fmt.Errorf(`store: unable to find this user: %s`, username)
 	} else if err != nil {
 		return fmt.Errorf(`store: unable to fetch user: %v`, err)
@@ -690,7 +691,7 @@ func (s *Storage) HasPassword(userID int64) (bool, error) {
 	query := `SELECT true FROM users WHERE id=$1 AND password <> '' LIMIT 1`
 
 	err := s.db.QueryRow(query, userID).Scan(&result)
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return false, nil
 	} else if err != nil {
 		return false, fmt.Errorf(`store: unable to execute query: %v`, err)

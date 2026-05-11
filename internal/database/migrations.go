@@ -5,6 +5,7 @@ package database // import "miniflux.app/v2/internal/database"
 
 import (
 	"database/sql"
+	"errors"
 
 	"miniflux.app/v2/internal/crypto"
 )
@@ -483,7 +484,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 			)
 
 			if err := tx.QueryRow(`FETCH NEXT FROM my_cursor`).Scan(&userID, &customStylesheet, &googleID, &oidcID); err != nil {
-				if err == sql.ErrNoRows {
+				if errors.Is(err, sql.ErrNoRows) {
 					break
 				}
 				return err
@@ -1081,7 +1082,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 			var id int64
 
 			if err := tx.QueryRow(`FETCH NEXT FROM id_cursor`).Scan(&id); err != nil {
-				if err == sql.ErrNoRows {
+				if errors.Is(err, sql.ErrNoRows) {
 					break
 				}
 				return err

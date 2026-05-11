@@ -5,6 +5,7 @@ package storage // import "miniflux.app/v2/internal/storage"
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -34,7 +35,7 @@ func (s *Storage) IconByID(iconID int64) (*model.Icon, error) {
 		WHERE id=$1`
 	err := s.db.QueryRow(query, iconID).Scan(&icon.ID, &icon.Hash, &icon.MimeType, &icon.Content, &icon.ExternalID)
 	switch {
-	case err == sql.ErrNoRows:
+	case errors.Is(err, sql.ErrNoRows):
 		return nil, nil
 	case err != nil:
 		return nil, fmt.Errorf("store: cannot load icon id=%d: %w", iconID, err)
@@ -58,7 +59,7 @@ func (s *Storage) IconByExternalID(externalIconID string) (*model.Icon, error) {
 	`
 	err := s.db.QueryRow(query, externalIconID).Scan(&icon.ID, &icon.Hash, &icon.MimeType, &icon.Content, &icon.ExternalID)
 	switch {
-	case err == sql.ErrNoRows:
+	case errors.Is(err, sql.ErrNoRows):
 		return nil, nil
 	case err != nil:
 		return nil, fmt.Errorf("store: cannot load icon external_id=%s: %w", externalIconID, err)
@@ -86,7 +87,7 @@ func (s *Storage) IconByFeedID(userID, feedID int64) (*model.Icon, error) {
 	var icon model.Icon
 	err := s.db.QueryRow(query, userID, feedID).Scan(&icon.ID, &icon.Hash, &icon.MimeType, &icon.Content, &icon.ExternalID)
 	switch {
-	case err == sql.ErrNoRows:
+	case errors.Is(err, sql.ErrNoRows):
 		return nil, nil
 	case err != nil:
 		return nil, fmt.Errorf("store: cannot load icon for feed_id=%d user_id=%d: %w", feedID, userID, err)
@@ -102,7 +103,8 @@ func (s *Storage) StoreFeedIcon(feedID int64, icon *model.Icon) error {
 		return fmt.Errorf(`store: unable to start transaction: %v`, err)
 	}
 
-	if err := tx.QueryRow(`SELECT id FROM icons WHERE hash=$1`, icon.Hash).Scan(&icon.ID); err == sql.ErrNoRows {
+	err = tx.QueryRow(`SELECT id FROM icons WHERE hash=$1`, icon.Hash).Scan(&icon.ID)
+	if errors.Is(err, sql.ErrNoRows) {
 		query := `
 			INSERT INTO icons
 				(hash, mime_type, content, external_id)
@@ -118,7 +120,6 @@ func (s *Storage) StoreFeedIcon(feedID int64, icon *model.Icon) error {
 			icon.Content,
 			crypto.GenerateRandomStringHex(20),
 		).Scan(&icon.ID)
-
 		if err != nil {
 			tx.Rollback()
 			return fmt.Errorf(`store: unable to create icon: %v`, err)

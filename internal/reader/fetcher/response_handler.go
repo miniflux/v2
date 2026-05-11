@@ -243,30 +243,33 @@ func (r *ResponseHandler) isCloudflareChallenge() bool {
 }
 
 func isNetworkError(err error) bool {
-	if _, ok := err.(*url.Error); ok {
+	if _, ok := errors.AsType[*url.Error](err); ok {
 		return true
 	}
-	if err == io.EOF {
+
+	if errors.Is(err, io.EOF) {
 		return true
 	}
-	var opErr *net.OpError
-	if ok := errors.As(err, &opErr); ok {
+
+	if _, ok := errors.AsType[*net.OpError](err); ok {
 		return true
 	}
+
 	return false
 }
 
 func isSSLError(err error) bool {
-	var certErr x509.UnknownAuthorityError
-	if errors.As(err, &certErr) {
+	if _, ok := errors.AsType[x509.UnknownAuthorityError](err); ok {
 		return true
 	}
 
-	var hostErr x509.HostnameError
-	if errors.As(err, &hostErr) {
+	if _, ok := errors.AsType[x509.HostnameError](err); ok {
 		return true
 	}
 
-	var algErr x509.InsecureAlgorithmError
-	return errors.As(err, &algErr)
+	if _, ok := errors.AsType[x509.InsecureAlgorithmError](err); ok {
+		return true
+	}
+
+	return false
 }

@@ -6,6 +6,7 @@ package storage // import "miniflux.app/v2/internal/storage"
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"golang.org/x/crypto/acme/autocert"
 )
@@ -32,7 +33,7 @@ func (c *certificateCache) Get(ctx context.Context, key string) ([]byte, error) 
 	query := `SELECT data::bytea FROM acme_cache WHERE key = $1`
 	var data []byte
 	err := c.storage.db.QueryRowContext(ctx, query, key).Scan(&data)
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, autocert.ErrCacheMiss
 	}
 
