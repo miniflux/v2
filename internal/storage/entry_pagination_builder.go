@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/lib/pq"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -192,7 +193,7 @@ func NewEntryPaginationBuilder(store *Storage, userID, entryID int64, order, dir
 		args:       []any{userID},
 		conditions: []string{"e.user_id = $1"},
 		entryID:    entryID,
-		order:      order,
+		order:      pq.QuoteIdentifier(order),
 		direction:  direction,
 	}
 }

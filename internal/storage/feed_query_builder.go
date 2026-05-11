@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/lib/pq"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/timezone"
 )
@@ -67,7 +68,13 @@ func (f *feedQueryBuilder) WithCounters() *feedQueryBuilder {
 
 // WithSorting add a sort expression.
 func (f *feedQueryBuilder) WithSorting(column, direction string) *feedQueryBuilder {
-	f.sortExpressions = append(f.sortExpressions, column+" "+direction)
+	switch {
+	case strings.EqualFold(direction, "ASC"):
+		f.sortExpressions = append(f.sortExpressions, pq.QuoteIdentifier(column)+" ASC")
+	case strings.EqualFold(direction, "DESC"):
+		f.sortExpressions = append(f.sortExpressions, pq.QuoteIdentifier(column)+" DESC")
+	}
+
 	return f
 }
 

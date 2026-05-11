@@ -50,9 +50,9 @@ func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 		e.args = append(e.args, query)
 
 		// 0.0000001 = 0.1 / (seconds_in_a_day)
-		e.WithSorting(
-			fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001", nArgs),
-			"DESC",
+
+		e.sortExpressions = append(e.sortExpressions,
+			fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001 DESC", nArgs),
 		)
 	}
 	return e
@@ -209,7 +209,13 @@ func (e *EntryQueryBuilder) WithShareCodeNotEmpty() *EntryQueryBuilder {
 
 // WithSorting add a sort expression.
 func (e *EntryQueryBuilder) WithSorting(column, direction string) *EntryQueryBuilder {
-	e.sortExpressions = append(e.sortExpressions, column+" "+direction)
+	switch {
+	case strings.EqualFold(direction, "ASC"):
+		e.sortExpressions = append(e.sortExpressions, pq.QuoteIdentifier(column)+" ASC")
+	case strings.EqualFold(direction, "DESC"):
+		e.sortExpressions = append(e.sortExpressions, pq.QuoteIdentifier(column)+" DESC")
+	}
+
 	return e
 }
 
@@ -410,7 +416,6 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 		}
 
 		err := rows.Scan(dest...)
-
 		if err != nil {
 			return nil, 0, fmt.Errorf("store: unable to fetch entry row: %v", err)
 		}
