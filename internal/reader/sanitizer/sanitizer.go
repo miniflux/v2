@@ -482,9 +482,7 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, tagName string, attributes []htm
 		switch tagName {
 		case "math":
 			if attribute.Key == "xmlns" {
-				if value != "http://www.w3.org/1998/Math/MathML" {
-					value = "http://www.w3.org/1998/Math/MathML"
-				}
+				value = "http://www.w3.org/1998/Math/MathML"
 			}
 		case "img":
 			switch attribute.Key {
