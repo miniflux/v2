@@ -537,7 +537,6 @@
     "page.login.title": "Anmeldung",
     "page.login.webauthn_login": "Melden Sie sich mit dem Passkey an",
     "page.login.webauthn_login.error": "Anmeldung mit Passkey nicht möglich",
-    "page.login.webauthn_login.help": "Bitte geben Sie Ihren Benutzernamen ein, sofern Sie einen Sicherheitsschlüssel verwenden. Dies ist nicht nötig, wenn Sie einen Passkey verwenden (auffindbare Anmeldeinformationen).",
     "page.new_api_key.title": "Neuer API-Schlüssel",
     "page.new_category.title": "Neue Kategorie",
     "page.new_user.title": "Neuer Benutzer",

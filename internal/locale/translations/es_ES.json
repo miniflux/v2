@@ -537,7 +537,6 @@
     "page.login.title": "Iniciar sesión",
     "page.login.webauthn_login": "Iniciar sesión con clave de acceso",
     "page.login.webauthn_login.error": "No se puede iniciar sesión con la clave de acceso",
-    "page.login.webauthn_login.help": "Por favor, introduce tu nombre de usuario si usas una clave de seguridad. Esto no es necesario si usas una Passkey (credenciales detectables).",
     "page.new_api_key.title": "Nueva clave API",
     "page.new_category.title": "Nueva categoría",
     "page.new_user.title": "Nuevo usuario",

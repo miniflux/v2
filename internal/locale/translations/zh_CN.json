@@ -531,7 +531,6 @@
     "page.login.title": "登录",
     "page.login.webauthn_login": "使用通行密钥登录",
     "page.login.webauthn_login.error": "无法使用通行密钥登录",
-    "page.login.webauthn_login.help": "如果您正在使用安全密钥，请输入您的用户名。如果您正在使用通行密钥（可发现凭证），则无需输入。",
     "page.new_api_key.title": "新的 API 密钥",
     "page.new_category.title": "新建分类",
     "page.new_user.title": "新建用户",

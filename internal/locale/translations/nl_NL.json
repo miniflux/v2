@@ -537,7 +537,6 @@
     "page.login.title": "Inloggen",
     "page.login.webauthn_login": "Inloggen met passkey",
     "page.login.webauthn_login.error": "Kan niet inloggen met passkey",
-    "page.login.webauthn_login.help": "Voer je gebruikersnaam in als je een beveiligingssleutel gebruikt. Dit is niet nodig als je een Passkey (ontdekkingsbare referenties) gebruikt.",
     "page.new_api_key.title": "Nieuwe API-sleutel",
     "page.new_category.title": "Nieuwe categorie",
     "page.new_user.title": "Nieuwe gebruiker",

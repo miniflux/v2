@@ -15,7 +15,7 @@
         {{ end }}
 
         <label for="form-username">{{ t "form.user.label.username" }}</label>
-        <input type="text" name="username" id="form-username" value="{{ .form.Username }}" autocomplete="username" required autofocus>
+        <input type="text" name="username" id="form-username" value="{{ .form.Username }}" autocomplete="username webauthn" required autofocus>
 
         <label for="form-password">{{ t "form.user.label.password" }}</label>
         <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="current-password" required>
@@ -38,9 +38,6 @@
         </template>
         <div class="buttons">
             <button class="button button-primary" id="webauthn-login" disabled>{{ t "page.login.webauthn_login" }}</button>
-        </div>
-        <div class="form-help">
-            <p>{{ t "page.login.webauthn_login.help" }}</p>
         </div>
     </div>
     {{ end }}

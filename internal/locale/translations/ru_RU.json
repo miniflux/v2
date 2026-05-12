@@ -543,7 +543,6 @@
     "page.login.title": "Войти",
     "page.login.webauthn_login": "Войти с паролем",
     "page.login.webauthn_login.error": "Невозможно войти с паролем",
-    "page.login.webauthn_login.help": "Пожалуйста, введите имя пользователя, если вы используете ключ безопасности. Это не требуется при использовании Passkey (обнаруживаемые учетные данные).",
     "page.new_api_key.title": "Новый API-ключ",
     "page.new_category.title": "Новая категория",
     "page.new_user.title": "Новый пользователь",

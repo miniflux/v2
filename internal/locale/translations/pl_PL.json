@@ -543,7 +543,6 @@
     "page.login.title": "Zaloguj się",
     "page.login.webauthn_login": "Zaloguj się przez klucz dostępu",
     "page.login.webauthn_login.error": "Nie można zalogować się za pomocą klucza dostępu",
-    "page.login.webauthn_login.help": "Wpisz swoją nazwę użytkownika, jeśli używasz klucza bezpieczeństwa. Nie jest to wymagane, jeśli używasz klucza dostępu (wykrywalnych danych uwierzytelniających).",
     "page.new_api_key.title": "Nowy klucz API",
     "page.new_category.title": "Nowa kategoria",
     "page.new_user.title": "Nowy użytkownik",

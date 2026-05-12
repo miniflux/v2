@@ -531,7 +531,6 @@
     "page.login.title": "Masuk",
     "page.login.webauthn_login": "Masuk menggunakan passkey",
     "page.login.webauthn_login.error": "Tidak dapat masuk menggunakan passkey",
-    "page.login.webauthn_login.help": "Mohon untuk memasukkan nama pengguna Anda jika Anda menggunakan kunci keamanan. Tidak diperlukan jika anda menggunakan Passkey (kredensial dapat ditemukan).",
     "page.new_api_key.title": "Kunci API Baru",
     "page.new_category.title": "Kategori Baru",
     "page.new_user.title": "Pengguna Baru",

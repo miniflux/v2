@@ -543,7 +543,6 @@
     "page.login.title": "Conectare",
     "page.login.webauthn_login": "Conectare cu cheia de acces",
     "page.login.webauthn_login.error": "Eroare la conectarea cu cheia de acces",
-    "page.login.webauthn_login.help": "Vă rog să introduceți numele utilizatorului dacă utilizați o cheie. Nu este necesară dacă utilizați o cheie de acces (credențiale descoperibile).",
     "page.new_api_key.title": "Cheie API Nouă",
     "page.new_category.title": "Categorie Nouă",
     "page.new_user.title": "Utilizator Nou",
