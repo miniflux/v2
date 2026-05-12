@@ -341,15 +341,15 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 			u.timezone
 		FROM
 			entries e
-		LEFT JOIN
+		INNER JOIN
 			feeds f ON f.id=e.feed_id
-		LEFT JOIN
+		INNER JOIN
 			categories c ON c.id=f.category_id
 		LEFT JOIN
 			feed_icons fi ON fi.feed_id=f.id
 		LEFT JOIN
 			icons i ON i.id=fi.icon_id
-		LEFT JOIN
+		INNER JOIN
 			users u ON u.id=e.user_id
 		WHERE ` + e.buildCondition() + " " + e.buildSorting()
 

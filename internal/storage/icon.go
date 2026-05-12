@@ -175,8 +175,8 @@ func (s *Storage) Icons(userID int64) (model.Icons, error) {
 			icons.content,
 			icons.external_id
 		FROM icons
-		LEFT JOIN feed_icons ON feed_icons.icon_id=icons.id
-		LEFT JOIN feeds ON feeds.id=feed_icons.feed_id
+		INNER JOIN feed_icons ON feed_icons.icon_id=icons.id
+		INNER JOIN feeds ON feeds.id=feed_icons.feed_id
 		WHERE
 			feeds.user_id=$1
 	`
