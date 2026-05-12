@@ -312,7 +312,7 @@ func (f *feedQueryBuilder) fetchFeedCounter() (unreadCounters map[int64]int, rea
 	`
 	join := ""
 	if f.counterJoinFeeds {
-		join = "LEFT JOIN feeds f ON f.id=e.feed_id"
+		join = "INNER JOIN feeds f ON f.id=e.feed_id"
 	}
 	query = fmt.Sprintf(query, join, f.buildCounterCondition())
 

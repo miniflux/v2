@@ -513,7 +513,7 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 			u.open_external_links_in_new_tab
 		FROM
 			users u
-		LEFT JOIN
+		INNER JOIN
 			api_keys ON api_keys.user_id=u.id
 		WHERE
 			api_keys.token = $1
