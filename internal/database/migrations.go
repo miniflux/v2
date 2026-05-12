@@ -1510,4 +1510,19 @@ var migrations = [...]func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		// entries_feed_idx is redundant: the unique constraint
+		// entries_feed_id_hash_key(feed_id, hash) and the explicit
+		// entries_feed_id_status_hash_idx(feed_id, status, hash) both
+		// cover feed_id-leading lookups, including FK cascade deletes.
+		//
+		// entries_user_status_idx is redundant: five three-column indexes
+		// share the same (user_id, status) prefix and serve every query
+		// that the two-column index could.
+		_, err = tx.Exec(`
+			DROP INDEX IF EXISTS entries_feed_idx;
+			DROP INDEX IF EXISTS entries_user_status_idx;
+		`)
+		return err
+	},
 }
