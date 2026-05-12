@@ -1152,7 +1152,7 @@ function initializeWebAuthn() {
 
         onClick("#webauthn-login", () => {
             abortController.abort();
-            webauthnHandler.login(usernameField.value).catch(err => WebAuthnHandler.showErrorMessage(err));
+            webauthnHandler.login().catch(err => WebAuthnHandler.showErrorMessage(err));
         });
 
         webauthnHandler.conditionalLogin(abortController).catch(err => WebAuthnHandler.showErrorMessage(err));

@@ -537,7 +537,6 @@
     "page.login.title": "Connexion",
     "page.login.webauthn_login": "Se connecter avec une clé d’accès",
     "page.login.webauthn_login.error": "Impossible de se connecter avec la clé d’accès",
-    "page.login.webauthn_login.help": "Veuillez saisir votre nom d'utilisateur si vous utilisez une clé de sécurité. Cela n'est pas nécessaire si vous utilisez une clé d'accès (Passkey).",
     "page.new_api_key.title": "Nouvelle clé d'API",
     "page.new_category.title": "Nouvelle catégorie",
     "page.new_user.title": "Nouvel Utilisateur",

@@ -537,7 +537,6 @@
     "page.login.title": "Kirjaudu sisään",
     "page.login.webauthn_login": "Kirjaudu sisään salasanalla",
     "page.login.webauthn_login.error": "Ei voida kirjautua sisään salasanalla",
-    "page.login.webauthn_login.help": "Jos käytät turva-avainta, kirjoita käyttäjätunnus. Passkeytä käyttäessä tämä ei ole tarpeen.",
     "page.new_api_key.title": "Uusi API-avain",
     "page.new_category.title": "Uusi kategoria",
     "page.new_user.title": "Uusi käyttäjä",

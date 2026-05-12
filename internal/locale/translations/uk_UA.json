@@ -543,7 +543,6 @@
     "page.login.title": "Вхід",
     "page.login.webauthn_login": "Увійти за допомогою пароля",
     "page.login.webauthn_login.error": "Неможливо ввійти за допомогою ключа доступу",
-    "page.login.webauthn_login.help": "Якщо використовуєте ключ безпеки, введіть ім'я користувача. Для паролю-паскі це не потрібно.",
     "page.new_api_key.title": "Створити ключ API",
     "page.new_category.title": "Нова категорія",
     "page.new_user.title": "Новий користувач",

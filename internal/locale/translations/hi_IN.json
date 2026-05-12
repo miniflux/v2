@@ -537,7 +537,6 @@
     "page.login.title": "साइन इन करें",
     "page.login.webauthn_login": "पासकी से लॉगिन करें",
     "page.login.webauthn_login.error": "पासकी से लॉगिन करने में असमर्थ",
-    "page.login.webauthn_login.help": "यदि आप सुरक्षा कुंजी का उपयोग कर रहे हैं तो कृपया अपना उपयोगकर्ता नाम दर्ज करें। पासकी (discoverable credentials) के लिए यह आवश्यक नहीं है।",
     "page.new_api_key.title": "नई एपीआई कुंजी",
     "page.new_category.title": "नया श्रेणी",
     "page.new_user.title": "नया उपभोक्ता",

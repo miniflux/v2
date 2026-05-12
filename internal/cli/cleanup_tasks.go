@@ -47,4 +47,12 @@ func runCleanupTasks(store *storage.Storage) {
 			metric.ArchiveEntriesDuration.WithLabelValues(model.EntryStatusUnread).Observe(time.Since(startTime).Seconds())
 		}
 	}
+
+	if nbIcons, err := store.CleanupOrphanIcons(); err != nil {
+		slog.Error("Unable to clean orphan icons", slog.Any("error", err))
+	} else {
+		slog.Info("Orphan icons cleanup completed",
+			slog.Int64("orphan_icons_removed", nbIcons),
+		)
+	}
 }

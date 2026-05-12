@@ -537,7 +537,6 @@
     "page.login.title": "Accedi",
     "page.login.webauthn_login": "Accedi con passkey",
     "page.login.webauthn_login.error": "Impossibile accedere con passkey",
-    "page.login.webauthn_login.help": "Inserisci il tuo nome utente se stai usando una chiave di sicurezza. Non è necessario con una Passkey (credenziali rilevabili).",
     "page.new_api_key.title": "Nuova chiave API",
     "page.new_category.title": "Nuova categoria",
     "page.new_user.title": "Nuovo utente",

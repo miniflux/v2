@@ -561,7 +561,6 @@
     "page.login.title": "تسجيل الدخول",
     "page.login.webauthn_login": "تسجيل الدخول عبر مفتاح مرور (Passkey)",
     "page.login.webauthn_login.error": "تعذر تسجيل الدخول باستخدام مفتاح المرور",
-    "page.login.webauthn_login.help": "يرجى إدخال اسم المستخدم إذا كنت تستخدم مفتاح أمان. هذا غير مطلوب إذا كنت تستخدم مفتاح مرور (بيانات اعتماد قابلة للاكتشاف).",
     "page.new_api_key.title": "مفتاح API جديد",
     "page.new_category.title": "فئة جديدة",
     "page.new_user.title": "مستخدم جديد",

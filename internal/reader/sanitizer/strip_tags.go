@@ -4,6 +4,7 @@
 package sanitizer // import "miniflux.app/v2/internal/reader/sanitizer"
 
 import (
+	"errors"
 	"io"
 	"strings"
 
@@ -19,7 +20,7 @@ func StripTags(input string) string {
 	for {
 		if tokenizer.Next() == html.ErrorToken {
 			err := tokenizer.Err()
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				return buffer.String()
 			}
 

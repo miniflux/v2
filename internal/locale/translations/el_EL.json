@@ -537,7 +537,6 @@
     "page.login.title": "Είσοδος",
     "page.login.webauthn_login": "Είσοδος με κωδικό πρόσβασης",
     "page.login.webauthn_login.error": "Δεν είναι δυνατή η σύνδεση με κωδικό πρόσβασης",
-    "page.login.webauthn_login.help": "Παρακαλώ εισαγάγετε το όνομα χρήστη σας εάν χρησιμοποιείτε κλειδί ασφαλείας. Αυτό δεν απαιτείται εάν χρησιμοποιείτε Passkey (ανακαλύψιμα διαπιστευτήρια).",
     "page.new_api_key.title": "Νέο κλειδί API",
     "page.new_category.title": "Νέα Κατηγορία",
     "page.new_user.title": "Νέος Χρήστης",

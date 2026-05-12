@@ -5,6 +5,7 @@ package storage // import "miniflux.app/v2/internal/storage"
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -135,7 +136,7 @@ func (s *Storage) GetEnclosure(enclosureID int64) (*model.Enclosure, error) {
 		&enclosure.MediaProgression,
 	)
 
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	} else if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch enclosure row: %v`, err)

@@ -30,7 +30,7 @@ class WebAuthnHandler {
 
     async conditionalLogin(abortController) {
         if (await WebAuthnHandler.isConditionalLoginSupported()) {
-            return this.login("", abortController);
+            return this.login(abortController);
         }
     }
 
@@ -45,26 +45,19 @@ class WebAuthnHandler {
             .replace(/=+$/g, "");
     }
 
-    async post(urlKey, username, data) {
-        let url = document.body.dataset[urlKey];
-        if (username) {
-            url += `?username=${encodeURIComponent(username)}`;
-        }
-
+    async post(urlKey, data) {
+        const url = document.body.dataset[urlKey];
         return sendPOSTRequest(url, data);
     }
 
-    async get(urlKey, username) {
-        let url = document.body.dataset[urlKey];
-        if (username) {
-            url += `?username=${encodeURIComponent(username)}`;
-        }
+    async get(urlKey) {
+        const url = document.body.dataset[urlKey];
         return fetch(url);
     }
 
     async removeAllCredentials() {
         try {
-            await this.post("webauthnDeleteAllUrl", null, {});
+            await this.post("webauthnDeleteAllUrl", {});
         } catch (err) {
             WebAuthnHandler.showErrorMessage(err);
             return;
@@ -108,7 +101,7 @@ class WebAuthnHandler {
 
         let registrationFinishResponse;
         try {
-            registrationFinishResponse = await this.post("webauthnRegisterFinishUrl", null, {
+            registrationFinishResponse = await this.post("webauthnRegisterFinishUrl", {
                 id: attestation.id,
                 rawId: this.encodeBuffer(attestation.rawId),
                 type: attestation.type,
@@ -130,10 +123,10 @@ class WebAuthnHandler {
         window.location.href = jsonData.redirect;
     }
 
-    async login(username, abortController) {
+    async login(abortController) {
         let loginBeginResponse;
         try {
-            loginBeginResponse = await this.get("webauthnLoginBeginUrl", username);
+            loginBeginResponse = await this.get("webauthnLoginBeginUrl");
         } catch (err) {
             WebAuthnHandler.showErrorMessage(err);
             return;
@@ -179,7 +172,7 @@ class WebAuthnHandler {
 
         let loginFinishResponse;
         try {
-            loginFinishResponse = await this.post("webauthnLoginFinishUrl", username, {
+            loginFinishResponse = await this.post("webauthnLoginFinishUrl", {
                 id: assertion.id,
                 rawId: this.encodeBuffer(assertion.rawId),
                 type: assertion.type,

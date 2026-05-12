@@ -531,7 +531,6 @@
     "page.login.title": "ログイン",
     "page.login.webauthn_login": "パスキーでログイン",
     "page.login.webauthn_login.error": "パスキーでログインできない",
-    "page.login.webauthn_login.help": "セキュリティキーを使用する場合はユーザー名を入力してください。パスキー（検出可能な認証情報）の場合は不要です。",
     "page.new_api_key.title": "新しい API キー",
     "page.new_category.title": "新規カテゴリ",
     "page.new_user.title": "新規ユーザー",

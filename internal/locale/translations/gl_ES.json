@@ -537,7 +537,6 @@
     "page.login.title": "Acceder",
     "page.login.webauthn_login": "Acceso con clave de paso",
     "page.login.webauthn_login.error": "Non se puido acceder coa clave de paso",
-    "page.login.webauthn_login.help": "Por favor escribe o teu identificador se estás a usar unha chave de seguridade. Non se require isto se estás a usar unha «Clave de Paso» (credenciais descubribles).",
     "page.new_api_key.title": "Nova clave da API",
     "page.new_category.title": "Nova Categoría",
     "page.new_user.title": "Nova Usuaria",
