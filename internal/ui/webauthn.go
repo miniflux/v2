@@ -204,10 +204,12 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 			return nil, fmt.Errorf("no user found for handle %x", userHandle)
 		}
 
-		// Since go-webauthn v0.11.0, the backup eligibility flag is strictly validated, but Miniflux does not store this flag.
-		// This workaround set the flag based on the parsed response, and avoid "BackupEligible flag inconsistency detected during login validation" error.
-		// See https://github.com/go-webauthn/webauthn/pull/240
-		credential.Credential.Flags.BackupEligible = parsedResponse.Response.AuthenticatorData.Flags.HasBackupEligible()
+		// One-shot backfill for credentials registered before the
+		// backup_eligible column was added: trust the assertion's BE
+		// once, then persist it after successful validation.
+		if !credential.BackupEligibleKnown {
+			credential.Credential.Flags.BackupEligible = parsedResponse.Response.AuthenticatorData.Flags.HasBackupEligible()
+		}
 
 		resolvedUser = loadedUser
 		resolvedCredential = credential
@@ -218,7 +220,8 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 		}, nil
 	}
 
-	if _, err := web.ValidateDiscoverableLogin(userByHandle, *sessionData, parsedResponse); err != nil {
+	validatedCredential, err := web.ValidateDiscoverableLogin(userByHandle, *sessionData, parsedResponse)
+	if err != nil {
 		slog.Warn("WebAuthn: ValidateDiscoverableLogin failed",
 			slog.String("client_ip", request.ClientIP(r)),
 			slog.String("user_agent", r.UserAgent()),
@@ -231,8 +234,8 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 	user := resolvedUser
 	matchingCredential := resolvedCredential
 
-	if err := h.store.WebAuthnSaveLogin(matchingCredential.Handle); err != nil {
-		slog.Warn("WebAuthn: unable to update last seen date for credential",
+	if err := h.store.WebAuthnSaveLogin(matchingCredential.Handle, validatedCredential); err != nil {
+		slog.Warn("WebAuthn: unable to persist credential state after login",
 			slog.Int64("user_id", user.ID),
 			slog.Any("error", err),
 		)

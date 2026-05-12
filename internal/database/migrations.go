@@ -1497,4 +1497,17 @@ var migrations = [...]func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		// backup_eligible is nullable: NULL marks pre-migration rows so the login path can backfill it from the assertion on first use.
+		_, err = tx.Exec(`
+			UPDATE webauthn_credentials SET name = '' WHERE name IS NULL;
+
+			ALTER TABLE webauthn_credentials
+				ALTER COLUMN name SET DEFAULT '',
+				ALTER COLUMN name SET NOT NULL,
+				ADD COLUMN backup_eligible boolean,
+				ADD COLUMN backup_state boolean NOT NULL DEFAULT false;
+		`)
+		return err
+	},
 }
