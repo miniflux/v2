@@ -120,7 +120,6 @@ func (s *Storage) GetEnclosure(enclosureID int64) (*model.Enclosure, error) {
 			enclosures
 		WHERE
 			id = $1
-		ORDER BY id ASC
 	`
 
 	row := s.db.QueryRow(query, enclosureID)
