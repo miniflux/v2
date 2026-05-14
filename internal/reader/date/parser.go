@@ -312,6 +312,8 @@ var replacer = strings.NewReplacer(
 	"Thurs,", "Thu,",
 	"Thur,", "Thu,",
 )
+var losAngelesLocation, _ = time.LoadLocation("America/Los_Angeles")
+var newYorkLocation, _ = time.LoadLocation("America/New_York")
 
 // Parse parses a given date string using a large
 // list of commonly found feed date formats.
@@ -352,9 +354,9 @@ func parseLocalTimeDates(layout, ds string) (t time.Time, err error) {
 
 	// Workaround for dates that don't use GMT.
 	if strings.HasSuffix(ds, "PST") || strings.HasSuffix(ds, "PDT") {
-		loc, _ = time.LoadLocation("America/Los_Angeles")
+		loc = losAngelesLocation
 	} else if strings.HasSuffix(ds, "EST") || strings.HasSuffix(ds, "EDT") {
-		loc, _ = time.LoadLocation("America/New_York")
+		loc = newYorkLocation
 	}
 
 	return time.ParseInLocation(layout, ds, loc)
