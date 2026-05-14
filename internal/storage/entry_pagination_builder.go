@@ -92,10 +92,8 @@ func (e *entryPaginationBuilder) WithStatusOrEntryID(status string, entryID int6
 
 func (e *entryPaginationBuilder) WithTags(tags []string) *entryPaginationBuilder {
 	if len(tags) > 0 {
-		for _, tag := range tags {
-			e.conditions = append(e.conditions, fmt.Sprintf("LOWER($%d) = ANY(LOWER(e.tags::text)::text[])", len(e.args)+1))
-			e.args = append(e.args, tag)
-		}
+		e.conditions = append(e.conditions, fmt.Sprintf("LOWER(e.tags::text)::text[] @> LOWER($%d::text)::text[]", len(e.args)+1))
+		e.args = append(e.args, pq.Array(tags))
 	}
 
 	return e
