@@ -130,7 +130,7 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		itemAuthors = append(itemAuthors, item.Authors...)
 		itemAuthors = append(itemAuthors, item.Author, j.jsonFeed.Author)
 
-		var authorNames []string
+		var authorNames = make([]string, 0, len(itemAuthors))
 		for _, author := range itemAuthors {
 			authorName := strings.TrimSpace(author.Name)
 			if authorName != "" {

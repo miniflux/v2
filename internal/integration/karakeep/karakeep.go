@@ -58,7 +58,7 @@ func (c *Client) attachTags(entryID string) error {
 		return nil
 	}
 
-	tagItems := make([]tagItem, 0)
+	tagItems := make([]tagItem, 0, strings.Count(c.tags, ",")+1)
 	for tag := range strings.SplitSeq(c.tags, ",") {
 		if trimmedTag := strings.TrimSpace(tag); trimmedTag != "" {
 			tagItems = append(tagItems, tagItem{TagName: trimmedTag})
