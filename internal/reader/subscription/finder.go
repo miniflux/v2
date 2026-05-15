@@ -125,47 +125,60 @@ func (f *subscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string, 
 }
 
 func (f *subscriptionFinder) findSubscriptionsFromWebPage(websiteURL string, doc *goquery.Document) (Subscriptions, *locale.LocalizedErrorWrapper) {
-	queries := map[string]string{
-		"link[type='application/rss+xml']":   parser.FormatRSS,
-		"link[type='application/atom+xml']":  parser.FormatAtom,
-		"link[type='application/feed+json']": parser.FormatJSON,
-
-		// Ignore JSON feed URLs that contain "/wp-json/" to avoid confusion
-		// with WordPress REST API endpoints.
-		"link[type='application/json']:not([href*='/wp-json/'])": parser.FormatJSON,
-	}
-
 	var subscriptions Subscriptions
-	subscriptionURLs := make(map[string]bool, len(queries))
-	for feedQuerySelector, feedFormat := range queries {
-		doc.Find(feedQuerySelector).Each(func(i int, s *goquery.Selection) {
-			subscription := new(subscription)
-			subscription.Type = feedFormat
+	// There are 4 possible feed formats
+	subscriptionURLs := make(map[string]bool, 4)
 
-			if feedURL, exists := s.Attr("href"); exists && feedURL != "" {
-				var err error
-				subscription.URL, err = urllib.ResolveToAbsoluteURL(websiteURL, feedURL)
-				if err != nil {
-					return
-				}
-			} else {
-				return // without an url, there can be no subscription.
+	// Single DOM walk over every <link> with a type attribute, then dispatch on
+	// the MIME type. This is better than doing a separate goquery.Find pass per
+	// type.
+	doc.Find("link[type]").Each(func(_ int, s *goquery.Selection) {
+		typeAttr, _ := s.Attr("type")
+		var feedFormat string
+		switch typeAttr {
+		case "application/rss+xml":
+			feedFormat = parser.FormatRSS
+		case "application/atom+xml":
+			feedFormat = parser.FormatAtom
+		case "application/feed+json":
+			feedFormat = parser.FormatJSON
+		case "application/json":
+			// Ignore JSON feed URLs that contain "/wp-json/" to avoid confusion
+			// with WordPress REST API endpoints.
+			if href, _ := s.Attr("href"); strings.Contains(href, "/wp-json/") {
+				return
 			}
+			feedFormat = parser.FormatJSON
+		default:
+			return
+		}
 
-			if title, exists := s.Attr("title"); exists {
-				subscription.Title = title
-			}
+		feedURL, _ := s.Attr("href")
+		if feedURL == "" {
+			return // without an url, there can be no subscription.
+		}
 
-			if subscription.Title == "" {
-				subscription.Title = subscription.URL
-			}
+		absoluteURL, err := urllib.ResolveToAbsoluteURL(websiteURL, feedURL)
+		if err != nil {
+			return
+		}
 
-			if !subscriptionURLs[subscription.URL] {
-				subscriptionURLs[subscription.URL] = true
-				subscriptions = append(subscriptions, subscription)
-			}
+		if subscriptionURLs[absoluteURL] {
+			return
+		}
+		subscriptionURLs[absoluteURL] = true
+
+		title, _ := s.Attr("title")
+		if title == "" {
+			title = absoluteURL
+		}
+
+		subscriptions = append(subscriptions, &subscription{
+			Type:  feedFormat,
+			Title: title,
+			URL:   absoluteURL,
 		})
-	}
+	})
 
 	return subscriptions, nil
 }
