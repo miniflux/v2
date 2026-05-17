@@ -318,47 +318,42 @@ func (s *Storage) GetReadTime(feedID int64, entryHash string) int {
 
 // RefreshFeedEntries updates feed entries while refreshing a feed.
 func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (newEntries model.Entries, err error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return nil, fmt.Errorf(`store: unable to start transaction: %v`, err)
+	}
+	defer tx.Rollback()
+
 	for _, entry := range entries {
 		entry.UserID = userID
 		entry.FeedID = feedID
 
-		tx, err := s.db.Begin()
-		if err != nil {
-			return nil, fmt.Errorf(`store: unable to start transaction: %v`, err)
-		}
-
 		entryExists, err := s.entryExists(tx, entry)
 		if err != nil {
-			if rollbackErr := tx.Rollback(); rollbackErr != nil {
-				return nil, fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
-			}
 			return nil, err
 		}
 
 		if entryExists {
 			if updateExistingEntries {
-				err = s.updateEntry(tx, entry)
+				if err := s.updateEntry(tx, entry); err != nil {
+					return nil, err
+				}
 			}
 		} else {
 			err = s.createEntry(tx, entry)
 			switch {
 			case errors.Is(err, ErrEntryTombstoned):
-				err = nil
-			case err == nil:
+				// skip tombstoned entries
+			case err != nil:
+				return nil, err
+			default:
 				newEntries = append(newEntries, entry)
 			}
 		}
+	}
 
-		if err != nil {
-			if rollbackErr := tx.Rollback(); rollbackErr != nil {
-				return nil, fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
-			}
-			return nil, err
-		}
-
-		if err := tx.Commit(); err != nil {
-			return nil, fmt.Errorf(`store: unable to commit transaction: %v`, err)
-		}
+	if err := tx.Commit(); err != nil {
+		return nil, fmt.Errorf(`store: unable to commit transaction: %v`, err)
 	}
 
 	return newEntries, nil
