@@ -22,6 +22,11 @@ import (
 type atom10Feed struct {
 	XMLName xml.Name `xml:"http://www.w3.org/2005/Atom feed"`
 
+	// xml:lang declares the natural language of the feed and, by
+	// inheritance, of its entries. Persisted on the feed row and emitted
+	// as an HTML lang attribute by the web reader.
+	Language string `xml:"lang,attr"`
+
 	// The "atom:id" element conveys a permanent, universally unique
 	// identifier for an entry or feed.
 	//
@@ -95,6 +100,8 @@ type atom10Entry struct {
 	//
 	// atom:entry elements MUST contain exactly one atom:id element.
 	ID string `xml:"http://www.w3.org/2005/Atom id"`
+
+	Language string `xml:"lang,attr"`
 
 	// The "atom:title" element is a Text construct that conveys a human-
 	// readable title for an entry or feed.

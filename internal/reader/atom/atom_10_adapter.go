@@ -51,6 +51,8 @@ func (a *atom10Adapter) buildFeed(baseURL string) *model.Feed {
 	// Populate the feed description.
 	feed.Description = a.atomFeed.Subtitle.body()
 
+	feed.Language = model.NormalizeLanguage(a.atomFeed.Language)
+
 	// Populate the feed icon.
 	for _, value := range []string{a.atomFeed.Icon, a.atomFeed.Logo} {
 		if value = strings.TrimSpace(value); value == "" {
@@ -108,6 +110,8 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 				entry.Title = entry.URL
 			}
 		}
+
+		entry.Language = model.NormalizeLanguage(atomEntry.Language)
 
 		// Populate the entry author.
 		authors := atomEntry.Authors.personNames()

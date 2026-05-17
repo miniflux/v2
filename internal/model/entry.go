@@ -33,6 +33,7 @@ type Entry struct {
 	Title       string        `json:"title"`
 	URL         string        `json:"url"`
 	CommentsURL string        `json:"comments_url"`
+	Language    string        `json:"language"`
 	Date        time.Time     `json:"published_at"`
 	CreatedAt   time.Time     `json:"created_at"`
 	ChangedAt   time.Time     `json:"changed_at"`

@@ -31,6 +31,7 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 		FeedURL:     strings.TrimSpace(baseURL),
 		SiteURL:     strings.TrimSpace(r.rss.Channel.Link),
 		Description: strings.TrimSpace(r.rss.Channel.Description),
+		Language:    model.NormalizeLanguage(r.rss.Channel.Language),
 	}
 
 	// Ensure the Site URL is absolute.
@@ -112,6 +113,8 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 		if entry.Author == "" {
 			entry.Author = findFeedAuthor(&r.rss.Channel)
 		}
+
+		entry.Language = model.NormalizeLanguage(item.DublinCoreLanguage)
 
 		// Generate the entry hash.
 		//
