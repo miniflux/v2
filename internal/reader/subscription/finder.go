@@ -319,12 +319,16 @@ func (f *subscriptionFinder) findSubscriptionsFromYouTube(websiteURL string) (Su
 // findCanonicalURL extracts the canonical URL from the HTML <link rel="canonical"> tag.
 // Returns the canonical URL if found, otherwise returns the effective URL.
 func (f *subscriptionFinder) findCanonicalURL(effectiveURL, baseURL string, doc *goquery.Document) string {
-	canonicalHref, exists := doc.Find("head link[rel='canonical' i]").First().Attr("href")
-	if !exists || strings.TrimSpace(canonicalHref) == "" {
+	canonicalHref, exists := doc.FindMatcher(goquery.Single("head link[rel='canonical' i]")).Attr("href")
+	if !exists {
+		return effectiveURL
+	}
+	canonicalHref = strings.TrimSpace(canonicalHref)
+	if canonicalHref == "" {
 		return effectiveURL
 	}
 
-	canonicalURL, err := urllib.ResolveToAbsoluteURL(baseURL, strings.TrimSpace(canonicalHref))
+	canonicalURL, err := urllib.ResolveToAbsoluteURL(baseURL, canonicalHref)
 	if err != nil {
 		return effectiveURL
 	}
