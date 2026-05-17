@@ -8,8 +8,9 @@ type DublinCoreChannelElement struct {
 }
 
 type DublinCoreItemElement struct {
-	DublinCoreTitle   string `xml:"http://purl.org/dc/elements/1.1/ title"`
-	DublinCoreDate    string `xml:"http://purl.org/dc/elements/1.1/ date"`
-	DublinCoreCreator string `xml:"http://purl.org/dc/elements/1.1/ creator"`
-	DublinCoreContent string `xml:"http://purl.org/rss/1.0/modules/content/ encoded"`
+	DublinCoreTitle    string `xml:"http://purl.org/dc/elements/1.1/ title"`
+	DublinCoreDate     string `xml:"http://purl.org/dc/elements/1.1/ date"`
+	DublinCoreCreator  string `xml:"http://purl.org/dc/elements/1.1/ creator"`
+	DublinCoreContent  string `xml:"http://purl.org/rss/1.0/modules/content/ encoded"`
+	DublinCoreLanguage string `xml:"http://purl.org/dc/elements/1.1/ language"`
 }

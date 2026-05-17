@@ -31,6 +31,7 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		FeedURL:     strings.TrimSpace(j.jsonFeed.FeedURL),
 		SiteURL:     strings.TrimSpace(j.jsonFeed.HomePageURL),
 		Description: strings.TrimSpace(j.jsonFeed.Description),
+		Language:    model.NormalizeLanguage(j.jsonFeed.Language),
 	}
 
 	if feed.FeedURL == "" {
@@ -69,6 +70,7 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 
 	for _, item := range j.jsonFeed.Items {
 		entry := model.NewEntry()
+		entry.Language = model.NormalizeLanguage(item.Language)
 
 		for _, itemURL := range []string{item.URL, item.ExternalURL} {
 			if itemURL = strings.TrimSpace(itemURL); itemURL == "" {

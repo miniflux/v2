@@ -47,8 +47,12 @@ func (a *atom03Adapter) buildFeed(baseURL string) *model.Feed {
 		feed.Title = feed.SiteURL
 	}
 
+	feed.Language = model.NormalizeLanguage(a.atomFeed.Language)
+
 	for _, atomEntry := range a.atomFeed.Entries {
 		entry := model.NewEntry()
+
+		entry.Language = model.NormalizeLanguage(atomEntry.Language)
 
 		// Populate the entry URL.
 		entry.URL = atomEntry.Links.originalLink()

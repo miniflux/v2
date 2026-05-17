@@ -340,7 +340,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 		originalFeed.EtagHeader = responseHandler.ETag()
 		originalFeed.LastModifiedHeader = responseHandler.LastModified()
-
+		originalFeed.Language = updatedFeed.Language
 		originalFeed.IconURL = updatedFeed.IconURL
 		iconChecker := icon.NewIconChecker(store, originalFeed)
 		if forceRefresh {
