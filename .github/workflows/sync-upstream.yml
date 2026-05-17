@@ -1,0 +1,32 @@
+name: Sync with Upstream
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Every Monday at 6:00 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/miniflux/v2.git
+          git fetch upstream main
+
+      - name: Rebase onto upstream
+        run: |
+          git rebase upstream/main
+
+      - name: Push rebased branch
+        run: |
+          git push --force-with-lease origin main
