@@ -171,16 +171,18 @@ func (f *subscriptionFinder) findSubscriptionsFromWebPage(websiteURL string, doc
 }
 
 func (f *subscriptionFinder) findSubscriptionsFromWellKnownURLs(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
-	knownURLs := map[string]string{
-		"atom.xml":     parser.FormatAtom,
-		"feed.atom":    parser.FormatAtom,
-		"feed.xml":     parser.FormatAtom,
-		"feed/":        parser.FormatAtom,
-		"index.rss":    parser.FormatRSS,
-		"index.xml":    parser.FormatRSS,
-		"rss.xml":      parser.FormatRSS,
-		"rss/":         parser.FormatRSS,
-		"rss/feed.xml": parser.FormatRSS,
+	knownURLs := [...]struct {
+		path, format string
+	}{
+		{"atom.xml", parser.FormatAtom},
+		{"feed.atom", parser.FormatAtom},
+		{"feed.xml", parser.FormatAtom},
+		{"feed/", parser.FormatAtom},
+		{"index.rss", parser.FormatRSS},
+		{"index.xml", parser.FormatRSS},
+		{"rss.xml", parser.FormatRSS},
+		{"rss/", parser.FormatRSS},
+		{"rss/feed.xml", parser.FormatRSS},
 	}
 
 	websiteURLRoot := urllib.RootURL(websiteURL)
@@ -197,8 +199,8 @@ func (f *subscriptionFinder) findSubscriptionsFromWellKnownURLs(websiteURL strin
 
 	var subscriptions Subscriptions
 	for _, baseURL := range baseURLs {
-		for knownURL, kind := range knownURLs {
-			fullURL, err := urllib.ResolveToAbsoluteURL(baseURL, knownURL)
+		for _, known := range knownURLs {
+			fullURL, err := urllib.ResolveToAbsoluteURL(baseURL, known.path)
 			if err != nil {
 				continue
 			}
@@ -227,7 +229,7 @@ func (f *subscriptionFinder) findSubscriptionsFromWellKnownURLs(websiteURL strin
 			}
 
 			subscriptions = append(subscriptions, &subscription{
-				Type:  kind,
+				Type:  known.format,
 				Title: fullURL,
 				URL:   fullURL,
 			})
