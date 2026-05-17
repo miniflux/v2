@@ -136,7 +136,7 @@ func (f *subscriptionFinder) findSubscriptionsFromWebPage(websiteURL string, doc
 	}
 
 	var subscriptions Subscriptions
-	subscriptionURLs := make(map[string]bool)
+	subscriptionURLs := make(map[string]bool, len(queries))
 	for feedQuerySelector, feedFormat := range queries {
 		doc.Find(feedQuerySelector).Each(func(i int, s *goquery.Selection) {
 			subscription := new(subscription)
