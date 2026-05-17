@@ -104,7 +104,7 @@
             tabindex="-1"
         >
             <header class="item-header" dir="auto">
-                <h2 id="entry-title-{{ .ID }}" class="item-title">
+                <h2 id="entry-title-{{ .ID }}" class="item-title" {{ with or .Language .Feed.Language }}lang="{{ . }}"{{ end }}>
                     <a
                         {{ if $.showOnlyUnreadEntries }}
                         href="{{ routePath "/unread/feed/%d/entry/%d" .Feed.ID .ID }}"

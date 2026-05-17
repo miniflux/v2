@@ -44,7 +44,7 @@
 {{ define "page_header"}}
 <section class="entry" data-id="{{ .entry.ID }}" aria-labelledby="page-header-title">
     <header class="entry-header">
-        <h1 id="page-header-title" dir="auto">
+        <h1 id="page-header-title" dir="auto" {{ with or .entry.Language .entry.Feed.Language }}lang="{{ . }}"{{ end }}>
             <a href="{{ .entry.URL | untrustedURL }}" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ else }}rel="noopener"{{ end }}>{{ .entry.Title }}</a>
         </h1>
         {{ if .user }}
@@ -236,7 +236,7 @@
 </div>
 {{ end }}
 {{ end }}
-<article class="entry-content {{ if ne $.user.GestureNav "none" }}gesture-nav-{{ $.user.GestureNav }}{{ end }}" dir="auto">
+<article class="entry-content {{ if ne $.user.GestureNav "none" }}gesture-nav-{{ $.user.GestureNav }}{{ end }}" dir="auto" {{ with or .entry.Language .entry.Feed.Language }}lang="{{ . }}"{{ end }}>
     {{ if not .entry.Feed.NoMediaPlayer }}
         {{ $mediaPlayerEnclosure := .entry.Enclosures.FindMediaPlayerEnclosure }}
 
