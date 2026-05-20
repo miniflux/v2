@@ -76,6 +76,72 @@ func TestTruncateHTML(t *testing.T) {
 			maxLen:   20,
 			expected: "hello world",
 		},
+		{
+			name:     "just enough characters",
+			input:    "Hello",
+			maxLen:   5,
+			expected: "Hello",
+		},
+		{
+			name:     "just enough unicode characters",
+			input:    "Привет",
+			maxLen:   6,
+			expected: "Привет",
+		},
+		{
+			name:     "spaces around tag",
+			input:    "hello <br/> world",
+			maxLen:   20,
+			expected: "hello world",
+		},
+		{
+			name:     "leading spaces",
+			input:    "  hello world",
+			maxLen:   5,
+			expected: "hello…",
+		},
+		{
+			name:     "text above limit with space at the end",
+			input:    "hello world",
+			maxLen:   6,
+			expected: "hello…",
+		},
+		{
+			name:     "leading space before tag",
+			input:    " <a>hello</a>",
+			maxLen:   15,
+			expected: "hello",
+		},
+		{
+			name:     "space-only tokens in between tags",
+			input:    "hello <br/>\t<a> </a>world",
+			maxLen:   15,
+			expected: "hello world",
+		},
+		{
+			name:     "truncate mid-word",
+			input:    "hello world",
+			maxLen:   8,
+			expected: "hello wo…",
+		},
+		{
+			name:     "truncate mid-word with unicode",
+			input:    "Съешь ещё этих мягких французских булок, да выпей же чаю",
+			maxLen:   25,
+			expected: "Съешь ещё этих мягких фра…",
+		},
+		{
+			name:     "negative limit",
+			input:    "whatever",
+			maxLen:   -10,
+			expected: "…",
+		},
+		{
+			name:     "zero limit",
+			input:    "whatever",
+			maxLen:   0,
+			expected: "…",
+		},
 	}
 
 	for _, tt := range tests {
