@@ -278,7 +278,7 @@ func (h *feverHandler) handleItems(w http.ResponseWriter, r *http.Request) {
 				itemIDs = append(itemIDs, itemID)
 			}
 
-			builder.WithEntryIDs(itemIDs)
+			builder.WithEntryIDs(itemIDs...)
 		}
 	default:
 		slog.Debug("[Fever] Fetching oldest items",
@@ -343,7 +343,7 @@ func (h *feverHandler) handleUnreadItems(w http.ResponseWriter, r *http.Request)
 	)
 
 	rawEntryIDs, err := h.store.NewEntryQueryBuilder(userID).
-		WithStatus(model.EntryStatusUnread).
+		WithStatuses(model.EntryStatusUnread).
 		GetEntryIDs()
 	if err != nil {
 		response.JSONServerError(w, r, err)
@@ -410,7 +410,7 @@ func (h *feverHandler) handleWriteItems(w http.ResponseWriter, r *http.Request) 
 	}
 
 	entry, err := h.store.NewEntryQueryBuilder(userID).
-		WithEntryID(entryID).
+		WithEntryIDs(entryID).
 		GetEntry()
 	if err != nil {
 		response.JSONServerError(w, r, err)

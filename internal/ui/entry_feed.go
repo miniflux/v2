@@ -24,7 +24,7 @@ func (h *handler) showFeedEntryPage(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := h.store.NewEntryQueryBuilder(user.ID).
 		WithFeedID(feedID).
-		WithEntryID(entryID).
+		WithEntryIDs(entryID).
 		GetEntry()
 	if err != nil {
 		response.HTMLServerError(w, r, err)

@@ -35,7 +35,7 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 
 	entries, count, err := h.store.NewEntryQueryBuilder(user.ID).
 		WithFeedID(feed.ID).
-		WithStatus(model.EntryStatusUnread).
+		WithStatuses(model.EntryStatusUnread).
 		WithSorting(user.EntryOrder, user.EntryDirection).
 		WithSorting("id", user.EntryDirection).
 		WithOffset(offset).

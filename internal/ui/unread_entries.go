@@ -22,7 +22,7 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 	offset := request.QueryIntParam(r, "offset", 0)
 
 	entries, countUnread, err := h.store.NewEntryQueryBuilder(user.ID).
-		WithStatus(model.EntryStatusUnread).
+		WithStatuses(model.EntryStatusUnread).
 		WithSorting(user.EntryOrder, user.EntryDirection).
 		WithSorting("id", user.EntryDirection).
 		WithOffset(offset).
@@ -39,7 +39,7 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 		offset = 0
 
 		entries, countUnread, err = h.store.NewEntryQueryBuilder(user.ID).
-			WithStatus(model.EntryStatusUnread).
+			WithStatuses(model.EntryStatusUnread).
 			WithSorting(user.EntryOrder, user.EntryDirection).
 			WithSorting("id", user.EntryDirection).
 			WithLimit(user.EntriesPerPage).

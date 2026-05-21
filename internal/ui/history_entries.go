@@ -22,7 +22,7 @@ func (h *handler) showHistoryPage(w http.ResponseWriter, r *http.Request) {
 	offset := request.QueryIntParam(r, "offset", 0)
 
 	entries, count, err := h.store.NewEntryQueryBuilder(user.ID).
-		WithStatus(model.EntryStatusRead).
+		WithStatuses(model.EntryStatusRead).
 		WithSorting("changed_at", "DESC").
 		WithSorting("published_at", "DESC").
 		WithoutContent().

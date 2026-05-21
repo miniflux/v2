@@ -34,7 +34,7 @@ func (h *handler) showSearchPage(w http.ResponseWriter, r *http.Request) {
 			WithLimit(user.EntriesPerPage)
 
 		if unreadOnly {
-			builder.WithStatus(model.EntryStatusUnread)
+			builder.WithStatuses(model.EntryStatusUnread)
 		}
 
 		entries, entriesCount, err = builder.GetEntriesWithCount()
