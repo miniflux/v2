@@ -24,7 +24,7 @@ func (h *handler) showStarredCategoryEntryPage(w http.ResponseWriter, r *http.Re
 
 	entry, err := h.store.NewEntryQueryBuilder(user.ID).
 		WithCategoryID(categoryID).
-		WithEntryID(entryID).
+		WithEntryIDs(entryID).
 		GetEntry()
 	if err != nil {
 		response.HTMLServerError(w, r, err)

@@ -18,7 +18,7 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
 
 	entry, err := h.store.NewEntryQueryBuilder(loggedUserID).
-		WithEntryID(entryID).
+		WithEntryIDs(entryID).
 		GetEntry()
 	if err != nil {
 		response.JSONServerError(w, r, err)

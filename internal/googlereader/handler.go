@@ -237,7 +237,7 @@ func (h *greaderHandler) editTagHandler(w http.ResponseWriter, r *http.Request) 
 	)
 
 	entries, err := h.store.NewEntryQueryBuilder(userID).
-		WithEntryIDs(itemIDs).
+		WithEntryIDs(itemIDs...).
 		GetEntries()
 	if err != nil {
 		response.JSONServerError(w, r, err)
@@ -650,7 +650,7 @@ func (h *greaderHandler) streamItemContentsHandler(w http.ResponseWriter, r *htt
 
 	entries, err := h.store.NewEntryQueryBuilder(userID).
 		WithEnclosures().
-		WithEntryIDs(itemIDs).
+		WithEntryIDs(itemIDs...).
 		WithSorting(model.DefaultSortingOrder, requestModifiers.SortDirection).
 		GetEntries()
 	if err != nil {
@@ -1018,7 +1018,7 @@ func (h *greaderHandler) handleReadingListStreamHandler(w http.ResponseWriter, r
 	for _, s := range rm.ExcludeTargets {
 		switch s.Type {
 		case ReadStream:
-			builder.WithStatus(model.EntryStatusUnread)
+			builder.WithStatuses(model.EntryStatusUnread)
 		default:
 			slog.Warn("[GoogleReader] Unknown ExcludeTargets filter type",
 				slog.String("handler", "handleReadingListStreamHandler"),
@@ -1071,7 +1071,7 @@ func (h *greaderHandler) handleStarredStreamHandler(w http.ResponseWriter, r *ht
 
 func (h *greaderHandler) handleReadStreamHandler(w http.ResponseWriter, r *http.Request, rm requestModifiers) {
 	builder := h.store.NewEntryQueryBuilder(rm.UserID).
-		WithStatus(model.EntryStatusRead).
+		WithStatuses(model.EntryStatusRead).
 		WithLimit(rm.Count).
 		WithOffset(rm.Offset).
 		WithSorting(model.DefaultSortingOrder, rm.SortDirection)

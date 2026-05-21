@@ -57,7 +57,7 @@ func (h *handler) getFeedEntryHandler(w http.ResponseWriter, r *http.Request) {
 
 	builder := h.store.NewEntryQueryBuilder(request.UserID(r)).
 		WithFeedID(feedID).
-		WithEntryID(entryID)
+		WithEntryIDs(entryID)
 
 	h.getEntryFromBuilder(w, r, builder)
 }
@@ -77,7 +77,7 @@ func (h *handler) getCategoryEntryHandler(w http.ResponseWriter, r *http.Request
 
 	builder := h.store.NewEntryQueryBuilder(request.UserID(r)).
 		WithCategoryID(categoryID).
-		WithEntryID(entryID)
+		WithEntryIDs(entryID)
 
 	h.getEntryFromBuilder(w, r, builder)
 }
@@ -90,7 +90,7 @@ func (h *handler) getEntryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	builder := h.store.NewEntryQueryBuilder(request.UserID(r)).
-		WithEntryID(entryID)
+		WithEntryIDs(entryID)
 
 	h.getEntryFromBuilder(w, r, builder)
 }
@@ -164,11 +164,11 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	builder := h.store.NewEntryQueryBuilder(userID).
 		WithFeedID(feedID).
 		WithCategoryID(categoryID).
-		WithStatuses(statuses).
+		WithStatuses(statuses...).
 		WithSorting(order, direction).
 		WithOffset(offset).
 		WithLimit(limit).
-		WithTags(tags).
+		WithTags(tags...).
 		WithEnclosures()
 
 	if request.HasQueryParam(r, "globally_visible") {
@@ -242,7 +242,7 @@ func (h *handler) saveEntryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	entry, err := h.store.NewEntryQueryBuilder(request.UserID(r)).
-		WithEntryID(entryID).
+		WithEntryIDs(entryID).
 		GetEntry()
 	if err != nil {
 		response.JSONServerError(w, r, err)
@@ -286,7 +286,7 @@ func (h *handler) updateEntryHandler(w http.ResponseWriter, r *http.Request) {
 	loggedUserID := request.UserID(r)
 
 	entry, err := h.store.NewEntryQueryBuilder(loggedUserID).
-		WithEntryID(entryID).
+		WithEntryIDs(entryID).
 		GetEntry()
 	if err != nil {
 		response.JSONServerError(w, r, err)
@@ -445,7 +445,7 @@ func (h *handler) fetchContentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	entry, err := h.store.NewEntryQueryBuilder(loggedUserID).
-		WithEntryID(entryID).
+		WithEntryIDs(entryID).
 		GetEntry()
 	if err != nil {
 		response.JSONServerError(w, r, err)

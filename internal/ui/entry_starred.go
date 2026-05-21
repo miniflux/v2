@@ -22,7 +22,7 @@ func (h *handler) showStarredEntryPage(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
 
 	entry, err := h.store.NewEntryQueryBuilder(user.ID).
-		WithEntryID(entryID).
+		WithEntryIDs(entryID).
 		GetEntry()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
