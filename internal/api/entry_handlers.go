@@ -468,7 +468,7 @@ func (h *handler) fetchContentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feed, err := storage.NewFeedQueryBuilder(h.store, loggedUserID).
+	feed, err := h.store.NewFeedQueryBuilder(loggedUserID).
 		WithFeedID(entry.FeedID).
 		GetFeed()
 	if err != nil {

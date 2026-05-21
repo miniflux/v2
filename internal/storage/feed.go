@@ -126,7 +126,7 @@ func (s *Storage) CountAllFeedsWithErrors() (int, error) {
 
 // Feeds returns all feeds that belong to the given user.
 func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
-	return NewFeedQueryBuilder(s, userID).
+	return s.NewFeedQueryBuilder(userID).
 		WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection).
 		GetFeeds()
 }
@@ -142,14 +142,14 @@ func getFeedsSorted(builder *feedQueryBuilder) (model.Feeds, error) {
 
 // FeedsWithCounters returns all feeds of the given user with read and unread entry counters.
 func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
-	return getFeedsSorted(NewFeedQueryBuilder(s, userID).
+	return getFeedsSorted(s.NewFeedQueryBuilder(userID).
 		WithCounters().
 		WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection))
 }
 
 // FetchCounters returns the per-feed read and unread entry counts for the given user.
 func (s *Storage) FetchCounters(userID int64) (model.FeedCounters, error) {
-	reads, unreads, err := NewFeedQueryBuilder(s, userID).
+	reads, unreads, err := s.NewFeedQueryBuilder(userID).
 		WithCounters().
 		fetchFeedCounter()
 
@@ -158,7 +158,7 @@ func (s *Storage) FetchCounters(userID int64) (model.FeedCounters, error) {
 
 // FeedsByCategoryWithCounters returns all feeds in the given category for the given user with read and unread entry counters.
 func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.Feeds, error) {
-	return getFeedsSorted(NewFeedQueryBuilder(s, userID).
+	return getFeedsSorted(s.NewFeedQueryBuilder(userID).
 		WithCategoryID(categoryID).
 		WithCounters().
 		WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection))
@@ -198,7 +198,7 @@ func (s *Storage) WeeklyFeedEntryCount(userID, feedID int64) (int, error) {
 
 // FeedByID returns the feed with the given ID.
 func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
-	feed, err := NewFeedQueryBuilder(s, userID).
+	feed, err := s.NewFeedQueryBuilder(userID).
 		WithFeedID(feedID).
 		GetFeed()
 

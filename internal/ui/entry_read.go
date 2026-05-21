@@ -9,7 +9,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/view"
 )
 
@@ -40,7 +39,7 @@ func (h *handler) showReadEntryPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	prevEntry, nextEntry, err := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, "changed_at", "desc").
+	prevEntry, nextEntry, err := h.store.NewEntryPaginationBuilder(user.ID, entry.ID, "changed_at", "desc").
 		WithStatus(model.EntryStatusRead).
 		Entries()
 	if err != nil {

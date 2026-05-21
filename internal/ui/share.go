@@ -10,7 +10,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 
-	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/view"
 )
 
@@ -44,7 +43,7 @@ func (h *handler) sharedEntry(w http.ResponseWriter, r *http.Request) {
 
 	etag := shareCode
 	response.NewBuilder(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
-		entry, err := storage.NewAnonymousQueryBuilder(h.store).
+		entry, err := h.store.NewAnonymousQueryBuilder().
 			WithShareCode(shareCode).
 			GetEntry()
 

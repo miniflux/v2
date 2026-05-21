@@ -524,17 +524,17 @@ func (e *EntryQueryBuilder) buildSorting() string {
 }
 
 // NewEntryQueryBuilder returns a new EntryQueryBuilder.
-func NewEntryQueryBuilder(store *Storage, userID int64) *EntryQueryBuilder {
+func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 	return &EntryQueryBuilder{
-		store:      store,
+		store:      s,
 		args:       []any{userID},
 		conditions: []string{"e.user_id = $1"},
 	}
 }
 
 // NewAnonymousQueryBuilder returns a new EntryQueryBuilder suitable for anonymous users.
-func NewAnonymousQueryBuilder(store *Storage) *EntryQueryBuilder {
+func (s *Storage) NewAnonymousQueryBuilder() *EntryQueryBuilder {
 	return &EntryQueryBuilder{
-		store: store,
+		store: s,
 	}
 }
