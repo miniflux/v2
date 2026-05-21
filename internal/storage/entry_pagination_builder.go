@@ -16,7 +16,7 @@ import (
 
 // entryPaginationBuilder is a builder for entry prev/next queries.
 type entryPaginationBuilder struct {
-	store      *Storage
+	db         *sql.DB
 	conditions []string
 	args       []any
 	entryID    int64
@@ -111,7 +111,7 @@ func (e *entryPaginationBuilder) WithGloballyVisible() *entryPaginationBuilder {
 
 // Entries returns previous and next entries.
 func (e *entryPaginationBuilder) Entries() (*model.Entry, *model.Entry, error) {
-	tx, err := e.store.db.Begin()
+	tx, err := e.db.Begin()
 	if err != nil {
 		return nil, nil, fmt.Errorf("begin transaction for entry pagination: %v", err)
 	}
@@ -203,9 +203,9 @@ func (e *entryPaginationBuilder) getEntry(tx *sql.Tx, entryID int64) (*model.Ent
 }
 
 // NewEntryPaginationBuilder returns a new EntryPaginationBuilder.
-func NewEntryPaginationBuilder(store *Storage, userID, entryID int64, order, direction string) *entryPaginationBuilder {
+func (s *Storage) NewEntryPaginationBuilder(userID, entryID int64, order, direction string) *entryPaginationBuilder {
 	return &entryPaginationBuilder{
-		store:      store,
+		db:         s.db,
 		args:       []any{userID},
 		conditions: []string{"e.user_id = $1"},
 		entryID:    entryID,

@@ -11,7 +11,6 @@ import (
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/reader/processor"
-	"miniflux.app/v2/internal/storage"
 )
 
 func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +36,7 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feed, err := storage.NewFeedQueryBuilder(h.store, loggedUserID).
+	feed, err := h.store.NewFeedQueryBuilder(loggedUserID).
 		WithFeedID(entry.FeedID).
 		GetFeed()
 	if err != nil {
