@@ -33,14 +33,15 @@ func runScheduler(store *storage.Storage, pool *worker.Pool) {
 func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency time.Duration, batchSize, errorLimit, limitPerHost int) {
 	for range time.Tick(frequency) {
 		// Generate a batch of feeds for any user that has feeds to refresh.
-		batchBuilder := store.NewBatchBuilder()
-		batchBuilder.WithBatchSize(batchSize)
-		batchBuilder.WithErrorLimit(errorLimit)
-		batchBuilder.WithoutDisabledFeeds()
-		batchBuilder.WithNextCheckExpired()
-		batchBuilder.WithLimitPerHost(limitPerHost)
+		jobs, err := store.NewBatchBuilder().
+			WithBatchSize(batchSize).
+			WithErrorLimit(errorLimit).
+			WithoutDisabledFeeds().
+			WithNextCheckExpired().
+			WithLimitPerHost(limitPerHost).
+			FetchJobs()
 
-		if jobs, err := batchBuilder.FetchJobs(); err != nil {
+		if err != nil {
 			slog.Error("Unable to fetch jobs from database", slog.Any("error", err))
 		} else if len(jobs) > 0 {
 			slog.Debug("Feed URLs in this batch", slog.Any("feed_urls", jobs.FeedURLs()))

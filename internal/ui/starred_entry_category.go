@@ -23,11 +23,10 @@ func (h *handler) showStarredCategoryEntryPage(w http.ResponseWriter, r *http.Re
 	categoryID := request.RouteInt64Param(r, "categoryID")
 	entryID := request.RouteInt64Param(r, "entryID")
 
-	builder := h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithCategoryID(categoryID)
-	builder.WithEntryID(entryID)
-
-	entry, err := builder.GetEntry()
+	entry, err := h.store.NewEntryQueryBuilder(user.ID).
+		WithCategoryID(categoryID).
+		WithEntryID(entryID).
+		GetEntry()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
@@ -53,11 +52,10 @@ func (h *handler) showStarredCategoryEntryPage(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryOrder, user.EntryDirection)
-	entryPaginationBuilder.WithCategoryID(categoryID)
-	entryPaginationBuilder.WithStarred()
-
-	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
+	prevEntry, nextEntry, err := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryOrder, user.EntryDirection).
+		WithCategoryID(categoryID).
+		WithStarred().
+		Entries()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return

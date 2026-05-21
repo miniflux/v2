@@ -23,11 +23,10 @@ func (h *handler) showUnreadCategoryEntryPage(w http.ResponseWriter, r *http.Req
 	categoryID := request.RouteInt64Param(r, "categoryID")
 	entryID := request.RouteInt64Param(r, "entryID")
 
-	builder := h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithCategoryID(categoryID)
-	builder.WithEntryID(entryID)
-
-	entry, err := builder.GetEntry()
+	entry, err := h.store.NewEntryQueryBuilder(user.ID).
+		WithCategoryID(categoryID).
+		WithEntryID(entryID).
+		GetEntry()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
@@ -48,10 +47,6 @@ func (h *handler) showUnreadCategoryEntryPage(w http.ResponseWriter, r *http.Req
 		entry.Status = model.EntryStatusRead
 	}
 
-	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryOrder, user.EntryDirection)
-	entryPaginationBuilder.WithCategoryID(categoryID)
-	entryPaginationBuilder.WithStatus(model.EntryStatusUnread)
-
 	if entry.Status == model.EntryStatusRead {
 		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusUnread)
 		if err != nil {
@@ -60,7 +55,10 @@ func (h *handler) showUnreadCategoryEntryPage(w http.ResponseWriter, r *http.Req
 		}
 	}
 
-	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
+	prevEntry, nextEntry, err := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryOrder, user.EntryDirection).
+		WithCategoryID(categoryID).
+		WithStatus(model.EntryStatusUnread).
+		Entries()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return

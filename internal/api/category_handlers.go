@@ -163,15 +163,14 @@ func (h *handler) refreshCategoryHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	batchBuilder := h.store.NewBatchBuilder()
-	batchBuilder.WithErrorLimit(config.Opts.PollingParsingErrorLimit())
-	batchBuilder.WithoutDisabledFeeds()
-	batchBuilder.WithUserID(userID)
-	batchBuilder.WithCategoryID(categoryID)
-	batchBuilder.WithNextCheckExpired()
-	batchBuilder.WithLimitPerHost(config.Opts.PollingLimitPerHost())
-
-	jobs, err := batchBuilder.FetchJobs()
+	jobs, err := h.store.NewBatchBuilder().
+		WithErrorLimit(config.Opts.PollingParsingErrorLimit()).
+		WithoutDisabledFeeds().
+		WithUserID(userID).
+		WithCategoryID(categoryID).
+		WithNextCheckExpired().
+		WithLimitPerHost(config.Opts.PollingLimitPerHost()).
+		FetchJobs()
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
