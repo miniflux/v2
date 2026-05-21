@@ -23,11 +23,11 @@ func (h *handler) showSearchEntryPage(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
 	searchQuery := request.QueryStringParam(r, "q", "")
 	unreadOnly := request.QueryBoolParam(r, "unread", false)
-	builder := h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithSearchQuery(searchQuery)
-	builder.WithEntryID(entryID)
 
-	entry, err := builder.GetEntry()
+	entry, err := h.store.NewEntryQueryBuilder(user.ID).
+		WithSearchQuery(searchQuery).
+		WithEntryID(entryID).
+		GetEntry()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
@@ -53,8 +53,8 @@ func (h *handler) showSearchEntryPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryOrder, user.EntryDirection)
-	entryPaginationBuilder.WithSearchQuery(searchQuery)
+	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryOrder, user.EntryDirection).
+		WithSearchQuery(searchQuery)
 	if unreadOnly {
 		if entry.Status == model.EntryStatusRead {
 			entryPaginationBuilder.WithStatusOrEntryID(model.EntryStatusUnread, entry.ID)

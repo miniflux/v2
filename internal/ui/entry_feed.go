@@ -23,11 +23,10 @@ func (h *handler) showFeedEntryPage(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
 	feedID := request.RouteInt64Param(r, "feedID")
 
-	builder := h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithFeedID(feedID)
-	builder.WithEntryID(entryID)
-
-	entry, err := builder.GetEntry()
+	entry, err := h.store.NewEntryQueryBuilder(user.ID).
+		WithFeedID(feedID).
+		WithEntryID(entryID).
+		GetEntry()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
@@ -53,9 +52,9 @@ func (h *handler) showFeedEntryPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryOrder, user.EntryDirection)
-	entryPaginationBuilder.WithFeedID(feedID)
-	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
+	prevEntry, nextEntry, err := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryOrder, user.EntryDirection).
+		WithFeedID(feedID).
+		Entries()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return

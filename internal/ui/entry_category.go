@@ -23,11 +23,10 @@ func (h *handler) showCategoryEntryPage(w http.ResponseWriter, r *http.Request) 
 	categoryID := request.RouteInt64Param(r, "categoryID")
 	entryID := request.RouteInt64Param(r, "entryID")
 
-	builder := h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithCategoryID(categoryID)
-	builder.WithEntryID(entryID)
-
-	entry, err := builder.GetEntry()
+	entry, err := h.store.NewEntryQueryBuilder(user.ID).
+		WithCategoryID(categoryID).
+		WithEntryID(entryID).
+		GetEntry()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
@@ -53,9 +52,9 @@ func (h *handler) showCategoryEntryPage(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryOrder, user.EntryDirection)
-	entryPaginationBuilder.WithCategoryID(categoryID)
-	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
+	prevEntry, nextEntry, err := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryOrder, user.EntryDirection).
+		WithCategoryID(categoryID).
+		Entries()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return

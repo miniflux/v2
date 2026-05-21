@@ -27,14 +27,15 @@ func (h *handler) showSearchPage(w http.ResponseWriter, r *http.Request) {
 	var entriesCount int
 
 	if searchQuery != "" {
-		builder := h.store.NewEntryQueryBuilder(user.ID)
-		builder.WithSearchQuery(searchQuery)
+		builder := h.store.NewEntryQueryBuilder(user.ID).
+			WithSearchQuery(searchQuery).
+			WithoutContent().
+			WithOffset(offset).
+			WithLimit(user.EntriesPerPage)
+
 		if unreadOnly {
 			builder.WithStatus(model.EntryStatusUnread)
 		}
-		builder.WithoutContent()
-		builder.WithOffset(offset)
-		builder.WithLimit(user.EntriesPerPage)
 
 		entries, entriesCount, err = builder.GetEntriesWithCount()
 		if err != nil {

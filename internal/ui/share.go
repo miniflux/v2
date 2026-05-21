@@ -44,10 +44,10 @@ func (h *handler) sharedEntry(w http.ResponseWriter, r *http.Request) {
 
 	etag := shareCode
 	response.NewBuilder(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
-		builder := storage.NewAnonymousQueryBuilder(h.store)
-		builder.WithShareCode(shareCode)
+		entry, err := storage.NewAnonymousQueryBuilder(h.store).
+			WithShareCode(shareCode).
+			GetEntry()
 
-		entry, err := builder.GetEntry()
 		if err != nil || entry == nil {
 			response.HTMLNotFound(w, r)
 			return
