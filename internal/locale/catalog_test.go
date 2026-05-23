@@ -111,6 +111,7 @@ func TestTranslationFilePluralForms(t *testing.T) {
 		"id_ID":            1,
 		"it_IT":            2,
 		"ja_JP":            1,
+		"ko_KR":            1,
 		"nan_Latn_pehoeji": 1,
 		"nl_NL":            2,
 		"pl_PL":            3,

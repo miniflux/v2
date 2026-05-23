@@ -36,7 +36,7 @@ func getPluralForm(lang string, n int) int {
 			return 1
 		}
 		return 0
-	case "id_ID", "ja_JP":
+	case "id_ID", "ja_JP", "ko_KR":
 		return 0
 	case "pl_PL":
 		switch {
