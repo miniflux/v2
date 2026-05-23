@@ -25,7 +25,7 @@ func StripTags(input string) string {
 		return ""
 	}
 
-	return dst.String()
+	return strings.TrimSpace(dst.String())
 }
 
 // stripIter iterates over the input [io.Reader] and calls the yield function for each [html.TextToken].
