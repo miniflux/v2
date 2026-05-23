@@ -177,7 +177,7 @@ func findFeedAuthor(rssChannel *rssChannel) string {
 		return ""
 	}
 
-	return strings.TrimSpace(sanitizer.StripTags(author))
+	return sanitizer.StripTags(author)
 }
 
 func findFeedTags(rssChannel *rssChannel) []string {
@@ -296,7 +296,7 @@ func findEntryAuthor(rssItem *rssItem) string {
 		return ""
 	}
 
-	return strings.TrimSpace(sanitizer.StripTags(author))
+	return sanitizer.StripTags(author)
 }
 
 func findEntryTags(rssItem *rssItem) []string {

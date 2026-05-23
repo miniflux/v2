@@ -7,7 +7,7 @@ import "testing"
 
 func TestStripTags(t *testing.T) {
 	input := `This <a href="/test.html">link is relative</a> and <strong>this</strong> image: <img src="../folder/image.png"/>`
-	expected := `This link is relative and this image: `
+	expected := `This link is relative and this image:`
 	output := StripTags(input)
 
 	if expected != output {
