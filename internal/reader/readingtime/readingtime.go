@@ -14,12 +14,14 @@ import (
 
 // EstimateReadingTime returns the estimated reading time of an article in minute.
 func EstimateReadingTime(content string, defaultReadingSpeed, cjkReadingSpeed int) int {
-	sanitizedContent := sanitizer.StripTags(content)
-	truncationPoint := min(len(sanitizedContent), 50)
+	const truncationPoint = 50
 
-	if isCJK(sanitizedContent[:truncationPoint]) {
+	sanitizedContent := sanitizer.StripTags(content)
+
+	if isCJK(sanitizedContent, truncationPoint) {
 		return (utf8.RuneCountInString(sanitizedContent) + cjkReadingSpeed - 1) / cjkReadingSpeed
 	}
+
 	return (countWords(sanitizedContent) + defaultReadingSpeed - 1) / defaultReadingSpeed
 }
 
@@ -31,10 +33,15 @@ func countWords(s string) int {
 	return n
 }
 
-func isCJK(text string) bool {
+func isCJK(text string, limit int) bool {
+	totalRunes := 0
 	totalCJK := 0
 
-	for _, r := range text[:min(len(text), 50)] {
+	for _, r := range text {
+		if totalRunes++; totalRunes > limit {
+			break
+		}
+
 		if unicode.Is(unicode.Han, r) ||
 			unicode.Is(unicode.Hangul, r) ||
 			unicode.Is(unicode.Hiragana, r) ||
