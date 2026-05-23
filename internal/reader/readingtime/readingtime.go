@@ -14,7 +14,7 @@ import (
 
 // EstimateReadingTime returns the estimated reading time of an article in minute.
 func EstimateReadingTime(content string, defaultReadingSpeed, cjkReadingSpeed int) int {
-	const truncationPoint = 50
+	const truncationPoint = 100
 
 	sanitizedContent := sanitizer.StripTags(content)
 
@@ -34,24 +34,25 @@ func countWords(s string) int {
 }
 
 func isCJK(text string, limit int) bool {
-	totalRunes := 0
-	totalCJK := 0
-
+	var letters, totalCJK int
 	for _, r := range text {
-		if totalRunes++; totalRunes > limit {
+		// Numbers and control characters often used in CJK too.
+		// Counting them makes detection less reliable.
+		if !unicode.In(r, unicode.Letter) {
+			continue
+		}
+
+		if letters++; letters == limit {
 			break
 		}
 
-		if unicode.Is(unicode.Han, r) ||
-			unicode.Is(unicode.Hangul, r) ||
-			unicode.Is(unicode.Hiragana, r) ||
-			unicode.Is(unicode.Katakana, r) ||
-			unicode.Is(unicode.Yi, r) ||
-			unicode.Is(unicode.Bopomofo, r) {
+		if unicode.In(r, unicode.Han, unicode.Hangul, unicode.Hiragana, unicode.Katakana, unicode.Yi, unicode.Bopomofo) {
 			totalCJK++
 		}
 	}
 
-	// if at least 50% of the text is CJK, odds are that the text is in CJK.
-	return totalCJK > len(text)/50
+	// If at least half of the letters is CJK, odds are that the text is CJK.
+	midpoint := letters / 2
+
+	return totalCJK > midpoint
 }
