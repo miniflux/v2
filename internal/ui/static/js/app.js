@@ -18,14 +18,17 @@ if (!window.trustedTypes || !trustedTypes.createPolicy) {
  *
  * @param {string} url - The URL to send the request to.
  * @param {Object} [body] - The body of the request (optional).
+ * @param {RequestInit} [fetchOptions] - Additional fetch options (optional).
  * @returns {Promise<Response>} The response from the fetch request.
  */
-function sendPOSTRequest(url, body = null) {
+function sendPOSTRequest(url, body = null, fetchOptions = {}) {
     const options = {
         method: "POST",
         headers: {
-            "X-Csrf-Token": document.body.dataset.csrfToken || ""
-        }
+            "X-Csrf-Token": document.body.dataset.csrfToken || "",
+            ...fetchOptions.headers,
+        },
+        ...fetchOptions,
     };
 
     if (body !== null) {
@@ -34,6 +37,32 @@ function sendPOSTRequest(url, body = null) {
     }
 
     return fetch(url, options);
+}
+
+/**
+ * Navigate after a POST request that may redirect with a flash message.
+ *
+ * @param {Response} response - The fetch response.
+ * @param {string} [redirectURL] - An explicit redirect URL (optional).
+ */
+function navigateAfterPOSTResponse(response, redirectURL) {
+    if (redirectURL) {
+        window.location.href = redirectURL;
+        return;
+    }
+
+    const locationHeader = response.headers.get("Location");
+    if (locationHeader) {
+        window.location.href = locationHeader;
+        return;
+    }
+
+    if (response?.redirected && response.url) {
+        window.location.href = response.url;
+        return;
+    }
+
+    window.location.reload();
 }
 
 /**
@@ -663,12 +692,8 @@ function toggleEntryStatus(element, toasting) {
 function handleRefreshAllFeedsAction() {
     const refreshAllFeedsUrl = document.body.dataset.refreshAllFeedsUrl;
     if (refreshAllFeedsUrl) {
-        sendPOSTRequest(refreshAllFeedsUrl).then((response) => {
-            if (response?.redirected && response.url) {
-                window.location.href = response.url;
-            } else {
-                window.location.reload();
-            }
+        sendPOSTRequest(refreshAllFeedsUrl, null, { redirect: "manual" }).then((response) => {
+            navigateAfterPOSTResponse(response);
         });
     }
 }
@@ -1250,14 +1275,8 @@ function initializeClickHandlers() {
     // Generic confirmation handler
     onClick(":is(a, button)[data-confirm]", (event) => {
         handleConfirmationMessage(event.target, (url, redirectURL) => {
-            sendPOSTRequest(url).then((response) => {
-                if (redirectURL) {
-                    window.location.href = redirectURL;
-                } else if (response?.redirected && response.url) {
-                    window.location.href = response.url;
-                } else {
-                    window.location.reload();
-                }
+            sendPOSTRequest(url, null, { redirect: "manual" }).then((response) => {
+                navigateAfterPOSTResponse(response, redirectURL);
             });
         });
     });
