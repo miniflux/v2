@@ -36,14 +36,16 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 		feed.SiteURL = absoluteSiteURL
 	}
 
-	// Try to find the feed URL from the Atom links.
-	for _, atomLink := range r.rss.Channel.Links {
-		atomLinkHref := strings.TrimSpace(atomLink.Href)
-		if atomLinkHref != "" && atomLink.Rel == "self" {
-			if absoluteFeedURL, err := urllib.ResolveToAbsoluteURL(feed.FeedURL, atomLinkHref); err == nil {
-				feed.FeedURL = absoluteFeedURL
-				break
-			}
+	// Try to find the feed URL from the Channel links.
+	for _, link := range r.rss.Channel.Links {
+		href := strings.TrimSpace(link.Href)
+		if href == "" || link.Rel != "self" {
+			continue
+		}
+
+		if absoluteFeedURL, err := urllib.ResolveToAbsoluteURL(feed.FeedURL, href); err == nil {
+			feed.FeedURL = absoluteFeedURL
+			break
 		}
 	}
 
@@ -78,19 +80,20 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 
 		// Populate the entry URL.
 		entryURL := findEntryURL(&item)
-		if entryURL == "" {
+		if entryURL != "" {
+			entry.URL = entryURL
+			if absoluteEntryURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, entryURL); err == nil {
+				entry.URL = absoluteEntryURL
+			}
+		}
+
+		if entry.URL == "" {
+			// Fallback to the feed URL if no entry URL is found.
+			entry.URL = feed.SiteURL
+
 			// Fallback to the first enclosure URL if it exists.
 			if len(entry.Enclosures) > 0 && entry.Enclosures[0].URL != "" {
 				entry.URL = entry.Enclosures[0].URL
-			} else {
-				// Fallback to the feed URL if no entry URL is found.
-				entry.URL = feed.SiteURL
-			}
-		} else {
-			if absoluteEntryURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, entryURL); err == nil {
-				entry.URL = absoluteEntryURL
-			} else {
-				entry.URL = entryURL
 			}
 		}
 
@@ -259,21 +262,21 @@ func findEntryDate(rssItem *rssItem) time.Time {
 		value = rssItem.DublinCoreDate
 	}
 
-	if value != "" {
-		result, err := date.Parse(value)
-		if err != nil {
-			slog.Debug("Unable to parse date from RSS feed",
-				slog.String("date", value),
-				slog.String("guid", rssItem.GUID.Data),
-				slog.Any("error", err),
-			)
-			return time.Now()
-		}
-
-		return result
+	if value = strings.TrimSpace(value); value == "" {
+		return time.Now()
 	}
 
-	return time.Now()
+	parsedDate, err := date.Parse(value)
+	if err != nil {
+		slog.Debug("Unable to parse date from RSS feed",
+			slog.String("date", value),
+			slog.String("guid", rssItem.GUID.Data),
+			slog.Any("error", err),
+		)
+		return time.Now()
+	}
+
+	return parsedDate
 }
 
 func findEntryAuthor(rssItem *rssItem) string {
@@ -333,22 +336,28 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 		if mediaURL == "" {
 			continue
 		}
-		if _, found := duplicates[mediaURL]; !found {
-			if mediaAbsoluteURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL); err != nil {
-				slog.Debug("Unable to build absolute URL for media thumbnail",
-					slog.String("url", mediaThumbnail.URL),
-					slog.String("site_url", siteURL),
-					slog.Any("error", err),
-				)
-			} else {
-				duplicates[mediaAbsoluteURL] = true
-				enclosures = append(enclosures, &model.Enclosure{
-					URL:      mediaAbsoluteURL,
-					MimeType: mediaThumbnail.MimeType(),
-					Size:     mediaThumbnail.Size(),
-				})
-			}
+
+		mediaURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL)
+		if err != nil {
+			slog.Debug("Unable to build absolute URL for media thumbnail",
+				slog.String("url", mediaThumbnail.URL),
+				slog.String("site_url", siteURL),
+				slog.Any("error", err),
+			)
+			continue
 		}
+
+		if _, found := duplicates[mediaURL]; found {
+			continue
+		}
+
+		duplicates[mediaURL] = true
+
+		enclosures = append(enclosures, &model.Enclosure{
+			URL:      mediaURL,
+			MimeType: mediaThumbnail.MimeType(),
+			Size:     mediaThumbnail.Size(),
+		})
 	}
 
 	for _, enclosure := range rssItem.Enclosures {
@@ -370,15 +379,17 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 			enclosureURL = absoluteEnclosureURL
 		}
 
-		if _, found := duplicates[enclosureURL]; !found {
-			duplicates[enclosureURL] = true
-
-			enclosures = append(enclosures, &model.Enclosure{
-				URL:      enclosureURL,
-				MimeType: enclosure.Type,
-				Size:     enclosure.Size(),
-			})
+		if _, found := duplicates[enclosureURL]; found {
+			continue
 		}
+
+		duplicates[enclosureURL] = true
+
+		enclosures = append(enclosures, &model.Enclosure{
+			URL:      enclosureURL,
+			MimeType: enclosure.Type,
+			Size:     enclosure.Size(),
+		})
 	}
 
 	for _, mediaContent := range mediaContents {
@@ -386,23 +397,28 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 		if mediaURL == "" {
 			continue
 		}
-		if _, found := duplicates[mediaURL]; !found {
-			mediaURL := strings.TrimSpace(mediaContent.URL)
-			if mediaAbsoluteURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL); err != nil {
-				slog.Debug("Unable to build absolute URL for media content",
-					slog.String("url", mediaContent.URL),
-					slog.String("site_url", siteURL),
-					slog.Any("error", err),
-				)
-			} else {
-				duplicates[mediaAbsoluteURL] = true
-				enclosures = append(enclosures, &model.Enclosure{
-					URL:      mediaAbsoluteURL,
-					MimeType: mediaContent.MimeType(),
-					Size:     mediaContent.Size(),
-				})
-			}
+
+		mediaURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL)
+		if err != nil {
+			slog.Debug("Unable to build absolute URL for media content",
+				slog.String("url", mediaContent.URL),
+				slog.String("site_url", siteURL),
+				slog.Any("error", err),
+			)
+			continue
 		}
+
+		if _, found := duplicates[mediaURL]; found {
+			continue
+		}
+
+		duplicates[mediaURL] = true
+
+		enclosures = append(enclosures, &model.Enclosure{
+			URL:      mediaURL,
+			MimeType: mediaContent.MimeType(),
+			Size:     mediaContent.Size(),
+		})
 	}
 
 	for _, mediaPeerLink := range mediaPeerLinks {
@@ -410,23 +426,28 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 		if mediaURL == "" {
 			continue
 		}
-		if _, found := duplicates[mediaURL]; !found {
-			mediaURL := strings.TrimSpace(mediaPeerLink.URL)
-			if mediaAbsoluteURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL); err != nil {
-				slog.Debug("Unable to build absolute URL for media peer link",
-					slog.String("url", mediaPeerLink.URL),
-					slog.String("site_url", siteURL),
-					slog.Any("error", err),
-				)
-			} else {
-				duplicates[mediaAbsoluteURL] = true
-				enclosures = append(enclosures, &model.Enclosure{
-					URL:      mediaAbsoluteURL,
-					MimeType: mediaPeerLink.MimeType(),
-					Size:     mediaPeerLink.Size(),
-				})
-			}
+
+		mediaURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL)
+		if err != nil {
+			slog.Debug("Unable to build absolute URL for media peer link",
+				slog.String("url", mediaPeerLink.URL),
+				slog.String("site_url", siteURL),
+				slog.Any("error", err),
+			)
+			continue
 		}
+
+		if _, found := duplicates[mediaURL]; found {
+			continue
+		}
+
+		duplicates[mediaURL] = true
+
+		enclosures = append(enclosures, &model.Enclosure{
+			URL:      mediaURL,
+			MimeType: mediaPeerLink.MimeType(),
+			Size:     mediaPeerLink.Size(),
+		})
 	}
 
 	return enclosures
