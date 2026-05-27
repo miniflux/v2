@@ -1011,9 +1011,10 @@ func TestAttrLowerCase(t *testing.T) {
 }
 
 func TestDeeplyNestedpage(t *testing.T) {
+	maxDepth := 512 // html.Parse has a maximum depth of 512
 	input := "test"
-	// -3 instead of -1 because <html><body> is automatically added.
-	for range maxDepth - 3 {
+	// -2 instead of -1 because <html><body> is automatically added.
+	for range maxDepth - 2 {
 		input = "<div>" + input + "</div>"
 	}
 	output := sanitizeHTMLWithDefaultOptions("http://example.org/", input)
@@ -1024,7 +1025,7 @@ func TestDeeplyNestedpage(t *testing.T) {
 	}
 
 	input = "test"
-	for range maxDepth - 2 {
+	for range maxDepth - 1 {
 		input = "<div>" + input + "</div>"
 	}
 	output = sanitizeHTMLWithDefaultOptions("http://example.org/", input)
