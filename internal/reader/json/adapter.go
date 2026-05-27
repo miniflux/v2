@@ -56,32 +56,34 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 
 	// Populate the icon URL if present.
 	for _, iconURL := range []string{j.jsonFeed.FaviconURL, j.jsonFeed.IconURL} {
-		iconURL = strings.TrimSpace(iconURL)
-		if iconURL != "" {
-			if absoluteIconURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, iconURL); err == nil {
-				feed.IconURL = absoluteIconURL
-				break
-			}
+		if iconURL = strings.TrimSpace(iconURL); iconURL == "" {
+			continue
+		}
+
+		if absoluteIconURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, iconURL); err == nil {
+			feed.IconURL = absoluteIconURL
+			break
 		}
 	}
 
 	for _, item := range j.jsonFeed.Items {
 		entry := model.NewEntry()
-		entry.Title = strings.TrimSpace(item.Title)
 
 		for _, itemURL := range []string{item.URL, item.ExternalURL} {
-			itemURL = strings.TrimSpace(itemURL)
-			if itemURL != "" {
-				// Make sure the entry URL is absolute.
-				if entryURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, itemURL); err == nil {
-					entry.URL = entryURL
-				}
+			if itemURL = strings.TrimSpace(itemURL); itemURL == "" {
+				continue
+			}
+
+			// Make sure the entry URL is absolute.
+			if entryURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, itemURL); err == nil {
+				entry.URL = entryURL
 				break
 			}
 		}
 
-		// The entry title is optional, so we need to find a fallback.
+		entry.Title = strings.TrimSpace(item.Title)
 		if entry.Title == "" {
+			// The entry title is optional, so we need to find a fallback.
 			for _, value := range []string{item.Summary, item.ContentText, item.ContentHTML} {
 				if value = sanitizer.TruncateHTML(value, 100); value == "" {
 					continue
@@ -99,29 +101,34 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 
 		// Populate the entry content.
 		for _, value := range []string{item.ContentHTML, item.ContentText, item.Summary} {
-			value = strings.TrimSpace(value)
-			if value != "" {
-				entry.Content = value
-				break
+			if value = strings.TrimSpace(value); value == "" {
+				continue
 			}
+
+			entry.Content = value
+			break
 		}
 
 		// Populate the entry date.
 		for _, value := range []string{item.DatePublished, item.DateModified} {
-			value = strings.TrimSpace(value)
-			if value != "" {
-				if date, err := date.Parse(value); err != nil {
-					slog.Debug("Unable to parse date from JSON feed",
-						slog.String("date", value),
-						slog.String("url", entry.URL),
-						slog.Any("error", err),
-					)
-				} else {
-					entry.Date = date
-					break
-				}
+			if value = strings.TrimSpace(value); value == "" {
+				continue
 			}
+
+			parsedDate, err := date.Parse(value)
+			if err != nil {
+				slog.Debug("Unable to parse date from JSON feed",
+					slog.String("date", value),
+					slog.String("url", entry.URL),
+					slog.Any("error", err),
+				)
+				continue
+			}
+
+			entry.Date = parsedDate
+			break
 		}
+
 		if entry.Date.IsZero() {
 			entry.Date = time.Now()
 		}
@@ -146,15 +153,25 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		// Populate the entry enclosures.
 		for _, attachment := range item.Attachments {
 			attachmentURL := strings.TrimSpace(attachment.URL)
-			if attachmentURL != "" {
-				if absoluteAttachmentURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, attachmentURL); err == nil {
-					entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
-						URL:      absoluteAttachmentURL,
-						MimeType: attachment.MimeType,
-						Size:     attachment.Size,
-					})
-				}
+			if attachmentURL == "" {
+				continue
 			}
+
+			absoluteAttachmentURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, attachmentURL)
+			if err != nil {
+				slog.Debug("Unable to build absolute URL for attachment",
+					slog.String("url", attachmentURL),
+					slog.String("site_url", feed.SiteURL),
+					slog.Any("error", err),
+				)
+				continue
+			}
+
+			entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+				URL:      absoluteAttachmentURL,
+				MimeType: attachment.MimeType,
+				Size:     attachment.Size,
+			})
 		}
 
 		// Populate the entry tags.

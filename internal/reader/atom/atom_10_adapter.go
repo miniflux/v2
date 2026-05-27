@@ -27,7 +27,10 @@ func NewAtom10Adapter(atomFeed *atom10Feed) *atom10Adapter {
 }
 
 func (a *atom10Adapter) BuildFeed(baseURL string) *model.Feed {
-	feed := new(model.Feed)
+	feed := &model.Feed{
+		FeedURL: baseURL,
+		SiteURL: baseURL,
+	}
 
 	// Populate the feed URL.
 	feedURL := a.atomFeed.Links.firstLinkWithRelation("self")
@@ -35,8 +38,6 @@ func (a *atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 		if absoluteFeedURL, err := urllib.ResolveToAbsoluteURL(baseURL, feedURL); err == nil {
 			feed.FeedURL = absoluteFeedURL
 		}
-	} else {
-		feed.FeedURL = baseURL
 	}
 
 	// Populate the site URL.
@@ -45,8 +46,6 @@ func (a *atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 		if absoluteSiteURL, err := urllib.ResolveToAbsoluteURL(baseURL, siteURL); err == nil {
 			feed.SiteURL = absoluteSiteURL
 		}
-	} else {
-		feed.SiteURL = baseURL
 	}
 
 	// Populate the feed title.
@@ -59,15 +58,17 @@ func (a *atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 	feed.Description = a.atomFeed.Subtitle.body()
 
 	// Populate the feed icon.
-	if a.atomFeed.Icon != "" {
-		if absoluteIconURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, a.atomFeed.Icon); err == nil {
-			feed.IconURL = absoluteIconURL
+	for _, value := range []string{a.atomFeed.Icon, a.atomFeed.Logo} {
+		if value = strings.TrimSpace(value); value == "" {
+			continue
 		}
-	} else if a.atomFeed.Logo != "" {
-		if absoluteLogoURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, a.atomFeed.Logo); err == nil {
-			feed.IconURL = absoluteLogoURL
+
+		if iconURL, err := urllib.ResolveToAbsoluteURL(feed.SiteURL, value); err == nil {
+			feed.IconURL = iconURL
+			break
 		}
 	}
+
 	feed.Entries = a.populateEntries(feed.SiteURL)
 	return feed
 }
@@ -115,19 +116,24 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 
 		// Populate the entry date.
 		for _, value := range []string{atomEntry.Published, atomEntry.Updated} {
-			if value != "" {
-				if parsedDate, err := date.Parse(value); err != nil {
-					slog.Debug("Unable to parse date from Atom 1.0 feed",
-						slog.String("date", value),
-						slog.String("url", entry.URL),
-						slog.Any("error", err),
-					)
-				} else {
-					entry.Date = parsedDate
-					break
-				}
+			if value = strings.TrimSpace(value); value == "" {
+				continue
 			}
+
+			parsedDate, err := date.Parse(value)
+			if err != nil {
+				slog.Debug("Unable to parse date from Atom 1.0 feed",
+					slog.String("date", value),
+					slog.String("url", entry.URL),
+					slog.Any("error", err),
+				)
+				continue
+			}
+
+			entry.Date = parsedDate
+			break
 		}
+
 		if entry.Date.IsZero() {
 			entry.Date = time.Now()
 		}
@@ -167,22 +173,28 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 			if mediaURL == "" {
 				continue
 			}
-			if _, found := uniqueEnclosuresMap[mediaURL]; !found {
-				if mediaAbsoluteURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL); err != nil {
-					slog.Debug("Unable to build absolute URL for media thumbnail",
-						slog.String("url", mediaThumbnail.URL),
-						slog.String("site_url", siteURL),
-						slog.Any("error", err),
-					)
-				} else {
-					uniqueEnclosuresMap[mediaAbsoluteURL] = true
-					entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
-						URL:      mediaAbsoluteURL,
-						MimeType: mediaThumbnail.MimeType(),
-						Size:     mediaThumbnail.Size(),
-					})
-				}
+
+			if _, found := uniqueEnclosuresMap[mediaURL]; found {
+				continue
 			}
+
+			mediaAbsoluteURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL)
+			if err != nil {
+				slog.Debug("Unable to build absolute URL for media thumbnail",
+					slog.String("url", mediaThumbnail.URL),
+					slog.String("site_url", siteURL),
+					slog.Any("error", err),
+				)
+				continue
+			}
+
+			uniqueEnclosuresMap[mediaAbsoluteURL] = true
+
+			entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+				URL:      mediaAbsoluteURL,
+				MimeType: mediaThumbnail.MimeType(),
+				Size:     mediaThumbnail.Size(),
+			})
 		}
 
 		for _, link := range atomEntry.Links.findAllLinksWithRelation("enclosure") {
@@ -193,17 +205,21 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 					slog.String("entry_url", entry.URL),
 					slog.Any("error", err),
 				)
-			} else {
-				if _, found := uniqueEnclosuresMap[absoluteEnclosureURL]; !found {
-					uniqueEnclosuresMap[absoluteEnclosureURL] = true
-					length, _ := strconv.ParseInt(link.Length, 10, 0)
-					entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
-						URL:      absoluteEnclosureURL,
-						MimeType: link.Type,
-						Size:     length,
-					})
-				}
+				continue
 			}
+
+			if _, found := uniqueEnclosuresMap[absoluteEnclosureURL]; found {
+				continue
+			}
+
+			uniqueEnclosuresMap[absoluteEnclosureURL] = true
+
+			length, _ := strconv.ParseInt(link.Length, 10, 0)
+			entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+				URL:      absoluteEnclosureURL,
+				MimeType: link.Type,
+				Size:     length,
+			})
 		}
 
 		for _, mediaContent := range atomEntry.AllMediaContents() {
@@ -211,22 +227,28 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 			if mediaURL == "" {
 				continue
 			}
-			if mediaAbsoluteURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL); err != nil {
+
+			mediaAbsoluteURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL)
+			if err != nil {
 				slog.Debug("Unable to build absolute URL for media content",
 					slog.String("url", mediaContent.URL),
 					slog.String("site_url", siteURL),
 					slog.Any("error", err),
 				)
-			} else {
-				if _, found := uniqueEnclosuresMap[mediaAbsoluteURL]; !found {
-					uniqueEnclosuresMap[mediaAbsoluteURL] = true
-					entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
-						URL:      mediaAbsoluteURL,
-						MimeType: mediaContent.MimeType(),
-						Size:     mediaContent.Size(),
-					})
-				}
+				continue
 			}
+
+			if _, found := uniqueEnclosuresMap[mediaAbsoluteURL]; found {
+				continue
+			}
+
+			uniqueEnclosuresMap[mediaAbsoluteURL] = true
+
+			entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+				URL:      mediaAbsoluteURL,
+				MimeType: mediaContent.MimeType(),
+				Size:     mediaContent.Size(),
+			})
 		}
 
 		for _, mediaPeerLink := range atomEntry.AllMediaPeerLinks() {
@@ -234,22 +256,28 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 			if mediaURL == "" {
 				continue
 			}
-			if mediaAbsoluteURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL); err != nil {
+
+			mediaAbsoluteURL, err := urllib.ResolveToAbsoluteURL(siteURL, mediaURL)
+			if err != nil {
 				slog.Debug("Unable to build absolute URL for media peer link",
 					slog.String("url", mediaPeerLink.URL),
 					slog.String("site_url", siteURL),
 					slog.Any("error", err),
 				)
-			} else {
-				if _, found := uniqueEnclosuresMap[mediaAbsoluteURL]; !found {
-					uniqueEnclosuresMap[mediaAbsoluteURL] = true
-					entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
-						URL:      mediaAbsoluteURL,
-						MimeType: mediaPeerLink.MimeType(),
-						Size:     mediaPeerLink.Size(),
-					})
-				}
+				continue
 			}
+
+			if _, found := uniqueEnclosuresMap[mediaAbsoluteURL]; found {
+				continue
+			}
+
+			uniqueEnclosuresMap[mediaAbsoluteURL] = true
+
+			entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+				URL:      mediaAbsoluteURL,
+				MimeType: mediaPeerLink.MimeType(),
+				Size:     mediaPeerLink.Size(),
+			})
 		}
 
 		entries = append(entries, entry)

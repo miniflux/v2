@@ -19,7 +19,10 @@ type atom03Adapter struct {
 }
 
 func (a *atom03Adapter) buildFeed(baseURL string) *model.Feed {
-	feed := new(model.Feed)
+	feed := &model.Feed{
+		FeedURL: baseURL,
+		SiteURL: baseURL,
+	}
 
 	// Populate the feed URL.
 	feedURL := a.atomFeed.Links.firstLinkWithRelation("self")
@@ -27,8 +30,6 @@ func (a *atom03Adapter) buildFeed(baseURL string) *model.Feed {
 		if absoluteFeedURL, err := urllib.ResolveToAbsoluteURL(baseURL, feedURL); err == nil {
 			feed.FeedURL = absoluteFeedURL
 		}
-	} else {
-		feed.FeedURL = baseURL
 	}
 
 	// Populate the site URL.
@@ -37,8 +38,6 @@ func (a *atom03Adapter) buildFeed(baseURL string) *model.Feed {
 		if absoluteSiteURL, err := urllib.ResolveToAbsoluteURL(baseURL, siteURL); err == nil {
 			feed.SiteURL = absoluteSiteURL
 		}
-	} else {
-		feed.SiteURL = baseURL
 	}
 
 	// Populate the feed title.
@@ -69,6 +68,7 @@ func (a *atom03Adapter) buildFeed(baseURL string) *model.Feed {
 		if entry.Title == "" {
 			entry.Title = sanitizer.TruncateHTML(entry.Content, 100)
 		}
+
 		if entry.Title == "" {
 			entry.Title = entry.URL
 		}
@@ -81,17 +81,24 @@ func (a *atom03Adapter) buildFeed(baseURL string) *model.Feed {
 
 		// Populate the entry date.
 		for _, value := range []string{atomEntry.Issued, atomEntry.Modified, atomEntry.Created} {
-			if parsedDate, err := date.Parse(value); err == nil {
-				entry.Date = parsedDate
-				break
-			} else {
+			if value = strings.TrimSpace(value); value == "" {
+				continue
+			}
+
+			parsedDate, err := date.Parse(value)
+			if err != nil {
 				slog.Debug("Unable to parse date from Atom 0.3 feed",
 					slog.String("date", value),
 					slog.String("id", atomEntry.ID),
 					slog.Any("error", err),
 				)
+				continue
 			}
+
+			entry.Date = parsedDate
+			break
 		}
+
 		if entry.Date.IsZero() {
 			entry.Date = time.Now()
 		}
