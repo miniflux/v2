@@ -66,8 +66,6 @@ type UserModificationRequest struct {
 	Stylesheet                      *string  `json:"stylesheet"`
 	CustomJS                        *string  `json:"custom_js"`
 	ExternalFontHosts               *string  `json:"external_font_hosts"`
-	GoogleID                        *string  `json:"google_id"`
-	OpenIDConnectID                 *string  `json:"openid_connect_id"`
 	EntriesPerPage                  *int     `json:"entries_per_page"`
 	IsAdmin                         *bool    `json:"is_admin"`
 	KeyboardShortcuts               *bool    `json:"keyboard_shortcuts"`
@@ -132,14 +130,6 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.ExternalFontHosts != nil {
 		user.ExternalFontHosts = *u.ExternalFontHosts
-	}
-
-	if u.GoogleID != nil {
-		user.GoogleID = *u.GoogleID
-	}
-
-	if u.OpenIDConnectID != nil {
-		user.OpenIDConnectID = *u.OpenIDConnectID
 	}
 
 	if u.EntriesPerPage != nil {
