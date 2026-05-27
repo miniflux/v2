@@ -20,11 +20,7 @@ type atom10Adapter struct {
 	atomFeed *atom10Feed
 }
 
-func NewAtom10Adapter(atomFeed *atom10Feed) *atom10Adapter {
-	return &atom10Adapter{atomFeed}
-}
-
-func (a *atom10Adapter) BuildFeed(baseURL string) *model.Feed {
+func (a *atom10Adapter) buildFeed(baseURL string) *model.Feed {
 	feed := &model.Feed{
 		FeedURL: baseURL,
 		SiteURL: baseURL,
