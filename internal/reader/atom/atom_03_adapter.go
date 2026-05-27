@@ -5,6 +5,7 @@ package atom // import "miniflux.app/v2/internal/reader/atom"
 
 import (
 	"log/slog"
+	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/crypto"

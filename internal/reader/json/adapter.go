@@ -4,6 +4,7 @@
 package json // import "miniflux.app/v2/internal/reader/json"
 
 import (
+	"cmp"
 	"log/slog"
 	"slices"
 	"strings"
@@ -134,20 +135,12 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		}
 
 		// Populate the entry author.
-		itemAuthors := j.jsonFeed.Authors
-		itemAuthors = append(itemAuthors, item.Authors...)
-		itemAuthors = append(itemAuthors, item.Author, j.jsonFeed.Author)
+		authorNames := make([]string, 0, len(j.jsonFeed.Authors)+len(item.Authors)+1+1)
 
-		var authorNames = make([]string, 0, len(itemAuthors))
-		for _, author := range itemAuthors {
-			authorName := strings.TrimSpace(author.Name)
-			if authorName != "" {
-				authorNames = append(authorNames, authorName)
-			}
-		}
+		authorNames = appendSorted(authorNames, JSONAuthor.name, j.jsonFeed.Authors...)
+		authorNames = appendSorted(authorNames, JSONAuthor.name, item.Authors...)
+		authorNames = appendSorted(authorNames, JSONAuthor.name, item.Author, j.jsonFeed.Author)
 
-		slices.Sort(authorNames)
-		authorNames = slices.Compact(authorNames)
 		entry.Author = strings.Join(authorNames, ", ")
 
 		// Populate the entry enclosures.
@@ -175,16 +168,8 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		}
 
 		// Populate the entry tags.
-		for _, tag := range item.Tags {
-			tag = strings.TrimSpace(tag)
-			if tag != "" {
-				entry.Tags = append(entry.Tags, tag)
-			}
-		}
-
-		// Sort and deduplicate tags.
-		slices.Sort(entry.Tags)
-		entry.Tags = slices.Compact(entry.Tags)
+		entry.Tags = make([]string, 0, len(item.Tags))
+		entry.Tags = appendSorted(entry.Tags, strings.TrimSpace, item.Tags...)
 
 		// Generate a hash for the entry.
 		for _, value := range []string{item.ID, item.URL, item.ExternalURL, item.ContentText + item.ContentHTML + item.Summary} {
@@ -199,4 +184,30 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 	}
 
 	return feed
+}
+
+// appendSortedSeq appends elements from "values" slice into "sorted" slice.
+//   - "fn" applied to every element of "values"
+//   - elements inserted into "sorted" slice so it stays sorted
+//   - duplicate elements are not inserted
+func appendSorted[I any, O cmp.Ordered](sorted []O, fn func(I) O, values ...I) []O {
+	var zero O
+
+	sorted = slices.Grow(sorted, len(values))
+	for in := range slices.Values(values) {
+		out := fn(in)
+		if out == zero {
+			continue
+		}
+
+		where, found := slices.BinarySearch(sorted, out)
+		if found {
+			continue
+		}
+
+		// Insert sorted to avoid duplicates.
+		sorted = slices.Insert(sorted, where, out)
+	}
+
+	return sorted
 }

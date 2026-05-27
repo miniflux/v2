@@ -5,8 +5,6 @@ package atom // import "miniflux.app/v2/internal/reader/atom"
 
 import (
 	"log/slog"
-	"slices"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -110,8 +108,7 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 		if len(authors) == 0 {
 			authors = a.atomFeed.Authors.personNames()
 		}
-		sort.Strings(authors)
-		authors = slices.Compact(authors)
+
 		entry.Author = strings.Join(authors, ", ")
 
 		// Populate the entry date.
@@ -139,14 +136,10 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 		}
 
 		// Populate categories.
-		categories := atomEntry.Categories.CategoryNames()
-		if len(categories) == 0 {
-			categories = a.atomFeed.Categories.CategoryNames()
+		entry.Tags = atomEntry.Categories.CategoryNames()
+		if len(entry.Tags) == 0 {
+			entry.Tags = a.atomFeed.Categories.CategoryNames()
 		}
-
-		// Sort and deduplicate categories.
-		sort.Strings(categories)
-		entry.Tags = slices.Compact(categories)
 
 		// Populate the commentsURL if defined.
 		// See https://tools.ietf.org/html/rfc4685#section-4

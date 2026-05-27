@@ -3,7 +3,10 @@
 
 package itunes // import "miniflux.app/v2/internal/reader/itunes"
 
-import "strings"
+import (
+	"iter"
+	"strings"
+)
 
 // Specs: https://help.apple.com/itc/podcasts_connect/#/itcb54353390
 type ItunesChannelElement struct {
@@ -22,15 +25,16 @@ type ItunesChannelElement struct {
 	ItunesType       string                  `xml:"http://www.itunes.com/dtds/podcast-1.0.dtd type"`
 }
 
-func (i *ItunesChannelElement) GetItunesCategories() []string {
-	categories := make([]string, 0, len(i.ItunesCategories))
-	for _, category := range i.ItunesCategories {
-		categories = append(categories, category.Text)
-		if category.SubCategory != nil {
-			categories = append(categories, category.SubCategory.Text)
+func (i *ItunesChannelElement) ItunesCategoriesSeq() iter.Seq[string] {
+	return func(yield func(string) bool) {
+		for _, category := range i.ItunesCategories {
+			for text := range category.All() {
+				if !yield(text) {
+					return
+				}
+			}
 		}
 	}
-	return categories
 }
 
 type ItunesItemElement struct {
@@ -54,6 +58,22 @@ type ItunesImageElement struct {
 type ItunesCategoryElement struct {
 	Text        string                 `xml:"text,attr"`
 	SubCategory *ItunesCategoryElement `xml:"http://www.itunes.com/dtds/podcast-1.0.dtd category"`
+}
+
+// All returns iterator for all category names including every nested [ItunesCategoryElement.SubCategory].
+func (cat *ItunesCategoryElement) All() iter.Seq[string] {
+	return func(yield func(string) bool) {
+		for ; cat != nil; cat = cat.SubCategory {
+			text := strings.TrimSpace(cat.Text)
+			if text == "" {
+				continue
+			}
+
+			if !yield(text) {
+				return
+			}
+		}
+	}
 }
 
 type ItunesOwnerElement struct {

@@ -4,6 +4,7 @@
 package media // import "miniflux.app/v2/internal/reader/media"
 
 import (
+	"iter"
 	"regexp"
 	"strconv"
 	"strings"
@@ -174,15 +175,15 @@ func (dl DescriptionList) First() string {
 
 type MediaCategoryList []MediaCategory
 
-func (mcl MediaCategoryList) Labels() []string {
-	var labels []string
-	for _, category := range mcl {
-		label := strings.TrimSpace(category.Label)
-		if label != "" {
-			labels = append(labels, label)
+func (mcl MediaCategoryList) LabelsSeq() iter.Seq[string] {
+	return func(yield func(string) bool) {
+		for _, category := range mcl {
+			label := strings.TrimSpace(category.Label)
+			if !yield(label) {
+				return
+			}
 		}
 	}
-	return labels
 }
 
 type MediaCategory struct {
