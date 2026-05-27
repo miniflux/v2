@@ -27,6 +27,6 @@ func Parse(baseURL string, r io.ReadSeeker, version string) (*model.Feed, error)
 			return nil, fmt.Errorf("atom: unable to parse Atom 1.0 feed: %w", err)
 		}
 		adapter := &atom10Adapter{atomFeed}
-		return adapter.BuildFeed(baseURL), nil
+		return adapter.buildFeed(baseURL), nil
 	}
 }
