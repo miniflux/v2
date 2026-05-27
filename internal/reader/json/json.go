@@ -3,7 +3,10 @@
 
 package json // import "miniflux.app/v2/internal/reader/json"
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"strings"
+)
 
 // JSON Feed specs:
 // https://www.jsonfeed.org/version/1.1/
@@ -62,6 +65,10 @@ type JSONAuthor struct {
 
 	// Author's avatar URL.
 	AvatarURL string `json:"avatar"`
+}
+
+func (a JSONAuthor) name() string {
+	return strings.TrimSpace(a.Name)
 }
 
 // JSONAuthors unmarshals either an array or a single author object.

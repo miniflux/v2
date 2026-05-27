@@ -4,6 +4,8 @@
 package atom // import "miniflux.app/v2/internal/reader/atom"
 
 import (
+	"cmp"
+	"slices"
 	"strings"
 )
 
@@ -32,19 +34,9 @@ func (a *AtomPerson) PersonName() string {
 
 type atomPersons []*AtomPerson
 
+// personNames returns sorted and deduplicated author names.
 func (a atomPersons) personNames() []string {
-	names := make([]string, 0, len(a))
-	authorNamesMap := make(map[string]bool, len(a))
-
-	for _, person := range a {
-		personName := person.PersonName()
-		if _, ok := authorNamesMap[personName]; !ok {
-			names = append(names, personName)
-			authorNamesMap[personName] = true
-		}
-	}
-
-	return names
+	return makeSorted((*AtomPerson).PersonName, a)
 }
 
 // Specs: https://datatracker.ietf.org/doc/html/rfc4287#section-4.2.7
@@ -134,22 +126,45 @@ type atomCategory struct {
 	Label string `xml:"label,attr"`
 }
 
-type atomCategories []atomCategory
-
-func (ac atomCategories) CategoryNames() []string {
-	categories := make([]string, 0, len(ac))
-
-	for _, category := range ac {
-		label := strings.TrimSpace(category.Label)
-		if label != "" {
-			categories = append(categories, label)
-		} else {
-			term := strings.TrimSpace(category.Term)
-			if term != "" {
-				categories = append(categories, term)
-			}
-		}
+func (ac atomCategory) name() string {
+	name := strings.TrimSpace(ac.Label)
+	if name != "" {
+		return name
 	}
 
-	return categories
+	name = strings.TrimSpace(ac.Term)
+	if name != "" {
+		return name
+	}
+
+	return ""
+}
+
+type atomCategories []atomCategory
+
+// CategoryNames returns sorted and deduplicated category names.
+func (ac atomCategories) CategoryNames() []string {
+	return makeSorted(atomCategory.name, ac)
+}
+
+func makeSorted[I any, O cmp.Ordered](fn func(I) O, values []I) []O {
+	var zero O
+
+	sorted := make([]O, 0, len(values))
+	for _, in := range values {
+		out := fn(in)
+		if out == zero {
+			continue
+		}
+
+		where, found := slices.BinarySearch(sorted, out)
+		if found {
+			continue
+		}
+
+		// Insert sorted to avoid duplicates.
+		sorted = slices.Insert(sorted, where, out)
+	}
+
+	return sorted
 }

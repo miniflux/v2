@@ -4,7 +4,9 @@
 package rss // import "miniflux.app/v2/internal/reader/rss"
 
 import (
+	"cmp"
 	"html"
+	"iter"
 	"log/slog"
 	"path"
 	"slices"
@@ -153,9 +155,6 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 		if len(entry.Tags) == 0 {
 			entry.Tags = findFeedTags(&r.rss.Channel)
 		}
-		// Sort and deduplicate tags.
-		slices.Sort(entry.Tags)
-		entry.Tags = slices.Compact(entry.Tags)
 
 		feed.Entries = append(feed.Entries, entry)
 	}
@@ -184,26 +183,12 @@ func findFeedAuthor(rssChannel *rssChannel) string {
 }
 
 func findFeedTags(rssChannel *rssChannel) []string {
-	itunesCategories := rssChannel.GetItunesCategories()
-	tags := make([]string, 0, len(rssChannel.Categories)+len(itunesCategories)+1)
+	tags := make([]string, 0, len(rssChannel.Categories)+2*len(rssChannel.ItunesCategories)+1)
 
-	for _, tag := range rssChannel.Categories {
-		tag = strings.TrimSpace(tag)
-		if tag != "" {
-			tags = append(tags, tag)
-		}
-	}
+	tags = appendSorted(tags, strings.TrimSpace, rssChannel.Categories...)
+	tags = appendSortedSeq(tags, strings.TrimSpace, rssChannel.ItunesCategoriesSeq())
 
-	for _, tag := range itunesCategories {
-		tag = strings.TrimSpace(tag)
-		if tag != "" {
-			tags = append(tags, tag)
-		}
-	}
-
-	if tag := strings.TrimSpace(rssChannel.GooglePlayCategory.Text); tag != "" {
-		tags = append(tags, tag)
-	}
+	tags = appendSorted(tags, strings.TrimSpace, rssChannel.GooglePlayCategory.Text)
 
 	return tags
 }
@@ -303,22 +288,10 @@ func findEntryAuthor(rssItem *rssItem) string {
 }
 
 func findEntryTags(rssItem *rssItem) []string {
-	mediaLabels := rssItem.MediaCategories.Labels()
-	tags := make([]string, 0, len(rssItem.Categories)+len(mediaLabels))
+	tags := make([]string, 0, len(rssItem.Categories)+len(rssItem.MediaCategories))
 
-	for _, tag := range rssItem.Categories {
-		tag = strings.TrimSpace(tag)
-		if tag != "" {
-			tags = append(tags, tag)
-		}
-	}
-
-	for _, tag := range mediaLabels {
-		tag = strings.TrimSpace(tag)
-		if tag != "" {
-			tags = append(tags, tag)
-		}
-	}
+	tags = appendSorted(tags, strings.TrimSpace, rssItem.Categories...)
+	tags = appendSortedSeq(tags, strings.TrimSpace, rssItem.MediaCategories.LabelsSeq())
 
 	return tags
 }
@@ -451,4 +424,35 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 	}
 
 	return enclosures
+}
+
+// appendSorted is identical to [appendSortedSeq] except receives variadic values rather than [iter.Seq].
+func appendSorted[I any, O cmp.Ordered](sorted []O, fn func(I) O, values ...I) []O {
+	sorted = slices.Grow(sorted, len(values))
+	return appendSortedSeq(sorted, fn, slices.Values(values))
+}
+
+// appendSortedSeq appends elements from "values" iterator into "sorted" slice.
+//   - "fn" applied to every element of "values"
+//   - elements inserted into "sorted" slice so it stays sorted
+//   - duplicate elements are not inserted
+func appendSortedSeq[I any, O cmp.Ordered](sorted []O, fn func(I) O, values iter.Seq[I]) []O {
+	var zero O
+
+	for in := range values {
+		out := fn(in)
+		if out == zero {
+			continue
+		}
+
+		where, found := slices.BinarySearch(sorted, out)
+		if found {
+			continue
+		}
+
+		// Insert sorted to avoid duplicates.
+		sorted = slices.Insert(sorted, where, out)
+	}
+
+	return sorted
 }
