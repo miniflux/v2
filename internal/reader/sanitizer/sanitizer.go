@@ -4,7 +4,6 @@
 package sanitizer // import "miniflux.app/v2/internal/reader/sanitizer"
 
 import (
-	"errors"
 	"io"
 	"net/url"
 	"slices"
@@ -16,10 +15,6 @@ import (
 	"miniflux.app/v2/internal/urllib"
 
 	"golang.org/x/net/html"
-)
-
-const (
-	maxDepth = 512 // The maximum allowed depths for nested HTML tags, same was WebKit.
 )
 
 var (
@@ -197,8 +192,7 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 	// Errors are a non-issue, so they're handled in filterAndRenderHTML
 	parsedBaseUrl, _ := url.Parse(baseURL)
 	for c := body.FirstChild; c != nil; c = c.NextSibling {
-		// -2 because of `<html><body>…`
-		if err := filterAndRenderHTML(&buffer, c, parsedBaseUrl, sanitizerOptions, maxDepth-2); err != nil {
+		if err := filterAndRenderHTML(&buffer, c, parsedBaseUrl, sanitizerOptions); err != nil {
 			return ""
 		}
 	}
@@ -224,13 +218,9 @@ func findAllowedIframeSourceDomain(iframeSourceURL string) (string, bool) {
 	return "", false
 }
 
-func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.URL, sanitizerOptions *SanitizerOptions, depth uint) error {
+func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.URL, sanitizerOptions *SanitizerOptions) error {
 	if n == nil {
 		return nil
-	}
-
-	if depth == 0 {
-		return errors.New("maximum nested tags limit reached")
 	}
 
 	switch n.Type {
@@ -245,7 +235,7 @@ func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.
 		_, ok := allowedHTMLTagsAndAttributes[tag]
 		if !ok {
 			// The tag isn't allowed, but we're still interested in its content
-			return filterAndRenderHTMLChildren(buf, n, parsedBaseUrl, sanitizerOptions, depth-1)
+			return filterAndRenderHTMLChildren(buf, n, parsedBaseUrl, sanitizerOptions)
 		}
 
 		htmlAttributes, hasAllRequiredAttributes := sanitizeAttributes(parsedBaseUrl, tag, n.Attr, sanitizerOptions)
@@ -255,7 +245,7 @@ func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.
 				return nil
 			}
 			// The tag doesn't have every required attributes but we're still interested in its content
-			return filterAndRenderHTMLChildren(buf, n, parsedBaseUrl, sanitizerOptions, depth-1)
+			return filterAndRenderHTMLChildren(buf, n, parsedBaseUrl, sanitizerOptions)
 		}
 		buf.WriteByte('<')
 		buf.WriteString(n.Data)
@@ -271,7 +261,7 @@ func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.
 
 		if tag != "iframe" {
 			// iframes aren't allowed to have child nodes.
-			filterAndRenderHTMLChildren(buf, n, parsedBaseUrl, sanitizerOptions, depth-1)
+			filterAndRenderHTMLChildren(buf, n, parsedBaseUrl, sanitizerOptions)
 		}
 
 		buf.WriteString("</")
@@ -282,9 +272,9 @@ func filterAndRenderHTML(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.
 	return nil
 }
 
-func filterAndRenderHTMLChildren(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.URL, sanitizerOptions *SanitizerOptions, depth uint) error {
+func filterAndRenderHTMLChildren(buf *strings.Builder, n *html.Node, parsedBaseUrl *url.URL, sanitizerOptions *SanitizerOptions) error {
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		if err := filterAndRenderHTML(buf, c, parsedBaseUrl, sanitizerOptions, depth); err != nil {
+		if err := filterAndRenderHTML(buf, c, parsedBaseUrl, sanitizerOptions); err != nil {
 			return err
 		}
 	}
