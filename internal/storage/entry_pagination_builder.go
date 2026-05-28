@@ -27,7 +27,7 @@ type entryPaginationBuilder struct {
 // WithSearchQuery adds full-text search query to the condition.
 func (e *entryPaginationBuilder) WithSearchQuery(query string) *entryPaginationBuilder {
 	if query != "" {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", len(e.args)+1))
+		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ websearch_to_tsquery($%d)", len(e.args)+1))
 		e.args = append(e.args, query)
 	}
 
