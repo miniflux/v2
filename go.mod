@@ -9,6 +9,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.12.0
 	github.com/andybalholm/brotli v1.2.1
 	github.com/coreos/go-oidc/v3 v3.18.0
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-webauthn/webauthn v0.17.4
 	github.com/lib/pq v1.12.3
 	github.com/prometheus/client_golang v1.23.2
