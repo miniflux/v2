@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/api"
+	"miniflux.app/v2/internal/collection"
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/fever"
 	"miniflux.app/v2/internal/googlereader"
@@ -35,6 +36,9 @@ func newRouter(store *storage.Storage, pool *worker.Pool) http.Handler {
 	// REST API routing.
 	if config.Opts.HasAPI() {
 		appMux.Handle("/v1/", api.NewHandler(store, pool))
+
+		// Article collections API routing.
+		appMux.Handle("/collections/", collection.NewHandler(store))
 	}
 
 	// Metrics endpoint.
