@@ -35,6 +35,7 @@ func NewHandler(store *storage.Storage) http.Handler {
 	mux.HandleFunc("POST /collections/{collectionID}/import", h.importItemsHandler)
 	mux.HandleFunc("POST /collections/{collectionID}/import-url", h.importFromURLHandler)
 	mux.HandleFunc("GET /collections/{collectionID}/export", h.exportCollectionHandler)
+	mux.HandleFunc("GET /collections/{collectionID}/stats", h.collectionStatsHandler)
 	mux.HandleFunc("GET /collections/export-file", h.downloadExportHandler)
 	mux.HandleFunc("POST /collections/{collectionID}/share", h.shareCollectionHandler)
 	mux.HandleFunc("GET /collections/shared", h.sharedCollectionHandler)
