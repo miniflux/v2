@@ -1019,7 +1019,7 @@ func (h *greaderHandler) handleReadingListStreamHandler(w http.ResponseWriter, r
 	for _, s := range rm.ExcludeTargets {
 		switch s.Type {
 		case ReadStream:
-			builder.WithStatuses(model.EntryStatusUnread)
+			builder = builder.WithStatuses(model.EntryStatusUnread)
 		default:
 			slog.Warn("[GoogleReader] Unknown ExcludeTargets filter type",
 				slog.String("handler", "handleReadingListStreamHandler"),
@@ -1031,11 +1031,11 @@ func (h *greaderHandler) handleReadingListStreamHandler(w http.ResponseWriter, r
 	}
 
 	if rm.StartTime > 0 {
-		builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
+		builder = builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
 	}
 
 	if rm.StopTime > 0 {
-		builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
+		builder = builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
 	}
 
 	itemRefs, continuation, err := getItemRefsAndContinuation(*builder, rm)
@@ -1054,11 +1054,11 @@ func (h *greaderHandler) handleStarredStreamHandler(w http.ResponseWriter, r *ht
 		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 
 	if rm.StartTime > 0 {
-		builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
+		builder = builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
 	}
 
 	if rm.StopTime > 0 {
-		builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
+		builder = builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
 	}
 
 	itemRefs, continuation, err := getItemRefsAndContinuation(*builder, rm)
@@ -1078,11 +1078,11 @@ func (h *greaderHandler) handleReadStreamHandler(w http.ResponseWriter, r *http.
 		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 
 	if rm.StartTime > 0 {
-		builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
+		builder = builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
 	}
 
 	if rm.StopTime > 0 {
-		builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
+		builder = builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
 	}
 
 	itemRefs, continuation, err := getItemRefsAndContinuation(*builder, rm)
@@ -1130,16 +1130,16 @@ func (h *greaderHandler) handleFeedStreamHandler(w http.ResponseWriter, r *http.
 		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 
 	if rm.StartTime > 0 {
-		builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
+		builder = builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
 	}
 
 	if rm.StopTime > 0 {
-		builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
+		builder = builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
 	}
 
 	for _, s := range rm.ExcludeTargets {
 		if s.Type == ReadStream {
-			builder.WithoutStatus(model.EntryStatusRead)
+			builder = builder.WithoutStatus(model.EntryStatusRead)
 		}
 	}
 
