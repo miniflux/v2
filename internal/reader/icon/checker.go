@@ -26,16 +26,16 @@ func NewIconChecker(store *storage.Storage, feed *model.Feed) *iconChecker {
 }
 
 func (c *iconChecker) UpdateOrCreateFeedIcon() {
-	requestBuilder := fetcher.NewRequestBuilder()
-	requestBuilder.WithUserAgent(c.feed.UserAgent, config.Opts.HTTPClientUserAgent())
-	requestBuilder.WithCookie(c.feed.Cookie)
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
-	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
-	requestBuilder.WithCustomFeedProxyURL(c.feed.ProxyURL)
-	requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())
-	requestBuilder.UseCustomApplicationProxyURL(c.feed.FetchViaProxy)
-	requestBuilder.IgnoreTLSErrors(c.feed.AllowSelfSignedCertificates)
-	requestBuilder.DisableHTTP2(c.feed.DisableHTTP2)
+	requestBuilder := fetcher.NewRequestBuilder().
+		WithUserAgent(c.feed.UserAgent, config.Opts.HTTPClientUserAgent()).
+		WithCookie(c.feed.Cookie).
+		WithTimeout(config.Opts.HTTPClientTimeout()).
+		WithProxyRotator(proxyrotator.ProxyRotatorInstance).
+		WithCustomFeedProxyURL(c.feed.ProxyURL).
+		WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL()).
+		UseCustomApplicationProxyURL(c.feed.FetchViaProxy).
+		IgnoreTLSErrors(c.feed.AllowSelfSignedCertificates).
+		DisableHTTP2(c.feed.DisableHTTP2)
 
 	iconFinder := newIconFinder(requestBuilder, c.feed.SiteURL, c.feed.IconURL)
 	if icon, err := iconFinder.findIcon(); err != nil {

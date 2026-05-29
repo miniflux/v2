@@ -342,10 +342,10 @@ func (h *greaderHandler) quickAddHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	requestBuilder := fetcher.NewRequestBuilder()
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
-	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
-	requestBuilder.WithUserAgent("", config.Opts.HTTPClientUserAgent())
+	requestBuilder := fetcher.NewRequestBuilder().
+		WithTimeout(config.Opts.HTTPClientTimeout()).
+		WithProxyRotator(proxyrotator.ProxyRotatorInstance).
+		WithUserAgent("", config.Opts.HTTPClientUserAgent())
 
 	var rssBridgeURL string
 	var rssBridgeToken string
