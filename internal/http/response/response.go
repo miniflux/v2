@@ -17,7 +17,7 @@ const ContentSecurityPolicyForUntrustedContent = `default-src 'none'; form-actio
 
 // NoContent sends a no content response to the client.
 func NoContent(w http.ResponseWriter, r *http.Request) {
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusNoContent)
-	builder.Write()
+	NewBuilder(w, r).
+		WithStatus(http.StatusNoContent).
+		Write()
 }

@@ -7,8 +7,8 @@ import "net/http"
 
 // Text writes a standard text response with a status 200 OK.
 func Text(w http.ResponseWriter, r *http.Request, body string) {
-	builder := NewBuilder(w, r)
-	builder.WithHeader("Content-Type", `text/plain; charset=utf-8`)
-	builder.WithBodyAsString(body)
-	builder.Write()
+	NewBuilder(w, r).
+		WithHeader("Content-Type", `text/plain; charset=utf-8`).
+		WithBodyAsString(body).
+		Write()
 }

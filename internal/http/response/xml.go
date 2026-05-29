@@ -7,17 +7,17 @@ import "net/http"
 
 // XML writes a standard XML response with a status 200 OK.
 func XML(w http.ResponseWriter, r *http.Request, body string) {
-	builder := NewBuilder(w, r)
-	builder.WithHeader("Content-Type", "text/xml; charset=utf-8")
-	builder.WithBodyAsString(body)
-	builder.Write()
+	NewBuilder(w, r).
+		WithHeader("Content-Type", "text/xml; charset=utf-8").
+		WithBodyAsString(body).
+		Write()
 }
 
 // XMLAttachment forces the XML document to be downloaded by the web browser.
 func XMLAttachment(w http.ResponseWriter, r *http.Request, filename string, body string) {
-	builder := NewBuilder(w, r)
-	builder.WithHeader("Content-Type", "text/xml; charset=utf-8")
-	builder.WithAttachment(filename)
-	builder.WithBodyAsString(body)
-	builder.Write()
+	NewBuilder(w, r).
+		WithHeader("Content-Type", "text/xml; charset=utf-8").
+		WithAttachment(filename).
+		WithBodyAsString(body).
+		Write()
 }

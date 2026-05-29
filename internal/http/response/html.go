@@ -15,15 +15,17 @@ import (
 
 // HTML creates a new HTML response with a 200 status code.
 func HTML[T []byte | string](w http.ResponseWriter, r *http.Request, body T) {
-	builder := NewBuilder(w, r)
-	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
-	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
+	builder := NewBuilder(w, r).
+		WithHeader("Content-Type", "text/html; charset=utf-8").
+		WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
+
 	switch v := any(body).(type) {
 	case []byte:
-		builder.WithBodyAsBytes(v)
+		builder = builder.WithBodyAsBytes(v)
 	case string:
-		builder.WithBodyAsString(v)
+		builder = builder.WithBodyAsString(v)
 	}
+
 	builder.Write()
 }
 
@@ -42,13 +44,13 @@ func HTMLServerError(w http.ResponseWriter, r *http.Request, err error) {
 		),
 	)
 
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusInternalServerError)
-	builder.WithHeader("Content-Security-Policy", ContentSecurityPolicyForUntrustedContent)
-	builder.WithHeader("Content-Type", "text/plain; charset=utf-8")
-	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBodyAsString(html.EscapeString(err.Error()))
-	builder.Write()
+	NewBuilder(w, r).
+		WithStatus(http.StatusInternalServerError).
+		WithHeader("Content-Security-Policy", ContentSecurityPolicyForUntrustedContent).
+		WithHeader("Content-Type", "text/plain; charset=utf-8").
+		WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store").
+		WithBodyAsString(html.EscapeString(err.Error())).
+		Write()
 }
 
 // HTMLBadRequest sends a bad request error to the client.
@@ -66,13 +68,13 @@ func HTMLBadRequest(w http.ResponseWriter, r *http.Request, err error) {
 		),
 	)
 
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusBadRequest)
-	builder.WithHeader("Content-Security-Policy", ContentSecurityPolicyForUntrustedContent)
-	builder.WithHeader("Content-Type", "text/plain; charset=utf-8")
-	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBodyAsString(html.EscapeString(err.Error()))
-	builder.Write()
+	NewBuilder(w, r).
+		WithStatus(http.StatusBadRequest).
+		WithHeader("Content-Security-Policy", ContentSecurityPolicyForUntrustedContent).
+		WithHeader("Content-Type", "text/plain; charset=utf-8").
+		WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store").
+		WithBodyAsString(html.EscapeString(err.Error())).
+		Write()
 }
 
 // HTMLForbidden sends a forbidden error to the client.
@@ -89,12 +91,12 @@ func HTMLForbidden(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusForbidden)
-	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
-	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBodyAsString("Access Forbidden")
-	builder.Write()
+	NewBuilder(w, r).
+		WithStatus(http.StatusForbidden).
+		WithHeader("Content-Type", "text/html; charset=utf-8").
+		WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store").
+		WithBodyAsString("Access Forbidden").
+		Write()
 }
 
 // HTMLNotFound sends a page not found error to the client.
@@ -111,12 +113,12 @@ func HTMLNotFound(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusNotFound)
-	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
-	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBodyAsString("Page Not Found")
-	builder.Write()
+	NewBuilder(w, r).
+		WithStatus(http.StatusNotFound).
+		WithHeader("Content-Type", "text/html; charset=utf-8").
+		WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store").
+		WithBodyAsString("Page Not Found").
+		Write()
 }
 
 // HTMLRedirect redirects the user to a relative path or an absolute http(s) URL.
@@ -142,11 +144,11 @@ func HTMLRequestedRangeNotSatisfiable(w http.ResponseWriter, r *http.Request, co
 		),
 	)
 
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusRequestedRangeNotSatisfiable)
-	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
-	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithHeader("Content-Range", contentRange)
-	builder.WithBodyAsString("Range Not Satisfiable")
-	builder.Write()
+	NewBuilder(w, r).
+		WithStatus(http.StatusRequestedRangeNotSatisfiable).
+		WithHeader("Content-Type", "text/html; charset=utf-8").
+		WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store").
+		WithHeader("Content-Range", contentRange).
+		WithBodyAsString("Range Not Satisfiable").
+		Write()
 }
