@@ -56,9 +56,9 @@ func (h *handler) showSearchEntryPage(w http.ResponseWriter, r *http.Request) {
 		WithSearchQuery(searchQuery)
 	if unreadOnly {
 		if entry.Status == model.EntryStatusRead {
-			entryPaginationBuilder.WithStatusOrEntryID(model.EntryStatusUnread, entry.ID)
+			entryPaginationBuilder = entryPaginationBuilder.WithStatusOrEntryID(model.EntryStatusUnread, entry.ID)
 		} else {
-			entryPaginationBuilder.WithStatus(model.EntryStatusUnread)
+			entryPaginationBuilder = entryPaginationBuilder.WithStatus(model.EntryStatusUnread)
 		}
 	}
 

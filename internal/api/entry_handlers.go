@@ -175,11 +175,11 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 		globallyVisible := request.QueryBoolParam(r, "globally_visible", true)
 
 		if globallyVisible {
-			builder.WithGloballyVisible()
+			builder = builder.WithGloballyVisible()
 		}
 	}
 
-	configureFilters(builder, r)
+	builder = configureFilters(builder, r)
 
 	entries, count, err := builder.GetEntriesWithCount()
 	if err != nil {
@@ -503,51 +503,53 @@ func (h *handler) flushHistoryHandler(w http.ResponseWriter, r *http.Request) {
 	response.JSONAccepted(w, r)
 }
 
-func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) {
+func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) *storage.EntryQueryBuilder {
 	if beforeEntryID := request.QueryInt64Param(r, "before_entry_id", 0); beforeEntryID > 0 {
-		builder.BeforeEntryID(beforeEntryID)
+		builder = builder.BeforeEntryID(beforeEntryID)
 	}
 
 	if afterEntryID := request.QueryInt64Param(r, "after_entry_id", 0); afterEntryID > 0 {
-		builder.AfterEntryID(afterEntryID)
+		builder = builder.AfterEntryID(afterEntryID)
 	}
 
 	if beforePublishedTimestamp := request.QueryInt64Param(r, "before", 0); beforePublishedTimestamp > 0 {
-		builder.BeforePublishedDate(time.Unix(beforePublishedTimestamp, 0))
+		builder = builder.BeforePublishedDate(time.Unix(beforePublishedTimestamp, 0))
 	}
 
 	if afterPublishedTimestamp := request.QueryInt64Param(r, "after", 0); afterPublishedTimestamp > 0 {
-		builder.AfterPublishedDate(time.Unix(afterPublishedTimestamp, 0))
+		builder = builder.AfterPublishedDate(time.Unix(afterPublishedTimestamp, 0))
 	}
 
 	if beforePublishedTimestamp := request.QueryInt64Param(r, "published_before", 0); beforePublishedTimestamp > 0 {
-		builder.BeforePublishedDate(time.Unix(beforePublishedTimestamp, 0))
+		builder = builder.BeforePublishedDate(time.Unix(beforePublishedTimestamp, 0))
 	}
 
 	if afterPublishedTimestamp := request.QueryInt64Param(r, "published_after", 0); afterPublishedTimestamp > 0 {
-		builder.AfterPublishedDate(time.Unix(afterPublishedTimestamp, 0))
+		builder = builder.AfterPublishedDate(time.Unix(afterPublishedTimestamp, 0))
 	}
 
 	if beforeChangedTimestamp := request.QueryInt64Param(r, "changed_before", 0); beforeChangedTimestamp > 0 {
-		builder.BeforeChangedDate(time.Unix(beforeChangedTimestamp, 0))
+		builder = builder.BeforeChangedDate(time.Unix(beforeChangedTimestamp, 0))
 	}
 
 	if afterChangedTimestamp := request.QueryInt64Param(r, "changed_after", 0); afterChangedTimestamp > 0 {
-		builder.AfterChangedDate(time.Unix(afterChangedTimestamp, 0))
+		builder = builder.AfterChangedDate(time.Unix(afterChangedTimestamp, 0))
 	}
 
 	if categoryID := request.QueryInt64Param(r, "category_id", 0); categoryID > 0 {
-		builder.WithCategoryID(categoryID)
+		builder = builder.WithCategoryID(categoryID)
 	}
 
 	if request.HasQueryParam(r, "starred") {
 		starred, err := strconv.ParseBool(r.URL.Query().Get("starred"))
 		if err == nil {
-			builder.WithStarred(starred)
+			builder = builder.WithStarred(starred)
 		}
 	}
 
 	if searchQuery := request.QueryStringParam(r, "search", ""); searchQuery != "" {
-		builder.WithSearchQuery(searchQuery)
+		builder = builder.WithSearchQuery(searchQuery)
 	}
+
+	return builder
 }

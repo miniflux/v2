@@ -249,8 +249,8 @@ func (h *feverHandler) handleItems(w http.ResponseWriter, r *http.Request) {
 				slog.Int64("user_id", userID),
 				slog.Int64("since_id", sinceID),
 			)
-			builder.AfterEntryID(sinceID)
-			builder.WithSorting("id", "ASC")
+			builder = builder.AfterEntryID(sinceID)
+			builder = builder.WithSorting("id", "ASC")
 		}
 	case request.HasQueryParam(r, "max_id"):
 		maxID := request.QueryInt64Param(r, "max_id", 0)
@@ -258,14 +258,14 @@ func (h *feverHandler) handleItems(w http.ResponseWriter, r *http.Request) {
 			slog.Debug("[Fever] Fetching most recent items",
 				slog.Int64("user_id", userID),
 			)
-			builder.WithSorting("id", "DESC")
+			builder = builder.WithSorting("id", "DESC")
 		} else if maxID > 0 {
 			slog.Debug("[Fever] Fetching items before a given item ID",
 				slog.Int64("user_id", userID),
 				slog.Int64("max_id", maxID),
 			)
-			builder.BeforeEntryID(maxID)
-			builder.WithSorting("id", "DESC")
+			builder = builder.BeforeEntryID(maxID)
+			builder = builder.WithSorting("id", "DESC")
 		}
 	case request.HasQueryParam(r, "with_ids"):
 		csvItemIDs := request.QueryStringParam(r, "with_ids", "")
@@ -278,7 +278,7 @@ func (h *feverHandler) handleItems(w http.ResponseWriter, r *http.Request) {
 				itemIDs = append(itemIDs, itemID)
 			}
 
-			builder.WithEntryIDs(itemIDs...)
+			builder = builder.WithEntryIDs(itemIDs...)
 		}
 	default:
 		slog.Debug("[Fever] Fetching oldest items",
