@@ -33,6 +33,9 @@ func NewHandler(store *storage.Storage) http.Handler {
 	mux.HandleFunc("GET /collections/{collectionID}", h.getCollectionHandler)
 	mux.HandleFunc("DELETE /collections/{collectionID}", h.removeCollectionHandler)
 	mux.HandleFunc("POST /collections/{collectionID}/import", h.importItemsHandler)
+	mux.HandleFunc("POST /collections/{collectionID}/import-url", h.importFromURLHandler)
+	mux.HandleFunc("GET /collections/{collectionID}/export", h.exportCollectionHandler)
+	mux.HandleFunc("GET /collections/export-file", h.downloadExportHandler)
 	mux.HandleFunc("GET /collections/{collectionID}/preview", h.previewCollectionHandler)
 
 	return h.authenticate(mux)
