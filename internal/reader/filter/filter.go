@@ -99,38 +99,50 @@ func IsBlockedEntry(blockRules filterRules, allowRules filterRules, feed *model.
 // matchesEntryRegexRules checks if the entry matches the regex rules defined in the feed or user settings.
 // It returns true if the entry matches the regex pattern, and a boolean indicating if the regex is valid.
 func matchesEntryRegexRules(regexPattern string, feed *model.Feed, entry *model.Entry) (bool, bool) {
+	regexPattern = strings.TrimSpace(regexPattern)
 	if regexPattern == "" {
 		return false, true // No pattern means rule is valid but doesn't match
 	}
 
-	compiledRegex, err := regexp.Compile(regexPattern)
-	if err != nil {
-		slog.Warn("Failed on regexp compilation",
-			slog.String("regex_pattern", regexPattern),
-			slog.Any("error", err),
-		)
-		return false, false // Invalid regex pattern
+	valid := false
+
+	for line := range strings.SplitSeq(regexPattern, "\n") {
+		pattern := strings.TrimSpace(line)
+		if pattern == "" {
+			continue
+		}
+
+		compiledRegex, err := regexp.Compile(pattern)
+		if err != nil {
+			slog.Warn("Failed on regexp compilation",
+				slog.String("regex_pattern", pattern),
+				slog.Any("error", err),
+			)
+			continue
+		}
+
+		valid = true
+
+		containsMatchingTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
+			return compiledRegex.MatchString(tag)
+		})
+
+		if compiledRegex.MatchString(entry.URL) ||
+			compiledRegex.MatchString(entry.Title) ||
+			compiledRegex.MatchString(entry.Author) ||
+			containsMatchingTag {
+			slog.Debug("Entry matches regex rule",
+				slog.String("entry_url", entry.URL),
+				slog.String("entry_title", entry.Title),
+				slog.String("entry_author", entry.Author),
+				slog.String("feed_url", feed.FeedURL),
+				slog.String("regex_pattern", pattern),
+			)
+			return true, true // Pattern matches and is valid
+		}
 	}
 
-	containsMatchingTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
-		return compiledRegex.MatchString(tag)
-	})
-
-	if compiledRegex.MatchString(entry.URL) ||
-		compiledRegex.MatchString(entry.Title) ||
-		compiledRegex.MatchString(entry.Author) ||
-		containsMatchingTag {
-		slog.Debug("Entry matches regex rule",
-			slog.String("entry_url", entry.URL),
-			slog.String("entry_title", entry.Title),
-			slog.String("entry_author", entry.Author),
-			slog.String("feed_url", feed.FeedURL),
-			slog.String("regex_pattern", regexPattern),
-		)
-		return true, true // Pattern matches and is valid
-	}
-
-	return false, true // Pattern is valid but doesn't match
+	return false, valid
 }
 
 func matchesEntryFilterRules(rules filterRules, feed *model.Feed, entry *model.Entry) bool {
