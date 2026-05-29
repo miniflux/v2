@@ -22,10 +22,10 @@ func JSON(w http.ResponseWriter, r *http.Request, body any) {
 		return
 	}
 
-	builder := NewBuilder(w, r)
-	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBodyAsBytes(responseBody)
-	builder.Write()
+	NewBuilder(w, r).
+		WithHeader("Content-Type", jsonContentTypeHeader).
+		WithBodyAsBytes(responseBody).
+		Write()
 }
 
 // JSONCreated sends a created response to the client.
@@ -36,19 +36,19 @@ func JSONCreated(w http.ResponseWriter, r *http.Request, body any) {
 		return
 	}
 
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusCreated)
-	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBodyAsBytes(responseBody)
-	builder.Write()
+	NewBuilder(w, r).
+		WithStatus(http.StatusCreated).
+		WithHeader("Content-Type", jsonContentTypeHeader).
+		WithBodyAsBytes(responseBody).
+		Write()
 }
 
 // JSONAccepted sends an accepted response to the client.
 func JSONAccepted(w http.ResponseWriter, r *http.Request) {
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusAccepted)
-	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.Write()
+	NewBuilder(w, r).
+		WithStatus(http.StatusAccepted).
+		WithHeader("Content-Type", jsonContentTypeHeader).
+		Write()
 }
 
 // JSONServerError sends an internal error to the client.
@@ -66,11 +66,11 @@ func JSONServerError(w http.ResponseWriter, r *http.Request, err error) {
 		),
 	)
 
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusInternalServerError)
-	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBodyAsBytes(generateJSONError(err))
-	builder.Write()
+	NewBuilder(w, r).
+		WithStatus(http.StatusInternalServerError).
+		WithHeader("Content-Type", jsonContentTypeHeader).
+		WithBodyAsBytes(generateJSONError(err)).
+		Write()
 }
 
 // JSONBadRequest sends a bad request error to the client.
@@ -88,11 +88,11 @@ func JSONBadRequest(w http.ResponseWriter, r *http.Request, err error) {
 		),
 	)
 
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusBadRequest)
-	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBodyAsBytes(generateJSONError(err))
-	builder.Write()
+	NewBuilder(w, r).
+		WithStatus(http.StatusBadRequest).
+		WithHeader("Content-Type", jsonContentTypeHeader).
+		WithBodyAsBytes(generateJSONError(err)).
+		Write()
 }
 
 // JSONUnauthorized sends a not authorized error to the client.
@@ -109,11 +109,11 @@ func JSONUnauthorized(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusUnauthorized)
-	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBodyAsBytes(generateJSONError(errors.New("access unauthorized")))
-	builder.Write()
+	NewBuilder(w, r).
+		WithStatus(http.StatusUnauthorized).
+		WithHeader("Content-Type", jsonContentTypeHeader).
+		WithBodyAsBytes(generateJSONError(errors.New("access unauthorized"))).
+		Write()
 }
 
 // JSONForbidden sends a forbidden error to the client.
@@ -130,11 +130,11 @@ func JSONForbidden(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusForbidden)
-	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBodyAsBytes(generateJSONError(errors.New("access forbidden")))
-	builder.Write()
+	NewBuilder(w, r).
+		WithStatus(http.StatusForbidden).
+		WithHeader("Content-Type", jsonContentTypeHeader).
+		WithBodyAsBytes(generateJSONError(errors.New("access forbidden"))).
+		Write()
 }
 
 // JSONNotFound sends a page not found error to the client.
@@ -151,11 +151,11 @@ func JSONNotFound(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	builder := NewBuilder(w, r)
-	builder.WithStatus(http.StatusNotFound)
-	builder.WithHeader("Content-Type", jsonContentTypeHeader)
-	builder.WithBodyAsBytes(generateJSONError(errors.New("resource not found")))
-	builder.Write()
+	NewBuilder(w, r).
+		WithStatus(http.StatusNotFound).
+		WithHeader("Content-Type", jsonContentTypeHeader).
+		WithBodyAsBytes(generateJSONError(errors.New("resource not found"))).
+		Write()
 }
 
 func generateJSONError(err error) []byte {

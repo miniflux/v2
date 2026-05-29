@@ -120,10 +120,10 @@ type contentItemOrigin struct {
 }
 
 func sendUnauthorizedResponse(w http.ResponseWriter, r *http.Request) {
-	builder := response.NewBuilder(w, r)
-	builder.WithStatus(http.StatusUnauthorized)
-	builder.WithHeader("X-Reader-Google-Bad-Token", "true")
-	builder.WithHeader("Content-Type", "text/plain; charset=utf-8")
-	builder.WithBodyAsString("Unauthorized")
-	builder.Write()
+	response.NewBuilder(w, r).
+		WithStatus(http.StatusUnauthorized).
+		WithHeader("X-Reader-Google-Bad-Token", "true").
+		WithHeader("Content-Type", "text/plain; charset=utf-8").
+		WithBodyAsString("Unauthorized").
+		Write()
 }
