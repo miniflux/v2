@@ -2709,6 +2709,101 @@ func TestGetUnreadEntryIDsEndpoint(t *testing.T) {
 	}
 }
 
+func TestGetStarredEntryIDsEndpoint(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	// A new user should have no starred entries.
+	entryIDs, err := regularUserClient.StarredEntryIDs()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entryIDs == nil {
+		t.Fatal(`Entry IDs should not be nil`)
+	}
+
+	if len(entryIDs) != 0 {
+		t.Fatalf(`Expected no starred entry IDs for a new user, got %d`, len(entryIDs))
+	}
+
+	// Subscribe to a feed and star one entry.
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	allEntries, err := regularUserClient.FeedEntries(feedID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(allEntries.Entries) == 0 {
+		t.Fatal(`Expected feed to have entries`)
+	}
+
+	// Starring one entry should appear in the results regardless of its read status.
+	firstEntryID := allEntries.Entries[0].ID
+	if err := regularUserClient.ToggleStarred(firstEntryID); err != nil {
+		t.Fatal(err)
+	}
+
+	entryIDs, err = regularUserClient.StarredEntryIDs()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(entryIDs) != 1 {
+		t.Fatalf(`Expected 1 starred entry ID, got %d`, len(entryIDs))
+	}
+
+	if entryIDs[0] != firstEntryID {
+		t.Fatalf(`Expected starred entry ID %d, got %d`, firstEntryID, entryIDs[0])
+	}
+
+	// Marking the entry as read should not remove it from starred results.
+	if err := regularUserClient.UpdateEntries([]int64{firstEntryID}, miniflux.EntryStatusRead); err != nil {
+		t.Fatal(err)
+	}
+
+	entryIDs, err = regularUserClient.StarredEntryIDs()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(entryIDs) != 1 {
+		t.Fatalf(`Expected starred entry ID to persist after marking as read, got %d result(s)`, len(entryIDs))
+	}
+
+	// Unstarring the entry should remove it from the results.
+	if err := regularUserClient.ToggleStarred(firstEntryID); err != nil {
+		t.Fatal(err)
+	}
+
+	entryIDs, err = regularUserClient.StarredEntryIDs()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(entryIDs) != 0 {
+		t.Fatalf(`Expected no starred entry IDs after unstarring, got %d`, len(entryIDs))
+	}
+}
+
 func TestUpdateEntryEndpoint(t *testing.T) {
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {

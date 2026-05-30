@@ -55,6 +55,7 @@ func NewHandler(store *storage.Storage, pool *worker.Pool) http.Handler {
 	mux.HandleFunc("POST /v1/feeds/{feedID}/entries/import", handler.importFeedEntryHandler)
 	mux.HandleFunc("GET /v1/feeds/{feedID}/entries/{entryID}", handler.getFeedEntryHandler)
 	mux.HandleFunc("GET /v1/unread-entry-ids", handler.getUnreadEntryIDsHandler)
+	mux.HandleFunc("GET /v1/starred-entry-ids", handler.getStarredEntryIDsHandler)
 	mux.HandleFunc("GET /v1/entries", handler.getEntriesHandler)
 	mux.HandleFunc("PUT /v1/entries", handler.setEntryStatusHandler)
 	mux.HandleFunc("GET /v1/entries/{entryID}", handler.getEntryHandler)

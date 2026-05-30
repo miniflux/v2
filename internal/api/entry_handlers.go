@@ -513,6 +513,22 @@ func (h *handler) getUnreadEntryIDsHandler(w http.ResponseWriter, r *http.Reques
 	response.JSON(w, r, entryIDs)
 }
 
+func (h *handler) getStarredEntryIDsHandler(w http.ResponseWriter, r *http.Request) {
+	entryIDs, err := h.store.NewEntryQueryBuilder(request.UserID(r)).
+		WithStarred(true).
+		GetEntryIDs()
+	if err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
+
+	if entryIDs == nil {
+		entryIDs = []int64{}
+	}
+
+	response.JSON(w, r, entryIDs)
+}
+
 func (h *handler) flushHistoryHandler(w http.ResponseWriter, r *http.Request) {
 	loggedUserID := request.UserID(r)
 	go h.store.FlushHistory(loggedUserID)

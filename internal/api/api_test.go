@@ -104,6 +104,19 @@ func TestGetUnreadEntryIDsHandlerRequiresAuthentication(t *testing.T) {
 	}
 }
 
+func TestGetStarredEntryIDsHandlerRequiresAuthentication(t *testing.T) {
+	handler := NewHandler(nil, nil)
+
+	r := httptest.NewRequest(http.MethodGet, "/v1/starred-entry-ids", nil)
+	w := httptest.NewRecorder()
+
+	handler.ServeHTTP(w, r)
+
+	if got := w.Code; got != http.StatusUnauthorized {
+		t.Fatalf(`Unexpected status code, got %d instead of %d`, got, http.StatusUnauthorized)
+	}
+}
+
 func TestNewHandlerSupportsBasePathStripping(t *testing.T) {
 	scenarios := []struct {
 		name   string
