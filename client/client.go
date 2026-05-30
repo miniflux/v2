@@ -888,6 +888,29 @@ func (c *Client) EntryContext(ctx context.Context, entryID int64) (*Entry, error
 	return entry, nil
 }
 
+// UnreadEntryIDs returns the IDs of all unread entries for the current user.
+func (c *Client) UnreadEntryIDs() ([]int64, error) {
+	ctx, cancel := withDefaultTimeout()
+	defer cancel()
+	return c.UnreadEntryIDsContext(ctx)
+}
+
+// UnreadEntryIDsContext returns the IDs of all unread entries for the current user.
+func (c *Client) UnreadEntryIDsContext(ctx context.Context) ([]int64, error) {
+	body, err := c.request.Get(ctx, "/v1/unread-entry-ids")
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var result []int64
+	if err := json.NewDecoder(body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return result, nil
+}
+
 // Entries fetches entries using the given filter.
 func (c *Client) Entries(filter *Filter) (*EntryResultSet, error) {
 	ctx, cancel := withDefaultTimeout()

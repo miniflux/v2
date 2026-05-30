@@ -2631,6 +2631,84 @@ func TestUpdateEntryStatusEndpoint(t *testing.T) {
 	}
 }
 
+func TestGetUnreadEntryIDsEndpoint(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	// A new user should have no unread entries.
+	entryIDs, err := regularUserClient.UnreadEntryIDs()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entryIDs == nil {
+		t.Fatal(`Entry IDs should not be nil`)
+	}
+
+	if len(entryIDs) != 0 {
+		t.Fatalf(`Expected no unread entry IDs for a new user, got %d`, len(entryIDs))
+	}
+
+	// Subscribe to a feed so there are unread entries.
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	allEntries, err := regularUserClient.FeedEntries(feedID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(allEntries.Entries) == 0 {
+		t.Fatal(`Expected feed to have entries`)
+	}
+
+	entryIDs, err = regularUserClient.UnreadEntryIDs()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(entryIDs) != allEntries.Total {
+		t.Fatalf(`Expected %d unread entry IDs, got %d`, allEntries.Total, len(entryIDs))
+	}
+
+	// Mark one entry as read and verify the count decreases.
+	firstEntryID := allEntries.Entries[0].ID
+	if err := regularUserClient.UpdateEntries([]int64{firstEntryID}, miniflux.EntryStatusRead); err != nil {
+		t.Fatal(err)
+	}
+
+	entryIDs, err = regularUserClient.UnreadEntryIDs()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(entryIDs) != allEntries.Total-1 {
+		t.Fatalf(`Expected %d unread entry IDs after marking one as read, got %d`, allEntries.Total-1, len(entryIDs))
+	}
+
+	for _, id := range entryIDs {
+		if id == firstEntryID {
+			t.Fatalf(`Entry ID %d should not appear in unread IDs after being marked as read`, firstEntryID)
+		}
+	}
+}
+
 func TestUpdateEntryEndpoint(t *testing.T) {
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
