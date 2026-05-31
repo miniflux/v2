@@ -546,7 +546,7 @@ a linked OAuth2 account to sign in\&.
 Disabled by default\&.
 .TP
 .B POLLING_FREQUENCY
-Interval for the background job scheduler.
+Interval in minutes for the background job scheduler.
 .br
 Determines how often a batch of feeds is selected for refresh,
 based on their last refresh time\&.
@@ -625,7 +625,7 @@ Minimum interval in minutes for the round robin scheduler\&.
 Default is 60 minutes\&.
 .TP
 .B TRUSTED_REVERSE_PROXY_NETWORKS
-List of networks (CIDR notation) allowed to use the proxy
+A comma-separated list of networks (CIDR notation) allowed to use the proxy
 authentication header, \fBX-Forwarded-For\fR,
 \fBX-Forwarded-Proto\fR, and \fBX-Real-Ip\fR headers\&.
 .br
