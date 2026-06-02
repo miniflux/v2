@@ -2,11 +2,7 @@ name: CI
 
 on:
   push:
-    branches-ignore: [main]
-
-  pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   # Stage TEST
@@ -29,7 +25,7 @@ jobs:
   deploy:
     name: "Stage: Deploy"
     needs: test
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
