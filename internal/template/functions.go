@@ -27,11 +27,17 @@ import (
 )
 
 type funcMap struct {
-	basePath string
+	basePath  string
+	iconPaths map[string]string
 }
 
 // Map returns a map of template functions that are compiled during template parsing.
 func (f *funcMap) Map() template.FuncMap {
+	// Pre-compute every icon URL once, as iconPath is called a lot during pages rendering.
+	f.iconPaths = make(map[string]string, len(static.BinaryBundles))
+	for filename, bundle := range static.BinaryBundles {
+		f.iconPaths[filename] = f.basePath + "/icon/" + bundle.Checksum + "/" + filename
+	}
 	return template.FuncMap{
 		"contains":         strings.Contains,
 		"csp":              csp,
@@ -155,10 +161,7 @@ func (f *funcMap) Map() template.FuncMap {
 }
 
 func (f *funcMap) iconPath(filename string) string {
-	if bundle, ok := static.BinaryBundles[filename]; ok {
-		return fmt.Sprintf("%s/icon/%s/%s", f.basePath, bundle.Checksum, filename)
-	}
-	return fmt.Sprintf("%s/icon/_/%s", f.basePath, filename)
+	return f.iconPaths[filename]
 }
 
 func (f *funcMap) iconFunc() func(string) template.HTML {

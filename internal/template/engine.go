@@ -28,7 +28,7 @@ type Engine struct {
 func NewEngine(basePath string) *Engine {
 	return &Engine{
 		templates: make(map[string]*template.Template),
-		funcMap:   &funcMap{basePath},
+		funcMap:   &funcMap{basePath: basePath},
 	}
 }
 
