@@ -353,7 +353,11 @@ var migrations = [...]func(tx *sql.Tx) error{
 		return err
 	},
 	func(tx *sql.Tx) (err error) {
-		sql := `CREATE INDEX enclosures_user_entry_url_idx ON enclosures(user_id, entry_id, md5(url))`
+		// This migration originally used md5(url), but it was changed to
+		// sha256 because PostgreSQL 18 disables MD5 in FIPS mode, which made
+		// fresh installs fail while replaying this migration. Existing
+		// installs that already ran it are migrated later on.
+		sql := `CREATE INDEX enclosures_user_entry_url_idx ON enclosures(user_id, entry_id, encode(sha256(url::bytea), 'hex'))`
 		_, err = tx.Exec(sql)
 		return err
 	},
@@ -724,7 +728,12 @@ var migrations = [...]func(tx *sql.Tx) error{
 		}
 
 		// Create unique index
-		_, err = tx.Exec(`CREATE UNIQUE INDEX enclosures_user_entry_url_unique_idx ON enclosures(user_id, entry_id, md5(url))`)
+		//
+		// This originally used md5(url), but it was changed to sha256 because
+		// PostgreSQL 18 disables MD5 in FIPS mode, which made fresh installs
+		// fail while replaying this migration. Existing installs that already
+		// ran it are migrated later on.
+		_, err = tx.Exec(`CREATE UNIQUE INDEX enclosures_user_entry_url_unique_idx ON enclosures(user_id, entry_id, encode(sha256(url::bytea), 'hex'))`)
 		if err != nil {
 			return err
 		}
@@ -1522,6 +1531,17 @@ var migrations = [...]func(tx *sql.Tx) error{
 		_, err = tx.Exec(`
 			DROP INDEX IF EXISTS entries_feed_idx;
 			DROP INDEX IF EXISTS entries_user_status_idx;
+		`)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		// PostgreSQL 18 disables MD5 when running in FIPS mode, which makes
+		// the unique index on enclosures relying on md5(url) unusable.
+		// Replace it with a SHA-256 based expression index.
+		_, err = tx.Exec(`
+			DROP INDEX IF EXISTS enclosures_user_entry_url_unique_idx;
+			CREATE UNIQUE INDEX enclosures_user_entry_url_unique_idx
+				ON enclosures (user_id, entry_id, encode(sha256(url::bytea), 'hex'));
 		`)
 		return err
 	},
