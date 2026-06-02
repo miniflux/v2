@@ -29,6 +29,7 @@ func (h *handler) showAppIcon(w http.ResponseWriter, r *http.Request) {
 			b.WithHeader("Content-Type", "image/png")
 		case ".svg":
 			b.WithHeader("Content-Type", "image/svg+xml")
+			b.WithCompressedVariants(value.Brotli, value.Gzip)
 		}
 		b.WithBodyAsBytes(value.Data)
 		b.Write()

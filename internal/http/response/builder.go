@@ -17,7 +17,10 @@ import (
 	"github.com/andybalholm/brotli"
 )
 
-const compressionThreshold = 1024
+// CompressionThreshold is the minimum body size, in bytes, for which HTTP
+// compression is applied. Smaller responses are sent uncompressed because the
+// encoding overhead outweighs the savings.
+const CompressionThreshold = 1024
 
 // Builder generates HTTP responses.
 type Builder struct {
@@ -27,6 +30,8 @@ type Builder struct {
 	headers           http.Header
 	enableCompression bool
 	body              any
+	brotliBody        []byte
+	gzipBody          []byte
 }
 
 // NewBuilder creates a new response builder.
@@ -61,6 +66,17 @@ func (b *Builder) WithBodyAsString(body string) *Builder {
 // WithBodyAsReader uses the given reader to build the response.
 func (b *Builder) WithBodyAsReader(body io.Reader) *Builder {
 	b.body = body
+	return b
+}
+
+// WithCompressedVariants provides precomputed Brotli and Gzip representations
+// of the response body. When the client supports the matching encoding, the
+// precomputed bytes are served directly. A nil slice simply means no variant
+// is available for that encoding, in which case the builder handles it as
+// usual (compressing on the fly, or sending it uncompressed for small bodies).
+func (b *Builder) WithCompressedVariants(brotliBody, gzipBody []byte) *Builder {
+	b.brotliBody = brotliBody
+	b.gzipBody = gzipBody
 	return b
 }
 
@@ -131,33 +147,39 @@ func (b *Builder) writeHeaders() {
 }
 
 func (b *Builder) compress(data []byte) {
-	if b.enableCompression && len(data) > compressionThreshold {
+	if b.enableCompression && len(data) > CompressionThreshold {
 		b.headers.Set("Vary", "Accept-Encoding")
 		acceptEncoding := b.r.Header.Get("Accept-Encoding")
+
 		switch {
 		case strings.Contains(acceptEncoding, "br"):
 			b.headers.Set("Content-Encoding", "br")
 			b.writeHeaders()
-
-			brotliWriter := brotli.NewWriterV2(b.w, brotli.DefaultCompression)
-			brotliWriter.Write(data)
-			brotliWriter.Close()
+			if b.brotliBody != nil {
+				b.w.Write(b.brotliBody)
+				return
+			}
+			writer := brotli.NewWriterV2(b.w, brotli.DefaultCompression)
+			writer.Write(data)
+			writer.Close()
 			return
 		case strings.Contains(acceptEncoding, "gzip"):
 			b.headers.Set("Content-Encoding", "gzip")
 			b.writeHeaders()
-
-			gzipWriter := gzip.NewWriter(b.w)
-			gzipWriter.Write(data)
-			gzipWriter.Close()
+			if b.gzipBody != nil {
+				b.w.Write(b.gzipBody)
+				return
+			}
+			writer := gzip.NewWriter(b.w)
+			writer.Write(data)
+			writer.Close()
 			return
 		case strings.Contains(acceptEncoding, "deflate"):
 			b.headers.Set("Content-Encoding", "deflate")
 			b.writeHeaders()
-
-			flateWriter, _ := flate.NewWriter(b.w, -1)
-			flateWriter.Write(data)
-			flateWriter.Close()
+			writer, _ := flate.NewWriter(b.w, -1)
+			writer.Write(data)
+			writer.Close()
 			return
 		}
 	}
