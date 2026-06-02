@@ -29,7 +29,8 @@ jobs:
   deploy:
     name: "Stage: Deploy"
     needs: test
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+    if: github.event_name == 'push'
+    #if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
