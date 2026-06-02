@@ -13,12 +13,37 @@ import (
 	"mime"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/andybalholm/brotli"
+	"github.com/andybalholm/brotli/matchfinder"
 )
 
 const compressionThreshold = 1024
+
+// Compression writers are pooled so each request reuses their internal
+// state (brotli sliding window + hash tables, flate dictionary, etc.)
+// instead of allocating it from scratch. Reset(dst) rebinds the
+// destination without re-allocating the buffers.
+var (
+	brotliWriterPool = sync.Pool{
+		New: func() any {
+			return brotli.NewWriterV2(io.Discard, brotli.DefaultCompression)
+		},
+	}
+	gzipWriterPool = sync.Pool{
+		New: func() any {
+			return gzip.NewWriter(io.Discard)
+		},
+	}
+	flateWriterPool = sync.Pool{
+		New: func() any {
+			w, _ := flate.NewWriter(io.Discard, flate.DefaultCompression)
+			return w
+		},
+	}
+)
 
 // Builder generates HTTP responses.
 type Builder struct {
@@ -146,25 +171,34 @@ func (b *Builder) compress(data []byte) {
 			b.headers.Set("Content-Encoding", "br")
 			b.writeHeaders()
 
-			brotliWriter := brotli.NewWriterV2(b.w, brotli.DefaultCompression)
+			brotliWriter := brotliWriterPool.Get().(*matchfinder.Writer)
+			brotliWriter.Reset(b.w)
 			brotliWriter.Write(data)
 			brotliWriter.Close()
+			brotliWriter.Reset(io.Discard)
+			brotliWriterPool.Put(brotliWriter)
 			return
 		case "gzip":
 			b.headers.Set("Content-Encoding", "gzip")
 			b.writeHeaders()
 
-			gzipWriter := gzip.NewWriter(b.w)
+			gzipWriter := gzipWriterPool.Get().(*gzip.Writer)
+			gzipWriter.Reset(b.w)
 			gzipWriter.Write(data)
 			gzipWriter.Close()
+			gzipWriter.Reset(io.Discard)
+			gzipWriterPool.Put(gzipWriter)
 			return
 		case "deflate":
 			b.headers.Set("Content-Encoding", "deflate")
 			b.writeHeaders()
 
-			flateWriter, _ := flate.NewWriter(b.w, -1)
+			flateWriter := flateWriterPool.Get().(*flate.Writer)
+			flateWriter.Reset(b.w)
 			flateWriter.Write(data)
 			flateWriter.Close()
+			flateWriter.Reset(io.Discard)
+			flateWriterPool.Put(flateWriter)
 			return
 		}
 	}
