@@ -240,7 +240,7 @@ func TestBuildResponseWithCachingEnabled(t *testing.T) {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
 	}
 
-	expectedHeader := "public, immutable"
+	expectedHeader := "public, max-age=60, immutable"
 	actualHeader := resp.Header.Get("Cache-Control")
 	if actualHeader != expectedHeader {
 		t.Fatalf(`Unexpected cache control header, got %q instead of %q`, actualHeader, expectedHeader)
@@ -297,7 +297,7 @@ func TestBuildResponseWithCachingAndIfNoneMatch(t *testing.T) {
 				t.Fatalf(`Unexpected body, got %q instead of %q`, actual, tt.expectedBody)
 			}
 
-			if resp.Header.Get("Cache-Control") != "public, immutable" {
+			if resp.Header.Get("Cache-Control") != "public, max-age=60, immutable" {
 				t.Fatalf(`Unexpected Cache-Control header: %q`, resp.Header.Get("Cache-Control"))
 			}
 

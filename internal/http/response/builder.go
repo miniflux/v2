@@ -6,6 +6,7 @@ package response // import "miniflux.app/v2/internal/http/response"
 import (
 	"compress/flate"
 	"compress/gzip"
+	"fmt"
 	"io"
 	"log/slog"
 	"maps"
@@ -86,7 +87,9 @@ func (b *Builder) WithoutCompression() *Builder {
 func (b *Builder) WithCaching(etag string, duration time.Duration, callback func(*Builder)) {
 	etag = normalizeETag(etag)
 	b.headers.Set("ETag", etag)
-	b.headers.Set("Cache-Control", "public, immutable")
+	// max-age is required for the "immutable" directive to take effect: without
+	// it, browsers still revalidate content-hashed assets on every reload.
+	b.headers.Set("Cache-Control", fmt.Sprintf("public, max-age=%d, immutable", int64(duration.Seconds())))
 	b.headers.Set("Expires", time.Now().Add(duration).UTC().Format(http.TimeFormat))
 
 	if ifNoneMatch(b.r.Header.Get("If-None-Match"), etag) {
