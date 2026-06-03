@@ -1837,3 +1837,31 @@ func TestParseFeedWithIconURL(t *testing.T) {
 		t.Errorf("Incorrect icon URL, got: %s", feed.IconURL)
 	}
 }
+
+func TestParseEntryWithIDAsURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+		<title>Example Feed</title>
+		<link href="http://example.org/"/>
+		<link href="http://example.org/atom" rel="self"/>
+		<entry>
+			<id>http://www.example.org/entries/1</id>
+		</entry>
+		<entry>
+			<id>mailto:john.doe@example.org</id>
+		</entry>
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)), "10")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].URL != "http://www.example.org/entries/1" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
+	}
+
+	if feed.Entries[1].URL != "http://example.org/" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[1].URL)
+	}
+}
