@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches-ignore: []
+    branches: [main]
 
 jobs:
   # Stage TEST

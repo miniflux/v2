@@ -14,8 +14,7 @@ RUN make linux-amd64
 
 # Stage 2
 
-#FROM alpine:3.20
-FROM alpine:3.7
+FROM alpine:3.20
 
 WORKDIR /app
 EXPOSE 8080
