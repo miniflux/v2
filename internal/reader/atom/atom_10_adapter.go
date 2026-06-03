@@ -81,6 +81,16 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 			}
 		}
 
+		// If the entry has no links, attempt to use its ID as a URL
+		// and if that fails, use the site URL.
+		if entry.URL == "" {
+			if urllib.IsAbsoluteURL(atomEntry.ID) {
+				entry.URL = atomEntry.ID
+			} else {
+				entry.URL = siteURL
+			}
+		}
+
 		// Populate the entry content.
 		entry.Content = atomEntry.Content.body()
 		if entry.Content == "" {
