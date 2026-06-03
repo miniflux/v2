@@ -21,7 +21,7 @@ jobs:
           exit-code: 1
           severity: HIGH,CRITICAL
 
-  # Stage DEPLOY
+  # Stage DEPLOY #
   deploy:
     name: "Stage: Deploy"
     needs: test
