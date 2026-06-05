@@ -19,6 +19,15 @@ func IsRelativePath(link string) bool {
 	if link == "" {
 		return false
 	}
+
+	// Reject backslashes: Go's url.Parse treats them as ordinary path
+	// characters, but browsers normalize them to forward slashes, so a target
+	// like "/\evil.com" would parse as relative here yet redirect to
+	// //evil.com in the browser (open redirect).
+	if strings.Contains(link, "\\") {
+		return false
+	}
+
 	if parsedURL, err := url.Parse(link); err == nil {
 		// Only allow relative paths (not scheme-relative URLs like //example.org)
 		// and ensure the URL doesn't have a host component
@@ -142,11 +151,6 @@ func JoinBaseURLAndPath(baseURL, path string) (string, error) {
 
 	if path == "" {
 		return "", errors.New("empty path")
-	}
-
-	_, err := url.Parse(baseURL)
-	if err != nil {
-		return "", fmt.Errorf("invalid base URL: %w", err)
 	}
 
 	finalURL, err := url.JoinPath(baseURL, path)

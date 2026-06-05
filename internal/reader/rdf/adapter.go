@@ -22,7 +22,7 @@ type rdfAdapter struct {
 
 func (r *rdfAdapter) buildFeed(baseURL string) *model.Feed {
 	feed := &model.Feed{
-		Title:       stripTags(r.rdf.Channel.Title),
+		Title:       sanitizer.StripTags(r.rdf.Channel.Title),
 		FeedURL:     strings.TrimSpace(baseURL),
 		SiteURL:     strings.TrimSpace(r.rdf.Channel.Link),
 		Description: strings.TrimSpace(r.rdf.Channel.Description),
@@ -95,17 +95,13 @@ func (r *rdfAdapter) buildFeed(baseURL string) *model.Feed {
 		// Populate the entry author.
 		switch {
 		case item.DublinCoreCreator != "":
-			entry.Author = stripTags(item.DublinCoreCreator)
+			entry.Author = sanitizer.StripTags(item.DublinCoreCreator)
 		case r.rdf.Channel.DublinCoreCreator != "":
-			entry.Author = stripTags(r.rdf.Channel.DublinCoreCreator)
+			entry.Author = sanitizer.StripTags(r.rdf.Channel.DublinCoreCreator)
 		}
 
 		feed.Entries = append(feed.Entries, entry)
 	}
 
 	return feed
-}
-
-func stripTags(value string) string {
-	return strings.TrimSpace(sanitizer.StripTags(value))
 }

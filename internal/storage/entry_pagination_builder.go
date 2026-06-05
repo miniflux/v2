@@ -16,7 +16,7 @@ import (
 
 // entryPaginationBuilder is a builder for entry prev/next queries.
 type entryPaginationBuilder struct {
-	store      *Storage
+	db         *sql.DB
 	conditions []string
 	args       []any
 	entryID    int64
@@ -25,77 +25,91 @@ type entryPaginationBuilder struct {
 }
 
 // WithSearchQuery adds full-text search query to the condition.
-func (e *entryPaginationBuilder) WithSearchQuery(query string) {
+func (e *entryPaginationBuilder) WithSearchQuery(query string) *entryPaginationBuilder {
 	if query != "" {
 		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", len(e.args)+1))
 		e.args = append(e.args, query)
 	}
+
+	return e
 }
 
 // WithStarred adds starred to the condition.
-func (e *entryPaginationBuilder) WithStarred() {
+func (e *entryPaginationBuilder) WithStarred() *entryPaginationBuilder {
 	e.conditions = append(e.conditions, "e.starred is true")
+
+	return e
 }
 
 // WithFeedID adds feed_id to the condition.
-func (e *entryPaginationBuilder) WithFeedID(feedID int64) {
+func (e *entryPaginationBuilder) WithFeedID(feedID int64) *entryPaginationBuilder {
 	if feedID != 0 {
 		e.conditions = append(e.conditions, "e.feed_id = $"+strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, feedID)
 	}
+
+	return e
 }
 
 // WithCategoryID adds category_id to the condition.
-func (e *entryPaginationBuilder) WithCategoryID(categoryID int64) {
+func (e *entryPaginationBuilder) WithCategoryID(categoryID int64) *entryPaginationBuilder {
 	if categoryID != 0 {
 		e.conditions = append(e.conditions, "f.category_id = $"+strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, categoryID)
 	}
+
+	return e
 }
 
 // WithStatus adds status to the condition.
-func (e *entryPaginationBuilder) WithStatus(status string) {
+func (e *entryPaginationBuilder) WithStatus(status string) *entryPaginationBuilder {
 	if status != "" {
 		e.conditions = append(e.conditions, "e.status = $"+strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, status)
 	}
+
+	return e
 }
 
 // WithStatusOrEntryID adds a status condition that always includes a specific entry ID.
-func (e *entryPaginationBuilder) WithStatusOrEntryID(status string, entryID int64) {
+func (e *entryPaginationBuilder) WithStatusOrEntryID(status string, entryID int64) *entryPaginationBuilder {
 	if status == "" {
-		return
+		return e
 	}
 
 	if entryID == 0 {
 		e.WithStatus(status)
-		return
+		return e
 	}
 
 	statusArg := len(e.args) + 1
 	entryArg := len(e.args) + 2
 	e.conditions = append(e.conditions, fmt.Sprintf("(e.status = $%d OR e.id = $%d)", statusArg, entryArg))
 	e.args = append(e.args, status, entryID)
+
+	return e
 }
 
-func (e *entryPaginationBuilder) WithTags(tags []string) {
+func (e *entryPaginationBuilder) WithTags(tags []string) *entryPaginationBuilder {
 	if len(tags) > 0 {
-		for _, tag := range tags {
-			e.conditions = append(e.conditions, fmt.Sprintf("LOWER($%d) = ANY(LOWER(e.tags::text)::text[])", len(e.args)+1))
-			e.args = append(e.args, tag)
-		}
+		e.conditions = append(e.conditions, fmt.Sprintf("LOWER(e.tags::text)::text[] @> LOWER($%d::text)::text[]", len(e.args)+1))
+		e.args = append(e.args, pq.Array(tags))
 	}
+
+	return e
 }
 
 // WithGloballyVisible adds global visibility to the condition.
-func (e *entryPaginationBuilder) WithGloballyVisible() {
+func (e *entryPaginationBuilder) WithGloballyVisible() *entryPaginationBuilder {
 	e.conditions = append(e.conditions, "not c.hide_globally")
 	e.conditions = append(e.conditions, "not f.hide_globally")
+
+	return e
 }
 
 // Entries returns previous and next entries.
 func (e *entryPaginationBuilder) Entries() (*model.Entry, *model.Entry, error) {
-	tx, err := e.store.db.Begin()
+	tx, err := e.db.Begin()
 	if err != nil {
 		return nil, nil, fmt.Errorf("begin transaction for entry pagination: %v", err)
 	}
@@ -187,9 +201,9 @@ func (e *entryPaginationBuilder) getEntry(tx *sql.Tx, entryID int64) (*model.Ent
 }
 
 // NewEntryPaginationBuilder returns a new EntryPaginationBuilder.
-func NewEntryPaginationBuilder(store *Storage, userID, entryID int64, order, direction string) *entryPaginationBuilder {
+func (s *Storage) NewEntryPaginationBuilder(userID, entryID int64, order, direction string) *entryPaginationBuilder {
 	return &entryPaginationBuilder{
-		store:      store,
+		db:         s.db,
 		args:       []any{userID},
 		conditions: []string{"e.user_id = $1"},
 		entryID:    entryID,

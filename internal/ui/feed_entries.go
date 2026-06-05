@@ -32,16 +32,16 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	offset := request.QueryIntParam(r, "offset", 0)
-	builder := h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithFeedID(feed.ID)
-	builder.WithStatus(model.EntryStatusUnread)
-	builder.WithSorting(user.EntryOrder, user.EntryDirection)
-	builder.WithSorting("id", user.EntryDirection)
-	builder.WithOffset(offset)
-	builder.WithLimit(user.EntriesPerPage)
-	builder.WithoutContent()
 
-	entries, count, err := builder.GetEntriesWithCount()
+	entries, count, err := h.store.NewEntryQueryBuilder(user.ID).
+		WithFeedID(feed.ID).
+		WithStatuses(model.EntryStatusUnread).
+		WithSorting(user.EntryOrder, user.EntryDirection).
+		WithSorting("id", user.EntryDirection).
+		WithOffset(offset).
+		WithLimit(user.EntriesPerPage).
+		WithoutContent().
+		GetEntriesWithCount()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return

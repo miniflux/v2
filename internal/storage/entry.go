@@ -47,11 +47,6 @@ func (s *Storage) CountAllEntries() (map[string]int64, error) {
 	return results, nil
 }
 
-// NewEntryQueryBuilder returns a new EntryQueryBuilder
-func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
-	return NewEntryQueryBuilder(s, userID)
-}
-
 // UpdateEntryTitleAndContent updates entry title and content.
 func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)

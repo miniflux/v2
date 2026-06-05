@@ -224,6 +224,9 @@ func TestHTMLRedirectRejectsUnsafeTargets(t *testing.T) {
 		"file:///etc/passwd",
 		"mailto:victim@example.org",
 		"//evil.example.org/path",
+		`/\evil.example.org/path`,
+		`\evil.example.org\path`,
+		`/foo\bar`,
 		"ftp://example.org/file",
 		"",
 	}

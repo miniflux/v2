@@ -31,16 +31,16 @@ func (h *handler) showCategoryEntriesStarredPage(w http.ResponseWriter, r *http.
 	}
 
 	offset := request.QueryIntParam(r, "offset", 0)
-	builder := h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithCategoryID(category.ID)
-	builder.WithSorting(user.EntryOrder, user.EntryDirection)
-	builder.WithSorting("id", user.EntryDirection)
-	builder.WithStarred(true)
-	builder.WithoutContent()
-	builder.WithOffset(offset)
-	builder.WithLimit(user.EntriesPerPage)
 
-	entries, count, err := builder.GetEntriesWithCount()
+	entries, count, err := h.store.NewEntryQueryBuilder(user.ID).
+		WithCategoryID(category.ID).
+		WithSorting(user.EntryOrder, user.EntryDirection).
+		WithSorting("id", user.EntryDirection).
+		WithStarred(true).
+		WithoutContent().
+		WithOffset(offset).
+		WithLimit(user.EntriesPerPage).
+		GetEntriesWithCount()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return

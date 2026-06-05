@@ -37,13 +37,12 @@ func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) int64 
 		userID := request.UserID(r)
 		// We allow the end-user to force refresh all its feeds in this category
 		// without taking into consideration the number of errors.
-		batchBuilder := h.store.NewBatchBuilder()
-		batchBuilder.WithoutDisabledFeeds()
-		batchBuilder.WithUserID(userID)
-		batchBuilder.WithCategoryID(categoryID)
-		batchBuilder.WithLimitPerHost(config.Opts.PollingLimitPerHost())
-
-		jobs, err := batchBuilder.FetchJobs()
+		jobs, err := h.store.NewBatchBuilder().
+			WithoutDisabledFeeds().
+			WithUserID(userID).
+			WithCategoryID(categoryID).
+			WithLimitPerHost(config.Opts.PollingLimitPerHost()).
+			FetchJobs()
 		if err != nil {
 			response.HTMLServerError(w, r, err)
 			return 0

@@ -16,6 +16,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var dummyBcryptHash = []byte("$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy")
+
 // CountUsers returns the total number of users.
 func (s *Storage) CountUsers() (int, error) {
 	var result int
@@ -513,7 +515,7 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 			u.open_external_links_in_new_tab
 		FROM
 			users u
-		LEFT JOIN
+		INNER JOIN
 			api_keys ON api_keys.user_id=u.id
 		WHERE
 			api_keys.token = $1
@@ -673,6 +675,8 @@ func (s *Storage) CheckPassword(username, password string) error {
 
 	err := s.db.QueryRow("SELECT password FROM users WHERE username=$1", username).Scan(&hash)
 	if errors.Is(err, sql.ErrNoRows) {
+		// Perform a dummy bcrypt comparison against the hashed `password` string to avoid leaking whether the user exists via response timing.
+		_ = bcrypt.CompareHashAndPassword(dummyBcryptHash, []byte(password))
 		return fmt.Errorf(`store: unable to find this user: %s`, username)
 	} else if err != nil {
 		return fmt.Errorf(`store: unable to fetch user: %v`, err)
