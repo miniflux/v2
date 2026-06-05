@@ -74,9 +74,9 @@ func TestLocalizedErrorWrapper_Translate(t *testing.T) {
 		t.Errorf("Expected French translation %q, got %q", expected, result)
 	}
 
-	// Test with missing language (should use key as fallback with args applied)
+	// Test with missing language (should fall back to the untranslated key)
 	result = wrapper.Translate("invalid_lang")
-	expected = "error.test_key%!(EXTRA string=test message, int=404)"
+	expected = "error.test_key"
 	if result != expected {
 		t.Errorf("Expected fallback translation %q, got %q", expected, result)
 	}
@@ -157,7 +157,7 @@ func TestLocalizedError_StringWithMissingTranslation(t *testing.T) {
 	localizedErr := NewLocalizedError("error.missing", "arg1")
 
 	result := localizedErr.String()
-	expected := "error.missing%!(EXTRA string=arg1)"
+	expected := "error.missing"
 	if result != expected {
 		t.Errorf("Expected String() result %q, got %q", expected, result)
 	}
@@ -217,7 +217,7 @@ func TestLocalizedError_Translate(t *testing.T) {
 
 	// Test with missing language
 	result = localizedErr.Translate("invalid_lang")
-	expected = "error.permission%!(EXTRA string=admin panel)"
+	expected = "error.permission"
 	if result != expected {
 		t.Errorf("Expected fallback translation %q, got %q", expected, result)
 	}
