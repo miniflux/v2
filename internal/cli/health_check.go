@@ -4,7 +4,6 @@
 package cli // import "miniflux.app/v2/internal/cli"
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"time"
@@ -22,12 +21,12 @@ func doHealthCheck(healthCheckEndpoint string) {
 	client := &http.Client{Timeout: 3 * time.Second}
 	resp, err := client.Get(healthCheckEndpoint)
 	if err != nil {
-		printErrorAndExit(fmt.Errorf(`health check failure: %v`, err))
+		printfAndExit(`health check failure: %v`, err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		printErrorAndExit(fmt.Errorf(`health check failed with status code %d`, resp.StatusCode))
+		printfAndExit(`health check failed with status code %d`, resp.StatusCode)
 	}
 
 	slog.Debug(`Health check is passing`)

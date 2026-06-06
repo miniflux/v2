@@ -25,24 +25,24 @@ func askCredentials() (string, string) {
 	reader := bufio.NewReader(os.Stdin)
 	username, err := reader.ReadString('\n')
 	if err != nil {
-		printErrorAndExit(fmt.Errorf("unable to read username: %w", err))
+		printfAndExit("unable to read username: %w", err)
 	}
 
 	fmt.Print("Enter Password: ")
 
 	state, err := term.GetState(fd)
 	if err != nil {
-		printErrorAndExit(fmt.Errorf("unable to get terminal state: %w", err))
+		printfAndExit("unable to get terminal state: %w", err)
 	}
 	defer func() {
 		if restoreErr := term.Restore(fd, state); restoreErr != nil {
-			printErrorAndExit(fmt.Errorf("unable to restore terminal state: %w", restoreErr))
+			printfAndExit("unable to restore terminal state: %w", restoreErr)
 		}
 	}()
 
 	bytePassword, err := term.ReadPassword(fd)
 	if err != nil {
-		printErrorAndExit(fmt.Errorf("unable to read password: %w", err))
+		printfAndExit("unable to read password: %w", err)
 	}
 
 	fmt.Print("\n")
