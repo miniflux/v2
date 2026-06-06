@@ -124,7 +124,7 @@ func Parse() {
 	default:
 		logFileHandler, err = os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 		if err != nil {
-			printErrorAndExit(fmt.Errorf("unable to open log file: %v", err))
+			printfAndExit("unable to open log file: %v", err)
 		}
 		defer logFileHandler.(*os.File).Close()
 	}
@@ -143,15 +143,15 @@ func Parse() {
 	}
 
 	if err := static.GenerateBinaryBundles(); err != nil {
-		printErrorAndExit(fmt.Errorf("unable to generate binary files bundle: %v", err))
+		printfAndExit("unable to generate binary files bundle: %v", err)
 	}
 
 	if err := static.GenerateStylesheetsBundles(); err != nil {
-		printErrorAndExit(fmt.Errorf("unable to generate stylesheets bundle: %v", err))
+		printfAndExit("unable to generate stylesheets bundle: %v", err)
 	}
 
 	if err := static.GenerateJavascriptBundles(config.Opts.WebAuthn()); err != nil {
-		printErrorAndExit(fmt.Errorf("unable to generate javascript bundle: %v", err))
+		printfAndExit("unable to generate javascript bundle: %v", err)
 	}
 
 	db, err := database.NewConnectionPool(
@@ -161,7 +161,7 @@ func Parse() {
 		config.Opts.DatabaseConnectionLifetime(),
 	)
 	if err != nil {
-		printErrorAndExit(fmt.Errorf("unable to connect to database: %v", err))
+		printfAndExit("unable to connect to database: %v", err)
 	}
 	defer db.Close()
 
@@ -231,7 +231,7 @@ func Parse() {
 		slog.Info("Initializing proxy rotation", slog.Int("proxies_count", len(config.Opts.HTTPClientProxies())))
 		proxyrotator.ProxyRotatorInstance, err = proxyrotator.NewProxyRotator(config.Opts.HTTPClientProxies())
 		if err != nil {
-			printErrorAndExit(fmt.Errorf("unable to initialize proxy rotator: %v", err))
+			printfAndExit("unable to initialize proxy rotator: %v", err)
 		}
 	}
 
@@ -251,4 +251,9 @@ func Parse() {
 func printErrorAndExit(err error) {
 	fmt.Fprintln(os.Stderr, err)
 	os.Exit(1)
+}
+
+func printfAndExit(format string, args ...any) {
+	err := fmt.Errorf(format, args...)
+	printErrorAndExit(err)
 }

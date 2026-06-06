@@ -13,17 +13,17 @@ import (
 func exportUserFeeds(store *storage.Storage, username string) {
 	user, err := store.UserByUsername(username)
 	if err != nil {
-		printErrorAndExit(fmt.Errorf("unable to find user: %w", err))
+		printfAndExit("unable to find user: %w", err)
 	}
 
 	if user == nil {
-		printErrorAndExit(fmt.Errorf("user %q not found", username))
+		printfAndExit("user %q not found", username)
 	}
 
 	opmlHandler := opml.NewHandler(store)
 	opmlExport, err := opmlHandler.Export(user.ID)
 	if err != nil {
-		printErrorAndExit(fmt.Errorf("unable to export feeds: %w", err))
+		printfAndExit("unable to export feeds: %w", err)
 	}
 
 	fmt.Println(opmlExport)
