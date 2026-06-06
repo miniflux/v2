@@ -299,20 +299,22 @@ func (f *feedQueryBuilder) fetchFeedCounter() (unreadCounters map[int64]int, rea
 		return nil, nil, nil
 	}
 
-	query := `
+	var qb strings.Builder
+
+	qb.WriteString(`
 		SELECT e.feed_id, e.status, count(*)
 		FROM entries e
-	`
+	`)
 
 	if f.counterJoinFeeds {
-		query += ` INNER JOIN feeds f ON f.id=e.feed_id `
+		qb.WriteString(` INNER JOIN feeds f ON f.id=e.feed_id`)
 	}
 
-	query += f.counterWhere.String()
+	qb.WriteString(" " + f.counterWhere.String())
 
-	query += ` GROUP BY e.feed_id, e.status`
+	qb.WriteString(` GROUP BY e.feed_id, e.status`)
 
-	rows, err := f.db.Query(query, f.counterArgs...)
+	rows, err := f.db.Query(qb.String(), f.counterArgs...)
 	if err != nil {
 		return nil, nil, fmt.Errorf(`store: unable to fetch feed counts: %w`, err)
 	}

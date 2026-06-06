@@ -142,23 +142,26 @@ func (e *entryPaginationBuilder) Entries() (*model.Entry, *model.Entry, error) {
 }
 
 func (e *entryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID int64, err error) {
+	cte := `
+		SELECT
+			e.id,
+			lag(e.id) over (` + e.orderBy.String() + `) as prev_id,
+			lead(e.id) over (` + e.orderBy.String() + `) as next_id
+		FROM entries AS e
+			JOIN feeds AS f ON f.id = e.feed_id
+			JOIN categories c ON c.id = f.category_id
+	` + e.where.String() + " " + e.orderBy.String()
+
 	var finalWhere whereBuilder
 
 	finalWhere.and("ep.id = $" + strconv.Itoa(len(e.args)+1))
 	args := append(slices.Clone(e.args), e.entryID)
 
 	query := `
-		WITH entry_pagination AS (
-			SELECT
-				e.id,
-				lag(e.id) over (` + e.orderBy.String() + `) as prev_id,
-				lead(e.id) over (` + e.orderBy.String() + `) as next_id
-			FROM entries AS e
-			JOIN feeds AS f ON f.id=e.feed_id
-			JOIN categories c ON c.id = f.category_id
-		` + e.where.String() + " " + e.orderBy.String() +
-		`)
-		SELECT prev_id, next_id FROM entry_pagination AS ep ` + finalWhere.String()
+		WITH entry_pagination AS (` + cte + `)
+		SELECT prev_id, next_id
+		FROM entry_pagination AS ep
+	` + finalWhere.String()
 
 	var pID, nID sql.NullInt64
 	err = tx.QueryRow(query, args...).Scan(&pID, &nID)

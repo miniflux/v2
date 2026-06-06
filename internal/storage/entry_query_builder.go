@@ -274,65 +274,70 @@ func (e *EntryQueryBuilder) GetEntriesWithCount() (model.Entries, int, error) {
 // When withCount is true, count(*) OVER() is included in the SELECT and the total
 // count of matching rows is returned; otherwise the returned count is 0.
 func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, error) {
-	countColumn := ""
+	var qb strings.Builder
+
+	qb.WriteString(`SELECT `)
+
 	if withCount {
-		countColumn = "count(*) OVER(),"
+		qb.WriteString(`count(*) OVER(),`)
 	}
 
-	query := `
-		SELECT
-			` + countColumn + `
-			e.id,
-			e.user_id,
-			e.feed_id,
-			e.hash,
-			e.published_at at time zone u.timezone,
-			e.title,
-			e.url,
-			e.comments_url,
-			e.author,
-			e.share_code,
-			` + e.contentColumn() + `,
-			e.status,
-			e.starred,
-			e.reading_time,
-			e.created_at,
-			e.changed_at,
-			e.tags,
-			f.title as feed_title,
-			f.feed_url,
-			f.site_url,
-			f.description,
-			f.checked_at,
-			f.category_id,
-			c.title as category_title,
-			c.hide_globally as category_hidden,
-			f.scraper_rules,
-			f.rewrite_rules,
-			f.crawler,
-			f.user_agent,
-			f.cookie,
-			f.hide_globally,
-			f.no_media_player,
-			f.webhook_url,
-			fi.icon_id,
-			i.external_id AS icon_external_id,
-			u.timezone
-		FROM
-			entries e
-		INNER JOIN
-			feeds f ON f.id=e.feed_id
-		INNER JOIN
-			categories c ON c.id=f.category_id
-		LEFT JOIN
-			feed_icons fi ON fi.feed_id=f.id
-		LEFT JOIN
-			icons i ON i.id=fi.icon_id
-		INNER JOIN
-			users u ON u.id=e.user_id
-		` + e.where.String() + " " + e.buildSorting()
+	qb.WriteString(`
+		e.id,
+		e.user_id,
+		e.feed_id,
+		e.hash,
+		e.published_at at time zone u.timezone,
+		e.title,
+		e.url,
+		e.comments_url,
+		e.author,
+		e.share_code,` +
+		e.contentColumn() + ` as content,` +
+		`e.status,
+		e.starred,
+		e.reading_time,
+		e.created_at,
+		e.changed_at,
+		e.tags,
+		f.title as feed_title,
+		f.feed_url,
+		f.site_url,
+		f.description,
+		f.checked_at,
+		f.category_id,
+		c.title as category_title,
+		c.hide_globally as category_hidden,
+		f.scraper_rules,
+		f.rewrite_rules,
+		f.crawler,
+		f.user_agent,
+		f.cookie,
+		f.hide_globally,
+		f.no_media_player,
+		f.webhook_url,
+		fi.icon_id,
+		i.external_id as icon_external_id,
+		u.timezone
+	FROM
+		entries e
+	INNER JOIN
+		feeds f ON f.id=e.feed_id
+	INNER JOIN
+		categories c ON c.id=f.category_id
+	LEFT JOIN
+		feed_icons fi ON fi.feed_id=f.id
+	LEFT JOIN
+		icons i ON i.id=fi.icon_id
+	INNER JOIN
+		users u ON u.id=e.user_id
+	`)
 
-	rows, err := e.store.db.Query(query, e.args...)
+	qb.WriteString(" " + e.where.String())
+
+	qb.WriteString(" " + e.buildSorting())
+
+	rows, err := e.store.db.Query(qb.String(), e.args...)
 	if err != nil {
 		return nil, 0, fmt.Errorf("store: unable to get entries: %v", err)
 	}
@@ -475,7 +480,7 @@ func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
 
 func (e *EntryQueryBuilder) contentColumn() string {
 	if e.excludeContent {
-		return "'' AS content"
+		return "''"
 	}
 	return "e.content"
 }
