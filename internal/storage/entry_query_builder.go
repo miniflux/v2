@@ -21,7 +21,7 @@ type EntryQueryBuilder struct {
 	store           *Storage
 	args            []any
 	where           whereBuilder
-	sortExpressions []string
+	orderBy         orderByBuilder
 	limit           int
 	offset          int
 	fetchEnclosures bool
@@ -50,9 +50,8 @@ func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 		e.args = append(e.args, query)
 
 		// 0.0000001 = 0.1 / (seconds_in_a_day)
-
-		e.sortExpressions = append(e.sortExpressions,
-			fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001 DESC", nArgs),
+		e.orderBy.desc(
+			fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001", nArgs),
 		)
 	}
 	return e
@@ -191,9 +190,9 @@ func (e *EntryQueryBuilder) WithShareCodeNotEmpty() *EntryQueryBuilder {
 func (e *EntryQueryBuilder) WithSorting(column, direction string) *EntryQueryBuilder {
 	switch {
 	case strings.EqualFold(direction, "ASC"):
-		e.sortExpressions = append(e.sortExpressions, pq.QuoteIdentifier(column)+" ASC")
+		e.orderBy.asc(pq.QuoteIdentifier(column))
 	case strings.EqualFold(direction, "DESC"):
-		e.sortExpressions = append(e.sortExpressions, pq.QuoteIdentifier(column)+" DESC")
+		e.orderBy.desc(pq.QuoteIdentifier(column))
 	}
 
 	return e
@@ -484,9 +483,7 @@ func (e *EntryQueryBuilder) contentColumn() string {
 func (e *EntryQueryBuilder) buildSorting() string {
 	var parts string
 
-	if len(e.sortExpressions) > 0 {
-		parts += " ORDER BY " + strings.Join(e.sortExpressions, ", ")
-	}
+	parts += e.orderBy.String()
 
 	if e.limit > 0 {
 		parts += " LIMIT " + strconv.Itoa(e.limit)

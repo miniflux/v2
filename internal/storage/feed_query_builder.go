@@ -19,7 +19,7 @@ type feedQueryBuilder struct {
 	db               *sql.DB
 	args             []any
 	where            whereBuilder
-	sortExpressions  []string
+	orderBy          orderByBuilder
 	limit            int
 	offset           int
 	withCounters     bool
@@ -77,9 +77,9 @@ func (f *feedQueryBuilder) WithCounters() *feedQueryBuilder {
 func (f *feedQueryBuilder) WithSorting(column, direction string) *feedQueryBuilder {
 	switch {
 	case strings.EqualFold(direction, "ASC"):
-		f.sortExpressions = append(f.sortExpressions, pq.QuoteIdentifier(column)+" ASC")
+		f.orderBy.asc(pq.QuoteIdentifier(column))
 	case strings.EqualFold(direction, "DESC"):
-		f.sortExpressions = append(f.sortExpressions, pq.QuoteIdentifier(column)+" DESC")
+		f.orderBy.desc(pq.QuoteIdentifier(column))
 	}
 
 	return f
@@ -100,9 +100,7 @@ func (f *feedQueryBuilder) WithOffset(offset int) *feedQueryBuilder {
 func (f *feedQueryBuilder) buildSorting() string {
 	var parts string
 
-	if len(f.sortExpressions) > 0 {
-		parts += " ORDER BY " + strings.Join(f.sortExpressions, ", ")
-	}
+	parts += f.orderBy.String()
 
 	if len(parts) > 0 {
 		parts += ", lower(f.title) ASC"

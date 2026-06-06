@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 
 	"github.com/lib/pq"
@@ -17,9 +18,9 @@ import (
 type entryPaginationBuilder struct {
 	db        *sql.DB
 	where     whereBuilder
+	orderBy   orderByBuilder
 	args      []any
 	entryID   int64
-	order     string
 	direction string
 }
 
@@ -141,30 +142,26 @@ func (e *entryPaginationBuilder) Entries() (*model.Entry, *model.Entry, error) {
 }
 
 func (e *entryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID int64, err error) {
-	cte := `
-		WITH entry_pagination AS (
-			SELECT
-				e.id,
-				lag(e.id) over (order by e.%[1]s asc, e.created_at asc, e.id desc) as prev_id,
-				lead(e.id) over (order by e.%[1]s asc, e.created_at asc, e.id desc) as next_id
-			FROM entries AS e
-			JOIN feeds AS f ON f.id=e.feed_id
-			JOIN categories c ON c.id = f.category_id
-		` + e.where.String() +
-		`	ORDER BY e.%[1]s asc, e.created_at asc, e.id desc
-		)
-		SELECT prev_id, next_id FROM entry_pagination AS ep %[2]s;
-	`
-
 	var finalWhere whereBuilder
 
 	finalWhere.and("ep.id = $" + strconv.Itoa(len(e.args)+1))
-	e.args = append(e.args, e.entryID)
+	args := append(slices.Clone(e.args), e.entryID)
 
-	query := fmt.Sprintf(cte, e.order, finalWhere.String())
+	query := `
+		WITH entry_pagination AS (
+			SELECT
+				e.id,
+				lag(e.id) over (` + e.orderBy.String() + `) as prev_id,
+				lead(e.id) over (` + e.orderBy.String() + `) as next_id
+			FROM entries AS e
+			JOIN feeds AS f ON f.id=e.feed_id
+			JOIN categories c ON c.id = f.category_id
+		` + e.where.String() + " " + e.orderBy.String() +
+		`)
+		SELECT prev_id, next_id FROM entry_pagination AS ep ` + finalWhere.String()
 
 	var pID, nID sql.NullInt64
-	err = tx.QueryRow(query, e.args...).Scan(&pID, &nID)
+	err = tx.QueryRow(query, args...).Scan(&pID, &nID)
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
 		return 0, 0, nil
@@ -207,11 +204,14 @@ func (s *Storage) NewEntryPaginationBuilder(userID, entryID int64, order, direct
 		db:        s.db,
 		args:      []any{userID},
 		entryID:   entryID,
-		order:     pq.QuoteIdentifier(order),
 		direction: direction,
 	}
 
 	e.where.and("e.user_id = $1")
+
+	e.orderBy.asc("e." + pq.QuoteIdentifier(order))
+	e.orderBy.asc("e.created_at")
+	e.orderBy.desc("e.id")
 
 	return &e
 }
