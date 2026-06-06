@@ -17,29 +17,30 @@ import (
 // feedQueryBuilder builds a SQL query to fetch feeds.
 type feedQueryBuilder struct {
 	db               *sql.DB
-	args             []any
+	args             argsBuilder
 	where            whereBuilder
 	orderBy          orderByBuilder
 	limit            int
 	offset           int
 	withCounters     bool
 	counterJoinFeeds bool
-	counterArgs      []any
+	counterArgs      argsBuilder
 	counterWhere     whereBuilder
 }
 
 // NewFeedQueryBuilder returns a new FeedQueryBuilder.
 func (s *Storage) NewFeedQueryBuilder(userID int64) *feedQueryBuilder {
 	f := feedQueryBuilder{
-		db:          s.db,
-		args:        []any{userID},
-		counterArgs: []any{userID, model.EntryStatusRead, model.EntryStatusUnread},
+		db: s.db,
 	}
 
-	f.where.and("f.user_id = $1")
+	nArgs := f.args.append(userID)
+	f.where.and("f.user_id = $" + strconv.Itoa(nArgs))
 
-	f.counterWhere.and("e.user_id = $1")
-	f.counterWhere.and("e.status IN ($2, $3)")
+	cArgs := f.counterArgs.append(userID)
+	f.counterWhere.and("e.user_id = $" + strconv.Itoa(cArgs))
+
+	f.counterWhere.and("e.status IN (" + model.EntryStatusRead + ", " + model.EntryStatusUnread + ")")
 
 	return &f
 }
@@ -50,11 +51,11 @@ func (f *feedQueryBuilder) WithCategoryID(categoryID int64) *feedQueryBuilder {
 		return f
 	}
 
-	f.where.and("f.category_id = $" + strconv.Itoa(len(f.args)+1))
-	f.args = append(f.args, categoryID)
+	nArgs := f.args.append(categoryID)
+	f.where.and("f.category_id = $" + strconv.Itoa(nArgs))
 
-	f.counterWhere.and("f.category_id = $" + strconv.Itoa(len(f.counterArgs)+1))
-	f.counterArgs = append(f.counterArgs, categoryID)
+	cArgs := f.args.append(categoryID)
+	f.counterWhere.and("f.category_id = $" + strconv.Itoa(cArgs))
 
 	f.counterJoinFeeds = true
 
@@ -67,8 +68,8 @@ func (f *feedQueryBuilder) WithFeedID(feedID int64) *feedQueryBuilder {
 		return f
 	}
 
-	f.where.and("f.id = $" + strconv.Itoa(len(f.args)+1))
-	f.args = append(f.args, feedID)
+	nArgs := f.args.append(feedID)
+	f.where.and("f.id = $" + strconv.Itoa(nArgs))
 
 	return f
 }
@@ -215,7 +216,7 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 		return nil, err
 	}
 
-	rows, err := f.db.Query(query, f.args...)
+	rows, err := f.db.Query(query, f.args.all()...)
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch feeds: %w`, err)
 	}
@@ -328,7 +329,7 @@ func (f *feedQueryBuilder) fetchFeedCounter() (unreadCounters map[int64]int, rea
 
 	qb.WriteString(` GROUP BY e.feed_id, e.status`)
 
-	rows, err := f.db.Query(qb.String(), f.counterArgs...)
+	rows, err := f.db.Query(qb.String(), f.counterArgs.all()...)
 	if err != nil {
 		return nil, nil, fmt.Errorf(`store: unable to fetch feed counts: %w`, err)
 	}

@@ -16,7 +16,7 @@ import (
 
 type batchBuilder struct {
 	db           *sql.DB
-	args         []any
+	args         argsBuilder
 	where        whereBuilder
 	batchSize    int
 	limitPerHost int
@@ -41,14 +41,14 @@ func (b *batchBuilder) WithBatchSize(batchSize int) *batchBuilder {
 }
 
 func (b *batchBuilder) WithUserID(userID int64) *batchBuilder {
-	b.where.and("user_id = $" + strconv.Itoa(len(b.args)+1))
-	b.args = append(b.args, userID)
+	nArgs := b.args.append(userID)
+	b.where.and("user_id = $" + strconv.Itoa(nArgs))
 	return b
 }
 
 func (b *batchBuilder) WithCategoryID(categoryID int64) *batchBuilder {
-	b.where.and("category_id = $" + strconv.Itoa(len(b.args)+1))
-	b.args = append(b.args, categoryID)
+	nArgs := b.args.append(categoryID)
+	b.where.and("category_id = $" + strconv.Itoa(nArgs))
 	return b
 }
 
@@ -57,8 +57,8 @@ func (b *batchBuilder) WithErrorLimit(limit int) *batchBuilder {
 		return b
 	}
 
-	b.where.and("parsing_error_count < $" + strconv.Itoa(len(b.args)+1))
-	b.args = append(b.args, limit)
+	nArgs := b.args.append(limit)
+	b.where.and("parsing_error_count < $" + strconv.Itoa(nArgs))
 
 	return b
 }
@@ -101,7 +101,7 @@ func (b *batchBuilder) FetchJobs() (model.JobList, error) {
 		qb.WriteString(` LIMIT ` + strconv.Itoa(b.batchSize))
 	}
 
-	rows, err := b.db.Query(qb.String(), b.args...)
+	rows, err := b.db.Query(qb.String(), b.args.all()...)
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch batch of jobs: %v`, err)
 	}

@@ -1,6 +1,9 @@
 package storage
 
-import "strings"
+import (
+	"slices"
+	"strings"
+)
 
 // whereBuilder constructs WHERE expression string using [strings.Builder].
 type whereBuilder struct {
@@ -52,4 +55,22 @@ func (b *orderByBuilder) desc(column string) {
 
 	b.sb.WriteString(column)
 	b.sb.WriteString(" DESC")
+}
+
+// argsBuilder collects all parametrized args.
+type argsBuilder struct {
+	args []any
+}
+
+func (b *argsBuilder) clone() argsBuilder {
+	return argsBuilder{args: slices.Clone(b.args)}
+}
+
+func (b *argsBuilder) all() []any {
+	return b.args
+}
+
+func (b *argsBuilder) append(arg any) int {
+	b.args = append(b.args, arg)
+	return len(b.args)
 }

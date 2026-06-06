@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"slices"
 	"strconv"
 
 	"github.com/lib/pq"
@@ -17,9 +16,9 @@ import (
 // entryPaginationBuilder is a builder for entry prev/next queries.
 type entryPaginationBuilder struct {
 	db        *sql.DB
+	args      argsBuilder
 	where     whereBuilder
 	orderBy   orderByBuilder
-	args      []any
 	entryID   int64
 	direction string
 }
@@ -30,8 +29,8 @@ func (e *entryPaginationBuilder) WithSearchQuery(query string) *entryPaginationB
 		return e
 	}
 
-	e.where.and(fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", len(e.args)+1))
-	e.args = append(e.args, query)
+	nArgs := e.args.append(query)
+	e.where.and(fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", nArgs))
 
 	return e
 }
@@ -49,8 +48,8 @@ func (e *entryPaginationBuilder) WithFeedID(feedID int64) *entryPaginationBuilde
 		return e
 	}
 
-	e.where.and("e.feed_id = $" + strconv.Itoa(len(e.args)+1))
-	e.args = append(e.args, feedID)
+	nArgs := e.args.append(feedID)
+	e.where.and("e.feed_id = $" + strconv.Itoa(nArgs))
 
 	return e
 }
@@ -61,8 +60,8 @@ func (e *entryPaginationBuilder) WithCategoryID(categoryID int64) *entryPaginati
 		return e
 	}
 
-	e.where.and("f.category_id = $" + strconv.Itoa(len(e.args)+1))
-	e.args = append(e.args, categoryID)
+	nArgs := e.args.append(categoryID)
+	e.where.and("f.category_id = $" + strconv.Itoa(nArgs))
 
 	return e
 }
@@ -73,8 +72,8 @@ func (e *entryPaginationBuilder) WithStatus(status string) *entryPaginationBuild
 		return e
 	}
 
-	e.where.and("e.status = $" + strconv.Itoa(len(e.args)+1))
-	e.args = append(e.args, status)
+	nArgs := e.args.append(status)
+	e.where.and("e.status = $" + strconv.Itoa(nArgs))
 
 	return e
 }
@@ -89,10 +88,9 @@ func (e *entryPaginationBuilder) WithStatusOrEntryID(status string, entryID int6
 		return e.WithStatus(status)
 	}
 
-	statusArg := len(e.args) + 1
-	entryArg := len(e.args) + 2
+	statusArg := e.args.append(status)
+	entryArg := e.args.append(entryID)
 	e.where.and(fmt.Sprintf("(e.status = $%d OR e.id = $%d)", statusArg, entryArg))
-	e.args = append(e.args, status, entryID)
 
 	return e
 }
@@ -102,8 +100,8 @@ func (e *entryPaginationBuilder) WithTags(tags ...string) *entryPaginationBuilde
 		return e
 	}
 
-	e.where.and(fmt.Sprintf("LOWER(e.tags::text)::text[] @> LOWER($%d::text)::text[]", len(e.args)+1))
-	e.args = append(e.args, pq.Array(tags))
+	nArgs := e.args.append(pq.Array(tags))
+	e.where.and(fmt.Sprintf("LOWER(e.tags::text)::text[] @> LOWER($%d::text)::text[]", nArgs))
 
 	return e
 }
@@ -161,10 +159,11 @@ func (e *entryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID
 			JOIN categories c ON c.id = f.category_id
 	` + e.where.String() + " " + e.orderBy.String()
 
-	var finalWhere whereBuilder
+	finalWhere := whereBuilder{}
+	finalArgs := e.args.clone()
 
-	finalWhere.and("ep.id = $" + strconv.Itoa(len(e.args)+1))
-	args := append(slices.Clone(e.args), e.entryID)
+	nArgs := finalArgs.append(e.entryID)
+	finalWhere.and("ep.id = $" + strconv.Itoa(nArgs))
 
 	query := `
 		WITH entry_pagination AS (` + cte + `)
@@ -173,7 +172,7 @@ func (e *entryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID
 	` + finalWhere.String()
 
 	var pID, nID sql.NullInt64
-	err = tx.QueryRow(query, args...).Scan(&pID, &nID)
+	err = tx.QueryRow(query, finalArgs.all()...).Scan(&pID, &nID)
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
 		return 0, 0, nil
@@ -214,12 +213,12 @@ func (e *entryPaginationBuilder) getEntry(tx *sql.Tx, entryID int64) (*model.Ent
 func (s *Storage) NewEntryPaginationBuilder(userID, entryID int64, order, direction string) *entryPaginationBuilder {
 	e := entryPaginationBuilder{
 		db:        s.db,
-		args:      []any{userID},
 		entryID:   entryID,
 		direction: direction,
 	}
 
-	e.where.and("e.user_id = $1")
+	nArgs := e.args.append(userID)
+	e.where.and("e.user_id = $" + strconv.Itoa(nArgs))
 
 	e.orderBy.asc("e." + pq.QuoteIdentifier(order))
 	e.orderBy.asc("e.created_at")
