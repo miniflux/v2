@@ -22,6 +22,7 @@ func (h *handler) showStylesheet(w http.ResponseWriter, r *http.Request) {
 	response.NewBuilder(w, r).WithCaching(stylesheetBundle.Checksum, 48*time.Hour, func(b *response.Builder) {
 		b.WithHeader("Content-Type", "text/css; charset=utf-8")
 		b.WithBodyAsBytes(stylesheetBundle.Data)
+		b.WithCompressedVariants(stylesheetBundle.Brotli, stylesheetBundle.Gzip)
 		b.Write()
 	})
 }

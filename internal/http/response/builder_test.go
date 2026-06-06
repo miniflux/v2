@@ -356,7 +356,7 @@ func TestIfNoneMatch(t *testing.T) {
 }
 
 func TestBuildResponseWithBrotliCompression(t *testing.T) {
-	body := strings.Repeat("a", compressionThreshold+1)
+	body := strings.Repeat("a", CompressionThreshold+1)
 	r, err := http.NewRequest("GET", "/", nil)
 	r.Header.Set("Accept-Encoding", "gzip, deflate, br")
 	if err != nil {
@@ -380,7 +380,7 @@ func TestBuildResponseWithBrotliCompression(t *testing.T) {
 }
 
 func TestBuildResponseWithGzipCompression(t *testing.T) {
-	body := strings.Repeat("a", compressionThreshold+1)
+	body := strings.Repeat("a", CompressionThreshold+1)
 	r, err := http.NewRequest("GET", "/", nil)
 	r.Header.Set("Accept-Encoding", "gzip, deflate")
 	if err != nil {
@@ -404,7 +404,7 @@ func TestBuildResponseWithGzipCompression(t *testing.T) {
 }
 
 func TestBuildResponseWithDeflateCompression(t *testing.T) {
-	body := strings.Repeat("a", compressionThreshold+1)
+	body := strings.Repeat("a", CompressionThreshold+1)
 	r, err := http.NewRequest("GET", "/", nil)
 	r.Header.Set("Accept-Encoding", "deflate")
 	if err != nil {
@@ -434,7 +434,7 @@ func TestBuildResponseWithDeflateCompression(t *testing.T) {
 }
 
 func TestBuildResponseWithCompressionDisabled(t *testing.T) {
-	body := strings.Repeat("a", compressionThreshold+1)
+	body := strings.Repeat("a", CompressionThreshold+1)
 	r, err := http.NewRequest("GET", "/", nil)
 	r.Header.Set("Accept-Encoding", "deflate")
 	if err != nil {
@@ -464,7 +464,7 @@ func TestBuildResponseWithCompressionDisabled(t *testing.T) {
 }
 
 func TestBuildResponseWithDeflateCompressionAndSmallPayload(t *testing.T) {
-	body := strings.Repeat("a", compressionThreshold)
+	body := strings.Repeat("a", CompressionThreshold)
 	r, err := http.NewRequest("GET", "/", nil)
 	r.Header.Set("Accept-Encoding", "deflate")
 	if err != nil {
@@ -494,7 +494,7 @@ func TestBuildResponseWithDeflateCompressionAndSmallPayload(t *testing.T) {
 }
 
 func TestBuildResponseWithoutCompressionHeader(t *testing.T) {
-	body := strings.Repeat("a", compressionThreshold+1)
+	body := strings.Repeat("a", CompressionThreshold+1)
 	r, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
 		t.Fatal(err)
