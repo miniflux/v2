@@ -61,11 +61,8 @@ func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 
 // WithStarred adds starred filter.
 func (e *EntryQueryBuilder) WithStarred(starred bool) *EntryQueryBuilder {
-	if starred {
-		e.where.and("e.starred is true")
-	} else {
-		e.where.and("e.starred is false")
-	}
+	e.where.and("e.starred is " + strconv.FormatBool(starred))
+
 	return e
 }
 
