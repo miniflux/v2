@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"fmt"
 	"slices"
 	"strings"
 )
@@ -23,6 +24,16 @@ func (b *whereBuilder) and(s string) {
 	}
 
 	b.sb.WriteString(s)
+}
+
+func (b *whereBuilder) andf(format string, args ...any) {
+	if b.sb.Len() == 0 {
+		b.sb.WriteString("WHERE ")
+	} else {
+		b.sb.WriteString(" AND ")
+	}
+
+	fmt.Fprintf(&b.sb, format, args...)
 }
 
 // orderByBuilder constructs ORDER BY expression string using [strings.Builder].
