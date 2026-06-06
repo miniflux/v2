@@ -20,7 +20,7 @@ import (
 type EntryQueryBuilder struct {
 	store           *Storage
 	args            []any
-	conditions      []string
+	where           whereBuilder
 	sortExpressions []string
 	limit           int
 	offset          int
@@ -46,7 +46,7 @@ func (e *EntryQueryBuilder) WithoutContent() *EntryQueryBuilder {
 func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 	if query != "" {
 		nArgs := len(e.args) + 1
-		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", nArgs))
+		e.where.and(fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", nArgs))
 		e.args = append(e.args, query)
 
 		// 0.0000001 = 0.1 / (seconds_in_a_day)
@@ -61,37 +61,37 @@ func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 // WithStarred adds starred filter.
 func (e *EntryQueryBuilder) WithStarred(starred bool) *EntryQueryBuilder {
 	if starred {
-		e.conditions = append(e.conditions, "e.starred is true")
+		e.where.and("e.starred is true")
 	} else {
-		e.conditions = append(e.conditions, "e.starred is false")
+		e.where.and("e.starred is false")
 	}
 	return e
 }
 
 // BeforeChangedDate adds a condition < changed_at
 func (e *EntryQueryBuilder) BeforeChangedDate(date time.Time) *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "e.changed_at < $"+strconv.Itoa(len(e.args)+1))
+	e.where.and("e.changed_at < $" + strconv.Itoa(len(e.args)+1))
 	e.args = append(e.args, date)
 	return e
 }
 
 // AfterChangedDate adds a condition > changed_at
 func (e *EntryQueryBuilder) AfterChangedDate(date time.Time) *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "e.changed_at > $"+strconv.Itoa(len(e.args)+1))
+	e.where.and("e.changed_at > $" + strconv.Itoa(len(e.args)+1))
 	e.args = append(e.args, date)
 	return e
 }
 
 // BeforePublishedDate adds a condition < published_at
 func (e *EntryQueryBuilder) BeforePublishedDate(date time.Time) *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "e.published_at < $"+strconv.Itoa(len(e.args)+1))
+	e.where.and("e.published_at < $" + strconv.Itoa(len(e.args)+1))
 	e.args = append(e.args, date)
 	return e
 }
 
 // AfterPublishedDate adds a condition > published_at
 func (e *EntryQueryBuilder) AfterPublishedDate(date time.Time) *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "e.published_at > $"+strconv.Itoa(len(e.args)+1))
+	e.where.and("e.published_at > $" + strconv.Itoa(len(e.args)+1))
 	e.args = append(e.args, date)
 	return e
 }
@@ -99,7 +99,7 @@ func (e *EntryQueryBuilder) AfterPublishedDate(date time.Time) *EntryQueryBuilde
 // BeforeEntryID adds a condition < entryID.
 func (e *EntryQueryBuilder) BeforeEntryID(entryID int64) *EntryQueryBuilder {
 	if entryID != 0 {
-		e.conditions = append(e.conditions, "e.id < $"+strconv.Itoa(len(e.args)+1))
+		e.where.and("e.id < $" + strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, entryID)
 	}
 	return e
@@ -108,7 +108,7 @@ func (e *EntryQueryBuilder) BeforeEntryID(entryID int64) *EntryQueryBuilder {
 // AfterEntryID adds a condition > entryID.
 func (e *EntryQueryBuilder) AfterEntryID(entryID int64) *EntryQueryBuilder {
 	if entryID != 0 {
-		e.conditions = append(e.conditions, "e.id > $"+strconv.Itoa(len(e.args)+1))
+		e.where.and("e.id > $" + strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, entryID)
 	}
 	return e
@@ -117,10 +117,10 @@ func (e *EntryQueryBuilder) AfterEntryID(entryID int64) *EntryQueryBuilder {
 // WithEntryIDs filter by entry IDs.
 func (e *EntryQueryBuilder) WithEntryIDs(entryIDs ...int64) *EntryQueryBuilder {
 	if len(entryIDs) == 1 {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.id = $%d", len(e.args)+1))
+		e.where.and(fmt.Sprintf("e.id = $%d", len(e.args)+1))
 		e.args = append(e.args, entryIDs[0])
 	} else if len(entryIDs) > 1 {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.id = ANY($%d)", len(e.args)+1))
+		e.where.and(fmt.Sprintf("e.id = ANY($%d)", len(e.args)+1))
 		e.args = append(e.args, pq.Int64Array(entryIDs))
 	}
 	return e
@@ -129,7 +129,7 @@ func (e *EntryQueryBuilder) WithEntryIDs(entryIDs ...int64) *EntryQueryBuilder {
 // WithFeedID filter by feed ID.
 func (e *EntryQueryBuilder) WithFeedID(feedID int64) *EntryQueryBuilder {
 	if feedID > 0 {
-		e.conditions = append(e.conditions, "e.feed_id = $"+strconv.Itoa(len(e.args)+1))
+		e.where.and("e.feed_id = $" + strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, feedID)
 	}
 	return e
@@ -138,7 +138,7 @@ func (e *EntryQueryBuilder) WithFeedID(feedID int64) *EntryQueryBuilder {
 // WithCategoryID filter by category ID.
 func (e *EntryQueryBuilder) WithCategoryID(categoryID int64) *EntryQueryBuilder {
 	if categoryID > 0 {
-		e.conditions = append(e.conditions, "f.category_id = $"+strconv.Itoa(len(e.args)+1))
+		e.where.and("f.category_id = $" + strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, categoryID)
 	}
 	return e
@@ -147,10 +147,10 @@ func (e *EntryQueryBuilder) WithCategoryID(categoryID int64) *EntryQueryBuilder 
 // WithStatuses filter by a list of entry statuses.
 func (e *EntryQueryBuilder) WithStatuses(statuses ...string) *EntryQueryBuilder {
 	if len(statuses) == 1 {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.status = $%d", len(e.args)+1))
+		e.where.and(fmt.Sprintf("e.status = $%d", len(e.args)+1))
 		e.args = append(e.args, statuses[0])
 	} else if len(statuses) > 1 {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.status = ANY($%d)", len(e.args)+1))
+		e.where.and(fmt.Sprintf("e.status = ANY($%d)", len(e.args)+1))
 		e.args = append(e.args, pq.StringArray(statuses))
 	}
 	return e
@@ -159,7 +159,7 @@ func (e *EntryQueryBuilder) WithStatuses(statuses ...string) *EntryQueryBuilder 
 // WithTags filter by a list of entry tags.
 func (e *EntryQueryBuilder) WithTags(tags ...string) *EntryQueryBuilder {
 	if len(tags) > 0 {
-		e.conditions = append(e.conditions, fmt.Sprintf("LOWER(e.tags::text)::text[] @> LOWER($%d::text)::text[]", len(e.args)+1))
+		e.where.and(fmt.Sprintf("LOWER(e.tags::text)::text[] @> LOWER($%d::text)::text[]", len(e.args)+1))
 		e.args = append(e.args, pq.Array(tags))
 	}
 	return e
@@ -168,7 +168,7 @@ func (e *EntryQueryBuilder) WithTags(tags ...string) *EntryQueryBuilder {
 // WithoutStatus set the entry status that should not be returned.
 func (e *EntryQueryBuilder) WithoutStatus(status string) *EntryQueryBuilder {
 	if status != "" {
-		e.conditions = append(e.conditions, "e.status <> $"+strconv.Itoa(len(e.args)+1))
+		e.where.and("e.status <> $" + strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, status)
 	}
 	return e
@@ -176,14 +176,14 @@ func (e *EntryQueryBuilder) WithoutStatus(status string) *EntryQueryBuilder {
 
 // WithShareCode set the entry share code.
 func (e *EntryQueryBuilder) WithShareCode(shareCode string) *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "e.share_code = $"+strconv.Itoa(len(e.args)+1))
+	e.where.and("e.share_code = $" + strconv.Itoa(len(e.args)+1))
 	e.args = append(e.args, shareCode)
 	return e
 }
 
 // WithShareCodeNotEmpty adds a filter for non-empty share code.
 func (e *EntryQueryBuilder) WithShareCodeNotEmpty() *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "e.share_code <> ''")
+	e.where.and("e.share_code <> ''")
 	return e
 }
 
@@ -216,8 +216,8 @@ func (e *EntryQueryBuilder) WithOffset(offset int) *EntryQueryBuilder {
 }
 
 func (e *EntryQueryBuilder) WithGloballyVisible() *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "c.hide_globally IS FALSE")
-	e.conditions = append(e.conditions, "f.hide_globally IS FALSE")
+	e.where.and("c.hide_globally IS FALSE")
+	e.where.and("f.hide_globally IS FALSE")
 	return e
 }
 
@@ -228,7 +228,7 @@ func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
 		FROM entries e
 			JOIN feeds f ON f.id = e.feed_id
 			JOIN categories c ON c.id = f.category_id
-		WHERE ` + e.buildCondition()
+	` + e.where.String()
 
 	err = e.store.db.QueryRow(query, e.args...).Scan(&count)
 	if err != nil {
@@ -331,7 +331,7 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 			icons i ON i.id=fi.icon_id
 		INNER JOIN
 			users u ON u.id=e.user_id
-		WHERE ` + e.buildCondition() + " " + e.buildSorting()
+		` + e.where.String() + " " + e.buildSorting()
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
@@ -451,7 +451,7 @@ func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
 			feeds f
 		ON
 			f.id=e.feed_id
-		WHERE ` + e.buildCondition() + " " + e.buildSorting()
+	` + e.where.String() + " " + e.buildSorting()
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
@@ -481,10 +481,6 @@ func (e *EntryQueryBuilder) contentColumn() string {
 	return "e.content"
 }
 
-func (e *EntryQueryBuilder) buildCondition() string {
-	return strings.Join(e.conditions, " AND ")
-}
-
 func (e *EntryQueryBuilder) buildSorting() string {
 	var parts string
 
@@ -505,11 +501,14 @@ func (e *EntryQueryBuilder) buildSorting() string {
 
 // NewEntryQueryBuilder returns a new EntryQueryBuilder.
 func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
-	return &EntryQueryBuilder{
-		store:      s,
-		args:       []any{userID},
-		conditions: []string{"e.user_id = $1"},
+	qb := EntryQueryBuilder{
+		store: s,
+		args:  []any{userID},
 	}
+
+	qb.where.and("e.user_id = $1")
+
+	return &qb
 }
 
 // NewAnonymousQueryBuilder returns a new EntryQueryBuilder suitable for anonymous users.

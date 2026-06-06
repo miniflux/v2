@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/lib/pq"
 	"miniflux.app/v2/internal/model"
@@ -16,18 +15,18 @@ import (
 
 // entryPaginationBuilder is a builder for entry prev/next queries.
 type entryPaginationBuilder struct {
-	db         *sql.DB
-	conditions []string
-	args       []any
-	entryID    int64
-	order      string
-	direction  string
+	db        *sql.DB
+	where     whereBuilder
+	args      []any
+	entryID   int64
+	order     string
+	direction string
 }
 
 // WithSearchQuery adds full-text search query to the condition.
 func (e *entryPaginationBuilder) WithSearchQuery(query string) *entryPaginationBuilder {
 	if query != "" {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", len(e.args)+1))
+		e.where.and(fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", len(e.args)+1))
 		e.args = append(e.args, query)
 	}
 
@@ -36,7 +35,7 @@ func (e *entryPaginationBuilder) WithSearchQuery(query string) *entryPaginationB
 
 // WithStarred adds starred to the condition.
 func (e *entryPaginationBuilder) WithStarred() *entryPaginationBuilder {
-	e.conditions = append(e.conditions, "e.starred is true")
+	e.where.and("e.starred is true")
 
 	return e
 }
@@ -44,7 +43,7 @@ func (e *entryPaginationBuilder) WithStarred() *entryPaginationBuilder {
 // WithFeedID adds feed_id to the condition.
 func (e *entryPaginationBuilder) WithFeedID(feedID int64) *entryPaginationBuilder {
 	if feedID != 0 {
-		e.conditions = append(e.conditions, "e.feed_id = $"+strconv.Itoa(len(e.args)+1))
+		e.where.and("e.feed_id = $" + strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, feedID)
 	}
 
@@ -54,7 +53,7 @@ func (e *entryPaginationBuilder) WithFeedID(feedID int64) *entryPaginationBuilde
 // WithCategoryID adds category_id to the condition.
 func (e *entryPaginationBuilder) WithCategoryID(categoryID int64) *entryPaginationBuilder {
 	if categoryID != 0 {
-		e.conditions = append(e.conditions, "f.category_id = $"+strconv.Itoa(len(e.args)+1))
+		e.where.and("f.category_id = $" + strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, categoryID)
 	}
 
@@ -64,7 +63,7 @@ func (e *entryPaginationBuilder) WithCategoryID(categoryID int64) *entryPaginati
 // WithStatus adds status to the condition.
 func (e *entryPaginationBuilder) WithStatus(status string) *entryPaginationBuilder {
 	if status != "" {
-		e.conditions = append(e.conditions, "e.status = $"+strconv.Itoa(len(e.args)+1))
+		e.where.and("e.status = $" + strconv.Itoa(len(e.args)+1))
 		e.args = append(e.args, status)
 	}
 
@@ -84,7 +83,7 @@ func (e *entryPaginationBuilder) WithStatusOrEntryID(status string, entryID int6
 
 	statusArg := len(e.args) + 1
 	entryArg := len(e.args) + 2
-	e.conditions = append(e.conditions, fmt.Sprintf("(e.status = $%d OR e.id = $%d)", statusArg, entryArg))
+	e.where.and(fmt.Sprintf("(e.status = $%d OR e.id = $%d)", statusArg, entryArg))
 	e.args = append(e.args, status, entryID)
 
 	return e
@@ -92,7 +91,7 @@ func (e *entryPaginationBuilder) WithStatusOrEntryID(status string, entryID int6
 
 func (e *entryPaginationBuilder) WithTags(tags []string) *entryPaginationBuilder {
 	if len(tags) > 0 {
-		e.conditions = append(e.conditions, fmt.Sprintf("LOWER(e.tags::text)::text[] @> LOWER($%d::text)::text[]", len(e.args)+1))
+		e.where.and(fmt.Sprintf("LOWER(e.tags::text)::text[] @> LOWER($%d::text)::text[]", len(e.args)+1))
 		e.args = append(e.args, pq.Array(tags))
 	}
 
@@ -101,8 +100,8 @@ func (e *entryPaginationBuilder) WithTags(tags []string) *entryPaginationBuilder
 
 // WithGloballyVisible adds global visibility to the condition.
 func (e *entryPaginationBuilder) WithGloballyVisible() *entryPaginationBuilder {
-	e.conditions = append(e.conditions, "not c.hide_globally")
-	e.conditions = append(e.conditions, "not f.hide_globally")
+	e.where.and("c.hide_globally IS FALSE")
+	e.where.and("f.hide_globally IS FALSE")
 
 	return e
 }
@@ -151,16 +150,18 @@ func (e *entryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID
 			FROM entries AS e
 			JOIN feeds AS f ON f.id=e.feed_id
 			JOIN categories c ON c.id = f.category_id
-			WHERE %[2]s
-			ORDER BY e.%[1]s asc, e.created_at asc, e.id desc
+		` + e.where.String() +
+		`	ORDER BY e.%[1]s asc, e.created_at asc, e.id desc
 		)
-		SELECT prev_id, next_id FROM entry_pagination AS ep WHERE %[3]s;
+		SELECT prev_id, next_id FROM entry_pagination AS ep %[2]s;
 	`
 
-	subCondition := strings.Join(e.conditions, " AND ")
-	finalCondition := "ep.id = $" + strconv.Itoa(len(e.args)+1)
-	query := fmt.Sprintf(cte, e.order, subCondition, finalCondition)
+	var finalWhere whereBuilder
+
+	finalWhere.and("ep.id = $" + strconv.Itoa(len(e.args)+1))
 	e.args = append(e.args, e.entryID)
+
+	query := fmt.Sprintf(cte, e.order, finalWhere.String())
 
 	var pID, nID sql.NullInt64
 	err = tx.QueryRow(query, e.args...).Scan(&pID, &nID)
@@ -202,12 +203,15 @@ func (e *entryPaginationBuilder) getEntry(tx *sql.Tx, entryID int64) (*model.Ent
 
 // NewEntryPaginationBuilder returns a new EntryPaginationBuilder.
 func (s *Storage) NewEntryPaginationBuilder(userID, entryID int64, order, direction string) *entryPaginationBuilder {
-	return &entryPaginationBuilder{
-		db:         s.db,
-		args:       []any{userID},
-		conditions: []string{"e.user_id = $1"},
-		entryID:    entryID,
-		order:      pq.QuoteIdentifier(order),
-		direction:  direction,
+	e := entryPaginationBuilder{
+		db:        s.db,
+		args:      []any{userID},
+		entryID:   entryID,
+		order:     pq.QuoteIdentifier(order),
+		direction: direction,
 	}
+
+	e.where.and("e.user_id = $1")
+
+	return &e
 }

@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
-	"strings"
 
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/urllib"
@@ -17,15 +16,17 @@ import (
 type batchBuilder struct {
 	db           *sql.DB
 	args         []any
-	conditions   []string
+	where        whereBuilder
 	batchSize    int
 	limitPerHost int
 }
 
 func (s *Storage) NewBatchBuilder() *batchBuilder {
-	return &batchBuilder{
+	b := batchBuilder{
 		db: s.db,
 	}
+
+	return &b
 }
 
 func (b *batchBuilder) WithBatchSize(batchSize int) *batchBuilder {
@@ -34,32 +35,32 @@ func (b *batchBuilder) WithBatchSize(batchSize int) *batchBuilder {
 }
 
 func (b *batchBuilder) WithUserID(userID int64) *batchBuilder {
-	b.conditions = append(b.conditions, "user_id = $"+strconv.Itoa(len(b.args)+1))
+	b.where.and("user_id = $" + strconv.Itoa(len(b.args)+1))
 	b.args = append(b.args, userID)
 	return b
 }
 
 func (b *batchBuilder) WithCategoryID(categoryID int64) *batchBuilder {
-	b.conditions = append(b.conditions, "category_id = $"+strconv.Itoa(len(b.args)+1))
+	b.where.and("category_id = $" + strconv.Itoa(len(b.args)+1))
 	b.args = append(b.args, categoryID)
 	return b
 }
 
 func (b *batchBuilder) WithErrorLimit(limit int) *batchBuilder {
 	if limit > 0 {
-		b.conditions = append(b.conditions, "parsing_error_count < $"+strconv.Itoa(len(b.args)+1))
+		b.where.and("parsing_error_count < $" + strconv.Itoa(len(b.args)+1))
 		b.args = append(b.args, limit)
 	}
 	return b
 }
 
 func (b *batchBuilder) WithNextCheckExpired() *batchBuilder {
-	b.conditions = append(b.conditions, "next_check_at < now()")
+	b.where.and("next_check_at < now()")
 	return b
 }
 
 func (b *batchBuilder) WithoutDisabledFeeds() *batchBuilder {
-	b.conditions = append(b.conditions, "disabled IS false")
+	b.where.and("disabled IS false")
 	return b
 }
 
@@ -75,9 +76,7 @@ func (b *batchBuilder) WithLimitPerHost(limit int) *batchBuilder {
 func (b *batchBuilder) FetchJobs() (model.JobList, error) {
 	query := `SELECT id, user_id, feed_url FROM feeds`
 
-	if len(b.conditions) > 0 {
-		query += " WHERE " + strings.Join(b.conditions, " AND ")
-	}
+	query += b.where.String()
 
 	query += " ORDER BY next_check_at ASC"
 

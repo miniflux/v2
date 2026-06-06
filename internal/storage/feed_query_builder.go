@@ -16,36 +16,43 @@ import (
 
 // feedQueryBuilder builds a SQL query to fetch feeds.
 type feedQueryBuilder struct {
-	db                *sql.DB
-	args              []any
-	conditions        []string
-	sortExpressions   []string
-	limit             int
-	offset            int
-	withCounters      bool
-	counterJoinFeeds  bool
-	counterArgs       []any
-	counterConditions []string
+	db               *sql.DB
+	args             []any
+	where            whereBuilder
+	sortExpressions  []string
+	limit            int
+	offset           int
+	withCounters     bool
+	counterJoinFeeds bool
+	counterArgs      []any
+	counterWhere     whereBuilder
 }
 
 // NewFeedQueryBuilder returns a new FeedQueryBuilder.
 func (s *Storage) NewFeedQueryBuilder(userID int64) *feedQueryBuilder {
-	return &feedQueryBuilder{
-		db:                s.db,
-		args:              []any{userID},
-		conditions:        []string{"f.user_id = $1"},
-		counterArgs:       []any{userID, model.EntryStatusRead, model.EntryStatusUnread},
-		counterConditions: []string{"e.user_id = $1", "e.status IN ($2, $3)"},
+	f := feedQueryBuilder{
+		db:          s.db,
+		args:        []any{userID},
+		counterArgs: []any{userID, model.EntryStatusRead, model.EntryStatusUnread},
 	}
+
+	f.where.and("f.user_id = $1")
+
+	f.counterWhere.and("e.user_id = $1")
+	f.counterWhere.and("e.status IN ($2, $3)")
+
+	return &f
 }
 
 // WithCategoryID filter by category ID.
 func (f *feedQueryBuilder) WithCategoryID(categoryID int64) *feedQueryBuilder {
 	if categoryID > 0 {
-		f.conditions = append(f.conditions, "f.category_id = $"+strconv.Itoa(len(f.args)+1))
+		f.where.and("f.category_id = $" + strconv.Itoa(len(f.args)+1))
 		f.args = append(f.args, categoryID)
-		f.counterConditions = append(f.counterConditions, "f.category_id = $"+strconv.Itoa(len(f.counterArgs)+1))
+
+		f.counterWhere.and("f.category_id = $" + strconv.Itoa(len(f.counterArgs)+1))
 		f.counterArgs = append(f.counterArgs, categoryID)
+
 		f.counterJoinFeeds = true
 	}
 	return f
@@ -54,7 +61,7 @@ func (f *feedQueryBuilder) WithCategoryID(categoryID int64) *feedQueryBuilder {
 // WithFeedID filter by feed ID.
 func (f *feedQueryBuilder) WithFeedID(feedID int64) *feedQueryBuilder {
 	if feedID > 0 {
-		f.conditions = append(f.conditions, "f.id = $"+strconv.Itoa(len(f.args)+1))
+		f.where.and("f.id = $" + strconv.Itoa(len(f.args)+1))
 		f.args = append(f.args, feedID)
 	}
 	return f
@@ -88,14 +95,6 @@ func (f *feedQueryBuilder) WithLimit(limit int) *feedQueryBuilder {
 func (f *feedQueryBuilder) WithOffset(offset int) *feedQueryBuilder {
 	f.offset = offset
 	return f
-}
-
-func (f *feedQueryBuilder) buildCondition() string {
-	return strings.Join(f.conditions, " AND ")
-}
-
-func (f *feedQueryBuilder) buildCounterCondition() string {
-	return strings.Join(f.counterConditions, " AND ")
 }
 
 func (f *feedQueryBuilder) buildSorting() string {
@@ -195,11 +194,7 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			icons i ON i.id=fi.icon_id
 		LEFT JOIN
 			users u ON u.id=f.user_id
-		WHERE %s
-		%s
-	`
-
-	query = fmt.Sprintf(query, f.buildCondition(), f.buildSorting())
+	` + f.where.String() + " " + f.buildSorting()
 
 	readCounters, unreadCounters, err := f.fetchFeedCounter()
 	if err != nil {
@@ -303,24 +298,19 @@ func (f *feedQueryBuilder) fetchFeedCounter() (unreadCounters map[int64]int, rea
 	if !f.withCounters {
 		return nil, nil, nil
 	}
+
 	query := `
-		SELECT
-			e.feed_id,
-			e.status,
-			count(*)
-		FROM
-			entries e
-		%s
-		WHERE
-			%s
-		GROUP BY
-			e.feed_id, e.status
+		SELECT e.feed_id, e.status, count(*)
+		FROM entries e
 	`
-	join := ""
+
 	if f.counterJoinFeeds {
-		join = "INNER JOIN feeds f ON f.id=e.feed_id"
+		query += ` INNER JOIN feeds f ON f.id=e.feed_id `
 	}
-	query = fmt.Sprintf(query, join, f.buildCounterCondition())
+
+	query += f.counterWhere.String()
+
+	query += ` GROUP BY e.feed_id, e.status`
 
 	rows, err := f.db.Query(query, f.counterArgs...)
 	if err != nil {
