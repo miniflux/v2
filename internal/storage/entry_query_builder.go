@@ -481,19 +481,21 @@ func (e *EntryQueryBuilder) contentColumn() string {
 }
 
 func (e *EntryQueryBuilder) buildSorting() string {
-	var parts string
+	var parts strings.Builder
 
-	parts += e.orderBy.String()
+	parts.WriteString(e.orderBy.String())
 
 	if e.limit > 0 {
-		parts += " LIMIT " + strconv.Itoa(e.limit)
+		parts.WriteString(" LIMIT ")
+		parts.WriteString(strconv.Itoa(e.limit))
 	}
 
 	if e.offset > 0 {
-		parts += " OFFSET " + strconv.Itoa(e.offset)
+		parts.WriteString(" OFFSET ")
+		parts.WriteString(strconv.Itoa(e.offset))
 	}
 
-	return parts
+	return parts.String()
 }
 
 // NewEntryQueryBuilder returns a new EntryQueryBuilder.

@@ -98,23 +98,25 @@ func (f *feedQueryBuilder) WithOffset(offset int) *feedQueryBuilder {
 }
 
 func (f *feedQueryBuilder) buildSorting() string {
-	var parts string
+	var parts strings.Builder
 
-	parts += f.orderBy.String()
+	parts.WriteString(f.orderBy.String())
 
-	if len(parts) > 0 {
-		parts += ", lower(f.title) ASC"
+	if parts.Len() > 0 {
+		parts.WriteString(", lower(f.title) ASC")
 	}
 
 	if f.limit > 0 {
-		parts += " LIMIT " + strconv.Itoa(f.limit)
+		parts.WriteString(" LIMIT ")
+		parts.WriteString(strconv.Itoa(f.limit))
 	}
 
 	if f.offset > 0 {
-		parts += " OFFSET " + strconv.Itoa(f.offset)
+		parts.WriteString(" OFFSET ")
+		parts.WriteString(strconv.Itoa(f.offset))
 	}
 
-	return parts
+	return parts.String()
 }
 
 // GetFeed returns a single feed that match the condition.
