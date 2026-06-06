@@ -31,7 +31,12 @@ func (s *Storage) NewBatchBuilder() *batchBuilder {
 }
 
 func (b *batchBuilder) WithBatchSize(batchSize int) *batchBuilder {
+	if batchSize <= 0 {
+		return b
+	}
+
 	b.batchSize = batchSize
+
 	return b
 }
 
@@ -48,10 +53,13 @@ func (b *batchBuilder) WithCategoryID(categoryID int64) *batchBuilder {
 }
 
 func (b *batchBuilder) WithErrorLimit(limit int) *batchBuilder {
-	if limit > 0 {
-		b.where.and("parsing_error_count < $" + strconv.Itoa(len(b.args)+1))
-		b.args = append(b.args, limit)
+	if limit <= 0 {
+		return b
 	}
+
+	b.where.and("parsing_error_count < $" + strconv.Itoa(len(b.args)+1))
+	b.args = append(b.args, limit)
+
 	return b
 }
 
@@ -66,9 +74,12 @@ func (b *batchBuilder) WithoutDisabledFeeds() *batchBuilder {
 }
 
 func (b *batchBuilder) WithLimitPerHost(limit int) *batchBuilder {
-	if limit > 0 {
-		b.limitPerHost = limit
+	if limit <= 0 {
+		return b
 	}
+
+	b.limitPerHost = limit
+
 	return b
 }
 

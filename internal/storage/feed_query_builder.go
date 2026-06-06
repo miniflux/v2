@@ -46,24 +46,30 @@ func (s *Storage) NewFeedQueryBuilder(userID int64) *feedQueryBuilder {
 
 // WithCategoryID filter by category ID.
 func (f *feedQueryBuilder) WithCategoryID(categoryID int64) *feedQueryBuilder {
-	if categoryID > 0 {
-		f.where.and("f.category_id = $" + strconv.Itoa(len(f.args)+1))
-		f.args = append(f.args, categoryID)
-
-		f.counterWhere.and("f.category_id = $" + strconv.Itoa(len(f.counterArgs)+1))
-		f.counterArgs = append(f.counterArgs, categoryID)
-
-		f.counterJoinFeeds = true
+	if categoryID == 0 {
+		return f
 	}
+
+	f.where.and("f.category_id = $" + strconv.Itoa(len(f.args)+1))
+	f.args = append(f.args, categoryID)
+
+	f.counterWhere.and("f.category_id = $" + strconv.Itoa(len(f.counterArgs)+1))
+	f.counterArgs = append(f.counterArgs, categoryID)
+
+	f.counterJoinFeeds = true
+
 	return f
 }
 
 // WithFeedID filter by feed ID.
 func (f *feedQueryBuilder) WithFeedID(feedID int64) *feedQueryBuilder {
-	if feedID > 0 {
-		f.where.and("f.id = $" + strconv.Itoa(len(f.args)+1))
-		f.args = append(f.args, feedID)
+	if feedID == 0 {
+		return f
 	}
+
+	f.where.and("f.id = $" + strconv.Itoa(len(f.args)+1))
+	f.args = append(f.args, feedID)
+
 	return f
 }
 
@@ -87,12 +93,20 @@ func (f *feedQueryBuilder) WithSorting(column, direction string) *feedQueryBuild
 
 // WithLimit set the limit.
 func (f *feedQueryBuilder) WithLimit(limit int) *feedQueryBuilder {
+	if limit <= 0 {
+		return f
+	}
+
 	f.limit = limit
 	return f
 }
 
 // WithOffset set the offset.
 func (f *feedQueryBuilder) WithOffset(offset int) *feedQueryBuilder {
+	if offset <= 0 {
+		return f
+	}
+
 	f.offset = offset
 	return f
 }

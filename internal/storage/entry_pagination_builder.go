@@ -26,10 +26,12 @@ type entryPaginationBuilder struct {
 
 // WithSearchQuery adds full-text search query to the condition.
 func (e *entryPaginationBuilder) WithSearchQuery(query string) *entryPaginationBuilder {
-	if query != "" {
-		e.where.and(fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", len(e.args)+1))
-		e.args = append(e.args, query)
+	if query == "" {
+		return e
 	}
+
+	e.where.and(fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", len(e.args)+1))
+	e.args = append(e.args, query)
 
 	return e
 }
@@ -43,30 +45,36 @@ func (e *entryPaginationBuilder) WithStarred() *entryPaginationBuilder {
 
 // WithFeedID adds feed_id to the condition.
 func (e *entryPaginationBuilder) WithFeedID(feedID int64) *entryPaginationBuilder {
-	if feedID != 0 {
-		e.where.and("e.feed_id = $" + strconv.Itoa(len(e.args)+1))
-		e.args = append(e.args, feedID)
+	if feedID == 0 {
+		return e
 	}
+
+	e.where.and("e.feed_id = $" + strconv.Itoa(len(e.args)+1))
+	e.args = append(e.args, feedID)
 
 	return e
 }
 
 // WithCategoryID adds category_id to the condition.
 func (e *entryPaginationBuilder) WithCategoryID(categoryID int64) *entryPaginationBuilder {
-	if categoryID != 0 {
-		e.where.and("f.category_id = $" + strconv.Itoa(len(e.args)+1))
-		e.args = append(e.args, categoryID)
+	if categoryID == 0 {
+		return e
 	}
+
+	e.where.and("f.category_id = $" + strconv.Itoa(len(e.args)+1))
+	e.args = append(e.args, categoryID)
 
 	return e
 }
 
 // WithStatus adds status to the condition.
 func (e *entryPaginationBuilder) WithStatus(status string) *entryPaginationBuilder {
-	if status != "" {
-		e.where.and("e.status = $" + strconv.Itoa(len(e.args)+1))
-		e.args = append(e.args, status)
+	if status == "" {
+		return e
 	}
+
+	e.where.and("e.status = $" + strconv.Itoa(len(e.args)+1))
+	e.args = append(e.args, status)
 
 	return e
 }
@@ -78,8 +86,7 @@ func (e *entryPaginationBuilder) WithStatusOrEntryID(status string, entryID int6
 	}
 
 	if entryID == 0 {
-		e.WithStatus(status)
-		return e
+		return e.WithStatus(status)
 	}
 
 	statusArg := len(e.args) + 1
@@ -90,11 +97,13 @@ func (e *entryPaginationBuilder) WithStatusOrEntryID(status string, entryID int6
 	return e
 }
 
-func (e *entryPaginationBuilder) WithTags(tags []string) *entryPaginationBuilder {
-	if len(tags) > 0 {
-		e.where.and(fmt.Sprintf("LOWER(e.tags::text)::text[] @> LOWER($%d::text)::text[]", len(e.args)+1))
-		e.args = append(e.args, pq.Array(tags))
+func (e *entryPaginationBuilder) WithTags(tags ...string) *entryPaginationBuilder {
+	if len(tags) == 0 {
+		return e
 	}
+
+	e.where.and(fmt.Sprintf("LOWER(e.tags::text)::text[] @> LOWER($%d::text)::text[]", len(e.args)+1))
+	e.args = append(e.args, pq.Array(tags))
 
 	return e
 }
