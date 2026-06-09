@@ -26,7 +26,7 @@ func (p *Printer) Print(key string) string {
 
 // Printf is like fmt.Printf, but using language-specific formatting.
 func (p *Printer) Printf(key string, args ...any) string {
-	return fmt.Sprintf(p.Print(key), args...)
+	return formatTranslation(p.Print(key), args...)
 }
 
 // Plural returns the translation of the given key by using the language plural form.
@@ -39,9 +39,39 @@ func (p *Printer) Plural(key string, n int, args ...any) string {
 	if choices, found := dict.plurals[key]; found {
 		index := getPluralForm(p.language, n)
 		if len(choices) > index {
-			return fmt.Sprintf(choices[index], args...)
+			return formatTranslation(choices[index], args...)
 		}
 	}
 
 	return key
+}
+
+// formatTranslation skips extra arguments when the translation references no argument,
+// so plural forms that omit the count (e.g. the Arabic dual "دقيقتين") don't get
+// a trailing %!(EXTRA ...) marker. Escaped percents are still processed by fmt.
+func formatTranslation(format string, args ...any) string {
+	if !hasFormattingDirective(format) {
+		return fmt.Sprintf(format, []any{}...)
+	}
+	return fmt.Sprintf(format, args...)
+}
+
+// hasFormattingDirective reports whether the format should be handled with the
+// supplied arguments. It treats "%%" as a literal percent and lets fmt validate
+// any other percent sequence, including a dangling "%".
+func hasFormattingDirective(format string) bool {
+	for index := 0; index < len(format); index++ {
+		if format[index] != '%' {
+			continue
+		}
+		if index+1 >= len(format) {
+			return true
+		}
+		if format[index+1] == '%' {
+			index++ // skip the escaped percent
+			continue
+		}
+		return true
+	}
+	return false
 }
