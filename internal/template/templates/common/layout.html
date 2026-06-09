@@ -44,6 +44,7 @@
     data-add-subscription-url="{{ routePath "/subscribe" }}"
     data-entries-status-url="{{ routePath "/entry/status" }}"
     data-refresh-all-feeds-url="{{ routePath "/feeds/refresh" }}"
+    data-refresh-all-feeds-message="{{ t "alert.background_feed_refresh" }}"
     {{ if .webAuthnEnabled }}
     data-webauthn-register-begin-url="{{ routePath "/webauthn/register/begin" }}"
     data-webauthn-register-finish-url="{{ routePath "/webauthn/register/finish" }}"

@@ -666,8 +666,11 @@ function handleRefreshAllFeedsAction() {
         sendPOSTRequest(refreshAllFeedsUrl).then((response) => {
             if (response?.redirected && response.url) {
                 window.location.href = response.url;
-            } else {
-                window.location.reload();
+                return;
+            }
+
+            if (response?.ok) {
+                showToastNotification("refresh", document.body.dataset.refreshAllFeedsMessage);
             }
         });
     }
