@@ -327,6 +327,18 @@ type EntryResultSet struct {
 	Entries Entries `json:"entries"`
 }
 
+// EntryIDsFilter holds optional pagination parameters for entry ID list endpoints.
+type EntryIDsFilter struct {
+	Limit  int
+	Offset int
+}
+
+// EntryIDsResultSet represents the response when fetching entry ID lists.
+type EntryIDsResultSet struct {
+	Total    int     `json:"total"`
+	EntryIDs []int64 `json:"entry_ids"`
+}
+
 // VersionResponse represents the version and the build information of the Miniflux instance.
 type VersionResponse struct {
 	Version   string `json:"version"`

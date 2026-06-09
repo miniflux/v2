@@ -889,49 +889,69 @@ func (c *Client) EntryContext(ctx context.Context, entryID int64) (*Entry, error
 }
 
 // UnreadEntryIDs returns the IDs of all unread entries for the current user.
-func (c *Client) UnreadEntryIDs() ([]int64, error) {
+func (c *Client) UnreadEntryIDs(filter *EntryIDsFilter) (*EntryIDsResultSet, error) {
 	ctx, cancel := withDefaultTimeout()
 	defer cancel()
-	return c.UnreadEntryIDsContext(ctx)
+	return c.UnreadEntryIDsContext(ctx, filter)
 }
 
 // UnreadEntryIDsContext returns the IDs of all unread entries for the current user.
-func (c *Client) UnreadEntryIDsContext(ctx context.Context) ([]int64, error) {
-	body, err := c.request.Get(ctx, "/v1/unread-entry-ids")
+func (c *Client) UnreadEntryIDsContext(ctx context.Context, filter *EntryIDsFilter) (*EntryIDsResultSet, error) {
+	body, err := c.request.Get(ctx, buildEntryIDsFilterQueryString("/v1/unread-entry-ids", filter))
 	if err != nil {
 		return nil, err
 	}
 	defer body.Close()
 
-	var result []int64
+	var result EntryIDsResultSet
 	if err := json.NewDecoder(body).Decode(&result); err != nil {
 		return nil, fmt.Errorf("miniflux: response error (%v)", err)
 	}
 
-	return result, nil
+	return &result, nil
 }
 
 // StarredEntryIDs returns the IDs of all starred entries for the current user.
-func (c *Client) StarredEntryIDs() ([]int64, error) {
+func (c *Client) StarredEntryIDs(filter *EntryIDsFilter) (*EntryIDsResultSet, error) {
 	ctx, cancel := withDefaultTimeout()
 	defer cancel()
-	return c.StarredEntryIDsContext(ctx)
+	return c.StarredEntryIDsContext(ctx, filter)
 }
 
 // StarredEntryIDsContext returns the IDs of all starred entries for the current user.
-func (c *Client) StarredEntryIDsContext(ctx context.Context) ([]int64, error) {
-	body, err := c.request.Get(ctx, "/v1/starred-entry-ids")
+func (c *Client) StarredEntryIDsContext(ctx context.Context, filter *EntryIDsFilter) (*EntryIDsResultSet, error) {
+	body, err := c.request.Get(ctx, buildEntryIDsFilterQueryString("/v1/starred-entry-ids", filter))
 	if err != nil {
 		return nil, err
 	}
 	defer body.Close()
 
-	var result []int64
+	var result EntryIDsResultSet
 	if err := json.NewDecoder(body).Decode(&result); err != nil {
 		return nil, fmt.Errorf("miniflux: response error (%v)", err)
 	}
 
-	return result, nil
+	return &result, nil
+}
+
+func buildEntryIDsFilterQueryString(path string, filter *EntryIDsFilter) string {
+	if filter == nil {
+		return path
+	}
+
+	params := url.Values{}
+	if filter.Limit > 0 {
+		params.Set("limit", strconv.Itoa(filter.Limit))
+	}
+	if filter.Offset > 0 {
+		params.Set("offset", strconv.Itoa(filter.Offset))
+	}
+
+	if len(params) == 0 {
+		return path
+	}
+
+	return path + "?" + params.Encode()
 }
 
 // Entries fetches entries using the given filter.

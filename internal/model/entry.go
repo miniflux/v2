@@ -19,6 +19,10 @@ const (
 // and for the user "entries_per_page" preference.
 const MaxEntryLimit = 1000
 
+// MaxEntryIDsLimit is the maximum allowed value for the "limit" query parameter
+// for the entry ID list endpoints.
+const MaxEntryIDsLimit = 10000
+
 // Entry represents a feed item in the system.
 type Entry struct {
 	ID          int64         `json:"id"`

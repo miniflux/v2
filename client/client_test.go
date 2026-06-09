@@ -1286,3 +1286,87 @@ func TestUpdateEnclosure(t *testing.T) {
 		t.Fatalf("Expected no error, got %v", err)
 	}
 }
+
+func TestUnreadEntryIDsNoFilter(t *testing.T) {
+	expected := &EntryIDsResultSet{
+		Total:    2,
+		EntryIDs: []int64{1, 2},
+	}
+	client := NewClientWithOptions(
+		"http://mf",
+		WithHTTPClient(
+			newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
+				expectRequest(t, http.MethodGet, "http://mf/v1/unread-entry-ids", nil, req)
+				return jsonResponseFrom(t, http.StatusOK, http.Header{}, expected)
+			})))
+	res, err := client.UnreadEntryIDsContext(t.Context(), nil)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	if !reflect.DeepEqual(res, expected) {
+		t.Fatalf("Expected %s, got %s", asJSON(expected), asJSON(res))
+	}
+}
+
+func TestUnreadEntryIDsWithFilter(t *testing.T) {
+	expected := &EntryIDsResultSet{
+		Total:    5,
+		EntryIDs: []int64{3},
+	}
+	client := NewClientWithOptions(
+		"http://mf",
+		WithHTTPClient(
+			newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
+				expectRequest(t, http.MethodGet, "http://mf/v1/unread-entry-ids?limit=1&offset=2", nil, req)
+				return jsonResponseFrom(t, http.StatusOK, http.Header{}, expected)
+			})))
+	res, err := client.UnreadEntryIDsContext(t.Context(), &EntryIDsFilter{Limit: 1, Offset: 2})
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	if !reflect.DeepEqual(res, expected) {
+		t.Fatalf("Expected %s, got %s", asJSON(expected), asJSON(res))
+	}
+}
+
+func TestStarredEntryIDsNoFilter(t *testing.T) {
+	expected := &EntryIDsResultSet{
+		Total:    1,
+		EntryIDs: []int64{42},
+	}
+	client := NewClientWithOptions(
+		"http://mf",
+		WithHTTPClient(
+			newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
+				expectRequest(t, http.MethodGet, "http://mf/v1/starred-entry-ids", nil, req)
+				return jsonResponseFrom(t, http.StatusOK, http.Header{}, expected)
+			})))
+	res, err := client.StarredEntryIDsContext(t.Context(), nil)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	if !reflect.DeepEqual(res, expected) {
+		t.Fatalf("Expected %s, got %s", asJSON(expected), asJSON(res))
+	}
+}
+
+func TestStarredEntryIDsWithFilter(t *testing.T) {
+	expected := &EntryIDsResultSet{
+		Total:    10,
+		EntryIDs: []int64{7, 8},
+	}
+	client := NewClientWithOptions(
+		"http://mf",
+		WithHTTPClient(
+			newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
+				expectRequest(t, http.MethodGet, "http://mf/v1/starred-entry-ids?limit=2&offset=5", nil, req)
+				return jsonResponseFrom(t, http.StatusOK, http.Header{}, expected)
+			})))
+	res, err := client.StarredEntryIDsContext(t.Context(), &EntryIDsFilter{Limit: 2, Offset: 5})
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	if !reflect.DeepEqual(res, expected) {
+		t.Fatalf("Expected %s, got %s", asJSON(expected), asJSON(res))
+	}
+}

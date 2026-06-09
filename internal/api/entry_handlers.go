@@ -497,10 +497,28 @@ func (h *handler) fetchContentHandler(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, entryContentResponse{Content: mediaproxy.RewriteDocumentWithAbsoluteProxyURL(entry.Content), ReadingTime: entry.ReadingTime})
 }
 
+type entryIDsResponse struct {
+	Total    int     `json:"total"`
+	EntryIDs []int64 `json:"entry_ids"`
+}
+
+func parseEntryIDsParams(r *http.Request) (limit, offset int) {
+	limit = request.QueryIntParam(r, "limit", model.MaxEntryIDsLimit)
+	if limit <= 0 || limit > model.MaxEntryIDsLimit {
+		limit = model.MaxEntryIDsLimit
+	}
+	offset = request.QueryIntParam(r, "offset", 0)
+	return limit, offset
+}
+
 func (h *handler) getUnreadEntryIDsHandler(w http.ResponseWriter, r *http.Request) {
-	entryIDs, err := h.store.NewEntryQueryBuilder(request.UserID(r)).
+	limit, offset := parseEntryIDsParams(r)
+	entryIDs, total, err := h.store.NewEntryQueryBuilder(request.UserID(r)).
 		WithStatuses(model.EntryStatusUnread).
-		GetEntryIDs()
+		WithSorting("id", "DESC").
+		WithLimitAndMaximum(limit, model.MaxEntryIDsLimit).
+		WithOffset(offset).
+		GetEntryIDsWithCount()
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
@@ -510,13 +528,17 @@ func (h *handler) getUnreadEntryIDsHandler(w http.ResponseWriter, r *http.Reques
 		entryIDs = []int64{}
 	}
 
-	response.JSON(w, r, entryIDs)
+	response.JSON(w, r, entryIDsResponse{Total: total, EntryIDs: entryIDs})
 }
 
 func (h *handler) getStarredEntryIDsHandler(w http.ResponseWriter, r *http.Request) {
-	entryIDs, err := h.store.NewEntryQueryBuilder(request.UserID(r)).
+	limit, offset := parseEntryIDsParams(r)
+	entryIDs, total, err := h.store.NewEntryQueryBuilder(request.UserID(r)).
 		WithStarred(true).
-		GetEntryIDs()
+		WithSorting("id", "DESC").
+		WithLimitAndMaximum(limit, model.MaxEntryIDsLimit).
+		WithOffset(offset).
+		GetEntryIDsWithCount()
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
@@ -526,7 +548,7 @@ func (h *handler) getStarredEntryIDsHandler(w http.ResponseWriter, r *http.Reque
 		entryIDs = []int64{}
 	}
 
-	response.JSON(w, r, entryIDs)
+	response.JSON(w, r, entryIDsResponse{Total: total, EntryIDs: entryIDs})
 }
 
 func (h *handler) flushHistoryHandler(w http.ResponseWriter, r *http.Request) {
