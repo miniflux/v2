@@ -13,12 +13,12 @@ require (
 	github.com/lib/pq v1.12.3
 	github.com/prometheus/client_golang v1.23.2
 	github.com/tdewolff/minify/v2 v2.24.13
-	golang.org/x/crypto v0.52.0
-	golang.org/x/image v0.41.0
-	golang.org/x/net v0.55.0
+	golang.org/x/crypto v0.53.0
+	golang.org/x/image v0.42.0
+	golang.org/x/net v0.56.0
 	golang.org/x/oauth2 v0.36.0
-	golang.org/x/term v0.43.0
-	golang.org/x/text v0.37.0
+	golang.org/x/term v0.44.0
+	golang.org/x/text v0.38.0
 )
 
 require (
@@ -45,6 +45,6 @@ require (
 	github.com/tinylib/msgp v1.6.4 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
-	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/sys v0.46.0 // indirect
 	google.golang.org/protobuf v1.36.8 // indirect
 )
