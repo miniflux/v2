@@ -26,8 +26,13 @@ func newCSRFMiddleware(basePath string) *csrfMiddleware {
 // in the request context.
 func (m *csrfMiddleware) handle(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodPost && !m.validate(w, r) {
-			return
+		switch r.Method {
+		case http.MethodGet, http.MethodHead, http.MethodOptions:
+			// Safe methods don't require CSRF validation.
+		default:
+			if !m.validate(w, r) {
+				return
+			}
 		}
 		next.ServeHTTP(w, r)
 	})

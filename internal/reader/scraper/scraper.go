@@ -83,13 +83,14 @@ func findContentUsingCustomRules(page io.Reader, rules string) (baseURL string, 
 		}
 	}
 
+	var buf strings.Builder
 	document.Find(rules).Each(func(i int, s *goquery.Selection) {
 		if content, err := goquery.OuterHtml(s); err == nil {
-			extractedContent += content
+			buf.WriteString(content)
 		}
 	})
 
-	return baseURL, extractedContent, nil
+	return baseURL, buf.String(), nil
 }
 
 func getPredefinedScraperRules(websiteURL string) string {

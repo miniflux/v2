@@ -3,7 +3,10 @@
 
 package readingtime
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 var samples = map[string]string{
 	"shortenglish": `This is a short paragraph in english, less than 250 chars.`,
@@ -79,10 +82,100 @@ func TestEstimateReadingTime(t *testing.T) {
 	}
 }
 
+func TestEmptyEstimateReadingTime(t *testing.T) {
+	got := EstimateReadingTime("", 200, 500)
+	if got != 0 {
+		t.Errorf(`Wrong reading time, got %d instead of %d`, got, 0)
+	}
+}
+
+func TestRepeatedEstimateReadingTime(t *testing.T) {
+	got := EstimateReadingTime(strings.Repeat("word ", 200), 200, 500)
+	if got != 1 {
+		t.Errorf(`Wrong reading time, got %d instead of %d`, got, 1)
+	}
+}
+
 func BenchmarkEstimateReadingTime(b *testing.B) {
 	for b.Loop() {
 		for _, sample := range samples {
 			EstimateReadingTime(sample, 200, 500)
 		}
+	}
+}
+
+func TestCountWordsZeroAllocs(t *testing.T) {
+	allocs := testing.AllocsPerRun(10, func() {
+		for _, sample := range samples {
+			countWords(sample)
+		}
+	})
+	if allocs != 0 {
+		t.Errorf("countWords allocated %v times, expected 0", allocs)
+	}
+}
+
+func Test_isCJK(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		input    string
+		limit    int
+		expected bool
+	}{
+		{
+			name:     "latin short",
+			input:    "Lorem ipsum dolor sit amet",
+			limit:    100,
+			expected: false,
+		},
+		{
+			name:     "latin long",
+			input:    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce fermentum id sem sed commodo. Ut eget mauris eu lectus mollis aliquam.",
+			limit:    100,
+			expected: false,
+		},
+		{
+			name:     "cyrillic",
+			input:    "Съешь ещё этих мягких французских булок, да выпей же чаю",
+			limit:    50,
+			expected: false,
+		},
+		{
+			name:     "japanese",
+			input:    "政盤が力和文ぱのら仕2以第ミ討漢年レ毎開スヤ間度を時深読じどが画気握てぐゆぶ留海え転5航調ヤ運旬クヌロレ探憲御裕こぎびさ。能ど加開ゆぶ軍43地伐2施ヤ実58共験それ合氾み歳熊つごゅま手柴りらし認整ラカ死感は界後えい警立ゃがよト訪奏エシサミ携勝ヘヒコカ軽通年クタ公無せはぐ読階齢間て。",
+			limit:    100,
+			expected: true,
+		},
+		{
+			name:     "hangul",
+			input:    "대통령은 국가의 안위에 관계되는 중대한 교전상태에 있어서 국가를 보위하기 위하여 긴급한 조치가 필요하고 국회의 집회가 불가능한 때에 한하여 법률의 효력을 가지는 명령을 발할 수 있다. 국가는 사회적·경제적 방법으로 근로자의 고용의 증진과 적정임금의 보장에 노력하여야 하며. 국교는 인정되지 아니하며. 법률이 정한 국무위원의 순서로 그 권한을 대행한다.",
+			limit:    100,
+			expected: true,
+		},
+		{
+			name:     "mixed but mostly non-CJK",
+			input:    "Tofu (Japanese: 豆腐, Hepburn: Tōfu; Chinese: 豆腐; pinyin: dòufu; Korean: 두부; RR: dubu)",
+			limit:    100,
+			expected: false,
+		},
+		{
+			name:     "mixed but just enough hangul",
+			input:    "Korean: 국한문 혼용체; Hanja: 國漢文混用體",
+			limit:    100,
+			expected: true,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := isCJK(test.input, test.limit)
+			if got != test.expected {
+				t.Errorf("isCJK(%q, %d) = %v, want %v", test.input, test.limit, got, test.expected)
+			}
+		})
 	}
 }

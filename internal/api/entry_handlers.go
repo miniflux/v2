@@ -55,9 +55,9 @@ func (h *handler) getFeedEntryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
-	builder.WithFeedID(feedID)
-	builder.WithEntryID(entryID)
+	builder := h.store.NewEntryQueryBuilder(request.UserID(r)).
+		WithFeedID(feedID).
+		WithEntryIDs(entryID)
 
 	h.getEntryFromBuilder(w, r, builder)
 }
@@ -75,9 +75,9 @@ func (h *handler) getCategoryEntryHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
-	builder.WithCategoryID(categoryID)
-	builder.WithEntryID(entryID)
+	builder := h.store.NewEntryQueryBuilder(request.UserID(r)).
+		WithCategoryID(categoryID).
+		WithEntryIDs(entryID)
 
 	h.getEntryFromBuilder(w, r, builder)
 }
@@ -89,8 +89,8 @@ func (h *handler) getEntryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
-	builder.WithEntryID(entryID)
+	builder := h.store.NewEntryQueryBuilder(request.UserID(r)).
+		WithEntryIDs(entryID)
 
 	h.getEntryFromBuilder(w, r, builder)
 }
@@ -161,15 +161,15 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 
 	tags := request.QueryStringParamList(r, "tags")
 
-	builder := h.store.NewEntryQueryBuilder(userID)
-	builder.WithFeedID(feedID)
-	builder.WithCategoryID(categoryID)
-	builder.WithStatuses(statuses)
-	builder.WithSorting(order, direction)
-	builder.WithOffset(offset)
-	builder.WithLimit(limit)
-	builder.WithTags(tags)
-	builder.WithEnclosures()
+	builder := h.store.NewEntryQueryBuilder(userID).
+		WithFeedID(feedID).
+		WithCategoryID(categoryID).
+		WithStatuses(statuses...).
+		WithSorting(order, direction).
+		WithOffset(offset).
+		WithLimit(limit).
+		WithTags(tags...).
+		WithEnclosures()
 
 	if request.HasQueryParam(r, "globally_visible") {
 		globallyVisible := request.QueryBoolParam(r, "globally_visible", true)
@@ -236,15 +236,14 @@ func (h *handler) saveEntryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
-	builder.WithEntryID(entryID)
-
 	if !h.store.HasSaveEntry(request.UserID(r)) {
 		response.JSONBadRequest(w, r, errors.New("no third-party integration enabled"))
 		return
 	}
 
-	entry, err := builder.GetEntry()
+	entry, err := h.store.NewEntryQueryBuilder(request.UserID(r)).
+		WithEntryIDs(entryID).
+		GetEntry()
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
@@ -285,10 +284,10 @@ func (h *handler) updateEntryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	loggedUserID := request.UserID(r)
-	entryBuilder := h.store.NewEntryQueryBuilder(loggedUserID)
-	entryBuilder.WithEntryID(entryID)
 
-	entry, err := entryBuilder.GetEntry()
+	entry, err := h.store.NewEntryQueryBuilder(loggedUserID).
+		WithEntryIDs(entryID).
+		GetEntry()
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
@@ -457,10 +456,9 @@ func (h *handler) fetchContentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entryBuilder := h.store.NewEntryQueryBuilder(loggedUserID)
-	entryBuilder.WithEntryID(entryID)
-
-	entry, err := entryBuilder.GetEntry()
+	entry, err := h.store.NewEntryQueryBuilder(loggedUserID).
+		WithEntryIDs(entryID).
+		GetEntry()
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
@@ -482,9 +480,9 @@ func (h *handler) fetchContentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feedBuilder := storage.NewFeedQueryBuilder(h.store, loggedUserID)
-	feedBuilder.WithFeedID(entry.FeedID)
-	feed, err := feedBuilder.GetFeed()
+	feed, err := h.store.NewFeedQueryBuilder(loggedUserID).
+		WithFeedID(entry.FeedID).
+		GetFeed()
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return

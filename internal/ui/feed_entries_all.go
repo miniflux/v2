@@ -31,15 +31,15 @@ func (h *handler) showFeedEntriesAllPage(w http.ResponseWriter, r *http.Request)
 	}
 
 	offset := request.QueryIntParam(r, "offset", 0)
-	builder := h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithFeedID(feed.ID)
-	builder.WithSorting(user.EntryOrder, user.EntryDirection)
-	builder.WithSorting("id", user.EntryDirection)
-	builder.WithoutContent()
-	builder.WithOffset(offset)
-	builder.WithLimit(user.EntriesPerPage)
 
-	entries, count, err := builder.GetEntriesWithCount()
+	entries, count, err := h.store.NewEntryQueryBuilder(user.ID).
+		WithFeedID(feed.ID).
+		WithSorting(user.EntryOrder, user.EntryDirection).
+		WithSorting("id", user.EntryDirection).
+		WithoutContent().
+		WithOffset(offset).
+		WithLimit(user.EntriesPerPage).
+		GetEntriesWithCount()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
@@ -52,9 +52,10 @@ func (h *handler) showFeedEntriesAllPage(w http.ResponseWriter, r *http.Request)
 	view.Set("pagination", getPagination(h.routePath("/feed/%d/entries/all", feed.ID), count, offset, user.EntriesPerPage))
 	view.Set("menu", "feeds")
 	view.Set("user", user)
-	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
-	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
+	navMetadata, _ := h.store.GetNavMetadata(user.ID)
+	view.Set("countUnread", navMetadata.CountUnread)
+	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
+	view.Set("hasSaveEntry", navMetadata.HasSaveEntry)
 	view.Set("showOnlyUnreadEntries", false)
 
 	response.HTML(w, r, view.Render("feed_entries"))

@@ -201,7 +201,7 @@ func TestCreateEntry(t *testing.T) {
 				}
 				w.WriteHeader(http.StatusUnauthorized)
 			},
-			errContains: "unable to get save entry",
+			errContains: "unable to save entry",
 		},
 		{
 			name:         "failure due to no accessToken",

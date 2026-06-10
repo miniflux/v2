@@ -9,13 +9,14 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/lib/pq"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/timezone"
 )
 
 // feedQueryBuilder builds a SQL query to fetch feeds.
 type feedQueryBuilder struct {
-	store             *Storage
+	db                *sql.DB
 	args              []any
 	conditions        []string
 	sortExpressions   []string
@@ -28,9 +29,9 @@ type feedQueryBuilder struct {
 }
 
 // NewFeedQueryBuilder returns a new FeedQueryBuilder.
-func NewFeedQueryBuilder(store *Storage, userID int64) *feedQueryBuilder {
+func (s *Storage) NewFeedQueryBuilder(userID int64) *feedQueryBuilder {
 	return &feedQueryBuilder{
-		store:             store,
+		db:                s.db,
 		args:              []any{userID},
 		conditions:        []string{"f.user_id = $1"},
 		counterArgs:       []any{userID, model.EntryStatusRead, model.EntryStatusUnread},
@@ -67,7 +68,13 @@ func (f *feedQueryBuilder) WithCounters() *feedQueryBuilder {
 
 // WithSorting add a sort expression.
 func (f *feedQueryBuilder) WithSorting(column, direction string) *feedQueryBuilder {
-	f.sortExpressions = append(f.sortExpressions, column+" "+direction)
+	switch {
+	case strings.EqualFold(direction, "ASC"):
+		f.sortExpressions = append(f.sortExpressions, pq.QuoteIdentifier(column)+" ASC")
+	case strings.EqualFold(direction, "DESC"):
+		f.sortExpressions = append(f.sortExpressions, pq.QuoteIdentifier(column)+" DESC")
+	}
+
 	return f
 }
 
@@ -130,7 +137,7 @@ func (f *feedQueryBuilder) GetFeed() (*model.Feed, error) {
 
 // GetFeeds returns a list of feeds that match the condition.
 func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
-	var query = `
+	query := `
 		SELECT
 			f.id,
 			f.feed_url,
@@ -199,7 +206,7 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 		return nil, err
 	}
 
-	rows, err := f.store.db.Query(query, f.args...)
+	rows, err := f.db.Query(query, f.args...)
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch feeds: %w`, err)
 	}
@@ -261,7 +268,6 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.ProxyURL,
 			&feed.IgnoreEntryUpdates,
 		)
-
 		if err != nil {
 			return nil, fmt.Errorf(`store: unable to fetch feeds row: %w`, err)
 		}
@@ -312,11 +318,11 @@ func (f *feedQueryBuilder) fetchFeedCounter() (unreadCounters map[int64]int, rea
 	`
 	join := ""
 	if f.counterJoinFeeds {
-		join = "LEFT JOIN feeds f ON f.id=e.feed_id"
+		join = "INNER JOIN feeds f ON f.id=e.feed_id"
 	}
 	query = fmt.Sprintf(query, join, f.buildCounterCondition())
 
-	rows, err := f.store.db.Query(query, f.counterArgs...)
+	rows, err := f.db.Query(query, f.counterArgs...)
 	if err != nil {
 		return nil, nil, fmt.Errorf(`store: unable to fetch feed counts: %w`, err)
 	}

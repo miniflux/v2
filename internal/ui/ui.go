@@ -60,10 +60,9 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 
 	// Feed listing pages.
 	mux.HandleFunc("GET /feeds", handler.showFeedsPage)
-	mux.HandleFunc("GET /feeds/refresh", handler.refreshAllFeeds)
+	mux.HandleFunc("POST /feeds/refresh", handler.refreshAllFeeds)
 
 	// Individual feed pages.
-	mux.HandleFunc("GET /feed/{feedID}/refresh", handler.refreshFeed)
 	mux.HandleFunc("POST /feed/{feedID}/refresh", handler.refreshFeed)
 	mux.HandleFunc("GET /feed/{feedID}/edit", handler.showEditFeedPage)
 	mux.HandleFunc("POST /feed/{feedID}/remove", handler.removeFeed)
@@ -85,9 +84,9 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 	mux.HandleFunc("GET /category/{categoryID}/feeds", handler.showCategoryFeedsPage)
 	mux.HandleFunc("POST /category/{categoryID}/feed/{feedID}/remove", handler.removeCategoryFeed)
 	mux.HandleFunc("POST /category/{categoryID}/feed/{feedID}/mark-all-as-read", handler.markCategoryFeedAsRead)
-	mux.HandleFunc("GET /category/{categoryID}/feeds/refresh", handler.refreshCategoryFeedsPage)
+	mux.HandleFunc("POST /category/{categoryID}/feeds/refresh", handler.refreshCategoryFeedsPage)
 	mux.HandleFunc("GET /category/{categoryID}/entries", handler.showCategoryEntriesPage)
-	mux.HandleFunc("GET /category/{categoryID}/entries/refresh", handler.refreshCategoryEntriesPage)
+	mux.HandleFunc("POST /category/{categoryID}/entries/refresh", handler.refreshCategoryEntriesPage)
 	mux.HandleFunc("GET /category/{categoryID}/entries/all", handler.showCategoryEntriesAllPage)
 	mux.HandleFunc("GET /category/{categoryID}/entries/starred", handler.showCategoryEntriesStarredPage)
 	mux.HandleFunc("GET /category/{categoryID}/edit", handler.showEditCategoryPage)
@@ -152,7 +151,7 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 
 	// OAuth2 flow.
 	if config.Opts.OAuth2Provider() != "" {
-		mux.HandleFunc("GET /oauth2/{provider}/unlink", handler.oauth2Unlink)
+		mux.HandleFunc("POST /oauth2/{provider}/unlink", handler.oauth2Unlink)
 		mux.HandleFunc("GET /oauth2/{provider}/redirect", handler.oauth2Redirect)
 		mux.HandleFunc("GET /oauth2/{provider}/callback", handler.oauth2Callback)
 	}
@@ -162,7 +161,7 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 
 	// Authentication pages.
 	mux.HandleFunc("POST /login", handler.checkLogin)
-	mux.HandleFunc("GET /logout", handler.logout)
+	mux.HandleFunc("POST /logout", handler.logout)
 	mux.Handle("GET /{$}", authProxyMiddleware.handle(http.HandlerFunc(handler.showLoginPage)))
 
 	// WebAuthn flow.
@@ -183,6 +182,6 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 		w.Write([]byte("User-agent: *\nDisallow: /"))
 	})
 
-	// Apply middleware chain: cross-origin protection -> web session -> CSRF validation -> handlers.
-	return http.NewCrossOriginProtection().Handler(webSessionMiddleware.handle(csrfMiddleware.handle(mux)))
+	// Apply middleware chain: web session -> CSRF validation -> handlers.
+	return webSessionMiddleware.handle(csrfMiddleware.handle(mux))
 }

@@ -88,7 +88,7 @@ func (c *Client) SendSlackMsg(feed *model.Feed, entries model.Entries) error {
 		if err != nil {
 			return fmt.Errorf("slack: unable to send request: %v", err)
 		}
-		defer response.Body.Close()
+		response.Body.Close()
 
 		if response.StatusCode >= 400 {
 			return fmt.Errorf("slack: unable to send a notification: url=%s status=%d", c.webhookURL, response.StatusCode)

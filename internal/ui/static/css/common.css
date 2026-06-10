@@ -132,16 +132,27 @@ a:hover {
     border-bottom: 1px dotted var(--header-list-border-color);
 }
 
-.header li a:hover {
+.header li :is(a, .logout-button):hover {
     color: #888;
 }
 
-.header :is(a, summary) {
+.header :is(a, summary, .logout-button) {
     font-size: 0.9em;
     color: var(--header-link-color);
     text-decoration: none;
     border: none;
     font-weight: 400;
+}
+
+.header .logout-form {
+    display: inline;
+}
+
+.header .logout-button {
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .header .active a {
@@ -899,13 +910,17 @@ dialog {
     margin-right: 0;
 }
 
-.item-meta-icons li > :is(a, button) {
+.item-meta-icons li :is(a, button) {
     color: #777;
     text-decoration: none;
     font-size: 0.8rem;
     border: none;
     background-color: transparent;
     cursor: pointer;
+}
+
+.item-meta-icons li form {
+    display: contents;
 }
 
 .item-meta-icons a span {

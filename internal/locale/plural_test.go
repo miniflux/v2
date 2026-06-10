@@ -66,6 +66,14 @@ func TestPluralRules(t *testing.T) {
 			5:   0,
 			100: 0,
 		},
+		// Korean (ko_KR) - always form 0
+		"ko_KR": {
+			0:   0,
+			1:   0,
+			2:   0,
+			5:   0,
+			100: 0,
+		},
 		// Polish (pl_PL) - 3 forms
 		"pl_PL": {
 			1:  0, // n == 1

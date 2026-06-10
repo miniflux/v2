@@ -20,15 +20,15 @@ func (h *handler) showHistoryPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	offset := request.QueryIntParam(r, "offset", 0)
-	builder := h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithStatus(model.EntryStatusRead)
-	builder.WithSorting("changed_at", "DESC")
-	builder.WithSorting("published_at", "DESC")
-	builder.WithoutContent()
-	builder.WithOffset(offset)
-	builder.WithLimit(user.EntriesPerPage)
 
-	entries, count, err := builder.GetEntriesWithCount()
+	entries, count, err := h.store.NewEntryQueryBuilder(user.ID).
+		WithStatuses(model.EntryStatusRead).
+		WithSorting("changed_at", "DESC").
+		WithSorting("published_at", "DESC").
+		WithoutContent().
+		WithOffset(offset).
+		WithLimit(user.EntriesPerPage).
+		GetEntriesWithCount()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
@@ -40,9 +40,10 @@ func (h *handler) showHistoryPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("pagination", getPagination(h.routePath("/history"), count, offset, user.EntriesPerPage))
 	view.Set("menu", "history")
 	view.Set("user", user)
-	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
-	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
+	navMetadata, _ := h.store.GetNavMetadata(user.ID)
+	view.Set("countUnread", navMetadata.CountUnread)
+	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
+	view.Set("hasSaveEntry", navMetadata.HasSaveEntry)
 
 	response.HTML(w, r, view.Render("history_entries"))
 }

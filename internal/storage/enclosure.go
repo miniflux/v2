@@ -5,6 +5,7 @@ package storage // import "miniflux.app/v2/internal/storage"
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -119,7 +120,6 @@ func (s *Storage) GetEnclosure(enclosureID int64) (*model.Enclosure, error) {
 			enclosures
 		WHERE
 			id = $1
-		ORDER BY id ASC
 	`
 
 	row := s.db.QueryRow(query, enclosureID)
@@ -135,7 +135,7 @@ func (s *Storage) GetEnclosure(enclosureID int64) (*model.Enclosure, error) {
 		&enclosure.MediaProgression,
 	)
 
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	} else if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch enclosure row: %v`, err)
@@ -155,7 +155,7 @@ func (s *Storage) createEnclosure(tx *sql.Tx, enclosure *model.Enclosure) error 
 			(url, size, mime_type, entry_id, user_id, media_progression)
 		VALUES
 			($1, $2, $3, $4, $5, $6)
-		ON CONFLICT (user_id, entry_id, md5(url)) DO NOTHING
+		ON CONFLICT (user_id, entry_id, encode(sha256(url::bytea), 'hex')) DO NOTHING
 		RETURNING
 			id
 	`

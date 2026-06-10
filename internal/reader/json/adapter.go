@@ -83,11 +83,12 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		// The entry title is optional, so we need to find a fallback.
 		if entry.Title == "" {
 			for _, value := range []string{item.Summary, item.ContentText, item.ContentHTML} {
-				value = strings.TrimSpace(value)
-				if value != "" {
-					entry.Title = sanitizer.TruncateHTML(value, 100)
-					break
+				if value = sanitizer.TruncateHTML(value, 100); value == "" {
+					continue
 				}
+
+				entry.Title = value
+				break
 			}
 		}
 
@@ -130,7 +131,7 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		itemAuthors = append(itemAuthors, item.Authors...)
 		itemAuthors = append(itemAuthors, item.Author, j.jsonFeed.Author)
 
-		var authorNames []string
+		var authorNames = make([]string, 0, len(itemAuthors))
 		for _, author := range itemAuthors {
 			authorName := strings.TrimSpace(author.Name)
 			if authorName != "" {

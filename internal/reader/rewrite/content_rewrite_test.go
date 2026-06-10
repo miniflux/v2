@@ -832,6 +832,60 @@ func TestRewriteAddCastopodEpisode(t *testing.T) {
 	}
 }
 
+func TestRewriteAddEnclosureLinks(t *testing.T) {
+	controlEntry := &model.Entry{
+		URL:   "https://example.org/article",
+		Title: `A title`,
+		Content: `Article Content<hr/><ul>` +
+			`<li><a href="https://example.org/episode.mp3?token=a&amp;b=c">https://example.org/episode.mp3?token=a&amp;b=c</a></li>` +
+			`<li><a href="https://example.org/video.mp4">https://example.org/video.mp4</a></li></ul>`,
+		Enclosures: model.EnclosureList{
+			{URL: "https://example.org/episode.mp3?token=a&b=c", MimeType: "audio/mpeg"},
+			{URL: "https://example.org/video.mp4", MimeType: "video/mp4"},
+			{URL: "", MimeType: "application/pdf"},
+		},
+	}
+	testEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `Article Content`,
+		Enclosures: model.EnclosureList{
+			{URL: "https://example.org/episode.mp3?token=a&b=c", MimeType: "audio/mpeg"},
+			{URL: "https://example.org/video.mp4", MimeType: "video/mp4"},
+			{URL: "", MimeType: "application/pdf"},
+		},
+	}
+	ApplyContentRewriteRules(testEntry, `add_enclosure_links`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestRewriteAddEnclosureLinksWithoutEnclosureURL(t *testing.T) {
+	controlEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `Article Content`,
+		Enclosures: model.EnclosureList{
+			{URL: "", MimeType: "audio/mpeg"},
+		},
+	}
+	testEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `Article Content`,
+		Enclosures: model.EnclosureList{
+			{URL: "", MimeType: "audio/mpeg"},
+		},
+	}
+	ApplyContentRewriteRules(testEntry, `add_enclosure_links`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
 func TestRewriteBase64Decode(t *testing.T) {
 	controlEntry := &model.Entry{
 		URL:     "https://example.org/article",

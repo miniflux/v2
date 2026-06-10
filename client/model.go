@@ -74,8 +74,6 @@ type UserModificationRequest struct {
 	EntryOrder                *string  `json:"entry_sorting_order"`
 	Stylesheet                *string  `json:"stylesheet"`
 	CustomJS                  *string  `json:"custom_js"`
-	GoogleID                  *string  `json:"google_id"`
-	OpenIDConnectID           *string  `json:"openid_connect_id"`
 	EntriesPerPage            *int     `json:"entries_per_page"`
 	KeyboardShortcuts         *bool    `json:"keyboard_shortcuts"`
 	ShowReadingTime           *bool    `json:"show_reading_time"`

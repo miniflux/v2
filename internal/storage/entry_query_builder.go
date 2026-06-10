@@ -50,9 +50,9 @@ func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 		e.args = append(e.args, query)
 
 		// 0.0000001 = 0.1 / (seconds_in_a_day)
-		e.WithSorting(
-			fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001", nArgs),
-			"DESC",
+
+		e.sortExpressions = append(e.sortExpressions,
+			fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001 DESC", nArgs),
 		)
 	}
 	return e
@@ -115,22 +115,13 @@ func (e *EntryQueryBuilder) AfterEntryID(entryID int64) *EntryQueryBuilder {
 }
 
 // WithEntryIDs filter by entry IDs.
-func (e *EntryQueryBuilder) WithEntryIDs(entryIDs []int64) *EntryQueryBuilder {
+func (e *EntryQueryBuilder) WithEntryIDs(entryIDs ...int64) *EntryQueryBuilder {
 	if len(entryIDs) == 1 {
 		e.conditions = append(e.conditions, fmt.Sprintf("e.id = $%d", len(e.args)+1))
 		e.args = append(e.args, entryIDs[0])
 	} else if len(entryIDs) > 1 {
 		e.conditions = append(e.conditions, fmt.Sprintf("e.id = ANY($%d)", len(e.args)+1))
 		e.args = append(e.args, pq.Int64Array(entryIDs))
-	}
-	return e
-}
-
-// WithEntryID filter by entry ID.
-func (e *EntryQueryBuilder) WithEntryID(entryID int64) *EntryQueryBuilder {
-	if entryID != 0 {
-		e.conditions = append(e.conditions, "e.id = $"+strconv.Itoa(len(e.args)+1))
-		e.args = append(e.args, entryID)
 	}
 	return e
 }
@@ -153,17 +144,8 @@ func (e *EntryQueryBuilder) WithCategoryID(categoryID int64) *EntryQueryBuilder 
 	return e
 }
 
-// WithStatus filter by entry status.
-func (e *EntryQueryBuilder) WithStatus(status string) *EntryQueryBuilder {
-	if status != "" {
-		e.conditions = append(e.conditions, "e.status = $"+strconv.Itoa(len(e.args)+1))
-		e.args = append(e.args, status)
-	}
-	return e
-}
-
 // WithStatuses filter by a list of entry statuses.
-func (e *EntryQueryBuilder) WithStatuses(statuses []string) *EntryQueryBuilder {
+func (e *EntryQueryBuilder) WithStatuses(statuses ...string) *EntryQueryBuilder {
 	if len(statuses) == 1 {
 		e.conditions = append(e.conditions, fmt.Sprintf("e.status = $%d", len(e.args)+1))
 		e.args = append(e.args, statuses[0])
@@ -175,12 +157,10 @@ func (e *EntryQueryBuilder) WithStatuses(statuses []string) *EntryQueryBuilder {
 }
 
 // WithTags filter by a list of entry tags.
-func (e *EntryQueryBuilder) WithTags(tags []string) *EntryQueryBuilder {
+func (e *EntryQueryBuilder) WithTags(tags ...string) *EntryQueryBuilder {
 	if len(tags) > 0 {
-		for _, cat := range tags {
-			e.conditions = append(e.conditions, fmt.Sprintf("LOWER($%d) = ANY(LOWER(e.tags::text)::text[])", len(e.args)+1))
-			e.args = append(e.args, cat)
-		}
+		e.conditions = append(e.conditions, fmt.Sprintf("LOWER(e.tags::text)::text[] @> LOWER($%d::text)::text[]", len(e.args)+1))
+		e.args = append(e.args, pq.Array(tags))
 	}
 	return e
 }
@@ -209,7 +189,13 @@ func (e *EntryQueryBuilder) WithShareCodeNotEmpty() *EntryQueryBuilder {
 
 // WithSorting add a sort expression.
 func (e *EntryQueryBuilder) WithSorting(column, direction string) *EntryQueryBuilder {
-	e.sortExpressions = append(e.sortExpressions, column+" "+direction)
+	switch {
+	case strings.EqualFold(direction, "ASC"):
+		e.sortExpressions = append(e.sortExpressions, pq.QuoteIdentifier(column)+" ASC")
+	case strings.EqualFold(direction, "DESC"):
+		e.sortExpressions = append(e.sortExpressions, pq.QuoteIdentifier(column)+" DESC")
+	}
+
 	return e
 }
 
@@ -335,15 +321,15 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 			u.timezone
 		FROM
 			entries e
-		LEFT JOIN
+		INNER JOIN
 			feeds f ON f.id=e.feed_id
-		LEFT JOIN
+		INNER JOIN
 			categories c ON c.id=f.category_id
 		LEFT JOIN
 			feed_icons fi ON fi.feed_id=f.id
 		LEFT JOIN
 			icons i ON i.id=fi.icon_id
-		LEFT JOIN
+		INNER JOIN
 			users u ON u.id=e.user_id
 		WHERE ` + e.buildCondition() + " " + e.buildSorting()
 
@@ -353,9 +339,10 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 	}
 	defer rows.Close()
 
-	entries := make(model.Entries, 0)
-	entryMap := make(map[int64]*model.Entry)
-	var entryIDs []int64
+	size := max(e.limit, 0)
+	entries := make(model.Entries, 0, size)
+	entryMap := make(map[int64]*model.Entry, size)
+	entryIDs := make([]int64, 0, size)
 	var totalCount int
 
 	for rows.Next() {
@@ -409,7 +396,6 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 		}
 
 		err := rows.Scan(dest...)
-
 		if err != nil {
 			return nil, 0, fmt.Errorf("store: unable to fetch entry row: %v", err)
 		}
@@ -518,17 +504,17 @@ func (e *EntryQueryBuilder) buildSorting() string {
 }
 
 // NewEntryQueryBuilder returns a new EntryQueryBuilder.
-func NewEntryQueryBuilder(store *Storage, userID int64) *EntryQueryBuilder {
+func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 	return &EntryQueryBuilder{
-		store:      store,
+		store:      s,
 		args:       []any{userID},
 		conditions: []string{"e.user_id = $1"},
 	}
 }
 
 // NewAnonymousQueryBuilder returns a new EntryQueryBuilder suitable for anonymous users.
-func NewAnonymousQueryBuilder(store *Storage) *EntryQueryBuilder {
+func (s *Storage) NewAnonymousQueryBuilder() *EntryQueryBuilder {
 	return &EntryQueryBuilder{
-		store: store,
+		store: s,
 	}
 }

@@ -97,7 +97,7 @@ func (a atomLinks) firstLinkWithRelationAndType(relation string, contentTypes ..
 }
 
 func (a atomLinks) findAllLinksWithRelation(relation string) []*AtomLink {
-	var links []*AtomLink
+	links := make([]*AtomLink, 0, len(a))
 
 	for _, link := range a {
 		if strings.EqualFold(link.Rel, relation) {
@@ -137,7 +137,7 @@ type atomCategory struct {
 type atomCategories []atomCategory
 
 func (ac atomCategories) CategoryNames() []string {
-	var categories []string
+	categories := make([]string, 0, len(ac))
 
 	for _, category := range ac {
 		label := strings.TrimSpace(category.Label)

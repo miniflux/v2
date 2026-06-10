@@ -5,6 +5,7 @@ package storage // import "miniflux.app/v2/internal/storage"
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -14,6 +15,8 @@ import (
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var dummyBcryptHash = []byte("$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy")
 
 // CountUsers returns the total number of users.
 func (s *Storage) CountUsers() (int, error) {
@@ -512,7 +515,7 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 			u.open_external_links_in_new_tab
 		FROM
 			users u
-		LEFT JOIN
+		INNER JOIN
 			api_keys ON api_keys.user_id=u.id
 		WHERE
 			api_keys.token = $1
@@ -556,7 +559,7 @@ func (s *Storage) fetchUser(query string, args ...any) (*model.User, error) {
 		&user.OpenExternalLinksInNewTab,
 	)
 
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	} else if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch user: %v`, err)
@@ -671,7 +674,9 @@ func (s *Storage) CheckPassword(username, password string) error {
 	username = strings.ToLower(username)
 
 	err := s.db.QueryRow("SELECT password FROM users WHERE username=$1", username).Scan(&hash)
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
+		// Perform a dummy bcrypt comparison against the hashed `password` string to avoid leaking whether the user exists via response timing.
+		_ = bcrypt.CompareHashAndPassword(dummyBcryptHash, []byte(password))
 		return fmt.Errorf(`store: unable to find this user: %s`, username)
 	} else if err != nil {
 		return fmt.Errorf(`store: unable to fetch user: %v`, err)
@@ -690,7 +695,7 @@ func (s *Storage) HasPassword(userID int64) (bool, error) {
 	query := `SELECT true FROM users WHERE id=$1 AND password <> '' LIMIT 1`
 
 	err := s.db.QueryRow(query, userID).Scan(&result)
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return false, nil
 	} else if err != nil {
 		return false, fmt.Errorf(`store: unable to execute query: %v`, err)

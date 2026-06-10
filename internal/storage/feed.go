@@ -108,22 +108,6 @@ func (s *Storage) CountAllFeeds() (map[string]int64, error) {
 	return results, nil
 }
 
-// CountUserFeedsWithErrors returns the number of feeds with parsing errors that belong to the given user.
-func (s *Storage) CountUserFeedsWithErrors(userID int64) int {
-	pollingParsingErrorLimit := config.Opts.PollingParsingErrorLimit()
-	if pollingParsingErrorLimit <= 0 {
-		pollingParsingErrorLimit = 1
-	}
-	query := `SELECT count(*) FROM feeds WHERE user_id=$1 AND parsing_error_count >= $2`
-	var result int
-	err := s.db.QueryRow(query, userID, pollingParsingErrorLimit).Scan(&result)
-	if err != nil {
-		return 0
-	}
-
-	return result
-}
-
 // CountAllFeedsWithErrors returns the number of feeds with parsing errors.
 func (s *Storage) CountAllFeedsWithErrors() (int, error) {
 	pollingParsingErrorLimit := config.Opts.PollingParsingErrorLimit()
@@ -142,9 +126,9 @@ func (s *Storage) CountAllFeedsWithErrors() (int, error) {
 
 // Feeds returns all feeds that belong to the given user.
 func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
-	builder := NewFeedQueryBuilder(s, userID)
-	builder.WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection)
-	return builder.GetFeeds()
+	return s.NewFeedQueryBuilder(userID).
+		WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection).
+		GetFeeds()
 }
 
 func getFeedsSorted(builder *feedQueryBuilder) (model.Feeds, error) {
@@ -158,27 +142,26 @@ func getFeedsSorted(builder *feedQueryBuilder) (model.Feeds, error) {
 
 // FeedsWithCounters returns all feeds of the given user with read and unread entry counters.
 func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
-	builder := NewFeedQueryBuilder(s, userID)
-	builder.WithCounters()
-	builder.WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection)
-	return getFeedsSorted(builder)
+	return getFeedsSorted(s.NewFeedQueryBuilder(userID).
+		WithCounters().
+		WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection))
 }
 
 // FetchCounters returns the per-feed read and unread entry counts for the given user.
 func (s *Storage) FetchCounters(userID int64) (model.FeedCounters, error) {
-	builder := NewFeedQueryBuilder(s, userID)
-	builder.WithCounters()
-	reads, unreads, err := builder.fetchFeedCounter()
+	reads, unreads, err := s.NewFeedQueryBuilder(userID).
+		WithCounters().
+		fetchFeedCounter()
+
 	return model.FeedCounters{ReadCounters: reads, UnreadCounters: unreads}, err
 }
 
 // FeedsByCategoryWithCounters returns all feeds in the given category for the given user with read and unread entry counters.
 func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.Feeds, error) {
-	builder := NewFeedQueryBuilder(s, userID)
-	builder.WithCategoryID(categoryID)
-	builder.WithCounters()
-	builder.WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection)
-	return getFeedsSorted(builder)
+	return getFeedsSorted(s.NewFeedQueryBuilder(userID).
+		WithCategoryID(categoryID).
+		WithCounters().
+		WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection))
 }
 
 // WeeklyFeedEntryCount returns the weekly entry count for a feed.
@@ -215,9 +198,9 @@ func (s *Storage) WeeklyFeedEntryCount(userID, feedID int64) (int, error) {
 
 // FeedByID returns the feed with the given ID.
 func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
-	builder := NewFeedQueryBuilder(s, userID)
-	builder.WithFeedID(feedID)
-	feed, err := builder.GetFeed()
+	feed, err := s.NewFeedQueryBuilder(userID).
+		WithFeedID(feedID).
+		GetFeed()
 
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
@@ -433,7 +416,6 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.ID,
 		feed.UserID,
 	)
-
 	if err != nil {
 		return fmt.Errorf(`store: unable to update feed #%d (%s): %v`, feed.ID, feed.FeedURL, err)
 	}
@@ -462,7 +444,6 @@ func (s *Storage) UpdateFeedError(feed *model.Feed) (err error) {
 		feed.ID,
 		feed.UserID,
 	)
-
 	if err != nil {
 		return fmt.Errorf(`store: unable to update feed error #%d (%s): %v`, feed.ID, feed.FeedURL, err)
 	}

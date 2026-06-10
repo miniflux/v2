@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/request"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -54,7 +55,11 @@ func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
 			return false
 		}
 
-		if username != config.Opts.MetricsUsername() || password != config.Opts.MetricsPassword() {
+		// Both checks have to be run to avoid leaking informations
+		// about the username and the password.
+		usernameCorrect := crypto.ConstantTimeCmp(username, config.Opts.MetricsUsername())
+		passwordCorrect := crypto.ConstantTimeCmp(password, config.Opts.MetricsPassword())
+		if !usernameCorrect || !passwordCorrect {
 			slog.Warn("Metrics endpoint accessed with invalid username or password",
 				slog.Bool("authentication_failed", true),
 				slog.String("client_ip", clientIP),

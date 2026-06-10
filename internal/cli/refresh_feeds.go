@@ -20,14 +20,13 @@ func refreshFeeds(store *storage.Storage) {
 	startTime := time.Now()
 
 	// Generate a batch of feeds for any user that has feeds to refresh.
-	batchBuilder := store.NewBatchBuilder()
-	batchBuilder.WithBatchSize(config.Opts.BatchSize())
-	batchBuilder.WithErrorLimit(config.Opts.PollingParsingErrorLimit())
-	batchBuilder.WithoutDisabledFeeds()
-	batchBuilder.WithNextCheckExpired()
-	batchBuilder.WithLimitPerHost(config.Opts.PollingLimitPerHost())
-
-	jobs, err := batchBuilder.FetchJobs()
+	jobs, err := store.NewBatchBuilder().
+		WithBatchSize(config.Opts.BatchSize()).
+		WithErrorLimit(config.Opts.PollingParsingErrorLimit()).
+		WithoutDisabledFeeds().
+		WithNextCheckExpired().
+		WithLimitPerHost(config.Opts.PollingLimitPerHost()).
+		FetchJobs()
 	if err != nil {
 		slog.Error("Unable to fetch jobs from database", slog.Any("error", err))
 		return
@@ -36,7 +35,7 @@ func refreshFeeds(store *storage.Storage) {
 	slog.Debug("Feed URLs in this batch", slog.Any("feed_urls", jobs.FeedURLs()))
 
 	nbJobs := len(jobs)
-	var jobQueue = make(chan model.Job, nbJobs)
+	jobQueue := make(chan model.Job, nbJobs)
 
 	slog.Info("Starting a pool of workers",
 		slog.Int("nb_workers", config.Opts.WorkerPoolSize()),

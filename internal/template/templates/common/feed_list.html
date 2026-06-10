@@ -3,7 +3,7 @@
         {{ range .feeds }}
         <article
             class="item feed-item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ else if ne .UnreadCount 0 }}feed-has-unread{{ end }}"
-            aria-labelledby="feed-title-{{ .ID }} feed-entries-counter"
+            aria-labelledby="feed-title-{{ .ID }} feed-entries-counter-{{ .ID }}"
             tabindex="-1"
         >
             <header class="item-header" dir="auto">
@@ -16,7 +16,7 @@
                         {{ .Title }}
                     </a>
                 </h2>
-                <span id="feed-entries-counter" class="feed-entries-counter">
+                <span id="feed-entries-counter-{{ .ID }}" class="feed-entries-counter">
                     <span aria-hidden="true">(</span>
                     <span class="sr-only">{{ plural "page.unread_entry_count" .UnreadCount .UnreadCount }}</span>
                     <span aria-hidden="true">{{ .UnreadCount }} /</span>
@@ -51,9 +51,12 @@
                 </ul>
                 <ul class="item-meta-icons">
                     <li class="item-meta-icons-refresh">
-                        <a href="{{ routePath "/feed/%d/refresh" .ID }}" aria-describedby="feed-title-{{ .ID }}">
-                            {{ icon "refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span>
-                        </a>
+                        <form action="{{ routePath "/feed/%d/refresh" .ID }}" method="post">
+                            <input type="hidden" name="csrf" value="{{ $.csrf }}">
+                            <button aria-describedby="feed-title-{{ .ID }}">
+                                {{ icon "refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span>
+                            </button>
+                        </form>
                     </li>
                     <li class="item-meta-icons-edit">
                         <a href="{{ routePath "/feed/%d/edit" .ID }}" aria-describedby="feed-title-{{ .ID }}">

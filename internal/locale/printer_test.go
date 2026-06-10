@@ -354,3 +354,59 @@ func TestPluralWithVariousLanguageRules(t *testing.T) {
 		}
 	}
 }
+
+func TestPluralFormWithoutPlaceholder(t *testing.T) {
+	defaultCatalog = catalog{
+		"ar_SA": translationDict{
+			plurals: map[string][]string{
+				// The Arabic dual omits the count by design.
+				"minutes": {"%d دقيقة", "دقيقة واحدة", "دقيقتين", "%d دقائق", "%d دقيقة", "%d دقيقة"},
+			},
+		},
+	}
+
+	printer := NewPrinter("ar_SA")
+
+	if got := printer.Plural("minutes", 1, 1); got != "دقيقة واحدة" {
+		t.Errorf(`Plural form should not get an EXTRA marker, got %q`, got)
+	}
+	if got := printer.Plural("minutes", 2, 2); got != "دقيقتين" {
+		t.Errorf(`Plural form should not get an EXTRA marker, got %q`, got)
+	}
+	if got := printer.Plural("minutes", 5, 5); got != "5 دقائق" {
+		t.Errorf(`Plural form with placeholder should be formatted, got %q`, got)
+	}
+}
+
+func TestPrintfUnescapesLiteralPercentWithoutArgs(t *testing.T) {
+	defaultCatalog = catalog{
+		"en_US": translationDict{
+			singulars: map[string]string{
+				"media.completion": "Mark as read at 90%% completion",
+			},
+		},
+	}
+
+	got := NewPrinter("en_US").Printf("media.completion")
+	expected := "Mark as read at 90% completion"
+	if got != expected {
+		t.Errorf(`Escaped percent should be unescaped, got %q instead of %q`, got, expected)
+	}
+}
+
+func TestHasFormattingDirective(t *testing.T) {
+	tests := map[string]bool{
+		"دقيقتين":   false,
+		"%d دقيقة":  true,
+		"90%% done": false, // escaped percent consumes no argument
+		"%d of %s":  true,
+		"":          false,
+		"%":         true,
+	}
+
+	for format, expected := range tests {
+		if got := hasFormattingDirective(format); got != expected {
+			t.Errorf(`hasFormattingDirective(%q) = %v, want %v`, format, got, expected)
+		}
+	}
+}

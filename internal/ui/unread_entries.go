@@ -20,16 +20,16 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	offset := request.QueryIntParam(r, "offset", 0)
-	builder := h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithStatus(model.EntryStatusUnread)
-	builder.WithSorting(user.EntryOrder, user.EntryDirection)
-	builder.WithSorting("id", user.EntryDirection)
-	builder.WithOffset(offset)
-	builder.WithLimit(user.EntriesPerPage)
-	builder.WithGloballyVisible()
-	builder.WithoutContent()
 
-	entries, countUnread, err := builder.GetEntriesWithCount()
+	entries, countUnread, err := h.store.NewEntryQueryBuilder(user.ID).
+		WithStatuses(model.EntryStatusUnread).
+		WithSorting(user.EntryOrder, user.EntryDirection).
+		WithSorting("id", user.EntryDirection).
+		WithOffset(offset).
+		WithLimit(user.EntriesPerPage).
+		WithGloballyVisible().
+		WithoutContent().
+		GetEntriesWithCount()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
@@ -37,15 +37,15 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 
 	if offset >= countUnread && countUnread > 0 {
 		offset = 0
-		builder = h.store.NewEntryQueryBuilder(user.ID)
-		builder.WithStatus(model.EntryStatusUnread)
-		builder.WithSorting(user.EntryOrder, user.EntryDirection)
-		builder.WithSorting("id", user.EntryDirection)
-		builder.WithLimit(user.EntriesPerPage)
-		builder.WithGloballyVisible()
-		builder.WithoutContent()
 
-		entries, countUnread, err = builder.GetEntriesWithCount()
+		entries, countUnread, err = h.store.NewEntryQueryBuilder(user.ID).
+			WithStatuses(model.EntryStatusUnread).
+			WithSorting(user.EntryOrder, user.EntryDirection).
+			WithSorting("id", user.EntryDirection).
+			WithLimit(user.EntriesPerPage).
+			WithGloballyVisible().
+			WithoutContent().
+			GetEntriesWithCount()
 		if err != nil {
 			response.HTMLServerError(w, r, err)
 			return
@@ -57,9 +57,10 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("pagination", getPagination(h.routePath("/unread"), countUnread, offset, user.EntriesPerPage))
 	view.Set("menu", "unread")
 	view.Set("user", user)
+	navMetadata, _ := h.store.GetNavMetadata(user.ID)
 	view.Set("countUnread", countUnread)
-	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
-	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
+	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
+	view.Set("hasSaveEntry", navMetadata.HasSaveEntry)
 
 	response.HTML(w, r, view.Render("unread_entries"))
 }

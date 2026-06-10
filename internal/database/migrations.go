@@ -5,6 +5,7 @@ package database // import "miniflux.app/v2/internal/database"
 
 import (
 	"database/sql"
+	"errors"
 
 	"miniflux.app/v2/internal/crypto"
 )
@@ -352,7 +353,11 @@ var migrations = [...]func(tx *sql.Tx) error{
 		return err
 	},
 	func(tx *sql.Tx) (err error) {
-		sql := `CREATE INDEX enclosures_user_entry_url_idx ON enclosures(user_id, entry_id, md5(url))`
+		// This migration originally used md5(url), but it was changed to
+		// sha256 because PostgreSQL 18 disables MD5 in FIPS mode, which made
+		// fresh installs fail while replaying this migration. Existing
+		// installs that already ran it are migrated later on.
+		sql := `CREATE INDEX enclosures_user_entry_url_idx ON enclosures(user_id, entry_id, encode(sha256(url::bytea), 'hex'))`
 		_, err = tx.Exec(sql)
 		return err
 	},
@@ -483,7 +488,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 			)
 
 			if err := tx.QueryRow(`FETCH NEXT FROM my_cursor`).Scan(&userID, &customStylesheet, &googleID, &oidcID); err != nil {
-				if err == sql.ErrNoRows {
+				if errors.Is(err, sql.ErrNoRows) {
 					break
 				}
 				return err
@@ -723,7 +728,12 @@ var migrations = [...]func(tx *sql.Tx) error{
 		}
 
 		// Create unique index
-		_, err = tx.Exec(`CREATE UNIQUE INDEX enclosures_user_entry_url_unique_idx ON enclosures(user_id, entry_id, md5(url))`)
+		//
+		// This originally used md5(url), but it was changed to sha256 because
+		// PostgreSQL 18 disables MD5 in FIPS mode, which made fresh installs
+		// fail while replaying this migration. Existing installs that already
+		// ran it are migrated later on.
+		_, err = tx.Exec(`CREATE UNIQUE INDEX enclosures_user_entry_url_unique_idx ON enclosures(user_id, entry_id, encode(sha256(url::bytea), 'hex'))`)
 		if err != nil {
 			return err
 		}
@@ -1081,7 +1091,7 @@ var migrations = [...]func(tx *sql.Tx) error{
 			var id int64
 
 			if err := tx.QueryRow(`FETCH NEXT FROM id_cursor`).Scan(&id); err != nil {
-				if err == sql.ErrNoRows {
+				if errors.Is(err, sql.ErrNoRows) {
 					break
 				}
 				return err
@@ -1493,6 +1503,45 @@ var migrations = [...]func(tx *sql.Tx) error{
 			ALTER TABLE integrations
 				ADD CONSTRAINT integrations_user_id_fkey
 				FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+		`)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		// backup_eligible is nullable: NULL marks pre-migration rows so the login path can backfill it from the assertion on first use.
+		_, err = tx.Exec(`
+			UPDATE webauthn_credentials SET name = '' WHERE name IS NULL;
+
+			ALTER TABLE webauthn_credentials
+				ALTER COLUMN name SET DEFAULT '',
+				ALTER COLUMN name SET NOT NULL,
+				ADD COLUMN backup_eligible boolean,
+				ADD COLUMN backup_state boolean NOT NULL DEFAULT false;
+		`)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		// entries_feed_idx is redundant: the unique constraint
+		// entries_feed_id_hash_key(feed_id, hash) and the explicit
+		// entries_feed_id_status_hash_idx(feed_id, status, hash) both
+		// cover feed_id-leading lookups, including FK cascade deletes.
+		//
+		// entries_user_status_idx is redundant: five three-column indexes
+		// share the same (user_id, status) prefix and serve every query
+		// that the two-column index could.
+		_, err = tx.Exec(`
+			DROP INDEX IF EXISTS entries_feed_idx;
+			DROP INDEX IF EXISTS entries_user_status_idx;
+		`)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		// PostgreSQL 18 disables MD5 when running in FIPS mode, which makes
+		// the unique index on enclosures relying on md5(url) unusable.
+		// Replace it with a SHA-256 based expression index.
+		_, err = tx.Exec(`
+			DROP INDEX IF EXISTS enclosures_user_entry_url_unique_idx;
+			CREATE UNIQUE INDEX enclosures_user_entry_url_unique_idx
+				ON enclosures (user_id, entry_id, encode(sha256(url::bytea), 'hex'));
 		`)
 		return err
 	},

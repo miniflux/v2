@@ -44,7 +44,7 @@ func (s *Storage) Category(userID, categoryID int64) (*model.Category, error) {
 	err := s.db.QueryRow(query, userID, categoryID).Scan(&category.ID, &category.UserID, &category.Title, &category.HideGlobally)
 
 	switch {
-	case err == sql.ErrNoRows:
+	case errors.Is(err, sql.ErrNoRows):
 		return nil, nil
 	case err != nil:
 		return nil, fmt.Errorf(`store: unable to fetch category: %v`, err)
@@ -61,7 +61,7 @@ func (s *Storage) FirstCategory(userID int64) (*model.Category, error) {
 	err := s.db.QueryRow(query, userID).Scan(&category.ID, &category.UserID, &category.Title, &category.HideGlobally)
 
 	switch {
-	case err == sql.ErrNoRows:
+	case errors.Is(err, sql.ErrNoRows):
 		return nil, nil
 	case err != nil:
 		return nil, fmt.Errorf(`store: unable to fetch category: %v`, err)
@@ -78,7 +78,7 @@ func (s *Storage) CategoryByTitle(userID int64, title string) (*model.Category, 
 	err := s.db.QueryRow(query, userID, title).Scan(&category.ID, &category.UserID, &category.Title, &category.HideGlobally)
 
 	switch {
-	case err == sql.ErrNoRows:
+	case errors.Is(err, sql.ErrNoRows):
 		return nil, nil
 	case err != nil:
 		return nil, fmt.Errorf(`store: unable to fetch category: %v`, err)
@@ -117,14 +117,24 @@ func (s *Storage) CategoriesWithFeedCount(userID int64, sortOrder string) (model
 			c.user_id,
 			c.title,
 			c.hide_globally,
-			(SELECT count(*) FROM feeds WHERE feeds.category_id=c.id) AS count,
-			(SELECT count(*)
-			   FROM feeds
-			     JOIN entries ON (feeds.id = entries.feed_id)
-			   WHERE feeds.category_id = c.id AND entries.status = $1) AS count_unread
+			coalesce(fc.feed_count, 0),
+			coalesce(uc.unread_count, 0)
 		FROM categories c
+		LEFT JOIN (
+			SELECT category_id, count(*) AS feed_count
+			FROM feeds
+			WHERE user_id = $2
+			GROUP BY category_id
+		) fc ON fc.category_id = c.id
+		LEFT JOIN (
+			SELECT f.category_id, count(*) AS unread_count
+			FROM entries e
+			INNER JOIN feeds f ON f.id = e.feed_id
+			WHERE e.user_id = $2 AND e.status = $1
+			GROUP BY f.category_id
+		) uc ON uc.category_id = c.id
 		WHERE
-			user_id=$2
+			c.user_id=$2
 	`
 
 	if sortOrder == "alphabetical" {
@@ -135,7 +145,7 @@ func (s *Storage) CategoriesWithFeedCount(userID int64, sortOrder string) (model
 	} else {
 		query += `
 			ORDER BY
-				count_unread DESC,
+				coalesce(uc.unread_count, 0) DESC,
 				c.title ASC
 		`
 	}

@@ -17,6 +17,7 @@ var AvailableLanguages = map[string]string{
 	"id_ID":            "Bahasa Indonesia",
 	"it_IT":            "Italiano",
 	"ja_JP":            "日本語",
+	"ko_KR":            "한국어",
 	"nan_Latn_pehoeji": "Pe̍h-ōe-jī",
 	"nl_NL":            "Nederlands",
 	"pl_PL":            "Polski",
