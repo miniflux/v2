@@ -511,34 +511,38 @@ func parseEntryIDsParams(r *http.Request) (limit, offset int) {
 	return limit, offset
 }
 
-func (h *handler) getUnreadEntryIDsHandler(w http.ResponseWriter, r *http.Request) {
-	limit, offset := parseEntryIDsParams(r)
-	entryIDs, total, err := h.store.NewEntryQueryBuilder(request.UserID(r)).
-		WithStatuses(model.EntryStatusUnread).
-		WithSorting("id", "DESC").
-		WithLimitAndMaximum(limit, model.MaxEntryIDsLimit).
-		WithOffset(offset).
-		GetEntryIDsWithCount()
-	if err != nil {
-		response.JSONServerError(w, r, err)
-		return
+func (h *handler) getEntryIDsHandler(w http.ResponseWriter, r *http.Request) {
+	if request.HasQueryParam(r, "starred") {
+		starredValue := request.QueryStringParam(r, "starred", "")
+		if starredValue != "true" && starredValue != "false" {
+			response.JSONBadRequest(w, r, errors.New(`invalid starred parameter, must be "true" or "false"`))
+			return
+		}
 	}
 
-	if entryIDs == nil {
-		entryIDs = []int64{}
+	if request.HasQueryParam(r, "status") {
+		statusValue := request.QueryStringParam(r, "status", "")
+		if statusValue != model.EntryStatusRead && statusValue != model.EntryStatusUnread {
+			response.JSONBadRequest(w, r, errors.New(`invalid status parameter, must be "read" or "unread"`))
+			return
+		}
 	}
 
-	response.JSON(w, r, entryIDsResponse{Total: total, EntryIDs: entryIDs})
-}
-
-func (h *handler) getStarredEntryIDsHandler(w http.ResponseWriter, r *http.Request) {
 	limit, offset := parseEntryIDsParams(r)
-	entryIDs, total, err := h.store.NewEntryQueryBuilder(request.UserID(r)).
-		WithStarred(true).
+	builder := h.store.NewEntryQueryBuilder(request.UserID(r)).
 		WithSorting("id", "DESC").
 		WithLimitAndMaximum(limit, model.MaxEntryIDsLimit).
-		WithOffset(offset).
-		GetEntryIDsWithCount()
+		WithOffset(offset)
+
+	if request.HasQueryParam(r, "starred") {
+		builder.WithStarred(request.QueryBoolParam(r, "starred", false))
+	}
+
+	if request.HasQueryParam(r, "status") {
+		builder.WithStatuses(request.QueryStringParam(r, "status", ""))
+	}
+
+	entryIDs, total, err := builder.GetEntryIDsWithCount()
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return

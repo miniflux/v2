@@ -91,10 +91,10 @@ func TestVersionHandler(t *testing.T) {
 	}
 }
 
-func TestGetUnreadEntryIDsHandlerRequiresAuthentication(t *testing.T) {
+func TestGetEntryIDsHandlerRequiresAuthentication(t *testing.T) {
 	handler := NewHandler(nil, nil)
 
-	r := httptest.NewRequest(http.MethodGet, "/v1/unread-entry-ids", nil)
+	r := httptest.NewRequest(http.MethodGet, "/v1/entries/ids", nil)
 	w := httptest.NewRecorder()
 
 	handler.ServeHTTP(w, r)
@@ -104,21 +104,36 @@ func TestGetUnreadEntryIDsHandlerRequiresAuthentication(t *testing.T) {
 	}
 }
 
-func TestGetStarredEntryIDsHandlerRequiresAuthentication(t *testing.T) {
+func TestGetEntryIDsHandlerRejectsInvalidStarredParam(t *testing.T) {
 	handler := NewHandler(nil, nil)
 
-	r := httptest.NewRequest(http.MethodGet, "/v1/starred-entry-ids", nil)
+	r := httptest.NewRequest(http.MethodGet, "/v1/entries/ids?starred=maybe", nil)
 	w := httptest.NewRecorder()
 
 	handler.ServeHTTP(w, r)
 
+	// Unauthenticated request should be rejected before param validation.
+	if got := w.Code; got != http.StatusUnauthorized {
+		t.Fatalf(`Unexpected status code, got %d instead of %d`, got, http.StatusUnauthorized)
+	}
+}
+
+func TestGetEntryIDsHandlerRejectsInvalidStatusParam(t *testing.T) {
+	handler := NewHandler(nil, nil)
+
+	r := httptest.NewRequest(http.MethodGet, "/v1/entries/ids?status=invalid", nil)
+	w := httptest.NewRecorder()
+
+	handler.ServeHTTP(w, r)
+
+	// Unauthenticated request should be rejected before param validation.
 	if got := w.Code; got != http.StatusUnauthorized {
 		t.Fatalf(`Unexpected status code, got %d instead of %d`, got, http.StatusUnauthorized)
 	}
 }
 
 func TestParseEntryIDsParamsDefaults(t *testing.T) {
-	r := httptest.NewRequest(http.MethodGet, "/v1/unread-entry-ids", nil)
+	r := httptest.NewRequest(http.MethodGet, "/v1/entries/ids", nil)
 	limit, offset := parseEntryIDsParams(r)
 
 	if limit != 10000 {
@@ -131,7 +146,7 @@ func TestParseEntryIDsParamsDefaults(t *testing.T) {
 }
 
 func TestParseEntryIDsParamsCustomValues(t *testing.T) {
-	r := httptest.NewRequest(http.MethodGet, "/v1/unread-entry-ids?limit=500&offset=100", nil)
+	r := httptest.NewRequest(http.MethodGet, "/v1/entries/ids?limit=500&offset=100", nil)
 	limit, offset := parseEntryIDsParams(r)
 
 	if limit != 500 {
@@ -144,7 +159,7 @@ func TestParseEntryIDsParamsCustomValues(t *testing.T) {
 }
 
 func TestParseEntryIDsParamsLimitCappedAtMaximum(t *testing.T) {
-	r := httptest.NewRequest(http.MethodGet, "/v1/unread-entry-ids?limit=99999", nil)
+	r := httptest.NewRequest(http.MethodGet, "/v1/entries/ids?limit=99999", nil)
 	limit, _ := parseEntryIDsParams(r)
 
 	if limit != 10000 {
@@ -153,7 +168,7 @@ func TestParseEntryIDsParamsLimitCappedAtMaximum(t *testing.T) {
 }
 
 func TestParseEntryIDsParamsZeroLimitUsesDefault(t *testing.T) {
-	r := httptest.NewRequest(http.MethodGet, "/v1/unread-entry-ids?limit=0", nil)
+	r := httptest.NewRequest(http.MethodGet, "/v1/entries/ids?limit=0", nil)
 	limit, _ := parseEntryIDsParams(r)
 
 	if limit != 10000 {

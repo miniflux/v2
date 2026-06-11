@@ -327,10 +327,12 @@ type EntryResultSet struct {
 	Entries Entries `json:"entries"`
 }
 
-// EntryIDsFilter holds optional pagination parameters for entry ID list endpoints.
+// EntryIDsFilter holds optional filter and pagination parameters for the entry IDs endpoint.
 type EntryIDsFilter struct {
-	Limit  int
-	Offset int
+	Limit   int
+	Offset  int
+	Starred *bool
+	Status  string
 }
 
 // EntryIDsResultSet represents the response when fetching entry ID lists.

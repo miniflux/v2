@@ -888,39 +888,16 @@ func (c *Client) EntryContext(ctx context.Context, entryID int64) (*Entry, error
 	return entry, nil
 }
 
-// UnreadEntryIDs returns the IDs of all unread entries for the current user.
-func (c *Client) UnreadEntryIDs(filter *EntryIDsFilter) (*EntryIDsResultSet, error) {
+// EntryIDs returns entry IDs for the current user, optionally filtered by starred status and/or read status.
+func (c *Client) EntryIDs(filter *EntryIDsFilter) (*EntryIDsResultSet, error) {
 	ctx, cancel := withDefaultTimeout()
 	defer cancel()
-	return c.UnreadEntryIDsContext(ctx, filter)
+	return c.EntryIDsContext(ctx, filter)
 }
 
-// UnreadEntryIDsContext returns the IDs of all unread entries for the current user.
-func (c *Client) UnreadEntryIDsContext(ctx context.Context, filter *EntryIDsFilter) (*EntryIDsResultSet, error) {
-	body, err := c.request.Get(ctx, buildEntryIDsFilterQueryString("/v1/unread-entry-ids", filter))
-	if err != nil {
-		return nil, err
-	}
-	defer body.Close()
-
-	var result EntryIDsResultSet
-	if err := json.NewDecoder(body).Decode(&result); err != nil {
-		return nil, fmt.Errorf("miniflux: response error (%v)", err)
-	}
-
-	return &result, nil
-}
-
-// StarredEntryIDs returns the IDs of all starred entries for the current user.
-func (c *Client) StarredEntryIDs(filter *EntryIDsFilter) (*EntryIDsResultSet, error) {
-	ctx, cancel := withDefaultTimeout()
-	defer cancel()
-	return c.StarredEntryIDsContext(ctx, filter)
-}
-
-// StarredEntryIDsContext returns the IDs of all starred entries for the current user.
-func (c *Client) StarredEntryIDsContext(ctx context.Context, filter *EntryIDsFilter) (*EntryIDsResultSet, error) {
-	body, err := c.request.Get(ctx, buildEntryIDsFilterQueryString("/v1/starred-entry-ids", filter))
+// EntryIDsContext returns entry IDs for the current user, optionally filtered by starred status and/or read status.
+func (c *Client) EntryIDsContext(ctx context.Context, filter *EntryIDsFilter) (*EntryIDsResultSet, error) {
+	body, err := c.request.Get(ctx, buildEntryIDsFilterQueryString("/v1/entries/ids", filter))
 	if err != nil {
 		return nil, err
 	}
@@ -945,6 +922,12 @@ func buildEntryIDsFilterQueryString(path string, filter *EntryIDsFilter) string 
 	}
 	if filter.Offset > 0 {
 		params.Set("offset", strconv.Itoa(filter.Offset))
+	}
+	if filter.Starred != nil {
+		params.Set("starred", strconv.FormatBool(*filter.Starred))
+	}
+	if filter.Status != "" {
+		params.Set("status", filter.Status)
 	}
 
 	if len(params) == 0 {

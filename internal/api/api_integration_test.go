@@ -2631,7 +2631,7 @@ func TestUpdateEntryStatusEndpoint(t *testing.T) {
 	}
 }
 
-func TestGetUnreadEntryIDsEndpoint(t *testing.T) {
+func TestGetEntryIDsEndpoint(t *testing.T) {
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
 		t.Skip(skipIntegrationTestsMessage)
@@ -2647,8 +2647,10 @@ func TestGetUnreadEntryIDsEndpoint(t *testing.T) {
 
 	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
 
-	// A new user should have no unread entries.
-	result, err := regularUserClient.UnreadEntryIDs(nil)
+	boolPtr := func(b bool) *bool { return &b }
+
+	// A new user should have no entries at all.
+	result, err := regularUserClient.EntryIDs(nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2658,14 +2660,14 @@ func TestGetUnreadEntryIDsEndpoint(t *testing.T) {
 	}
 
 	if len(result.EntryIDs) != 0 {
-		t.Fatalf(`Expected no unread entry IDs for a new user, got %d`, len(result.EntryIDs))
+		t.Fatalf(`Expected no entry IDs for a new user, got %d`, len(result.EntryIDs))
 	}
 
 	if result.Total != 0 {
 		t.Fatalf(`Expected total to be 0 for a new user, got %d`, result.Total)
 	}
 
-	// Subscribe to a feed so there are unread entries.
+	// Subscribe to a feed so there are entries.
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
 	})
@@ -2682,47 +2684,67 @@ func TestGetUnreadEntryIDsEndpoint(t *testing.T) {
 		t.Fatal(`Expected feed to have entries`)
 	}
 
-	result, err = regularUserClient.UnreadEntryIDs(nil)
+	// Without filters, all entries should be returned.
+	result, err = regularUserClient.EntryIDs(nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if len(result.EntryIDs) != allEntries.Total {
-		t.Fatalf(`Expected %d unread entry IDs, got %d`, allEntries.Total, len(result.EntryIDs))
+		t.Fatalf(`Expected %d entry IDs, got %d`, allEntries.Total, len(result.EntryIDs))
 	}
 
 	if result.Total != allEntries.Total {
 		t.Fatalf(`Expected total %d, got %d`, allEntries.Total, result.Total)
 	}
 
-	// Mark one entry as read and verify the count decreases.
+	// Filter by status=unread: all entries should be unread initially.
+	unreadResult, err := regularUserClient.EntryIDs(&miniflux.EntryIDsFilter{Status: miniflux.EntryStatusUnread})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(unreadResult.EntryIDs) != allEntries.Total {
+		t.Fatalf(`Expected %d unread entry IDs, got %d`, allEntries.Total, len(unreadResult.EntryIDs))
+	}
+
+	// Mark one entry as read and verify status filter results update.
 	firstEntryID := allEntries.Entries[0].ID
 	if err := regularUserClient.UpdateEntries([]int64{firstEntryID}, miniflux.EntryStatusRead); err != nil {
 		t.Fatal(err)
 	}
 
-	result, err = regularUserClient.UnreadEntryIDs(nil)
+	unreadResult, err = regularUserClient.EntryIDs(&miniflux.EntryIDsFilter{Status: miniflux.EntryStatusUnread})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if len(result.EntryIDs) != allEntries.Total-1 {
-		t.Fatalf(`Expected %d unread entry IDs after marking one as read, got %d`, allEntries.Total-1, len(result.EntryIDs))
+	if len(unreadResult.EntryIDs) != allEntries.Total-1 {
+		t.Fatalf(`Expected %d unread entry IDs after marking one as read, got %d`, allEntries.Total-1, len(unreadResult.EntryIDs))
 	}
 
-	if result.Total != allEntries.Total-1 {
-		t.Fatalf(`Expected total %d after marking one as read, got %d`, allEntries.Total-1, result.Total)
+	if unreadResult.Total != allEntries.Total-1 {
+		t.Fatalf(`Expected total %d after marking one as read, got %d`, allEntries.Total-1, unreadResult.Total)
 	}
 
-	for _, id := range result.EntryIDs {
+	for _, id := range unreadResult.EntryIDs {
 		if id == firstEntryID {
 			t.Fatalf(`Entry ID %d should not appear in unread IDs after being marked as read`, firstEntryID)
 		}
 	}
 
-	// Pagination: limit=1 should return 1 entry but total reflects the full count.
+	readResult, err := regularUserClient.EntryIDs(&miniflux.EntryIDsFilter{Status: miniflux.EntryStatusRead})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(readResult.EntryIDs) != 1 || readResult.EntryIDs[0] != firstEntryID {
+		t.Fatalf(`Expected only entry %d in read results, got %v`, firstEntryID, readResult.EntryIDs)
+	}
+
+	// Pagination: limit=1 should return 1 entry but total reflects the full unread count.
 	if allEntries.Total >= 2 {
-		pagedResult, err := regularUserClient.UnreadEntryIDs(&miniflux.EntryIDsFilter{Limit: 1})
+		pagedResult, err := regularUserClient.EntryIDs(&miniflux.EntryIDsFilter{Status: miniflux.EntryStatusUnread, Limit: 1})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -2736,7 +2758,7 @@ func TestGetUnreadEntryIDsEndpoint(t *testing.T) {
 		}
 
 		// offset=1 should skip the first entry.
-		offsetResult, err := regularUserClient.UnreadEntryIDs(&miniflux.EntryIDsFilter{Limit: 1, Offset: 1})
+		offsetResult, err := regularUserClient.EntryIDs(&miniflux.EntryIDsFilter{Status: miniflux.EntryStatusUnread, Limit: 1, Offset: 1})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -2749,126 +2771,97 @@ func TestGetUnreadEntryIDsEndpoint(t *testing.T) {
 			t.Fatalf(`Entry at offset=1 should differ from offset=0, both returned %d`, offsetResult.EntryIDs[0])
 		}
 	}
-}
 
-func TestGetStarredEntryIDsEndpoint(t *testing.T) {
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
-
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
-
-	// A new user should have no starred entries.
-	result, err := regularUserClient.StarredEntryIDs(nil)
+	// Filter by starred=true: initially no starred entries.
+	starredResult, err := regularUserClient.EntryIDs(&miniflux.EntryIDsFilter{Starred: boolPtr(true)})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if result.EntryIDs == nil {
-		t.Fatal(`Entry IDs should not be nil`)
+	if len(starredResult.EntryIDs) != 0 {
+		t.Fatalf(`Expected no starred entry IDs for a new user, got %d`, len(starredResult.EntryIDs))
 	}
 
-	if len(result.EntryIDs) != 0 {
-		t.Fatalf(`Expected no starred entry IDs for a new user, got %d`, len(result.EntryIDs))
-	}
-
-	if result.Total != 0 {
-		t.Fatalf(`Expected total to be 0 for a new user, got %d`, result.Total)
-	}
-
-	// Subscribe to a feed and star one entry.
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: testConfig.testFeedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	allEntries, err := regularUserClient.FeedEntries(feedID, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if len(allEntries.Entries) == 0 {
-		t.Fatal(`Expected feed to have entries`)
-	}
-
-	// Starring one entry should appear in the results regardless of its read status.
-	firstEntryID := allEntries.Entries[0].ID
+	// Star the first entry and verify it appears in starred results.
 	if err := regularUserClient.ToggleStarred(firstEntryID); err != nil {
 		t.Fatal(err)
 	}
 
-	result, err = regularUserClient.StarredEntryIDs(nil)
+	starredResult, err = regularUserClient.EntryIDs(&miniflux.EntryIDsFilter{Starred: boolPtr(true)})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if len(result.EntryIDs) != 1 {
-		t.Fatalf(`Expected 1 starred entry ID, got %d`, len(result.EntryIDs))
+	if len(starredResult.EntryIDs) != 1 {
+		t.Fatalf(`Expected 1 starred entry ID, got %d`, len(starredResult.EntryIDs))
 	}
 
-	if result.Total != 1 {
-		t.Fatalf(`Expected total 1, got %d`, result.Total)
+	if starredResult.Total != 1 {
+		t.Fatalf(`Expected total 1, got %d`, starredResult.Total)
 	}
 
-	if result.EntryIDs[0] != firstEntryID {
-		t.Fatalf(`Expected starred entry ID %d, got %d`, firstEntryID, result.EntryIDs[0])
+	if starredResult.EntryIDs[0] != firstEntryID {
+		t.Fatalf(`Expected starred entry ID %d, got %d`, firstEntryID, starredResult.EntryIDs[0])
 	}
 
-	// Marking the entry as read should not remove it from starred results.
-	if err := regularUserClient.UpdateEntries([]int64{firstEntryID}, miniflux.EntryStatusRead); err != nil {
-		t.Fatal(err)
-	}
-
-	result, err = regularUserClient.StarredEntryIDs(nil)
+	// The read starred entry should appear when filtering by starred=true (read status does not affect it).
+	starredResult, err = regularUserClient.EntryIDs(&miniflux.EntryIDsFilter{Starred: boolPtr(true)})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if len(result.EntryIDs) != 1 {
-		t.Fatalf(`Expected starred entry ID to persist after marking as read, got %d result(s)`, len(result.EntryIDs))
+	if len(starredResult.EntryIDs) != 1 {
+		t.Fatalf(`Expected starred entry ID to persist after marking as read, got %d result(s)`, len(starredResult.EntryIDs))
 	}
 
-	// Pagination: limit=0 returns 0 entries but total is 1.
-	pagedResult, err := regularUserClient.StarredEntryIDs(&miniflux.EntryIDsFilter{Limit: 0, Offset: 1})
+	// starred=false should exclude the starred entry.
+	notStarredResult, err := regularUserClient.EntryIDs(&miniflux.EntryIDsFilter{Starred: boolPtr(false)})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if len(pagedResult.EntryIDs) != 0 {
-		t.Fatalf(`Expected 0 entry IDs with offset=1 past the only result, got %d`, len(pagedResult.EntryIDs))
+	for _, id := range notStarredResult.EntryIDs {
+		if id == firstEntryID {
+			t.Fatalf(`Starred entry %d should not appear in starred=false results`, firstEntryID)
+		}
 	}
 
-	if pagedResult.Total != 1 {
-		t.Fatalf(`Expected total 1 with offset past results, got %d`, pagedResult.Total)
+	// Pagination with offset past the single starred result should return 0 entries but total 1.
+	pagedStarred, err := regularUserClient.EntryIDs(&miniflux.EntryIDsFilter{Starred: boolPtr(true), Limit: 0, Offset: 1})
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	// Unstarring the entry should remove it from the results.
+	if len(pagedStarred.EntryIDs) != 0 {
+		t.Fatalf(`Expected 0 entry IDs with offset=1 past the only result, got %d`, len(pagedStarred.EntryIDs))
+	}
+
+	if pagedStarred.Total != 1 {
+		t.Fatalf(`Expected total 1 with offset past results, got %d`, pagedStarred.Total)
+	}
+
+	// Unstarring the entry should remove it from starred=true results.
 	if err := regularUserClient.ToggleStarred(firstEntryID); err != nil {
 		t.Fatal(err)
 	}
 
-	result, err = regularUserClient.StarredEntryIDs(nil)
+	starredResult, err = regularUserClient.EntryIDs(&miniflux.EntryIDsFilter{Starred: boolPtr(true)})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if len(result.EntryIDs) != 0 {
-		t.Fatalf(`Expected no starred entry IDs after unstarring, got %d`, len(result.EntryIDs))
+	if len(starredResult.EntryIDs) != 0 {
+		t.Fatalf(`Expected no starred entry IDs after unstarring, got %d`, len(starredResult.EntryIDs))
 	}
 
-	if result.Total != 0 {
-		t.Fatalf(`Expected total 0 after unstarring, got %d`, result.Total)
+	if starredResult.Total != 0 {
+		t.Fatalf(`Expected total 0 after unstarring, got %d`, starredResult.Total)
+	}
+
+	// Invalid starred value should return 400.
+	_, err = regularUserClient.EntryIDs(&miniflux.EntryIDsFilter{Status: "maybe"})
+	if err == nil {
+		t.Fatal(`Expected error for invalid status parameter, got nil`)
 	}
 }
 
