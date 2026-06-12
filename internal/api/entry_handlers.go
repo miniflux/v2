@@ -497,6 +497,64 @@ func (h *handler) fetchContentHandler(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, entryContentResponse{Content: mediaproxy.RewriteDocumentWithAbsoluteProxyURL(entry.Content), ReadingTime: entry.ReadingTime})
 }
 
+type entryIDsResponse struct {
+	Total    int     `json:"total"`
+	EntryIDs []int64 `json:"entry_ids"`
+}
+
+func parseEntryIDsParams(r *http.Request) (limit, offset int) {
+	limit = request.QueryIntParam(r, "limit", model.MaxEntryIDsLimit)
+	if limit <= 0 || limit > model.MaxEntryIDsLimit {
+		limit = model.MaxEntryIDsLimit
+	}
+	offset = request.QueryIntParam(r, "offset", 0)
+	return limit, offset
+}
+
+func (h *handler) getEntryIDsHandler(w http.ResponseWriter, r *http.Request) {
+	if request.HasQueryParam(r, "starred") {
+		starredValue := request.QueryStringParam(r, "starred", "")
+		if starredValue != "true" && starredValue != "false" {
+			response.JSONBadRequest(w, r, errors.New(`invalid starred parameter, must be "true" or "false"`))
+			return
+		}
+	}
+
+	if request.HasQueryParam(r, "status") {
+		statusValue := request.QueryStringParam(r, "status", "")
+		if statusValue != model.EntryStatusRead && statusValue != model.EntryStatusUnread {
+			response.JSONBadRequest(w, r, errors.New(`invalid status parameter, must be "read" or "unread"`))
+			return
+		}
+	}
+
+	limit, offset := parseEntryIDsParams(r)
+	builder := h.store.NewEntryQueryBuilder(request.UserID(r)).
+		WithSorting("id", "DESC").
+		WithLimitAndMaximum(limit, model.MaxEntryIDsLimit).
+		WithOffset(offset)
+
+	if request.HasQueryParam(r, "starred") {
+		builder.WithStarred(request.QueryBoolParam(r, "starred", false))
+	}
+
+	if request.HasQueryParam(r, "status") {
+		builder.WithStatuses(request.QueryStringParam(r, "status", ""))
+	}
+
+	entryIDs, total, err := builder.GetEntryIDsWithCount()
+	if err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
+
+	if entryIDs == nil {
+		entryIDs = []int64{}
+	}
+
+	response.JSON(w, r, entryIDsResponse{Total: total, EntryIDs: entryIDs})
+}
+
 func (h *handler) flushHistoryHandler(w http.ResponseWriter, r *http.Request) {
 	loggedUserID := request.UserID(r)
 	go h.store.FlushHistory(loggedUserID)
