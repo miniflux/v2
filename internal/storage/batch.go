@@ -16,76 +16,92 @@ import (
 
 type batchBuilder struct {
 	db           *sql.DB
-	args         []any
-	conditions   []string
+	args         argsBuilder
+	where        whereBuilder
 	batchSize    int
 	limitPerHost int
 }
 
 func (s *Storage) NewBatchBuilder() *batchBuilder {
-	return &batchBuilder{
+	b := batchBuilder{
 		db: s.db,
 	}
+
+	return &b
 }
 
 func (b *batchBuilder) WithBatchSize(batchSize int) *batchBuilder {
+	if batchSize <= 0 {
+		return b
+	}
+
 	b.batchSize = batchSize
+
 	return b
 }
 
 func (b *batchBuilder) WithUserID(userID int64) *batchBuilder {
-	b.conditions = append(b.conditions, "user_id = $"+strconv.Itoa(len(b.args)+1))
-	b.args = append(b.args, userID)
+	nArgs := b.args.append(userID)
+	b.where.and("user_id = $" + strconv.Itoa(nArgs))
 	return b
 }
 
 func (b *batchBuilder) WithCategoryID(categoryID int64) *batchBuilder {
-	b.conditions = append(b.conditions, "category_id = $"+strconv.Itoa(len(b.args)+1))
-	b.args = append(b.args, categoryID)
+	nArgs := b.args.append(categoryID)
+	b.where.and("category_id = $" + strconv.Itoa(nArgs))
 	return b
 }
 
 func (b *batchBuilder) WithErrorLimit(limit int) *batchBuilder {
-	if limit > 0 {
-		b.conditions = append(b.conditions, "parsing_error_count < $"+strconv.Itoa(len(b.args)+1))
-		b.args = append(b.args, limit)
+	if limit <= 0 {
+		return b
 	}
+
+	nArgs := b.args.append(limit)
+	b.where.and("parsing_error_count < $" + strconv.Itoa(nArgs))
+
 	return b
 }
 
 func (b *batchBuilder) WithNextCheckExpired() *batchBuilder {
-	b.conditions = append(b.conditions, "next_check_at < now()")
+	b.where.and("next_check_at < now()")
 	return b
 }
 
 func (b *batchBuilder) WithoutDisabledFeeds() *batchBuilder {
-	b.conditions = append(b.conditions, "disabled IS false")
+	b.where.and("disabled IS false")
 	return b
 }
 
 func (b *batchBuilder) WithLimitPerHost(limit int) *batchBuilder {
-	if limit > 0 {
-		b.limitPerHost = limit
+	if limit <= 0 {
+		return b
 	}
+
+	b.limitPerHost = limit
+
 	return b
 }
 
 // FetchJobs retrieves a batch of jobs based on the conditions set in the builder.
 // When limitPerHost is set, it limits the number of jobs per feed hostname to prevent overwhelming a single host.
 func (b *batchBuilder) FetchJobs() (model.JobList, error) {
-	query := `SELECT id, user_id, feed_url FROM feeds`
+	var qb strings.Builder
 
-	if len(b.conditions) > 0 {
-		query += " WHERE " + strings.Join(b.conditions, " AND ")
-	}
+	qb.WriteString(`
+		SELECT id, user_id, feed_url
+		FROM feeds
+	`)
 
-	query += " ORDER BY next_check_at ASC"
+	qb.WriteString(" " + b.where.String())
+
+	qb.WriteString(` ORDER BY next_check_at ASC`)
 
 	if b.batchSize > 0 {
-		query += " LIMIT " + strconv.Itoa(b.batchSize)
+		qb.WriteString(` LIMIT ` + strconv.Itoa(b.batchSize))
 	}
 
-	rows, err := b.db.Query(query, b.args...)
+	rows, err := b.db.Query(qb.String(), b.args.all()...)
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch batch of jobs: %v`, err)
 	}

@@ -343,92 +343,16 @@ func (s *Storage) UserLanguage(userID int64) (language string) {
 
 // UserByID finds a user by the ID.
 func (s *Storage) UserByID(userID int64) (*model.User, error) {
-	query := `
-		SELECT
-			id,
-			username,
-			is_admin,
-			theme,
-			language,
-			timezone,
-			entry_direction,
-			entries_per_page,
-			keyboard_shortcuts,
-			show_reading_time,
-			entry_swipe,
-			gesture_nav,
-			last_login_at,
-			stylesheet,
-			custom_js,
-			external_font_hosts,
-			google_id,
-			openid_connect_id,
-			display_mode,
-			entry_order,
-			default_reading_speed,
-			cjk_reading_speed,
-			default_home_page,
-			categories_sorting_order,
-			mark_read_on_view,
-			mark_read_on_media_player_completion,
-			media_playback_rate,
-			block_filter_entry_rules,
-			keep_filter_entry_rules,
-			always_open_external_links,
-			open_external_links_in_new_tab
-		FROM
-			users
-		WHERE
-			id = $1
-	`
-	return s.fetchUser(query, userID)
+	return s.UserByField("id", userID)
 }
 
 // UserByUsername finds a user by the username.
 func (s *Storage) UserByUsername(username string) (*model.User, error) {
-	query := `
-		SELECT
-			id,
-			username,
-			is_admin,
-			theme,
-			language,
-			timezone,
-			entry_direction,
-			entries_per_page,
-			keyboard_shortcuts,
-			show_reading_time,
-			entry_swipe,
-			gesture_nav,
-			last_login_at,
-			stylesheet,
-			custom_js,
-			external_font_hosts,
-			google_id,
-			openid_connect_id,
-			display_mode,
-			entry_order,
-			default_reading_speed,
-			cjk_reading_speed,
-			default_home_page,
-			categories_sorting_order,
-			mark_read_on_view,
-			mark_read_on_media_player_completion,
-			media_playback_rate,
-			block_filter_entry_rules,
-			keep_filter_entry_rules,
-			always_open_external_links,
-			open_external_links_in_new_tab
-		FROM
-			users
-		WHERE
-			username=LOWER($1)
-	`
-	return s.fetchUser(query, username)
+	return s.UserByField("username", strings.ToLower(username))
 }
 
 // UserByField returns the user matching the given column name and value.
-func (s *Storage) UserByField(field, value string) (*model.User, error) {
+func (s *Storage) UserByField(field string, value any) (*model.User, error) {
 	query := `
 		SELECT
 			id,
@@ -465,9 +389,9 @@ func (s *Storage) UserByField(field, value string) (*model.User, error) {
 		FROM
 			users
 		WHERE
-			%s=$1
-	`
-	return s.fetchUser(fmt.Sprintf(query, pq.QuoteIdentifier(field)), value)
+	` + pq.QuoteIdentifier(field) + "=$1"
+
+	return s.fetchUser(query, value)
 }
 
 // AnotherUserWithFieldExists returns true if a user other than userID has the given value in the given column.

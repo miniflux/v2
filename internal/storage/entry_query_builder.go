@@ -19,9 +19,9 @@ import (
 // EntryQueryBuilder builds a SQL query to fetch entries.
 type EntryQueryBuilder struct {
 	store           *Storage
-	args            []any
-	conditions      []string
-	sortExpressions []string
+	args            argsBuilder
+	where           whereBuilder
+	orderBy         orderByBuilder
 	limit           int
 	offset          int
 	fetchEnclosures bool
@@ -44,146 +44,180 @@ func (e *EntryQueryBuilder) WithoutContent() *EntryQueryBuilder {
 
 // WithSearchQuery adds full-text search query to the condition.
 func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
-	if query != "" {
-		nArgs := len(e.args) + 1
-		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", nArgs))
-		e.args = append(e.args, query)
-
-		// 0.0000001 = 0.1 / (seconds_in_a_day)
-
-		e.sortExpressions = append(e.sortExpressions,
-			fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001 DESC", nArgs),
-		)
+	if query == "" {
+		return e
 	}
+
+	nArgs := e.args.append(query)
+	e.where.andf("e.document_vectors @@ plainto_tsquery($%d)", nArgs)
+
+	// 0.0000001 = 0.1 / (seconds_in_a_day)
+	e.orderBy.desc(
+		fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001", nArgs),
+	)
+
 	return e
 }
 
 // WithStarred adds starred filter.
 func (e *EntryQueryBuilder) WithStarred(starred bool) *EntryQueryBuilder {
-	if starred {
-		e.conditions = append(e.conditions, "e.starred is true")
-	} else {
-		e.conditions = append(e.conditions, "e.starred is false")
-	}
+	e.where.and("e.starred is " + strconv.FormatBool(starred))
+
 	return e
 }
 
 // BeforeChangedDate adds a condition < changed_at
 func (e *EntryQueryBuilder) BeforeChangedDate(date time.Time) *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "e.changed_at < $"+strconv.Itoa(len(e.args)+1))
-	e.args = append(e.args, date)
+	nArgs := e.args.append(date)
+	e.where.and("e.changed_at < $" + strconv.Itoa(nArgs))
+
 	return e
 }
 
 // AfterChangedDate adds a condition > changed_at
 func (e *EntryQueryBuilder) AfterChangedDate(date time.Time) *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "e.changed_at > $"+strconv.Itoa(len(e.args)+1))
-	e.args = append(e.args, date)
+	nArgs := e.args.append(date)
+	e.where.and("e.changed_at > $" + strconv.Itoa(nArgs))
+
 	return e
 }
 
 // BeforePublishedDate adds a condition < published_at
 func (e *EntryQueryBuilder) BeforePublishedDate(date time.Time) *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "e.published_at < $"+strconv.Itoa(len(e.args)+1))
-	e.args = append(e.args, date)
+	nArgs := e.args.append(date)
+	e.where.and("e.published_at < $" + strconv.Itoa(nArgs))
+
 	return e
 }
 
 // AfterPublishedDate adds a condition > published_at
 func (e *EntryQueryBuilder) AfterPublishedDate(date time.Time) *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "e.published_at > $"+strconv.Itoa(len(e.args)+1))
-	e.args = append(e.args, date)
+	nArgs := e.args.append(date)
+	e.where.and("e.published_at > $" + strconv.Itoa(nArgs))
+
 	return e
 }
 
 // BeforeEntryID adds a condition < entryID.
 func (e *EntryQueryBuilder) BeforeEntryID(entryID int64) *EntryQueryBuilder {
-	if entryID != 0 {
-		e.conditions = append(e.conditions, "e.id < $"+strconv.Itoa(len(e.args)+1))
-		e.args = append(e.args, entryID)
+	if entryID == 0 {
+		return e
 	}
+
+	nArgs := e.args.append(entryID)
+	e.where.and("e.id < $" + strconv.Itoa(nArgs))
+
 	return e
 }
 
 // AfterEntryID adds a condition > entryID.
 func (e *EntryQueryBuilder) AfterEntryID(entryID int64) *EntryQueryBuilder {
-	if entryID != 0 {
-		e.conditions = append(e.conditions, "e.id > $"+strconv.Itoa(len(e.args)+1))
-		e.args = append(e.args, entryID)
+	if entryID == 0 {
+		return e
 	}
+
+	nArgs := e.args.append(entryID)
+	e.where.and("e.id > $" + strconv.Itoa(nArgs))
+
 	return e
 }
 
 // WithEntryIDs filter by entry IDs.
 func (e *EntryQueryBuilder) WithEntryIDs(entryIDs ...int64) *EntryQueryBuilder {
-	if len(entryIDs) == 1 {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.id = $%d", len(e.args)+1))
-		e.args = append(e.args, entryIDs[0])
-	} else if len(entryIDs) > 1 {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.id = ANY($%d)", len(e.args)+1))
-		e.args = append(e.args, pq.Int64Array(entryIDs))
+	if len(entryIDs) == 0 {
+		return e
 	}
+
+	if len(entryIDs) == 1 {
+		nArgs := e.args.append(entryIDs[0])
+		e.where.and("e.id = $" + strconv.Itoa(nArgs))
+
+		return e
+	}
+
+	nArgs := e.args.append(pq.Int64Array(entryIDs))
+	e.where.andf("e.id = ANY($%d)", nArgs)
+
 	return e
 }
 
 // WithFeedID filter by feed ID.
 func (e *EntryQueryBuilder) WithFeedID(feedID int64) *EntryQueryBuilder {
-	if feedID > 0 {
-		e.conditions = append(e.conditions, "e.feed_id = $"+strconv.Itoa(len(e.args)+1))
-		e.args = append(e.args, feedID)
+	if feedID == 0 {
+		return e
 	}
+
+	nArgs := e.args.append(feedID)
+	e.where.and("e.feed_id = $" + strconv.Itoa(nArgs))
+
 	return e
 }
 
 // WithCategoryID filter by category ID.
 func (e *EntryQueryBuilder) WithCategoryID(categoryID int64) *EntryQueryBuilder {
-	if categoryID > 0 {
-		e.conditions = append(e.conditions, "f.category_id = $"+strconv.Itoa(len(e.args)+1))
-		e.args = append(e.args, categoryID)
+	if categoryID == 0 {
+		return e
 	}
+
+	nArgs := e.args.append(categoryID)
+	e.where.and("f.category_id = $" + strconv.Itoa(nArgs))
+
 	return e
 }
 
 // WithStatuses filter by a list of entry statuses.
 func (e *EntryQueryBuilder) WithStatuses(statuses ...string) *EntryQueryBuilder {
-	if len(statuses) == 1 {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.status = $%d", len(e.args)+1))
-		e.args = append(e.args, statuses[0])
-	} else if len(statuses) > 1 {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.status = ANY($%d)", len(e.args)+1))
-		e.args = append(e.args, pq.StringArray(statuses))
+	if len(statuses) == 0 {
+		return e
 	}
+
+	if len(statuses) == 1 {
+		nArgs := e.args.append(statuses[0])
+		e.where.and("e.status = $" + strconv.Itoa(nArgs))
+
+		return e
+	}
+
+	nArgs := e.args.append(pq.StringArray(statuses))
+	e.where.andf("e.status = ANY($%d)", nArgs)
+
 	return e
 }
 
 // WithTags filter by a list of entry tags.
 func (e *EntryQueryBuilder) WithTags(tags ...string) *EntryQueryBuilder {
-	if len(tags) > 0 {
-		e.conditions = append(e.conditions, fmt.Sprintf("LOWER(e.tags::text)::text[] @> LOWER($%d::text)::text[]", len(e.args)+1))
-		e.args = append(e.args, pq.Array(tags))
+	if len(tags) == 0 {
+		return e
 	}
+
+	nArgs := e.args.append(pq.Array(tags))
+	e.where.andf("LOWER(e.tags::text)::text[] @> LOWER($%d::text)::text[]", nArgs)
+
 	return e
 }
 
 // WithoutStatus set the entry status that should not be returned.
 func (e *EntryQueryBuilder) WithoutStatus(status string) *EntryQueryBuilder {
-	if status != "" {
-		e.conditions = append(e.conditions, "e.status <> $"+strconv.Itoa(len(e.args)+1))
-		e.args = append(e.args, status)
+	if status == "" {
+		return e
 	}
+
+	nArgs := e.args.append(status)
+	e.where.and("e.status <> $" + strconv.Itoa(nArgs))
+
 	return e
 }
 
 // WithShareCode set the entry share code.
 func (e *EntryQueryBuilder) WithShareCode(shareCode string) *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "e.share_code = $"+strconv.Itoa(len(e.args)+1))
-	e.args = append(e.args, shareCode)
+	nArgs := e.args.append(shareCode)
+	e.where.and("e.share_code = $" + strconv.Itoa(nArgs))
 	return e
 }
 
 // WithShareCodeNotEmpty adds a filter for non-empty share code.
 func (e *EntryQueryBuilder) WithShareCodeNotEmpty() *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "e.share_code <> ''")
+	e.where.and("e.share_code <> ''")
 	return e
 }
 
@@ -191,9 +225,9 @@ func (e *EntryQueryBuilder) WithShareCodeNotEmpty() *EntryQueryBuilder {
 func (e *EntryQueryBuilder) WithSorting(column, direction string) *EntryQueryBuilder {
 	switch {
 	case strings.EqualFold(direction, "ASC"):
-		e.sortExpressions = append(e.sortExpressions, pq.QuoteIdentifier(column)+" ASC")
+		e.orderBy.asc(pq.QuoteIdentifier(column))
 	case strings.EqualFold(direction, "DESC"):
-		e.sortExpressions = append(e.sortExpressions, pq.QuoteIdentifier(column)+" DESC")
+		e.orderBy.desc(pq.QuoteIdentifier(column))
 	}
 
 	return e
@@ -201,9 +235,12 @@ func (e *EntryQueryBuilder) WithSorting(column, direction string) *EntryQueryBui
 
 // WithLimit set the limit.
 func (e *EntryQueryBuilder) WithLimit(limit int) *EntryQueryBuilder {
-	if limit > 0 {
-		e.limit = min(limit, model.MaxEntryLimit)
+	if limit <= 0 {
+		return e
 	}
+
+	e.limit = min(limit, model.MaxEntryLimit)
+
 	return e
 }
 
@@ -217,15 +254,18 @@ func (e *EntryQueryBuilder) WithLimitAndMaximum(limit, maximum int) *EntryQueryB
 
 // WithOffset set the offset.
 func (e *EntryQueryBuilder) WithOffset(offset int) *EntryQueryBuilder {
-	if offset > 0 {
-		e.offset = offset
+	if offset <= 0 {
+		return e
 	}
+
+	e.offset = offset
+
 	return e
 }
 
 func (e *EntryQueryBuilder) WithGloballyVisible() *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "c.hide_globally IS FALSE")
-	e.conditions = append(e.conditions, "f.hide_globally IS FALSE")
+	e.where.and("c.hide_globally IS FALSE")
+	e.where.and("f.hide_globally IS FALSE")
 	return e
 }
 
@@ -236,9 +276,9 @@ func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
 		FROM entries e
 			JOIN feeds f ON f.id = e.feed_id
 			JOIN categories c ON c.id = f.category_id
-		WHERE ` + e.buildCondition()
+	` + e.where.String()
 
-	err = e.store.db.QueryRow(query, e.args...).Scan(&count)
+	err = e.store.db.QueryRow(query, e.args.all()...).Scan(&count)
 	if err != nil {
 		return 0, fmt.Errorf("store: unable to count entries: %v", err)
 	}
@@ -283,65 +323,70 @@ func (e *EntryQueryBuilder) GetEntriesWithCount() (model.Entries, int, error) {
 // When withCount is true, count(*) OVER() is included in the SELECT and the total
 // count of matching rows is returned; otherwise the returned count is 0.
 func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, error) {
-	countColumn := ""
+	var qb strings.Builder
+
+	qb.WriteString(`SELECT `)
+
 	if withCount {
-		countColumn = "count(*) OVER(),"
+		qb.WriteString(`count(*) OVER(),`)
 	}
 
-	query := `
-		SELECT
-			` + countColumn + `
-			e.id,
-			e.user_id,
-			e.feed_id,
-			e.hash,
-			e.published_at at time zone u.timezone,
-			e.title,
-			e.url,
-			e.comments_url,
-			e.author,
-			e.share_code,
-			` + e.contentColumn() + `,
-			e.status,
-			e.starred,
-			e.reading_time,
-			e.created_at,
-			e.changed_at,
-			e.tags,
-			f.title as feed_title,
-			f.feed_url,
-			f.site_url,
-			f.description,
-			f.checked_at,
-			f.category_id,
-			c.title as category_title,
-			c.hide_globally as category_hidden,
-			f.scraper_rules,
-			f.rewrite_rules,
-			f.crawler,
-			f.user_agent,
-			f.cookie,
-			f.hide_globally,
-			f.no_media_player,
-			f.webhook_url,
-			fi.icon_id,
-			i.external_id AS icon_external_id,
-			u.timezone
-		FROM
-			entries e
-		INNER JOIN
-			feeds f ON f.id=e.feed_id
-		INNER JOIN
-			categories c ON c.id=f.category_id
-		LEFT JOIN
-			feed_icons fi ON fi.feed_id=f.id
-		LEFT JOIN
-			icons i ON i.id=fi.icon_id
-		INNER JOIN
-			users u ON u.id=e.user_id
-		WHERE ` + e.buildCondition() + " " + e.buildSorting()
+	qb.WriteString(`
+		e.id,
+		e.user_id,
+		e.feed_id,
+		e.hash,
+		e.published_at at time zone u.timezone,
+		e.title,
+		e.url,
+		e.comments_url,
+		e.author,
+		e.share_code,` +
+		e.contentColumn() + ` as content,` +
+		`e.status,
+		e.starred,
+		e.reading_time,
+		e.created_at,
+		e.changed_at,
+		e.tags,
+		f.title as feed_title,
+		f.feed_url,
+		f.site_url,
+		f.description,
+		f.checked_at,
+		f.category_id,
+		c.title as category_title,
+		c.hide_globally as category_hidden,
+		f.scraper_rules,
+		f.rewrite_rules,
+		f.crawler,
+		f.user_agent,
+		f.cookie,
+		f.hide_globally,
+		f.no_media_player,
+		f.webhook_url,
+		fi.icon_id,
+		i.external_id as icon_external_id,
+		u.timezone
+	FROM
+		entries e
+	INNER JOIN
+		feeds f ON f.id=e.feed_id
+	INNER JOIN
+		categories c ON c.id=f.category_id
+	LEFT JOIN
+		feed_icons fi ON fi.feed_id=f.id
+	LEFT JOIN
+		icons i ON i.id=fi.icon_id
+	INNER JOIN
+		users u ON u.id=e.user_id
+	`)
 
-	rows, err := e.store.db.Query(query, e.args...)
+	qb.WriteString(" " + e.where.String())
+
+	qb.WriteString(" " + e.buildSorting())
+
+	rows, err := e.store.db.Query(qb.String(), e.args.all()...)
 	if err != nil {
 		return nil, 0, fmt.Errorf("store: unable to get entries: %v", err)
 	}
@@ -459,9 +504,9 @@ func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
 			feeds f
 		ON
 			f.id=e.feed_id
-		WHERE ` + e.buildCondition() + " " + e.buildSorting()
+	` + e.where.String() + " " + e.buildSorting()
 
-	rows, err := e.store.db.Query(query, e.args...)
+	rows, err := e.store.db.Query(query, e.args.all()...)
 	if err != nil {
 		return nil, fmt.Errorf("store: unable to get entries: %v", err)
 	}
@@ -498,40 +543,39 @@ func (e *EntryQueryBuilder) GetEntryIDsWithCount() ([]int64, int, error) {
 
 func (e *EntryQueryBuilder) contentColumn() string {
 	if e.excludeContent {
-		return "'' AS content"
+		return "''"
 	}
 	return "e.content"
 }
 
-func (e *EntryQueryBuilder) buildCondition() string {
-	return strings.Join(e.conditions, " AND ")
-}
-
 func (e *EntryQueryBuilder) buildSorting() string {
-	var parts string
+	var parts strings.Builder
 
-	if len(e.sortExpressions) > 0 {
-		parts += " ORDER BY " + strings.Join(e.sortExpressions, ", ")
-	}
+	parts.WriteString(e.orderBy.String())
 
 	if e.limit > 0 {
-		parts += " LIMIT " + strconv.Itoa(e.limit)
+		parts.WriteString(" LIMIT ")
+		parts.WriteString(strconv.Itoa(e.limit))
 	}
 
 	if e.offset > 0 {
-		parts += " OFFSET " + strconv.Itoa(e.offset)
+		parts.WriteString(" OFFSET ")
+		parts.WriteString(strconv.Itoa(e.offset))
 	}
 
-	return parts
+	return parts.String()
 }
 
 // NewEntryQueryBuilder returns a new EntryQueryBuilder.
 func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
-	return &EntryQueryBuilder{
-		store:      s,
-		args:       []any{userID},
-		conditions: []string{"e.user_id = $1"},
+	qb := EntryQueryBuilder{
+		store: s,
 	}
+
+	nArgs := qb.args.append(userID)
+	qb.where.and("e.user_id = $" + strconv.Itoa(nArgs))
+
+	return &qb
 }
 
 // NewAnonymousQueryBuilder returns a new EntryQueryBuilder suitable for anonymous users.

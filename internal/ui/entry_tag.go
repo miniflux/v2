@@ -52,7 +52,7 @@ func (h *handler) showTagEntryPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	prevEntry, nextEntry, err := h.store.NewEntryPaginationBuilder(user.ID, entry.ID, user.EntryOrder, user.EntryDirection).
-		WithTags([]string{tagName}).
+		WithTags(tagName).
 		Entries()
 	if err != nil {
 		response.HTMLServerError(w, r, err)
