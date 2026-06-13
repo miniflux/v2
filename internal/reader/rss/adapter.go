@@ -298,14 +298,11 @@ func findEntryTags(rssItem *rssItem) []string {
 }
 
 func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
-	mediaThumbnails := rssItem.AllMediaThumbnails()
-	mediaContents := rssItem.AllMediaContents()
-	mediaPeerLinks := rssItem.AllMediaPeerLinks()
-	capacity := len(mediaThumbnails) + len(rssItem.Enclosures) + len(mediaContents) + len(mediaPeerLinks)
-	enclosures := make(model.EnclosureList, 0, capacity)
-	duplicates := make(map[string]bool, capacity)
+	duplicates := make(map[string]bool)
 
-	for _, mediaThumbnail := range mediaThumbnails {
+	var enclosures model.EnclosureList
+
+	for mediaThumbnail := range rssItem.AllMediaThumbnails() {
 		mediaURL := strings.TrimSpace(mediaThumbnail.URL)
 		if mediaURL == "" {
 			continue
@@ -366,7 +363,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 		})
 	}
 
-	for _, mediaContent := range mediaContents {
+	for mediaContent := range rssItem.AllMediaContents() {
 		mediaURL := strings.TrimSpace(mediaContent.URL)
 		if mediaURL == "" {
 			continue
@@ -395,7 +392,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 		})
 	}
 
-	for _, mediaPeerLink := range mediaPeerLinks {
+	for mediaPeerLink := range rssItem.AllMediaPeerLinks() {
 		mediaURL := strings.TrimSpace(mediaPeerLink.URL)
 		if mediaURL == "" {
 			continue

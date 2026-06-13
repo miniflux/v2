@@ -67,6 +67,8 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		}
 	}
 
+	enclosures := make(model.EnclosureList, 0)
+
 	feed.Entries = make(model.Entries, 0, len(j.jsonFeed.Items))
 	for _, item := range j.jsonFeed.Items {
 		entry := model.NewEntry()
@@ -145,7 +147,7 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		entry.Author = strings.Join(authorNames, ", ")
 
 		// Populate the entry enclosures.
-		entry.Enclosures = make([]*model.Enclosure, 0, len(item.Attachments))
+		enclosures = enclosures[:0]
 
 		for _, attachment := range item.Attachments {
 			attachmentURL := strings.TrimSpace(attachment.URL)
@@ -163,12 +165,14 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 				continue
 			}
 
-			entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+			enclosures = append(enclosures, &model.Enclosure{
 				URL:      absoluteAttachmentURL,
 				MimeType: attachment.MimeType,
 				Size:     attachment.Size,
 			})
 		}
+
+		entry.Enclosures = slices.Clone(enclosures)
 
 		// Populate the entry tags.
 		entry.Tags = make([]string, 0, len(item.Tags))
