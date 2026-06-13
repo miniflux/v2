@@ -249,6 +249,7 @@ func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
 // GetEntry returns a single entry that match the condition.
 func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 	e.limit = 1
+	e.fetchEnclosures = true
 	entries, err := e.GetEntries()
 	if err != nil {
 		return nil, err
@@ -256,11 +257,6 @@ func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 
 	if len(entries) != 1 {
 		return nil, nil
-	}
-
-	entries[0].Enclosures, err = e.store.GetEnclosures(entries[0].ID)
-	if err != nil {
-		return nil, err
 	}
 
 	return entries[0], nil
