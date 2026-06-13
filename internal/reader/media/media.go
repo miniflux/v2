@@ -22,34 +22,61 @@ type MediaItemElement struct {
 	MediaPeerLinks    []PeerLink        `xml:"http://search.yahoo.com/mrss/ peerLink"`
 }
 
-// AllMediaThumbnails returns all thumbnail elements merged together.
-func (e *MediaItemElement) AllMediaThumbnails() []Thumbnail {
-	items := make([]Thumbnail, 0, len(e.MediaThumbnails)+len(e.MediaGroups))
-	items = append(items, e.MediaThumbnails...)
-	for _, mediaGroup := range e.MediaGroups {
-		items = append(items, mediaGroup.MediaThumbnails...)
+// AllMediaThumbnails returns an iterator for all thumbnail elements merged together.
+func (e *MediaItemElement) AllMediaThumbnails() iter.Seq[Thumbnail] {
+	return func(yield func(Thumbnail) bool) {
+		for _, value := range e.MediaThumbnails {
+			if !yield(value) {
+				return
+			}
+		}
+
+		for _, mediaGroup := range e.MediaGroups {
+			for _, value := range mediaGroup.MediaThumbnails {
+				if !yield(value) {
+					return
+				}
+			}
+		}
 	}
-	return items
 }
 
-// AllMediaContents returns all content elements merged together.
-func (e *MediaItemElement) AllMediaContents() []Content {
-	items := make([]Content, 0, len(e.MediaContents)+len(e.MediaGroups))
-	items = append(items, e.MediaContents...)
-	for _, mediaGroup := range e.MediaGroups {
-		items = append(items, mediaGroup.MediaContents...)
+// AllMediaContents returns an iterator for all content elements merged together.
+func (e *MediaItemElement) AllMediaContents() iter.Seq[Content] {
+	return func(yield func(Content) bool) {
+		for _, value := range e.MediaContents {
+			if !yield(value) {
+				return
+			}
+		}
+
+		for _, mediaGroup := range e.MediaGroups {
+			for _, value := range mediaGroup.MediaContents {
+				if !yield(value) {
+					return
+				}
+			}
+		}
 	}
-	return items
 }
 
-// AllMediaPeerLinks returns all peer link elements merged together.
-func (e *MediaItemElement) AllMediaPeerLinks() []PeerLink {
-	items := make([]PeerLink, 0, len(e.MediaPeerLinks)+len(e.MediaGroups))
-	items = append(items, e.MediaPeerLinks...)
-	for _, mediaGroup := range e.MediaGroups {
-		items = append(items, mediaGroup.MediaPeerLinks...)
+// AllMediaPeerLinks returns an iterator for all peer link elements merged together.
+func (e *MediaItemElement) AllMediaPeerLinks() iter.Seq[PeerLink] {
+	return func(yield func(PeerLink) bool) {
+		for _, value := range e.MediaPeerLinks {
+			if !yield(value) {
+				return
+			}
+		}
+
+		for _, mediaGroup := range e.MediaGroups {
+			for _, value := range mediaGroup.MediaPeerLinks {
+				if !yield(value) {
+					return
+				}
+			}
+		}
 	}
-	return items
 }
 
 // FirstMediaDescription returns the first description element.
