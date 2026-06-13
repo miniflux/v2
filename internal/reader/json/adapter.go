@@ -67,6 +67,7 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		}
 	}
 
+	feed.Entries = make(model.Entries, 0, len(j.jsonFeed.Items))
 	for _, item := range j.jsonFeed.Items {
 		entry := model.NewEntry()
 
@@ -144,6 +145,8 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		entry.Author = strings.Join(authorNames, ", ")
 
 		// Populate the entry enclosures.
+		entry.Enclosures = make([]*model.Enclosure, 0, len(item.Attachments))
+
 		for _, attachment := range item.Attachments {
 			attachmentURL := strings.TrimSpace(attachment.URL)
 			if attachmentURL == "" {

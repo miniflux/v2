@@ -74,6 +74,7 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 	// non-conformant feeds that reuse the same <guid> for every entry.
 	seenGUIDs := make(map[string]int)
 
+	feed.Entries = make(model.Entries, 0, len(r.rss.Channel.Items))
 	for _, item := range r.rss.Channel.Items {
 		entry := model.NewEntry()
 		entry.Date = findEntryDate(&item)
