@@ -50,6 +50,7 @@ func (a *atom03Adapter) buildFeed(baseURL string) *model.Feed {
 
 	feed.Language = language.Normalize(a.atomFeed.Language)
 
+	feed.Entries = make(model.Entries, 0, len(a.atomFeed.Entries))
 	for _, atomEntry := range a.atomFeed.Entries {
 		entry := model.NewEntry()
 
