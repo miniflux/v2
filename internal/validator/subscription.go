@@ -15,7 +15,7 @@ func ValidateSubscriptionDiscovery(request *model.SubscriptionDiscoveryRequest) 
 		return locale.NewLocalizedError("error.invalid_site_url")
 	}
 
-	if request.ProxyURL != "" && !urllib.IsAbsoluteURL(request.ProxyURL) {
+	if request.ProxyURL != "" && !urllib.IsValidProxyURL(request.ProxyURL) {
 		return locale.NewLocalizedError("error.invalid_proxy_url")
 	}
 
