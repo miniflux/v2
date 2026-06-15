@@ -22,19 +22,13 @@ func (h *handler) getEnclosureByIDHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	enclosure, err := h.store.GetEnclosure(enclosureID)
+	enclosure, err := h.store.EnclosureByID(request.UserID(r), enclosureID)
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
 	}
 
 	if enclosure == nil {
-		response.JSONNotFound(w, r)
-		return
-	}
-
-	userID := request.UserID(r)
-	if enclosure.UserID != userID {
 		response.JSONNotFound(w, r)
 		return
 	}
@@ -62,19 +56,13 @@ func (h *handler) updateEnclosureByIDHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	enclosure, err := h.store.GetEnclosure(enclosureID)
+	enclosure, err := h.store.EnclosureByID(request.UserID(r), enclosureID)
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
 	}
 
 	if enclosure == nil {
-		response.JSONNotFound(w, r)
-		return
-	}
-
-	userID := request.UserID(r)
-	if enclosure.UserID != userID {
 		response.JSONNotFound(w, r)
 		return
 	}

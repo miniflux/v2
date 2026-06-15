@@ -13,7 +13,7 @@ import (
 
 func (h *handler) saveEnclosureProgression(w http.ResponseWriter, r *http.Request) {
 	enclosureID := request.RouteInt64Param(r, "enclosureID")
-	enclosure, err := h.store.GetEnclosure(enclosureID)
+	enclosure, err := h.store.EnclosureByID(request.UserID(r), enclosureID)
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return

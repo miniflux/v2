@@ -258,7 +258,7 @@ func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 		return nil, nil
 	}
 
-	entries[0].Enclosures, err = e.store.GetEnclosures(entries[0].ID)
+	entries[0].Enclosures, err = e.store.EnclosuresByEntryID(entries[0].ID)
 	if err != nil {
 		return nil, err
 	}
@@ -433,7 +433,7 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 	}
 
 	if e.fetchEnclosures && len(entryIDs) > 0 {
-		enclosures, err := e.store.GetEnclosuresForEntries(entryIDs)
+		enclosures, err := e.store.EnclosuresByEntryIDs(entryIDs)
 		if err != nil {
 			return nil, 0, fmt.Errorf("store: unable to fetch enclosures: %w", err)
 		}

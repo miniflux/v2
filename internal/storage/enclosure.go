@@ -14,8 +14,8 @@ import (
 	"github.com/lib/pq"
 )
 
-// GetEnclosures returns all attachments for the given entry.
-func (s *Storage) GetEnclosures(entryID int64) (model.EnclosureList, error) {
+// EnclosuresByEntryID returns all enclosures for the given entry.
+func (s *Storage) EnclosuresByEntryID(entryID int64) (model.EnclosureList, error) {
 	query := `
 		SELECT
 			id,
@@ -61,7 +61,8 @@ func (s *Storage) GetEnclosures(entryID int64) (model.EnclosureList, error) {
 	return enclosures, nil
 }
 
-func (s *Storage) GetEnclosuresForEntries(entryIDs []int64) (map[int64]model.EnclosureList, error) {
+// EnclosuresByEntryIDs returns enclosures for the given entries, grouped by entry ID.
+func (s *Storage) EnclosuresByEntryIDs(entryIDs []int64) (map[int64]model.EnclosureList, error) {
 	query := `
 		SELECT
 			id,
@@ -106,7 +107,8 @@ func (s *Storage) GetEnclosuresForEntries(entryIDs []int64) (map[int64]model.Enc
 	return enclosuresMap, nil
 }
 
-func (s *Storage) GetEnclosure(enclosureID int64) (*model.Enclosure, error) {
+// EnclosureByID returns the enclosure for the given user and enclosure ID.
+func (s *Storage) EnclosureByID(userID, enclosureID int64) (*model.Enclosure, error) {
 	query := `
 		SELECT
 			id,
@@ -119,10 +121,10 @@ func (s *Storage) GetEnclosure(enclosureID int64) (*model.Enclosure, error) {
 		FROM
 			enclosures
 		WHERE
-			id = $1
+			id = $1 AND user_id = $2
 	`
 
-	row := s.db.QueryRow(query, enclosureID)
+	row := s.db.QueryRow(query, enclosureID, userID)
 
 	var enclosure model.Enclosure
 	err := row.Scan(
@@ -215,6 +217,7 @@ func (s *Storage) updateEnclosures(tx *sql.Tx, entry *model.Entry) error {
 	return nil
 }
 
+// UpdateEnclosure persists changes to the given enclosure.
 func (s *Storage) UpdateEnclosure(enclosure *model.Enclosure) error {
 	query := `
 		UPDATE
