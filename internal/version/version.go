@@ -45,7 +45,7 @@ func init() {
 	if Version == "" {
 		// Some Miniflux clients expect a specific version format.
 		// For example, Flux News converts the string version to an integer.
-		Version = "2.2.x-dev"
+		Version = "2.3.x-dev"
 	}
 	if Commit == "" {
 		Commit = getCommit()
