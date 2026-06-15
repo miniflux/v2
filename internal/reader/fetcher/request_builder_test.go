@@ -4,10 +4,12 @@
 package fetcher // import "miniflux.app/v2/internal/reader/fetcher"
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -334,6 +336,84 @@ func TestRequestBuilder_ConnectionCloseHeader(t *testing.T) {
 		t.Fatalf("Expected no error, got %v", err)
 	}
 	defer resp.Body.Close()
+}
+
+func TestRequestBuilder_UseKeepaliveNoConnectionClose(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if got := r.Header.Get("Connection"); got == "close" {
+			t.Errorf("UseKeepalive should not send 'Connection: close', got %q", got)
+		}
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	builder := NewRequestBuilder().UseKeepalive(true)
+	defer builder.Close()
+
+	resp, err := builder.ExecuteRequest(server.URL)
+	if err != nil {
+		t.Fatalf("ExecuteRequest: %v", err)
+	}
+	resp.Body.Close()
+}
+
+func TestRequestBuilder_UseKeepaliveReusesConnection(t *testing.T) {
+	var (
+		mu       sync.Mutex
+		remotes  = map[string]struct{}{}
+		requests int
+	)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mu.Lock()
+		remotes[r.RemoteAddr] = struct{}{}
+		requests++
+		mu.Unlock()
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	builder := NewRequestBuilder().UseKeepalive(true)
+	defer builder.Close()
+
+	for range 5 {
+		resp, err := builder.ExecuteRequest(server.URL)
+		if err != nil {
+			t.Fatalf("ExecuteRequest: %v", err)
+		}
+		// Drain + close so the connection returns to the idle pool and the
+		// next iteration can reuse it.
+		io.Copy(io.Discard, resp.Body)
+		resp.Body.Close()
+	}
+
+	if requests != 5 {
+		t.Fatalf("expected 5 requests, got %d", requests)
+	}
+	if len(remotes) != 1 {
+		t.Errorf("expected a single reused TCP connection, got %d distinct remotes: %v", len(remotes), remotes)
+	}
+}
+
+func TestRequestBuilder_ExecuteRequestDoesNotMutateBuilderHeaders(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	builder := NewRequestBuilder()
+	resp, err := builder.ExecuteRequest(server.URL)
+	if err != nil {
+		t.Fatalf("ExecuteRequest: %v", err)
+	}
+	resp.Body.Close()
+
+	// Per-request headers (Accept, Accept-Encoding, Connection) must not leak
+	// back into the builder so that it can be reused for further requests.
+	for _, h := range []string{"Accept", "Accept-Encoding", "Connection"} {
+		if got := builder.headers.Get(h); got != "" {
+			t.Errorf("builder.headers[%q] leaked from ExecuteRequest: %q", h, got)
+		}
+	}
 }
 
 func TestRequestBuilder_WithCustomApplicationProxyURL(t *testing.T) {

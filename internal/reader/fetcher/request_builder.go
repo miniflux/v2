@@ -38,12 +38,16 @@ type RequestBuilder struct {
 	clientProxyURL     *url.URL
 	clientTimeout      time.Duration
 	useClientProxy     bool
+	useKeepalive       bool
 	withoutRedirects   bool
 	ignoreTLSErrors    bool
 	disableHTTP2       bool
 	disableCompression bool
 	proxyRotator       *proxyrotator.ProxyRotator
 	feedProxyURL       string
+
+	// client is lazily built and reused when keepalive is enabled.
+	client *http.Client
 }
 
 func NewRequestBuilder() *RequestBuilder {
@@ -125,6 +129,14 @@ func (r *RequestBuilder) WithoutRedirects() *RequestBuilder {
 	return r
 }
 
+func (r *RequestBuilder) UseKeepalive(value bool) *RequestBuilder {
+	r.useKeepalive = value
+	if !value {
+		r.Close()
+	}
+	return r
+}
+
 func (r *RequestBuilder) DisableHTTP2(value bool) *RequestBuilder {
 	r.disableHTTP2 = value
 	return r
@@ -141,6 +153,44 @@ func (r *RequestBuilder) WithoutCompression() *RequestBuilder {
 }
 
 func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, error) {
+	client, err := r.clientOrNew()
+	if err != nil {
+		return nil, err
+	}
+
+	headers := r.headers.Clone()
+	if !r.useKeepalive {
+		headers.Set("Connection", "close")
+		defer r.Close()
+	}
+
+	return r.send(client, requestURL, headers)
+}
+
+// Close releases idle connections held by the keep-alive client, if any.
+// Safe to call even if no request was sent.
+func (r *RequestBuilder) Close() {
+	if r.client != nil {
+		r.client.CloseIdleConnections()
+		r.client = nil
+	}
+}
+
+func (r *RequestBuilder) clientOrNew() (*http.Client, error) {
+	if r.client == nil {
+		client, err := r.newClient()
+		if err != nil {
+			return nil, err
+		}
+		r.client = client
+	}
+
+	return r.client, nil
+}
+
+// newClient builds a configured *http.Client from the builder's settings.
+// The proxy rotator advances once per call.
+func (r *RequestBuilder) newClient() (*http.Client, error) {
 	var clientProxyURL *url.URL
 
 	switch {
@@ -231,14 +281,13 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		transport.TLSNextProto = map[string]func(string, *tls.Conn) http.RoundTripper{}
 	}
 
-	var clientProxyURLRedacted string
 	if clientProxyURL != nil {
 		transport.Proxy = http.ProxyURL(clientProxyURL)
-		clientProxyURLRedacted = clientProxyURL.Redacted()
 	}
 
 	client := &http.Client{
-		Timeout: r.clientTimeout,
+		Timeout:   r.clientTimeout,
+		Transport: transport,
 	}
 
 	if r.withoutRedirects {
@@ -247,14 +296,28 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		}
 	}
 
-	client.Transport = transport
+	var clientProxyURLRedacted string
+	if clientProxyURL != nil {
+		clientProxyURLRedacted = clientProxyURL.Redacted()
+	}
+	slog.Debug("Built HTTP client", slog.Group("client",
+		slog.Bool("without_redirects", r.withoutRedirects),
+		slog.Bool("use_app_client_proxy", r.useClientProxy),
+		slog.String("client_proxy_url", clientProxyURLRedacted),
+		slog.Bool("ignore_tls_errors", r.ignoreTLSErrors),
+		slog.Bool("disable_http2", r.disableHTTP2),
+	))
 
+	return client, nil
+}
+
+func (r *RequestBuilder) send(client *http.Client, requestURL string, headers http.Header) (*http.Response, error) {
 	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header = r.headers
+	req.Header = headers.Clone()
 	if r.disableCompression {
 		req.Header.Set("Accept-Encoding", "identity")
 	} else {
@@ -267,19 +330,11 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		req.Header.Set("Accept", defaultAcceptHeader)
 	}
 
-	req.Header.Set("Connection", "close")
-
 	slog.Debug("Making outgoing request", slog.Group("request",
 		slog.String("method", req.Method),
 		slog.String("url", req.URL.String()),
 		slog.Any("headers", req.Header),
-		slog.Bool("without_redirects", r.withoutRedirects),
-		slog.Bool("use_app_client_proxy", r.useClientProxy),
-		slog.String("client_proxy_url", clientProxyURLRedacted),
-		slog.Bool("ignore_tls_errors", r.ignoreTLSErrors),
-		slog.Bool("disable_http2", r.disableHTTP2),
 	))
-
 	return client.Do(req)
 }
 
