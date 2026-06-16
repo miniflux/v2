@@ -658,19 +658,28 @@ function toggleEntryStatus(element, toasting) {
 /**
  * Handle the refresh of all feeds.
  *
- * This function POSTs to the URL specified in the data-refresh-all-feeds-url attribute of the body element.
+ * This submits a real form POST to the URL specified in the data-refresh-all-feeds-url
+ * attribute of the body element, so the browser follows the redirect once and renders the
+ * server-side flash message, matching the behavior of the menu button.
  */
 function handleRefreshAllFeedsAction() {
     const refreshAllFeedsUrl = document.body.dataset.refreshAllFeedsUrl;
-    if (refreshAllFeedsUrl) {
-        sendPOSTRequest(refreshAllFeedsUrl).then((response) => {
-            if (response?.redirected && response.url) {
-                window.location.href = response.url;
-            } else {
-                window.location.reload();
-            }
-        });
+    if (!refreshAllFeedsUrl) {
+        return;
     }
+
+    const form = document.createElement("form");
+    form.method = "post";
+    form.action = refreshAllFeedsUrl;
+
+    const csrfField = document.createElement("input");
+    csrfField.type = "hidden";
+    csrfField.name = "csrf";
+    csrfField.value = document.body.dataset.csrfToken || "";
+    form.appendChild(csrfField);
+
+    document.body.appendChild(form);
+    form.submit();
 }
 
 /**
