@@ -32,6 +32,49 @@ func TestValidateEntriesStatusUpdateRequest(t *testing.T) {
 	if err == nil {
 		t.Error(`Only a valid status should be accepted`)
 	}
+
+	starred := true
+	err = ValidateEntriesStatusUpdateRequest(&model.EntriesStatusUpdateRequest{
+		Starred:  &starred,
+		EntryIDs: []int64{int64(123)},
+	})
+	if err != nil {
+		t.Error(`A request with only the starred field should be accepted`)
+	}
+
+	notStarred := false
+	err = ValidateEntriesStatusUpdateRequest(&model.EntriesStatusUpdateRequest{
+		Starred:  &notStarred,
+		EntryIDs: []int64{int64(123)},
+	})
+	if err != nil {
+		t.Error(`A request with starred set to false should be accepted`)
+	}
+
+	err = ValidateEntriesStatusUpdateRequest(&model.EntriesStatusUpdateRequest{
+		Status:   model.EntryStatusRead,
+		Starred:  &starred,
+		EntryIDs: []int64{int64(123)},
+	})
+	if err != nil {
+		t.Error(`A request with both status and starred should be accepted`)
+	}
+
+	err = ValidateEntriesStatusUpdateRequest(&model.EntriesStatusUpdateRequest{
+		EntryIDs: []int64{int64(123)},
+	})
+	if err == nil {
+		t.Error(`A request without status or starred should be rejected`)
+	}
+
+	err = ValidateEntriesStatusUpdateRequest(&model.EntriesStatusUpdateRequest{
+		Status:   "invalid",
+		Starred:  &starred,
+		EntryIDs: []int64{int64(123)},
+	})
+	if err == nil {
+		t.Error(`An invalid status should be rejected even when starred is specified`)
+	}
 }
 
 func TestValidateEntryStatus(t *testing.T) {

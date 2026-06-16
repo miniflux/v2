@@ -16,7 +16,15 @@ func ValidateEntriesStatusUpdateRequest(request *model.EntriesStatusUpdateReques
 		return errors.New(`the list of entries cannot be empty`)
 	}
 
-	return ValidateEntryStatus(request.Status)
+	if request.Status == "" && request.Starred == nil {
+		return errors.New(`either the status or the starred field must be specified`)
+	}
+
+	if request.Status != "" {
+		return ValidateEntryStatus(request.Status)
+	}
+
+	return nil
 }
 
 // ValidateEntryStatus makes sure the entry status is valid.

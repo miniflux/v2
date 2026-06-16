@@ -206,9 +206,18 @@ func (h *handler) setEntryStatusHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if err := h.store.SetEntriesStatus(request.UserID(r), entriesStatusUpdateRequest.EntryIDs, entriesStatusUpdateRequest.Status); err != nil {
-		response.JSONServerError(w, r, err)
-		return
+	if entriesStatusUpdateRequest.Status != "" {
+		if err := h.store.SetEntriesStatus(request.UserID(r), entriesStatusUpdateRequest.EntryIDs, entriesStatusUpdateRequest.Status); err != nil {
+			response.JSONServerError(w, r, err)
+			return
+		}
+	}
+
+	if entriesStatusUpdateRequest.Starred != nil {
+		if err := h.store.SetEntriesStarredState(request.UserID(r), entriesStatusUpdateRequest.EntryIDs, *entriesStatusUpdateRequest.Starred); err != nil {
+			response.JSONServerError(w, r, err)
+			return
+		}
 	}
 
 	response.NoContent(w, r)
