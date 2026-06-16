@@ -221,7 +221,10 @@ func (f *subscriptionFinder) findSubscriptionsFromWellKnownURLs(websiteURL strin
 			// Some websites redirects unknown URLs to the home page.
 			// As result, the list of known URLs is returned to the subscription list.
 			// We don't want the user to choose between invalid feed URLs.
-			requestBuilder := f.requestBuilder.WithoutRedirects()
+			//
+			// Probe each known URL on its own builder so disabling redirects
+			// here doesn't leak into the finder's other requests.
+			requestBuilder := f.requestBuilder.Clone().WithoutRedirects()
 
 			responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(fullURL))
 			localizedError := responseHandler.LocalizedError()

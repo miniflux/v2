@@ -267,6 +267,29 @@ func TestRequestBuilder_WithoutRedirects(t *testing.T) {
 	}
 }
 
+func TestRequestBuilder_Clone(t *testing.T) {
+	original := NewRequestBuilder().WithHeader("X-Shared", "value")
+
+	clone := original.Clone().WithoutRedirects()
+	clone.WithHeader("X-Clone-Only", "value")
+
+	if original.withoutRedirects {
+		t.Error("Mutating the clone should not disable redirects on the original")
+	}
+
+	if original.headers.Get("X-Clone-Only") != "" {
+		t.Error("Mutating the clone's headers should not affect the original")
+	}
+
+	if clone.headers.Get("X-Shared") != "value" {
+		t.Error("Expected the clone to inherit the original headers")
+	}
+
+	if clone.clientTimeout != original.clientTimeout {
+		t.Error("Expected the clone to inherit the original timeout")
+	}
+}
+
 func TestRequestBuilder_DisableHTTP2(t *testing.T) {
 	builder := NewRequestBuilder()
 	builder = builder.DisableHTTP2(true)

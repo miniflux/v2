@@ -53,6 +53,15 @@ func NewRequestBuilder() *RequestBuilder {
 	}
 }
 
+// Clone returns an independent copy of the builder. Mutating the copy (for
+// example to disable redirects for a single request) leaves the original
+// untouched.
+func (r *RequestBuilder) Clone() *RequestBuilder {
+	clone := *r
+	clone.headers = r.headers.Clone()
+	return &clone
+}
+
 func (r *RequestBuilder) WithHeader(key, value string) *RequestBuilder {
 	r.headers.Set(key, value)
 	return r
