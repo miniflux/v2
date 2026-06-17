@@ -57,7 +57,7 @@ func (s *SubscriptionForm) Validate() *locale.LocalizedError {
 		return locale.NewLocalizedError("error.feed_invalid_urlrewrite_rule")
 	}
 
-	if s.ProxyURL != "" && !urllib.IsAbsoluteURL(s.ProxyURL) {
+	if s.ProxyURL != "" && !urllib.IsValidProxyURL(s.ProxyURL) {
 		return locale.NewLocalizedError("error.invalid_feed_proxy_url")
 	}
 
