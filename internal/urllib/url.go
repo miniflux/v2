@@ -43,6 +43,11 @@ func hasHTTPPrefix(inputURL string) bool {
 	return strings.HasPrefix(inputURL, "https://") || strings.HasPrefix(inputURL, "http://")
 }
 
+// hasSOCKSPrefix reports whether the URL string begins with an SOCKS5 or SOCKS5H scheme.
+func hasSOCKSPrefix(inputURL string) bool {
+	return strings.HasPrefix(inputURL, "socks5://") || strings.HasPrefix(inputURL, "socks5h://")
+}
+
 // IsAbsoluteURL reports whether the link is absolute and starts with an HTTP or HTTPS scheme.
 func IsAbsoluteURL(inputURL string) bool {
 	if !hasHTTPPrefix(inputURL) {
@@ -53,6 +58,18 @@ func IsAbsoluteURL(inputURL string) bool {
 		return false
 	}
 	return parsedURL.IsAbs()
+}
+
+// IsValidProxyURL reports whether the url is absolute, has a host and starts with an HTTP, HTTPS, SOCKS5 or SOCKS5H scheme.
+func IsValidProxyURL(inputURL string) bool {
+	if !hasHTTPPrefix(inputURL) && !hasSOCKSPrefix(inputURL) {
+		return false
+	}
+	parsedURL, err := url.Parse(inputURL)
+	if err != nil {
+		return false
+	}
+	return parsedURL.IsAbs() && parsedURL.Host != ""
 }
 
 // resolveToAbsoluteURL resolves a relative URL using a base URL, parsing the base only if needed.
