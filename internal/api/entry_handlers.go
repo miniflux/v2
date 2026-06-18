@@ -194,14 +194,14 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	response.JSON(w, r, &entriesResponse{Total: count, Entries: entries})
 }
 
-func (h *handler) setEntryStatusHandler(w http.ResponseWriter, r *http.Request) {
+func (h *handler) setEntryStatusAndStarredHandler(w http.ResponseWriter, r *http.Request) {
 	var entriesStatusUpdateRequest model.EntriesStatusUpdateRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&entriesStatusUpdateRequest); err != nil {
 		response.JSONBadRequest(w, r, err)
 		return
 	}
 
-	if err := validator.ValidateEntriesStatusUpdateRequest(&entriesStatusUpdateRequest); err != nil {
+	if err := validator.ValidateEntriesStatusAndStarredUpdateRequest(&entriesStatusUpdateRequest); err != nil {
 		response.JSONBadRequest(w, r, err)
 		return
 	}

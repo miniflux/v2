@@ -32,9 +32,34 @@ func TestValidateEntriesStatusUpdateRequest(t *testing.T) {
 	if err == nil {
 		t.Error(`Only a valid status should be accepted`)
 	}
+}
+
+func TestValidateEntriesStatusAndStarredUpdateRequest(t *testing.T) {
+	err := ValidateEntriesStatusAndStarredUpdateRequest(&model.EntriesStatusUpdateRequest{
+		Status:   model.EntryStatusRead,
+		EntryIDs: []int64{int64(123), int64(456)},
+	})
+	if err != nil {
+		t.Error(`A valid request should not be rejected`)
+	}
+
+	err = ValidateEntriesStatusAndStarredUpdateRequest(&model.EntriesStatusUpdateRequest{
+		Status: model.EntryStatusRead,
+	})
+	if err == nil {
+		t.Error(`An empty list of entries is not valid`)
+	}
+
+	err = ValidateEntriesStatusAndStarredUpdateRequest(&model.EntriesStatusUpdateRequest{
+		Status:   "invalid",
+		EntryIDs: []int64{int64(123)},
+	})
+	if err == nil {
+		t.Error(`Only a valid status should be accepted`)
+	}
 
 	starred := true
-	err = ValidateEntriesStatusUpdateRequest(&model.EntriesStatusUpdateRequest{
+	err = ValidateEntriesStatusAndStarredUpdateRequest(&model.EntriesStatusUpdateRequest{
 		Starred:  &starred,
 		EntryIDs: []int64{int64(123)},
 	})
@@ -43,7 +68,7 @@ func TestValidateEntriesStatusUpdateRequest(t *testing.T) {
 	}
 
 	notStarred := false
-	err = ValidateEntriesStatusUpdateRequest(&model.EntriesStatusUpdateRequest{
+	err = ValidateEntriesStatusAndStarredUpdateRequest(&model.EntriesStatusUpdateRequest{
 		Starred:  &notStarred,
 		EntryIDs: []int64{int64(123)},
 	})
@@ -51,7 +76,7 @@ func TestValidateEntriesStatusUpdateRequest(t *testing.T) {
 		t.Error(`A request with starred set to false should be accepted`)
 	}
 
-	err = ValidateEntriesStatusUpdateRequest(&model.EntriesStatusUpdateRequest{
+	err = ValidateEntriesStatusAndStarredUpdateRequest(&model.EntriesStatusUpdateRequest{
 		Status:   model.EntryStatusRead,
 		Starred:  &starred,
 		EntryIDs: []int64{int64(123)},
@@ -60,14 +85,14 @@ func TestValidateEntriesStatusUpdateRequest(t *testing.T) {
 		t.Error(`A request with both status and starred should be accepted`)
 	}
 
-	err = ValidateEntriesStatusUpdateRequest(&model.EntriesStatusUpdateRequest{
+	err = ValidateEntriesStatusAndStarredUpdateRequest(&model.EntriesStatusUpdateRequest{
 		EntryIDs: []int64{int64(123)},
 	})
 	if err == nil {
 		t.Error(`A request without status or starred should be rejected`)
 	}
 
-	err = ValidateEntriesStatusUpdateRequest(&model.EntriesStatusUpdateRequest{
+	err = ValidateEntriesStatusAndStarredUpdateRequest(&model.EntriesStatusUpdateRequest{
 		Status:   "invalid",
 		Starred:  &starred,
 		EntryIDs: []int64{int64(123)},
