@@ -165,7 +165,7 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 				continue
 			}
 
-			enclosures = append(enclosures, &model.Enclosure{
+			enclosures = append(enclosures, model.Enclosure{
 				URL:      absoluteAttachmentURL,
 				MimeType: attachment.MimeType,
 				Size:     attachment.Size,

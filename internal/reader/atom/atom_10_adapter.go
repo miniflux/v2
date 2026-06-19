@@ -184,7 +184,7 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 
 			uniqueEnclosuresMap[mediaAbsoluteURL] = true
 
-			enclosures = append(enclosures, &model.Enclosure{
+			enclosures = append(enclosures, model.Enclosure{
 				URL:      mediaAbsoluteURL,
 				MimeType: mediaThumbnail.MimeType(),
 				Size:     mediaThumbnail.Size(),
@@ -209,7 +209,7 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 			uniqueEnclosuresMap[absoluteEnclosureURL] = true
 
 			length, _ := strconv.ParseInt(link.Length, 10, 0)
-			enclosures = append(enclosures, &model.Enclosure{
+			enclosures = append(enclosures, model.Enclosure{
 				URL:      absoluteEnclosureURL,
 				MimeType: link.Type,
 				Size:     length,
@@ -238,7 +238,7 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 
 			uniqueEnclosuresMap[mediaAbsoluteURL] = true
 
-			enclosures = append(enclosures, &model.Enclosure{
+			enclosures = append(enclosures, model.Enclosure{
 				URL:      mediaAbsoluteURL,
 				MimeType: mediaContent.MimeType(),
 				Size:     mediaContent.Size(),
@@ -267,7 +267,7 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 
 			uniqueEnclosuresMap[mediaAbsoluteURL] = true
 
-			enclosures = append(enclosures, &model.Enclosure{
+			enclosures = append(enclosures, model.Enclosure{
 				URL:      mediaAbsoluteURL,
 				MimeType: mediaPeerLink.MimeType(),
 				Size:     mediaPeerLink.Size(),

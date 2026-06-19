@@ -148,11 +148,13 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		return fmt.Errorf(`store: unable to create entry %q (feed #%d): %v`, entry.URL, entry.FeedID, err)
 	}
 
-	for _, enclosure := range entry.Enclosures {
+	for i := range entry.Enclosures {
+		enclosure := &entry.Enclosures[i]
+
 		enclosure.EntryID = entry.ID
 		enclosure.UserID = entry.UserID
-		err := s.createEnclosure(tx, enclosure)
-		if err != nil {
+
+		if err := s.createEnclosure(tx, enclosure); err != nil {
 			return err
 		}
 	}
@@ -201,7 +203,9 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 		return fmt.Errorf(`store: unable to update entry %q: %v`, entry.URL, err)
 	}
 
-	for _, enclosure := range entry.Enclosures {
+	for i := range entry.Enclosures {
+		enclosure := &entry.Enclosures[i]
+
 		enclosure.UserID = entry.UserID
 		enclosure.EntryID = entry.ID
 	}

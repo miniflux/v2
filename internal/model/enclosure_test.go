@@ -54,7 +54,7 @@ func TestEnclosure_IsAudio(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			enclosure := &Enclosure{MimeType: tc.mimeType}
+			enclosure := Enclosure{MimeType: tc.mimeType}
 			if got := enclosure.IsAudio(); got != tc.expected {
 				t.Errorf("IsAudio() = %v, want %v for mime type %s", got, tc.expected, tc.mimeType)
 			}
@@ -82,7 +82,7 @@ func TestEnclosure_IsVideo(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			enclosure := &Enclosure{MimeType: tc.mimeType}
+			enclosure := Enclosure{MimeType: tc.mimeType}
 			if got := enclosure.IsVideo(); got != tc.expected {
 				t.Errorf("IsVideo() = %v, want %v for mime type %s", got, tc.expected, tc.mimeType)
 			}
@@ -117,7 +117,7 @@ func TestEnclosure_IsImage(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			enclosure := &Enclosure{MimeType: tc.mimeType, URL: tc.url}
+			enclosure := Enclosure{MimeType: tc.mimeType, URL: tc.url}
 			if got := enclosure.IsImage(); got != tc.expected {
 				t.Errorf("IsImage() = %v, want %v for mime type %s and URL %s", got, tc.expected, tc.mimeType, tc.url)
 			}
@@ -134,40 +134,40 @@ func TestEnclosureList_FindMediaPlayerEnclosure(t *testing.T) {
 		{
 			name: "Returns first audio enclosure",
 			enclosures: EnclosureList{
-				&Enclosure{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
-				&Enclosure{URL: "http://example.com/video.mp4", MimeType: "video/mp4"},
+				{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
+				{URL: "http://example.com/video.mp4", MimeType: "video/mp4"},
 			},
 			expectedNil: false,
 		},
 		{
 			name: "Returns first video enclosure",
 			enclosures: EnclosureList{
-				&Enclosure{URL: "http://example.com/video.mp4", MimeType: "video/mp4"},
-				&Enclosure{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
+				{URL: "http://example.com/video.mp4", MimeType: "video/mp4"},
+				{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
 			},
 			expectedNil: false,
 		},
 		{
 			name: "Skips image enclosure and returns audio",
 			enclosures: EnclosureList{
-				&Enclosure{URL: "http://example.com/image.jpg", MimeType: "image/jpeg"},
-				&Enclosure{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
+				{URL: "http://example.com/image.jpg", MimeType: "image/jpeg"},
+				{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
 			},
 			expectedNil: false,
 		},
 		{
 			name: "Skips enclosure with empty URL",
 			enclosures: EnclosureList{
-				&Enclosure{URL: "", MimeType: "audio/mpeg"},
-				&Enclosure{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
+				{URL: "", MimeType: "audio/mpeg"},
+				{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
 			},
 			expectedNil: false,
 		},
 		{
 			name: "Returns nil for no media enclosures",
 			enclosures: EnclosureList{
-				&Enclosure{URL: "http://example.com/image.jpg", MimeType: "image/jpeg"},
-				&Enclosure{URL: "http://example.com/doc.pdf", MimeType: "application/pdf"},
+				{URL: "http://example.com/image.jpg", MimeType: "image/jpeg"},
+				{URL: "http://example.com/doc.pdf", MimeType: "application/pdf"},
 			},
 			expectedNil: true,
 		},
@@ -179,8 +179,8 @@ func TestEnclosureList_FindMediaPlayerEnclosure(t *testing.T) {
 		{
 			name: "Returns nil for all empty URLs",
 			enclosures: EnclosureList{
-				&Enclosure{URL: "", MimeType: "audio/mpeg"},
-				&Enclosure{URL: "", MimeType: "video/mp4"},
+				{URL: "", MimeType: "audio/mpeg"},
+				{URL: "", MimeType: "video/mp4"},
 			},
 			expectedNil: true,
 		},
@@ -213,40 +213,40 @@ func TestEnclosureList_ContainsAudioOrVideo(t *testing.T) {
 		{
 			name: "Contains audio",
 			enclosures: EnclosureList{
-				&Enclosure{MimeType: "audio/mpeg"},
-				&Enclosure{MimeType: "image/jpeg"},
+				{MimeType: "audio/mpeg"},
+				{MimeType: "image/jpeg"},
 			},
 			expected: true,
 		},
 		{
 			name: "Contains video",
 			enclosures: EnclosureList{
-				&Enclosure{MimeType: "image/jpeg"},
-				&Enclosure{MimeType: "video/mp4"},
+				{MimeType: "image/jpeg"},
+				{MimeType: "video/mp4"},
 			},
 			expected: true,
 		},
 		{
 			name: "Contains both audio and video",
 			enclosures: EnclosureList{
-				&Enclosure{MimeType: "audio/mpeg"},
-				&Enclosure{MimeType: "video/mp4"},
+				{MimeType: "audio/mpeg"},
+				{MimeType: "video/mp4"},
 			},
 			expected: true,
 		},
 		{
 			name: "Contains only images",
 			enclosures: EnclosureList{
-				&Enclosure{MimeType: "image/jpeg"},
-				&Enclosure{MimeType: "image/png"},
+				{MimeType: "image/jpeg"},
+				{MimeType: "image/png"},
 			},
 			expected: false,
 		},
 		{
 			name: "Contains only documents",
 			enclosures: EnclosureList{
-				&Enclosure{MimeType: "application/pdf"},
-				&Enclosure{MimeType: "text/plain"},
+				{MimeType: "application/pdf"},
+				{MimeType: "text/plain"},
 			},
 			expected: false,
 		},
@@ -258,14 +258,14 @@ func TestEnclosureList_ContainsAudioOrVideo(t *testing.T) {
 		{
 			name: "Single audio enclosure",
 			enclosures: EnclosureList{
-				&Enclosure{MimeType: "audio/wav"},
+				{MimeType: "audio/wav"},
 			},
 			expected: true,
 		},
 		{
 			name: "Single video enclosure",
 			enclosures: EnclosureList{
-				&Enclosure{MimeType: "video/webm"},
+				{MimeType: "video/webm"},
 			},
 			expected: true,
 		},
@@ -378,7 +378,7 @@ func TestEnclosure_ProxifyEnclosureURL(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			enclosure := &Enclosure{
+			enclosure := Enclosure{
 				URL:      tc.url,
 				MimeType: tc.mimeType,
 			}
@@ -431,10 +431,10 @@ func TestEnclosureList_ProxifyEnclosureURL(t *testing.T) {
 		{
 			name: "Mixed enclosures with all proxy mode",
 			enclosures: EnclosureList{
-				&Enclosure{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
-				&Enclosure{URL: "https://example.com/video.mp4", MimeType: "video/mp4"},
-				&Enclosure{URL: "http://example.com/image.jpg", MimeType: "image/jpeg"},
-				&Enclosure{URL: "http://example.com/doc.pdf", MimeType: "application/pdf"},
+				{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
+				{URL: "https://example.com/video.mp4", MimeType: "video/mp4"},
+				{URL: "http://example.com/image.jpg", MimeType: "image/jpeg"},
+				{URL: "http://example.com/doc.pdf", MimeType: "application/pdf"},
 			},
 			mediaProxyOption:        "all",
 			mediaProxyResourceTypes: []string{"audio", "video"},
@@ -443,9 +443,9 @@ func TestEnclosureList_ProxifyEnclosureURL(t *testing.T) {
 		{
 			name: "Mixed enclosures with http-only proxy mode",
 			enclosures: EnclosureList{
-				&Enclosure{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
-				&Enclosure{URL: "https://example.com/video.mp4", MimeType: "video/mp4"},
-				&Enclosure{URL: "http://example.com/video2.mp4", MimeType: "video/mp4"},
+				{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
+				{URL: "https://example.com/video.mp4", MimeType: "video/mp4"},
+				{URL: "http://example.com/video2.mp4", MimeType: "video/mp4"},
 			},
 			mediaProxyOption:        "http-only",
 			mediaProxyResourceTypes: []string{"audio", "video"},
@@ -454,8 +454,8 @@ func TestEnclosureList_ProxifyEnclosureURL(t *testing.T) {
 		{
 			name: "No media types in resource list",
 			enclosures: EnclosureList{
-				&Enclosure{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
-				&Enclosure{URL: "http://example.com/video.mp4", MimeType: "video/mp4"},
+				{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
+				{URL: "http://example.com/video.mp4", MimeType: "video/mp4"},
 			},
 			mediaProxyOption:        "all",
 			mediaProxyResourceTypes: []string{"image"},
@@ -464,8 +464,8 @@ func TestEnclosureList_ProxifyEnclosureURL(t *testing.T) {
 		{
 			name: "Proxy mode none",
 			enclosures: EnclosureList{
-				&Enclosure{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
-				&Enclosure{URL: "http://example.com/video.mp4", MimeType: "video/mp4"},
+				{URL: "http://example.com/audio.mp3", MimeType: "audio/mpeg"},
+				{URL: "http://example.com/video.mp4", MimeType: "video/mp4"},
 			},
 			mediaProxyOption:        "none",
 			mediaProxyResourceTypes: []string{"audio", "video"},
@@ -481,8 +481,8 @@ func TestEnclosureList_ProxifyEnclosureURL(t *testing.T) {
 		{
 			name: "Enclosures with empty URLs",
 			enclosures: EnclosureList{
-				&Enclosure{URL: "", MimeType: "audio/mpeg"},
-				&Enclosure{URL: "http://example.com/video.mp4", MimeType: "video/mp4"},
+				{URL: "", MimeType: "audio/mpeg"},
+				{URL: "http://example.com/video.mp4", MimeType: "video/mp4"},
 			},
 			mediaProxyOption:        "all",
 			mediaProxyResourceTypes: []string{"audio", "video"},
@@ -534,7 +534,7 @@ func TestEnclosure_ProxifyEnclosureURL_EdgeCases(t *testing.T) {
 	}
 
 	t.Run("Empty resource types slice", func(t *testing.T) {
-		enclosure := &Enclosure{
+		enclosure := Enclosure{
 			URL:      "http://example.com/audio.mp3",
 			MimeType: "audio/mpeg",
 		}
@@ -549,7 +549,7 @@ func TestEnclosure_ProxifyEnclosureURL_EdgeCases(t *testing.T) {
 	})
 
 	t.Run("Nil resource types slice", func(t *testing.T) {
-		enclosure := &Enclosure{
+		enclosure := Enclosure{
 			URL:      "http://example.com/audio.mp3",
 			MimeType: "audio/mpeg",
 		}
@@ -563,7 +563,7 @@ func TestEnclosure_ProxifyEnclosureURL_EdgeCases(t *testing.T) {
 		}
 	})
 	t.Run("Invalid proxy mode", func(t *testing.T) {
-		enclosure := &Enclosure{
+		enclosure := Enclosure{
 			URL:      "http://example.com/audio.mp3",
 			MimeType: "audio/mpeg",
 		}
