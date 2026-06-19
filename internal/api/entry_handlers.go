@@ -404,7 +404,7 @@ func (h *handler) importFeedEntryHandler(w http.ResponseWriter, r *http.Request)
 		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
 	}
 
-	created, err := h.store.InsertEntryForFeed(userID, feedID, entry)
+	created, err := h.store.InsertEntryForFeed(userID, feedID, &entry)
 	if errors.Is(err, storage.ErrEntryTombstoned) {
 		response.JSONBadRequest(w, r, err)
 		return

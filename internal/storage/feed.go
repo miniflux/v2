@@ -291,7 +291,9 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
 	}
 
-	for _, entry := range feed.Entries {
+	for i := range feed.Entries {
+		entry := &feed.Entries[i]
+
 		entry.FeedID = feed.ID
 		entry.UserID = feed.UserID
 
