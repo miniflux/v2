@@ -322,7 +322,9 @@ func (s *Storage) GetReadTime(feedID int64, entryHash string) int {
 
 // RefreshFeedEntries updates feed entries while refreshing a feed.
 func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (newEntries model.Entries, err error) {
-	for _, entry := range entries {
+	for i := range entries {
+		entry := &entries[i]
+
 		entry.UserID = userID
 		entry.FeedID = feedID
 
@@ -349,7 +351,7 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 			case errors.Is(err, ErrEntryTombstoned):
 				err = nil
 			case err == nil:
-				newEntries = append(newEntries, entry)
+				newEntries = append(newEntries, *entry)
 			}
 		}
 
