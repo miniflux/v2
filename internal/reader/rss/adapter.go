@@ -339,7 +339,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 
 		duplicates[mediaURL] = true
 
-		enclosures = append(enclosures, &model.Enclosure{
+		enclosures = append(enclosures, model.Enclosure{
 			URL:      mediaURL,
 			MimeType: mediaThumbnail.MimeType(),
 			Size:     mediaThumbnail.Size(),
@@ -371,7 +371,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 
 		duplicates[enclosureURL] = true
 
-		enclosures = append(enclosures, &model.Enclosure{
+		enclosures = append(enclosures, model.Enclosure{
 			URL:      enclosureURL,
 			MimeType: enclosure.Type,
 			Size:     enclosure.Size(),
@@ -400,7 +400,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 
 		duplicates[mediaURL] = true
 
-		enclosures = append(enclosures, &model.Enclosure{
+		enclosures = append(enclosures, model.Enclosure{
 			URL:      mediaURL,
 			MimeType: mediaContent.MimeType(),
 			Size:     mediaContent.Size(),
@@ -429,7 +429,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 
 		duplicates[mediaURL] = true
 
-		enclosures = append(enclosures, &model.Enclosure{
+		enclosures = append(enclosures, model.Enclosure{
 			URL:      mediaURL,
 			MimeType: mediaPeerLink.MimeType(),
 			Size:     mediaPeerLink.Size(),
