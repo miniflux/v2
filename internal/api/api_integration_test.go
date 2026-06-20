@@ -2631,6 +2631,69 @@ func TestUpdateEntryStatusEndpoint(t *testing.T) {
 	}
 }
 
+func TestUpdateEntriesStarredEndpoint(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := regularUserClient.FeedEntries(feedID, nil)
+	if err != nil {
+		t.Fatalf(`Failed to get entries: %v`, err)
+	}
+
+	entryID := result.Entries[0].ID
+
+	// Star the entry without changing its status.
+	if err := regularUserClient.UpdateEntriesStarred([]int64{entryID}, true); err != nil {
+		t.Fatal(err)
+	}
+
+	entry, err := regularUserClient.Entry(entryID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !entry.Starred {
+		t.Fatalf(`Expected entry to be starred`)
+	}
+
+	if entry.Status != miniflux.EntryStatusUnread {
+		t.Fatalf(`Expected status to remain unread, got %q`, entry.Status)
+	}
+
+	// Unstar the entry.
+	if err := regularUserClient.UpdateEntriesStarred([]int64{entryID}, false); err != nil {
+		t.Fatal(err)
+	}
+
+	entry, err = regularUserClient.Entry(entryID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.Starred {
+		t.Fatalf(`Expected entry to no longer be starred`)
+	}
+}
+
 func TestGetEntryIDsEndpoint(t *testing.T) {
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {

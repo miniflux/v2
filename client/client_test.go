@@ -1108,6 +1108,27 @@ func TestUpdateEntries(t *testing.T) {
 	}
 }
 
+func TestUpdateEntriesStarred(t *testing.T) {
+	starred := true
+	client := NewClientWithOptions(
+		"http://mf",
+		WithHTTPClient(
+			newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
+				expectRequest(t, http.MethodPut, "http://mf/v1/entries", nil, req)
+				expectFromJSON(t, req.Body, &struct {
+					EntryIDs []int64 `json:"entry_ids"`
+					Starred  *bool   `json:"starred"`
+				}{
+					EntryIDs: []int64{1, 2},
+					Starred:  &starred,
+				})
+				return jsonResponseFrom(t, http.StatusOK, http.Header{}, nil)
+			})))
+	if err := client.UpdateEntriesStarredContext(t.Context(), []int64{1, 2}, true); err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+}
+
 func TestUpdateEntry(t *testing.T) {
 	expected := &Entry{
 		ID:    1,

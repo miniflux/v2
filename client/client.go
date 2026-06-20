@@ -1030,6 +1030,24 @@ func (c *Client) UpdateEntriesContext(ctx context.Context, entryIDs []int64, sta
 	return err
 }
 
+// UpdateEntriesStarred updates the starred state of a list of entries.
+func (c *Client) UpdateEntriesStarred(entryIDs []int64, starred bool) error {
+	ctx, cancel := withDefaultTimeout()
+	defer cancel()
+	return c.UpdateEntriesStarredContext(ctx, entryIDs, starred)
+}
+
+// UpdateEntriesStarredContext updates the starred state of a list of entries.
+func (c *Client) UpdateEntriesStarredContext(ctx context.Context, entryIDs []int64, starred bool) error {
+	type payload struct {
+		EntryIDs []int64 `json:"entry_ids"`
+		Starred  *bool   `json:"starred"`
+	}
+
+	_, err := c.request.Put(ctx, "/v1/entries", &payload{EntryIDs: entryIDs, Starred: &starred})
+	return err
+}
+
 // UpdateEntry updates an entry.
 func (c *Client) UpdateEntry(entryID int64, entryChanges *EntryModificationRequest) (*Entry, error) {
 	ctx, cancel := withDefaultTimeout()

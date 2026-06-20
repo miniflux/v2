@@ -451,18 +451,8 @@ func (s *Storage) SetEntriesStatusAndCountVisible(userID int64, entryIDs []int64
 // SetEntriesStarredState updates the starred state for the given list of entries.
 func (s *Storage) SetEntriesStarredState(userID int64, entryIDs []int64, starred bool) error {
 	query := `UPDATE entries SET starred=$1, changed_at=now() WHERE user_id=$2 AND id=ANY($3)`
-	result, err := s.db.Exec(query, starred, userID, pq.Array(entryIDs))
-	if err != nil {
+	if _, err := s.db.Exec(query, starred, userID, pq.Array(entryIDs)); err != nil {
 		return fmt.Errorf(`store: unable to update the starred state %v: %v`, entryIDs, err)
-	}
-
-	count, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf(`store: unable to update these entries %v: %v`, entryIDs, err)
-	}
-
-	if count == 0 {
-		return errors.New(`store: nothing has been updated`)
 	}
 
 	return nil
