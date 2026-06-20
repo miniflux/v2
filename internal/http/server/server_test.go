@@ -37,7 +37,7 @@ func TestDetermineListenTargets(t *testing.T) {
 			certFile:  "/path/to/cert.pem",
 			keyFile:   "/path/to/key.pem",
 			expected: []listenTarget{
-				{address: ":443", mode: modeTLS, certFile: "/path/to/cert.pem", keyFile: "/path/to/key.pem"},
+				{address: ":443", mode: modeTLS},
 			},
 		},
 		{
@@ -94,7 +94,7 @@ func TestDetermineListenTargets(t *testing.T) {
 			certFile:  "/path/to/cert.pem",
 			keyFile:   "/path/to/key.pem",
 			expected: []listenTarget{
-				{address: "/var/run/miniflux.sock", mode: modeUnixSocketTLS, certFile: "/path/to/cert.pem", keyFile: "/path/to/key.pem"},
+				{address: "/var/run/miniflux.sock", mode: modeUnixSocketTLS},
 			},
 		},
 		{
@@ -103,8 +103,8 @@ func TestDetermineListenTargets(t *testing.T) {
 			certFile:  "/path/to/cert.pem",
 			keyFile:   "/path/to/key.pem",
 			expected: []listenTarget{
-				{address: "/var/run/miniflux.sock", mode: modeUnixSocketTLS, certFile: "/path/to/cert.pem", keyFile: "/path/to/key.pem"},
-				{address: ":8080", mode: modeTLS, certFile: "/path/to/cert.pem", keyFile: "/path/to/key.pem"},
+				{address: "/var/run/miniflux.sock", mode: modeUnixSocketTLS},
+				{address: ":8080", mode: modeTLS},
 			},
 		},
 		{
