@@ -26,6 +26,11 @@ type entryIDResponse struct {
 	ID int64 `json:"id"`
 }
 
+type entryIDsResponse struct {
+	Total    int     `json:"total"`
+	EntryIDs []int64 `json:"entry_ids"`
+}
+
 type entryContentResponse struct {
 	Content     string `json:"content"`
 	ReadingTime int    `json:"reading_time"`
