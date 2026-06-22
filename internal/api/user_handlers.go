@@ -113,7 +113,13 @@ func (h *handler) markUserAsReadHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if _, err := h.store.UserByID(userID); err != nil {
+	user, err := h.store.UserByID(userID)
+	if err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
+
+	if user == nil {
 		response.JSONNotFound(w, r)
 		return
 	}
@@ -128,7 +134,13 @@ func (h *handler) markUserAsReadHandler(w http.ResponseWriter, r *http.Request) 
 
 func (h *handler) getIntegrationsStatusHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	if _, err := h.store.UserByID(userID); err != nil {
+	user, err := h.store.UserByID(userID)
+	if err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
+
+	if user == nil {
 		response.JSONNotFound(w, r)
 		return
 	}
