@@ -1298,6 +1298,10 @@ func buildFilterQueryString(path string, filter *Filter) string {
 			values.Add("status", status)
 		}
 
+		for _, tag := range filter.Tags {
+			values.Add("tags", tag)
+		}
+
 		path = fmt.Sprintf("%s?%s", path, values.Encode())
 	}
 

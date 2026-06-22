@@ -146,12 +146,15 @@ type Feed struct {
 	FeedURL                     string    `json:"feed_url"`
 	SiteURL                     string    `json:"site_url"`
 	Title                       string    `json:"title"`
+	Description                 string    `json:"description"`
 	CheckedAt                   time.Time `json:"checked_at"`
+	NextCheckAt                 time.Time `json:"next_check_at"`
 	EtagHeader                  string    `json:"etag_header,omitempty"`
 	LastModifiedHeader          string    `json:"last_modified_header,omitempty"`
 	ParsingErrorMsg             string    `json:"parsing_error_message,omitempty"`
 	ParsingErrorCount           int       `json:"parsing_error_count,omitempty"`
 	Disabled                    bool      `json:"disabled"`
+	NoMediaPlayer               bool      `json:"no_media_player"`
 	IgnoreHTTPCache             bool      `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates bool      `json:"allow_self_signed_certificates"`
 	FetchViaProxy               bool      `json:"fetch_via_proxy"`
@@ -172,6 +175,14 @@ type Feed struct {
 	HideGlobally                bool      `json:"hide_globally"`
 	DisableHTTP2                bool      `json:"disable_http2"`
 	ProxyURL                    string    `json:"proxy_url"`
+	AppriseServiceURLs          string    `json:"apprise_service_urls"`
+	WebhookURL                  string    `json:"webhook_url"`
+	NtfyEnabled                 bool      `json:"ntfy_enabled"`
+	NtfyPriority                int       `json:"ntfy_priority"`
+	NtfyTopic                   string    `json:"ntfy_topic"`
+	PushoverEnabled             bool      `json:"pushover_enabled"`
+	PushoverPriority            int       `json:"pushover_priority"`
+	Icon                        *FeedIcon `json:"icon"`
 }
 
 // FeedCreationRequest represents the request to create a feed.
@@ -185,6 +196,7 @@ type FeedCreationRequest struct {
 	Crawler                     bool   `json:"crawler"`
 	IgnoreEntryUpdates          bool   `json:"ignore_entry_updates"`
 	Disabled                    bool   `json:"disabled"`
+	NoMediaPlayer               bool   `json:"no_media_player"`
 	IgnoreHTTPCache             bool   `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
 	FetchViaProxy               bool   `json:"fetch_via_proxy"`
@@ -205,6 +217,7 @@ type FeedModificationRequest struct {
 	FeedURL                     *string `json:"feed_url"`
 	SiteURL                     *string `json:"site_url"`
 	Title                       *string `json:"title"`
+	Description                 *string `json:"description"`
 	ScraperRules                *string `json:"scraper_rules"`
 	RewriteRules                *string `json:"rewrite_rules"`
 	UrlRewriteRules             *string `json:"urlrewrite_rules"`
@@ -220,6 +233,7 @@ type FeedModificationRequest struct {
 	Password                    *string `json:"password"`
 	CategoryID                  *int64  `json:"category_id"`
 	Disabled                    *bool   `json:"disabled"`
+	NoMediaPlayer               *bool   `json:"no_media_player"`
 	IgnoreHTTPCache             *bool   `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates *bool   `json:"allow_self_signed_certificates"`
 	FetchViaProxy               *bool   `json:"fetch_via_proxy"`
@@ -318,6 +332,7 @@ type Filter struct {
 	CategoryID      int64
 	FeedID          int64
 	Statuses        []string
+	Tags            []string
 	GloballyVisible bool
 }
 
