@@ -22,6 +22,11 @@ func (h *handler) currentUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if user == nil {
+		response.JSONNotFound(w, r)
+		return
+	}
+
 	response.JSON(w, r, user)
 }
 

@@ -120,6 +120,12 @@ func (h *handler) getCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 			response.JSONServerError(w, r, userErr)
 			return
 		}
+
+		if user == nil {
+			response.JSONNotFound(w, r)
+			return
+		}
+
 		categories, err = h.store.CategoriesWithFeedCount(user.ID, user.CategoriesSortingOrder)
 	} else {
 		categories, err = h.store.Categories(request.UserID(r))
