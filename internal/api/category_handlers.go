@@ -112,9 +112,8 @@ func (h *handler) markCategoryAsReadHandler(w http.ResponseWriter, r *http.Reque
 func (h *handler) getCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	var categories model.Categories
 	var err error
-	includeCounts := request.QueryStringParam(r, "counts", "false")
 
-	if includeCounts == "true" {
+	if request.QueryBoolParam(r, "counts", false) {
 		user, userErr := h.store.UserByID(request.UserID(r))
 		if userErr != nil {
 			response.JSONServerError(w, r, userErr)
