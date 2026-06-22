@@ -507,20 +507,6 @@ func (h *handler) fetchContentHandler(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, r, entryContentResponse{Content: mediaproxy.RewriteDocumentWithAbsoluteProxyURL(entry.Content), ReadingTime: entry.ReadingTime})
 }
 
-type entryIDsResponse struct {
-	Total    int     `json:"total"`
-	EntryIDs []int64 `json:"entry_ids"`
-}
-
-func parseEntryIDsParams(r *http.Request) (limit, offset int) {
-	limit = request.QueryIntParam(r, "limit", model.MaxEntryIDsLimit)
-	if limit <= 0 || limit > model.MaxEntryIDsLimit {
-		limit = model.MaxEntryIDsLimit
-	}
-	offset = request.QueryIntParam(r, "offset", 0)
-	return limit, offset
-}
-
 func (h *handler) getEntryIDsHandler(w http.ResponseWriter, r *http.Request) {
 	if request.HasQueryParam(r, "starred") {
 		starredValue := request.QueryStringParam(r, "starred", "")
@@ -616,4 +602,13 @@ func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) *stor
 	}
 
 	return builder
+}
+
+func parseEntryIDsParams(r *http.Request) (limit, offset int) {
+	limit = request.QueryIntParam(r, "limit", model.MaxEntryIDsLimit)
+	if limit <= 0 || limit > model.MaxEntryIDsLimit {
+		limit = model.MaxEntryIDsLimit
+	}
+	offset = request.QueryIntParam(r, "offset", 0)
+	return limit, offset
 }
