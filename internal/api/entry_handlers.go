@@ -604,10 +604,6 @@ func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) *stor
 		builder = builder.AfterChangedDate(time.Unix(afterChangedTimestamp, 0))
 	}
 
-	if categoryID := request.QueryInt64Param(r, "category_id", 0); categoryID > 0 {
-		builder = builder.WithCategoryID(categoryID)
-	}
-
 	if request.HasQueryParam(r, "starred") {
 		starred, err := strconv.ParseBool(r.URL.Query().Get("starred"))
 		if err == nil {
