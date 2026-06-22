@@ -189,6 +189,7 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 
 	for i := range entries {
 		entries[i].Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(entries[i].Content)
+		entries[i].Enclosures.ProxifyEnclosureURL(config.Opts.MediaProxyMode(), config.Opts.MediaProxyResourceTypes())
 	}
 
 	response.JSON(w, r, &entriesResponse{Total: count, Entries: entries})
