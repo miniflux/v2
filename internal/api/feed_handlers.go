@@ -115,7 +115,7 @@ func (h *handler) updateFeedHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	originalFeed, err := h.store.FeedByID(userID, feedID)
 	if err != nil {
-		response.JSONNotFound(w, r)
+		response.JSONServerError(w, r, err)
 		return
 	}
 
