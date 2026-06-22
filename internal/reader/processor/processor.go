@@ -91,6 +91,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 		}
 
 		webpageBaseURL := ""
+		var scrapedMetadata map[string]string
 		entry.URL = rewrite.RewriteEntryURL(feed, entry)
 		entryIsNew := store.IsNewEntry(feed.ID, entry.Hash)
 		contentExtractedSuccessfully := false
@@ -108,15 +109,16 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 
 			startTime := time.Now()
 
-			scrapedPageBaseURL, extractedContent, scraperErr := scraper.ScrapeWebsite(
+			scrapeResult, scraperErr := scraper.ScrapeWebsite(
 				requestBuilder,
 				entry.URL,
 				feed.ScraperRules,
 			)
 
-			if scrapedPageBaseURL != "" {
-				webpageBaseURL = scrapedPageBaseURL
+			if scrapeResult.BaseURL != "" {
+				webpageBaseURL = scrapeResult.BaseURL
 			}
+			scrapedMetadata = scrapeResult.Metadata
 
 			if config.Opts.HasMetricsCollector() {
 				status := metric.StatusSuccess
@@ -134,14 +136,14 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 					slog.String("feed_url", feed.FeedURL),
 					slog.Any("error", scraperErr),
 				)
-			} else if extractedContent != "" {
+			} else if scrapeResult.ExtractedContent != "" {
 				// We replace the entry content only if the scraper doesn't return any error.
-				entry.Content = minifyContent(extractedContent)
+				entry.Content = minifyContent(scrapeResult.ExtractedContent)
 				contentExtractedSuccessfully = true
 			}
 		}
 
-		rewrite.ApplyContentRewriteRules(entry, feed.RewriteRules)
+		rewrite.ApplyContentRewriteRules(entry, feed.RewriteRules, &rewrite.RewriteContext{Metadata: scrapedMetadata})
 
 		// Re-run filters only when extracted content replaced entry.Content.
 		if contentExtractedSuccessfully && filter.IsBlockedEntry(blockRules, allowRules, feed, entry) {
@@ -192,7 +194,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 		IgnoreTLSErrors(feed.AllowSelfSignedCertificates).
 		DisableHTTP2(feed.DisableHTTP2)
 
-	webpageBaseURL, extractedContent, scraperErr := scraper.ScrapeWebsite(
+	scrapeResult, scraperErr := scraper.ScrapeWebsite(
 		requestBuilder,
 		entry.URL,
 		feed.ScraperRules,
@@ -210,15 +212,15 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 		return scraperErr
 	}
 
-	if extractedContent != "" {
-		entry.Content = minifyContent(extractedContent)
+	if scrapeResult.ExtractedContent != "" {
+		entry.Content = minifyContent(scrapeResult.ExtractedContent)
 		if user.ShowReadingTime {
 			entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
 		}
 	}
 
-	rewrite.ApplyContentRewriteRules(entry, entry.Feed.RewriteRules)
-	entry.Content = sanitizer.SanitizeHTML(webpageBaseURL, entry.Content, &sanitizer.SanitizerOptions{OpenLinksInNewTab: user.OpenExternalLinksInNewTab})
+	rewrite.ApplyContentRewriteRules(entry, entry.Feed.RewriteRules, &rewrite.RewriteContext{Metadata: scrapeResult.Metadata})
+	entry.Content = sanitizer.SanitizeHTML(scrapeResult.BaseURL, entry.Content, &sanitizer.SanitizerOptions{OpenLinksInNewTab: user.OpenExternalLinksInNewTab})
 
 	return nil
 }
