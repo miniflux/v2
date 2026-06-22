@@ -198,7 +198,7 @@ func (h *handler) userByIDHandler(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.store.UserByID(userID)
 	if err != nil {
-		response.JSONBadRequest(w, r, errors.New("unable to fetch this user from the database"))
+		response.JSONServerError(w, r, err)
 		return
 	}
 
@@ -220,7 +220,7 @@ func (h *handler) userByUsernameHandler(w http.ResponseWriter, r *http.Request) 
 	username := request.RouteStringParam(r, "username")
 	user, err := h.store.UserByUsername(username)
 	if err != nil {
-		response.JSONBadRequest(w, r, errors.New("unable to fetch this user from the database"))
+		response.JSONServerError(w, r, err)
 		return
 	}
 
