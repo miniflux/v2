@@ -10,7 +10,7 @@ import (
 	"miniflux.app/v2/internal/locale"
 )
 
-func isValidFilterRules(filterEntryRules string, filterType string) *locale.LocalizedError {
+func IsValidFilterRules(filterEntryRules string, filterType string) *locale.LocalizedError {
 	// Valid Format: FieldName=RegEx\nFieldName=RegEx...
 	fieldNames := []string{"EntryTitle", "EntryURL", "EntryCommentsURL", "EntryContent", "EntryAuthor", "EntryTag", "EntryDate"}
 

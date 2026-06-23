@@ -37,13 +37,13 @@ func ValidateFeedCreation(store *storage.Storage, userID int64, request *model.F
 	}
 
 	if request.BlockFilterEntryRules != "" {
-		if err := isValidFilterRules(request.BlockFilterEntryRules, "block"); err != nil {
+		if err := IsValidFilterRules(request.BlockFilterEntryRules, "block"); err != nil {
 			return err
 		}
 	}
 
 	if request.KeepFilterEntryRules != "" {
-		if err := isValidFilterRules(request.KeepFilterEntryRules, "keep"); err != nil {
+		if err := IsValidFilterRules(request.KeepFilterEntryRules, "keep"); err != nil {
 			return err
 		}
 	}
@@ -106,13 +106,13 @@ func ValidateFeedModification(store *storage.Storage, userID, feedID int64, requ
 	}
 
 	if request.BlockFilterEntryRules != nil && *request.BlockFilterEntryRules != "" {
-		if err := isValidFilterRules(*request.BlockFilterEntryRules, "block"); err != nil {
+		if err := IsValidFilterRules(*request.BlockFilterEntryRules, "block"); err != nil {
 			return err
 		}
 	}
 
 	if request.KeepFilterEntryRules != nil && *request.KeepFilterEntryRules != "" {
-		if err := isValidFilterRules(*request.KeepFilterEntryRules, "keep"); err != nil {
+		if err := IsValidFilterRules(*request.KeepFilterEntryRules, "keep"); err != nil {
 			return err
 		}
 	}

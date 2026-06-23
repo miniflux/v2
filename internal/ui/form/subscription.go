@@ -61,6 +61,18 @@ func (s *SubscriptionForm) Validate() *locale.LocalizedError {
 		return locale.NewLocalizedError("error.invalid_feed_proxy_url")
 	}
 
+	if s.BlockFilterEntryRules != "" {
+		if err := validator.IsValidFilterRules(s.BlockFilterEntryRules, "block"); err != nil {
+			return err
+		}
+	}
+
+	if s.KeepFilterEntryRules != "" {
+		if err := validator.IsValidFilterRules(s.KeepFilterEntryRules, "keep"); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

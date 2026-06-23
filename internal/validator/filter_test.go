@@ -46,7 +46,7 @@ func TestIsValidFilterRules(t *testing.T) {
 	for _, tt := range tests {
 		tc := tt
 		t.Run(tc.name, func(t *testing.T) {
-			err := isValidFilterRules(tc.rules, "block")
+			err := IsValidFilterRules(tc.rules, "block")
 			if (err != nil) != tc.wantErr {
 				t.Fatalf("expected error=%v, got %v", tc.wantErr, err)
 			}
