@@ -358,7 +358,7 @@ func TestIfNoneMatch(t *testing.T) {
 func TestBuildResponseWithBrotliCompression(t *testing.T) {
 	body := strings.Repeat("a", compressionThreshold+1)
 	r, err := http.NewRequest("GET", "/", nil)
-	r.Header.Set("Accept-Encoding", "gzip, deflate, br")
+	r.Header.Set("Accept-Encoding", "br, gzip, deflate")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -456,7 +456,7 @@ func TestBuildResponseWithCompressionDisabled(t *testing.T) {
 		t.Fatalf(`Unexpected header value, got %q instead of %q`, actual, expected)
 	}
 
-	expectedVary := ""
+	expectedVary := "Accept-Encoding"
 	actualVary := resp.Header.Get("Vary")
 	if actualVary != expectedVary {
 		t.Fatalf(`Unexpected vary header value, got %q instead of %q`, actualVary, expectedVary)
@@ -486,7 +486,7 @@ func TestBuildResponseWithDeflateCompressionAndSmallPayload(t *testing.T) {
 		t.Fatalf(`Unexpected header value, got %q instead of %q`, actual, expected)
 	}
 
-	expectedVary := ""
+	expectedVary := "Accept-Encoding"
 	actualVary := resp.Header.Get("Vary")
 	if actualVary != expectedVary {
 		t.Fatalf(`Unexpected vary header value, got %q instead of %q`, actualVary, expectedVary)

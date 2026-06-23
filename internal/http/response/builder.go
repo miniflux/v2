@@ -4,6 +4,7 @@
 package response // import "miniflux.app/v2/internal/http/response"
 
 import (
+	"bytes"
 	"compress/flate"
 	"compress/gzip"
 	"fmt"
@@ -27,7 +28,7 @@ type Builder struct {
 	statusCode        int
 	headers           http.Header
 	enableCompression bool
-	body              any
+	body              io.Reader
 }
 
 // NewBuilder creates a new response builder.
@@ -49,13 +50,13 @@ func (b *Builder) WithHeader(key, value string) *Builder {
 
 // WithBodyAsBytes uses the given bytes to build the response.
 func (b *Builder) WithBodyAsBytes(body []byte) *Builder {
-	b.body = body
+	b.body = bytes.NewReader(body)
 	return b
 }
 
 // WithBodyAsString uses the given string to build the response.
 func (b *Builder) WithBodyAsString(body string) *Builder {
-	b.body = body
+	b.body = strings.NewReader(body)
 	return b
 }
 
@@ -101,6 +102,22 @@ func (b *Builder) WithCaching(etag string, duration time.Duration, callback func
 	}
 }
 
+type nopWriteCloser struct {
+	io.Writer
+}
+
+func (nopWriteCloser) Close() error { return nil }
+
+type nopWriteCloserReaderFrom struct {
+	io.Writer
+}
+
+func (nopWriteCloserReaderFrom) Close() error { return nil }
+
+func (c nopWriteCloserReaderFrom) ReadFrom(r io.Reader) (n int64, err error) {
+	return c.Writer.(io.ReaderFrom).ReadFrom(r)
+}
+
 // Write generates the HTTP response.
 func (b *Builder) Write() {
 	if b.body == nil {
@@ -108,19 +125,53 @@ func (b *Builder) Write() {
 		return
 	}
 
-	switch v := b.body.(type) {
-	case []byte:
-		b.compress(v)
-	case string:
-		b.compress([]byte(v))
-	case io.Reader:
-		// Compression not implemented in this case
-		b.writeHeaders()
-		_, err := io.Copy(b.w, v)
-		if err != nil {
-			slog.Error("Unable to write response body", slog.Any("error", err))
+	encoding := b.acceptEncoding()
+
+	var wc io.WriteCloser
+
+	switch encoding {
+	case encodingBrotli:
+		wc = brotli.NewWriterV2(b.w, brotli.BestSpeed)
+	case encodingGzip:
+		wc, _ = gzip.NewWriterLevel(b.w, gzip.BestSpeed)
+	case encodingDeflate:
+		wc, _ = flate.NewWriter(b.w, flate.BestSpeed)
+	case "":
+		// [Builder.acceptEncoding] returns "" as per [HTTP Semantics]:
+		// 	As long as the identity;q=0 or *;q=0 directives do not explicitly forbid
+		// 	the identity value that means no encoding, the server must never return
+		// 	a 406 Not Acceptable error.
+		//
+		// [HTTP Semantics]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Accept-Encoding.
+		HTMLNotAcceptable(b.w, b.r)
+		return
+	default:
+		// Fallback writer with no compression.
+		encoding = encodingIdentity
+
+		// Wraps [io.Writer] to make it implement [io.WriteCloser].
+		//
+		// That is straight-up copy from [io.NopCloser] for [io.Reader]
+		// as [io] doesn't have an alternative for [io.Writer].
+		wc = nopWriteCloser{b.w}
+		if _, ok := b.w.(io.ReaderFrom); ok {
+			wc = nopWriteCloserReaderFrom{b.w}
 		}
 	}
+
+	if encoding != encodingIdentity {
+		b.headers.Set("Content-Encoding", encoding)
+	}
+
+	b.headers.Set("Vary", "Accept-Encoding")
+	b.writeHeaders()
+
+	_, err := io.Copy(wc, b.body)
+	if err != nil {
+		slog.Error("Unable to write response body", "error", err)
+	}
+
+	wc.Close()
 }
 
 func (b *Builder) writeHeaders() {
@@ -133,40 +184,29 @@ func (b *Builder) writeHeaders() {
 	b.w.WriteHeader(b.statusCode)
 }
 
-func (b *Builder) compress(data []byte) {
-	if b.enableCompression && len(data) > compressionThreshold {
-		b.headers.Set("Vary", "Accept-Encoding")
-		acceptEncoding := b.r.Header.Get("Accept-Encoding")
-		switch {
-		case strings.Contains(acceptEncoding, "br"):
-			b.headers.Set("Content-Encoding", "br")
-			b.writeHeaders()
+const (
+	encodingBrotli   = "br"
+	encodingGzip     = "gzip"
+	encodingDeflate  = "deflate"
+	encodingIdentity = "identity"
+)
 
-			brotliWriter := brotli.NewWriterV2(b.w, brotli.DefaultCompression)
-			brotliWriter.Write(data)
-			brotliWriter.Close()
-			return
-		case strings.Contains(acceptEncoding, "gzip"):
-			b.headers.Set("Content-Encoding", "gzip")
-			b.writeHeaders()
+var acceptEncoding = AcceptEncoding(encodingBrotli, encodingGzip, encodingDeflate)
 
-			gzipWriter := gzip.NewWriter(b.w)
-			gzipWriter.Write(data)
-			gzipWriter.Close()
-			return
-		case strings.Contains(acceptEncoding, "deflate"):
-			b.headers.Set("Content-Encoding", "deflate")
-			b.writeHeaders()
-
-			flateWriter, _ := flate.NewWriter(b.w, -1)
-			flateWriter.Write(data)
-			flateWriter.Close()
-			return
-		}
+func (b *Builder) acceptEncoding() string {
+	type sizer interface {
+		Size() int64
 	}
 
-	b.writeHeaders()
-	b.w.Write(data)
+	if !b.enableCompression {
+		return encodingIdentity
+	}
+
+	if body, ok := b.body.(sizer); ok && body.Size() <= compressionThreshold {
+		return encodingIdentity
+	}
+
+	return acceptEncoding.Parse(b.r.Header.Get("Accept-Encoding"))
 }
 
 func normalizeETag(etag string) string {
