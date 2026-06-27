@@ -14,7 +14,6 @@ type User struct {
 	ID                              int64      `json:"id"`
 	Username                        string     `json:"username"`
 	Password                        string     `json:"-"`
-	IsAdmin                         bool       `json:"is_admin"`
 	Theme                           string     `json:"theme"`
 	Language                        string     `json:"language"`
 	Timezone                        string     `json:"timezone"`
@@ -26,9 +25,6 @@ type User struct {
 	GoogleID                        string     `json:"google_id"`
 	OpenIDConnectID                 string     `json:"openid_connect_id"`
 	EntriesPerPage                  int        `json:"entries_per_page"`
-	KeyboardShortcuts               bool       `json:"keyboard_shortcuts"`
-	ShowReadingTime                 bool       `json:"show_reading_time"`
-	EntrySwipe                      bool       `json:"entry_swipe"`
 	GestureNav                      string     `json:"gesture_nav"`
 	LastLoginAt                     *time.Time `json:"last_login_at"`
 	DisplayMode                     string     `json:"display_mode"`
@@ -36,13 +32,17 @@ type User struct {
 	CJKReadingSpeed                 int        `json:"cjk_reading_speed"`
 	DefaultHomePage                 string     `json:"default_home_page"`
 	CategoriesSortingOrder          string     `json:"categories_sorting_order"`
-	MarkReadOnView                  bool       `json:"mark_read_on_view"`
-	MarkReadOnMediaPlayerCompletion bool       `json:"mark_read_on_media_player_completion"`
 	MediaPlaybackRate               float64    `json:"media_playback_rate"`
 	BlockFilterEntryRules           string     `json:"block_filter_entry_rules"`
 	KeepFilterEntryRules            string     `json:"keep_filter_entry_rules"`
+	MarkReadOnView                  bool       `json:"mark_read_on_view"`
+	MarkReadOnMediaPlayerCompletion bool       `json:"mark_read_on_media_player_completion"`
 	AlwaysOpenExternalLinks         bool       `json:"always_open_external_links"`
 	OpenExternalLinksInNewTab       bool       `json:"open_external_links_in_new_tab"`
+	KeyboardShortcuts               bool       `json:"keyboard_shortcuts"`
+	ShowReadingTime                 bool       `json:"show_reading_time"`
+	EntrySwipe                      bool       `json:"entry_swipe"`
+	IsAdmin                         bool       `json:"is_admin"`
 }
 
 // UserCreationRequest represents the request to create a user.
