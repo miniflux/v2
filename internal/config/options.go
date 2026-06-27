@@ -36,17 +36,17 @@ const (
 
 type configValue struct {
 	parsedStringValue string
-	parsedBoolValue   bool
 	parsedIntValue    int
 	parsedInt64Value  int64
 	parsedDuration    time.Duration
 	parsedStringList  []string
 	parsedURLValue    *url.URL
 	parsedBytesValue  []byte
+	parsedBoolValue   bool
 
+	secret    bool
 	rawValue  string
 	valueType configValueType
-	secret    bool
 	targetKey string
 
 	validator func(string) error
