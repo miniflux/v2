@@ -6,6 +6,8 @@ package storage // import "miniflux.app/v2/internal/storage"
 import (
 	"database/sql"
 	"fmt"
+	"maps"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -258,12 +260,14 @@ func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 		return nil, nil
 	}
 
-	entries[0].Enclosures, err = e.store.EnclosuresByEntryID(entries[0].ID)
+	entry := entries[0]
+
+	entry.Enclosures, err = e.store.EnclosuresByEntryID(entry.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	return entries[0], nil
+	return &entry, nil
 }
 
 // GetEntries returns a list of entries that match the condition.
@@ -349,8 +353,7 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 
 	size := max(e.limit, 0)
 	entries := make(model.Entries, 0, size)
-	entryMap := make(map[int64]*model.Entry, size)
-	entryIDs := make([]int64, 0, size)
+	entryMap := make(map[int64]int, size)
 	var totalCount int
 
 	for rows.Next() {
@@ -428,19 +431,20 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 		entry.Feed.Category.UserID = entry.UserID
 
 		entries = append(entries, entry)
-		entryMap[entry.ID] = entry
-		entryIDs = append(entryIDs, entry.ID)
+		entryMap[entry.ID] = len(entries) - 1
 	}
 
-	if e.fetchEnclosures && len(entryIDs) > 0 {
+	if e.fetchEnclosures && len(entries) > 0 {
+		entryIDs := slices.Collect(maps.Keys(entryMap))
+
 		enclosures, err := e.store.EnclosuresByEntryIDs(entryIDs)
 		if err != nil {
 			return nil, 0, fmt.Errorf("store: unable to fetch enclosures: %w", err)
 		}
 
 		for entryID, entryEnclosures := range enclosures {
-			if entry, exists := entryMap[entryID]; exists {
-				entry.Enclosures = entryEnclosures
+			if idx, exists := entryMap[entryID]; exists {
+				entries[idx].Enclosures = entryEnclosures
 			}
 		}
 	}

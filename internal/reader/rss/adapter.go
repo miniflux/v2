@@ -74,6 +74,7 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 	// non-conformant feeds that reuse the same <guid> for every entry.
 	seenGUIDs := make(map[string]int)
 
+	feed.Entries = make(model.Entries, 0, len(r.rss.Channel.Items))
 	for _, item := range r.rss.Channel.Items {
 		entry := model.NewEntry()
 		entry.Date = findEntryDate(&item)
@@ -297,14 +298,11 @@ func findEntryTags(rssItem *rssItem) []string {
 }
 
 func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
-	mediaThumbnails := rssItem.AllMediaThumbnails()
-	mediaContents := rssItem.AllMediaContents()
-	mediaPeerLinks := rssItem.AllMediaPeerLinks()
-	capacity := len(mediaThumbnails) + len(rssItem.Enclosures) + len(mediaContents) + len(mediaPeerLinks)
-	enclosures := make(model.EnclosureList, 0, capacity)
-	duplicates := make(map[string]bool, capacity)
+	duplicates := make(map[string]bool)
 
-	for _, mediaThumbnail := range mediaThumbnails {
+	var enclosures model.EnclosureList
+
+	for mediaThumbnail := range rssItem.AllMediaThumbnails() {
 		mediaURL := strings.TrimSpace(mediaThumbnail.URL)
 		if mediaURL == "" {
 			continue
@@ -326,7 +324,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 
 		duplicates[mediaURL] = true
 
-		enclosures = append(enclosures, &model.Enclosure{
+		enclosures = append(enclosures, model.Enclosure{
 			URL:      mediaURL,
 			MimeType: mediaThumbnail.MimeType(),
 			Size:     mediaThumbnail.Size(),
@@ -358,14 +356,14 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 
 		duplicates[enclosureURL] = true
 
-		enclosures = append(enclosures, &model.Enclosure{
+		enclosures = append(enclosures, model.Enclosure{
 			URL:      enclosureURL,
 			MimeType: enclosure.Type,
 			Size:     enclosure.Size(),
 		})
 	}
 
-	for _, mediaContent := range mediaContents {
+	for mediaContent := range rssItem.AllMediaContents() {
 		mediaURL := strings.TrimSpace(mediaContent.URL)
 		if mediaURL == "" {
 			continue
@@ -387,14 +385,14 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 
 		duplicates[mediaURL] = true
 
-		enclosures = append(enclosures, &model.Enclosure{
+		enclosures = append(enclosures, model.Enclosure{
 			URL:      mediaURL,
 			MimeType: mediaContent.MimeType(),
 			Size:     mediaContent.Size(),
 		})
 	}
 
-	for _, mediaPeerLink := range mediaPeerLinks {
+	for mediaPeerLink := range rssItem.AllMediaPeerLinks() {
 		mediaURL := strings.TrimSpace(mediaPeerLink.URL)
 		if mediaURL == "" {
 			continue
@@ -416,7 +414,7 @@ func findEntryEnclosures(rssItem *rssItem, siteURL string) model.EnclosureList {
 
 		duplicates[mediaURL] = true
 
-		enclosures = append(enclosures, &model.Enclosure{
+		enclosures = append(enclosures, model.Enclosure{
 			URL:      mediaURL,
 			MimeType: mediaPeerLink.MimeType(),
 			Size:     mediaPeerLink.Size(),

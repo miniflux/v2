@@ -5,6 +5,7 @@ package atom // import "miniflux.app/v2/internal/reader/atom"
 
 import (
 	"log/slog"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -68,6 +69,9 @@ func (a *atom10Adapter) buildFeed(baseURL string) *model.Feed {
 }
 
 func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
+	enclosures := make(model.EnclosureList, 0)
+	uniqueEnclosuresMap := make(map[string]bool)
+
 	entries := make(model.Entries, 0, len(a.atomFeed.Entries))
 
 	for _, atomEntry := range a.atomFeed.Entries {
@@ -165,9 +169,10 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 		}
 
 		// Populate the entry enclosures.
-		uniqueEnclosuresMap := make(map[string]bool)
+		clear(uniqueEnclosuresMap)
+		enclosures = enclosures[:0]
 
-		for _, mediaThumbnail := range atomEntry.AllMediaThumbnails() {
+		for mediaThumbnail := range atomEntry.AllMediaThumbnails() {
 			mediaURL := strings.TrimSpace(mediaThumbnail.URL)
 			if mediaURL == "" {
 				continue
@@ -189,7 +194,7 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 
 			uniqueEnclosuresMap[mediaAbsoluteURL] = true
 
-			entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+			enclosures = append(enclosures, model.Enclosure{
 				URL:      mediaAbsoluteURL,
 				MimeType: mediaThumbnail.MimeType(),
 				Size:     mediaThumbnail.Size(),
@@ -214,14 +219,14 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 			uniqueEnclosuresMap[absoluteEnclosureURL] = true
 
 			length, _ := strconv.ParseInt(link.Length, 10, 0)
-			entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+			enclosures = append(enclosures, model.Enclosure{
 				URL:      absoluteEnclosureURL,
 				MimeType: link.Type,
 				Size:     length,
 			})
 		}
 
-		for _, mediaContent := range atomEntry.AllMediaContents() {
+		for mediaContent := range atomEntry.AllMediaContents() {
 			mediaURL := strings.TrimSpace(mediaContent.URL)
 			if mediaURL == "" {
 				continue
@@ -243,14 +248,14 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 
 			uniqueEnclosuresMap[mediaAbsoluteURL] = true
 
-			entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+			enclosures = append(enclosures, model.Enclosure{
 				URL:      mediaAbsoluteURL,
 				MimeType: mediaContent.MimeType(),
 				Size:     mediaContent.Size(),
 			})
 		}
 
-		for _, mediaPeerLink := range atomEntry.AllMediaPeerLinks() {
+		for mediaPeerLink := range atomEntry.AllMediaPeerLinks() {
 			mediaURL := strings.TrimSpace(mediaPeerLink.URL)
 			if mediaURL == "" {
 				continue
@@ -272,13 +277,14 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 
 			uniqueEnclosuresMap[mediaAbsoluteURL] = true
 
-			entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+			enclosures = append(enclosures, model.Enclosure{
 				URL:      mediaAbsoluteURL,
 				MimeType: mediaPeerLink.MimeType(),
 				Size:     mediaPeerLink.Size(),
 			})
 		}
 
+		entry.Enclosures = slices.Clone(enclosures)
 		entries = append(entries, entry)
 	}
 
