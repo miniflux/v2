@@ -1120,12 +1120,19 @@ article.category-has-unread {
     height: auto;
 }
 
+.entry-content p > img:only-child {
+    display: block;
+    margin: auto;
+}
+
 .entry-content figure {
     margin-top: 15px;
     margin-bottom: 15px;
 }
 
 .entry-content figure img {
+    display: block;
+    margin: auto;
     border: 1px solid #000;
 }
 
