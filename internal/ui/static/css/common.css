@@ -1106,6 +1106,12 @@ article.category-has-unread {
     margin-bottom: 10px;
 }
 
+.entry-content h1,
+.entry-content h2,
+.entry-content h3 {
+    line-height: 1.2;
+}
+
 .entry-content iframe,
 .entry-content video,
 .entry-content img {
