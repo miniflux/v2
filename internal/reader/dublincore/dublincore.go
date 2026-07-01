@@ -4,7 +4,8 @@
 package dublincore // import "miniflux.app/v2/internal/reader/dublincore"
 
 type DublinCoreChannelElement struct {
-	DublinCoreCreator string `xml:"http://purl.org/dc/elements/1.1/ creator"`
+	DublinCoreCreator  string `xml:"http://purl.org/dc/elements/1.1/ creator"`
+	DublinCoreLanguage string `xml:"http://purl.org/dc/elements/1.1/ language"`
 }
 
 type DublinCoreItemElement struct {

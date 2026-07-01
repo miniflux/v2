@@ -26,6 +26,7 @@ func (r *rdfAdapter) buildFeed(baseURL string) *model.Feed {
 		FeedURL:     strings.TrimSpace(baseURL),
 		SiteURL:     strings.TrimSpace(r.rdf.Channel.Link),
 		Description: strings.TrimSpace(r.rdf.Channel.Description),
+		Language:    model.NormalizeLanguage(r.rdf.Channel.DublinCoreLanguage),
 	}
 
 	if feed.Title == "" {
@@ -99,6 +100,8 @@ func (r *rdfAdapter) buildFeed(baseURL string) *model.Feed {
 		case r.rdf.Channel.DublinCoreCreator != "":
 			entry.Author = sanitizer.StripTags(r.rdf.Channel.DublinCoreCreator)
 		}
+
+		entry.Language = model.NormalizeLanguage(item.DublinCoreLanguage)
 
 		feed.Entries = append(feed.Entries, entry)
 	}

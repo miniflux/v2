@@ -848,3 +848,99 @@ func TestParseFeedWithInvalidCharacterEntity(t *testing.T) {
 		t.Errorf(`Incorrect URL, got: %q`, feed.SiteURL)
 	}
 }
+
+func TestParseFeedWithChannelLanguage(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://purl.org/rss/1.0/">
+	  <channel>
+			<title>Example Feed</title>
+			<link>http://example.org</link>
+			<dc:language>EN-us</dc:language>
+	  </channel>
+	  <item>
+			<title>Item</title>
+			<link>http://example.org/item</link>
+	  </item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Language != "en-us" {
+		t.Errorf(`Incorrect feed language, got: %q`, feed.Language)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf(`Unexpected entry count, got: %d`, len(feed.Entries))
+	}
+
+	if feed.Entries[0].Language != "" {
+		t.Errorf(`Expected empty entry language, got: %q`, feed.Entries[0].Language)
+	}
+}
+
+func TestParseFeedWithItemLanguage(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://purl.org/rss/1.0/">
+	  <channel>
+			<title>Example Feed</title>
+			<link>http://example.org</link>
+			<dc:language>en</dc:language>
+	  </channel>
+	  <item>
+			<title>Item</title>
+			<link>http://example.org/item</link>
+			<dc:language>fr_CA</dc:language>
+	  </item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Language != "en" {
+		t.Errorf(`Incorrect feed language, got: %q`, feed.Language)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf(`Unexpected entry count, got: %d`, len(feed.Entries))
+	}
+
+	if feed.Entries[0].Language != "fr-ca" {
+		t.Errorf(`Incorrect entry language, got: %q`, feed.Entries[0].Language)
+	}
+}
+
+func TestParseFeedWithoutLanguage(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+	  <channel>
+			<title>Example Feed</title>
+			<link>http://example.org</link>
+	  </channel>
+	  <item>
+			<title>Item</title>
+			<link>http://example.org/item</link>
+	  </item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Language != "" {
+		t.Errorf(`Expected empty feed language, got: %q`, feed.Language)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf(`Unexpected entry count, got: %d`, len(feed.Entries))
+	}
+
+	if feed.Entries[0].Language != "" {
+		t.Errorf(`Expected empty entry language, got: %q`, feed.Entries[0].Language)
+	}
+}
