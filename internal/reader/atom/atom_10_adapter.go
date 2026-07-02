@@ -111,7 +111,13 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 			}
 		}
 
+		// Populate the entry language. xml:lang applies to the whole
+		// subtree it is declared on, so an entry without its own
+		// xml:lang inherits the feed-level value.
 		entry.Language = model.NormalizeLanguage(atomEntry.Language)
+		if entry.Language == "" {
+			entry.Language = model.NormalizeLanguage(a.atomFeed.Language)
+		}
 
 		// Populate the entry author.
 		authors := atomEntry.Authors.personNames()
