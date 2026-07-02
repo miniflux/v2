@@ -1961,3 +1961,55 @@ func TestParseEntryWithoutLanguage(t *testing.T) {
 		t.Errorf("Expected empty entry language, got: %q", feed.Entries[0].Language)
 	}
 }
+
+func TestParseFeedWithForeignLangAttribute(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom" xmlns:foo="http://example.org/ns" xml:lang="fr-CA" foo:lang="zz">
+		<title>Example Feed</title>
+		<link href="http://example.org/"/>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+		<entry xml:lang="fr-CA" foo:lang="zz">
+			<title>Bonjour</title>
+			<link href="http://example.org/2003/12/13/bonjour"/>
+			<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+			<updated>2003-12-13T18:30:02Z</updated>
+		</entry>
+	</feed>`
+
+	feed, err := Parse("http://example.org/feed.xml", bytes.NewReader([]byte(data)), "10")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Language != "fr-ca" {
+		t.Errorf("Incorrect language, got: %q", feed.Language)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf("Expected 1 entry, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].Language != "fr-ca" {
+		t.Errorf("Incorrect entry language, got: %q", feed.Entries[0].Language)
+	}
+}
+
+func TestParseFeedWithUnqualifiedLangAttribute(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom" lang="de">
+		<title>Example Feed</title>
+		<link href="http://example.org/"/>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+	</feed>`
+
+	feed, err := Parse("http://example.org/feed.xml", bytes.NewReader([]byte(data)), "10")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Language != "" {
+		t.Errorf("Expected empty language for unqualified lang attribute, got: %q", feed.Language)
+	}
+}
