@@ -13,6 +13,7 @@ import (
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
+	"miniflux.app/v2/internal/reader/language"
 	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/urllib"
 )
@@ -31,7 +32,7 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		FeedURL:     strings.TrimSpace(j.jsonFeed.FeedURL),
 		SiteURL:     strings.TrimSpace(j.jsonFeed.HomePageURL),
 		Description: strings.TrimSpace(j.jsonFeed.Description),
-		Language:    model.NormalizeLanguage(j.jsonFeed.Language),
+		Language:    language.Normalize(j.jsonFeed.Language),
 	}
 
 	if feed.FeedURL == "" {
@@ -70,7 +71,7 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 
 	for _, item := range j.jsonFeed.Items {
 		entry := model.NewEntry()
-		entry.Language = model.NormalizeLanguage(item.Language)
+		entry.Language = language.Normalize(item.Language)
 
 		for _, itemURL := range []string{item.URL, item.ExternalURL} {
 			if itemURL = strings.TrimSpace(itemURL); itemURL == "" {

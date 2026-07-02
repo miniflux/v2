@@ -12,6 +12,7 @@ import (
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
+	"miniflux.app/v2/internal/reader/language"
 	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/urllib"
 )
@@ -51,7 +52,7 @@ func (a *atom10Adapter) buildFeed(baseURL string) *model.Feed {
 	// Populate the feed description.
 	feed.Description = a.atomFeed.Subtitle.body()
 
-	feed.Language = model.NormalizeLanguage(a.atomFeed.Language)
+	feed.Language = language.Normalize(a.atomFeed.Language)
 
 	// Populate the feed icon.
 	for _, value := range []string{a.atomFeed.Icon, a.atomFeed.Logo} {
@@ -114,9 +115,9 @@ func (a *atom10Adapter) populateEntries(siteURL string) model.Entries {
 		// Populate the entry language. xml:lang applies to the whole
 		// subtree it is declared on, so an entry without its own
 		// xml:lang inherits the feed-level value.
-		entry.Language = model.NormalizeLanguage(atomEntry.Language)
+		entry.Language = language.Normalize(atomEntry.Language)
 		if entry.Language == "" {
-			entry.Language = model.NormalizeLanguage(a.atomFeed.Language)
+			entry.Language = language.Normalize(a.atomFeed.Language)
 		}
 
 		// Populate the entry author.
