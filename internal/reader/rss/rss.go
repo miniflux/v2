@@ -38,6 +38,10 @@ type rssChannel struct {
 	// You may also use values defined by the W3C: https://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes.
 	Language string `xml:"rss language"`
 
+	// Hybrid feeds declare the channel language with <dc:language>
+	// instead of <language>.
+	dublincore.DublinCoreChannelElement
+
 	// Copyright is a string indicating the copyright.
 	Copyright string `xml:"rss copyRight"`
 

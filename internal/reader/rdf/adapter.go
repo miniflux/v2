@@ -102,7 +102,12 @@ func (r *rdfAdapter) buildFeed(baseURL string) *model.Feed {
 			entry.Author = sanitizer.StripTags(r.rdf.Channel.DublinCoreCreator)
 		}
 
+		// Populate the entry language, falling back to the channel
+		// language: items are part of the channel's content.
 		entry.Language = language.Normalize(item.DublinCoreLanguage)
+		if entry.Language == "" {
+			entry.Language = feed.Language
+		}
 
 		feed.Entries = append(feed.Entries, entry)
 	}

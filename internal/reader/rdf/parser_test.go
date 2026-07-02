@@ -876,8 +876,8 @@ func TestParseFeedWithChannelLanguage(t *testing.T) {
 		t.Fatalf(`Unexpected entry count, got: %d`, len(feed.Entries))
 	}
 
-	if feed.Entries[0].Language != "" {
-		t.Errorf(`Expected empty entry language, got: %q`, feed.Entries[0].Language)
+	if feed.Entries[0].Language != "en-us" {
+		t.Errorf(`Expected entry to inherit channel language, got: %q`, feed.Entries[0].Language)
 	}
 }
 

@@ -35,6 +35,12 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 		Language:    language.Normalize(r.rss.Channel.Language),
 	}
 
+	// Hybrid feeds declare the channel language with <dc:language>
+	// instead of <language>.
+	if feed.Language == "" {
+		feed.Language = language.Normalize(r.rss.Channel.DublinCoreLanguage)
+	}
+
 	// Ensure the Site URL is absolute.
 	if absoluteSiteURL, err := urllib.ResolveToAbsoluteURL(baseURL, feed.SiteURL); err == nil {
 		feed.SiteURL = absoluteSiteURL
@@ -115,7 +121,12 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 			entry.Author = findFeedAuthor(&r.rss.Channel)
 		}
 
+		// Populate the entry language, falling back to the channel
+		// language: items are part of the channel's content.
 		entry.Language = language.Normalize(item.DublinCoreLanguage)
+		if entry.Language == "" {
+			entry.Language = feed.Language
+		}
 
 		// Generate the entry hash.
 		//
