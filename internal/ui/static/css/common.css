@@ -26,6 +26,7 @@ hr {
 
 h1, h2, h3 {
     color: var(--title-color);
+    line-height: 1.2;
 }
 
 main {
