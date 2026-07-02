@@ -25,6 +25,7 @@
     "alert.no_search_result": "Tidak ada hasil untuk pencarian ini.",
     "alert.no_shared_entry": "Tidak ada entri yang dibagikan.",
     "alert.no_tag_entry": "Tidak ada entri yang cocok dengan tag ini.",
+    "alert.no_tag": "Tidak ada tanda.",
     "alert.no_unread_entry": "Belum ada artikel yang dibaca.",
     "alert.no_user": "Anda adalah satu-satunya pengguna.",
     "alert.prefs_saved": "Preferensi disimpan!",
@@ -457,6 +458,7 @@
     "page.categories.feeds": "Langganan",
     "page.categories.no_feed": "Tidak ada umpan.",
     "page.categories.title": "Kategori",
+    "page.tags.title": "Tanda",
     "page.categories_count": [
         "%d kategori"
     ],

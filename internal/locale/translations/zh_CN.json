@@ -25,6 +25,7 @@
     "alert.no_search_result": "此搜索没有结果。",
     "alert.no_shared_entry": "没有已分享条目。",
     "alert.no_tag_entry": "没有匹配此标签的条目。",
+    "alert.no_tag": "没有标签。",
     "alert.no_unread_entry": "没有未读条目。",
     "alert.no_user": "您是唯一的用户。",
     "alert.prefs_saved": "偏好设置已保存！",
@@ -457,6 +458,7 @@
     "page.categories.feeds": "订阅源",
     "page.categories.no_feed": "无订阅源。",
     "page.categories.title": "分类",
+    "page.tags.title": "标签",
     "page.categories_count": [
         "%d 个分类"
     ],

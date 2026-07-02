@@ -25,6 +25,7 @@
     "alert.no_search_result": "Es gibt kein Ergebnis für diese Suche.",
     "alert.no_shared_entry": "Es existieren derzeit keine geteilten Artikel.",
     "alert.no_tag_entry": "Es gibt keine Artikel, die diesem Tag entsprechen.",
+    "alert.no_tag": "Es gibt kein Stichwort.",
     "alert.no_unread_entry": "Es existiert kein ungelesener Artikel.",
     "alert.no_user": "Sie sind der einzige Benutzer.",
     "alert.prefs_saved": "Einstellungen gespeichert!",
@@ -461,6 +462,7 @@
     "page.categories.feeds": "Abonnements",
     "page.categories.no_feed": "Kein Abonnement.",
     "page.categories.title": "Kategorien",
+    "page.tags.title": "Stichworte",
     "page.categories_count": [
         "%d Kategorie",
         "%d Kategorien"

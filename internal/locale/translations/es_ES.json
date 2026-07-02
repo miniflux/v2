@@ -25,6 +25,7 @@
     "alert.no_search_result": "No hay resultados para esta búsqueda.",
     "alert.no_shared_entry": "No hay artículos compartidos.",
     "alert.no_tag_entry": "No hay artículos con esta etiqueta.",
+    "alert.no_tag": "No hay etiquetas.",
     "alert.no_unread_entry": "No hay artículos sin leer.",
     "alert.no_user": "Eres el único usuario.",
     "alert.prefs_saved": "¡Las preferencias se han guardado!",
@@ -461,6 +462,7 @@
     "page.categories.feeds": "Fuentes",
     "page.categories.no_feed": "Sin fuente.",
     "page.categories.title": "Categorías",
+    "page.tags.title": "Etiquetas",
     "page.categories_count": [
         "%d categoría",
         "%d categorías"

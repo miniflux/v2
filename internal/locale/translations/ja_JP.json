@@ -25,6 +25,7 @@
     "alert.no_search_result": "検索で何も見つかりませんでした。",
     "alert.no_shared_entry": "共有エントリはありません。",
     "alert.no_tag_entry": "このタグに一致するエントリーはありません。",
+    "alert.no_tag": "タグはありません。",
     "alert.no_unread_entry": "未読の記事はありません。",
     "alert.no_user": "あなたが唯一のユーザーです。",
     "alert.prefs_saved": "設定情報は保存されました!",
@@ -457,6 +458,7 @@
     "page.categories.feeds": "フィード一覧",
     "page.categories.no_feed": "フィードはありません。",
     "page.categories.title": "カテゴリ",
+    "page.tags.title": "タグ",
     "page.categories_count": [
         "%d 件のカテゴリ"
     ],

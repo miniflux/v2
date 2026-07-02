@@ -10,6 +10,7 @@ import (
 	"io"
 	"math/rand/v2"
 	"os"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -2985,6 +2986,52 @@ func TestUpdateEntryEndpoint(t *testing.T) {
 
 	if entry.Content != "New content" {
 		t.Errorf(`Invalid content, got %q`, entry.Content)
+	}
+
+	originalTitle := entry.Title
+	originalContent := entry.Content
+	tags := []string{" digested ", "digested-advertisement-false"}
+	updatedEntry, err = regularUserClient.UpdateEntry(result.Entries[0].ID, &miniflux.EntryModificationRequest{
+		Tags: &tags,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expectedTags := []string{"digested", "digested-advertisement-false"}
+	if !reflect.DeepEqual(updatedEntry.Tags, expectedTags) {
+		t.Errorf(`Invalid tags, got %v`, updatedEntry.Tags)
+	}
+	if updatedEntry.Title != originalTitle {
+		t.Errorf(`Title should not change when only tags are updated, got %q`, updatedEntry.Title)
+	}
+	if updatedEntry.Content != originalContent {
+		t.Errorf(`Content should not change when only tags are updated, got %q`, updatedEntry.Content)
+	}
+
+	entry, err = regularUserClient.Entry(result.Entries[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(entry.Tags, expectedTags) {
+		t.Errorf(`Invalid persisted tags, got %v`, entry.Tags)
+	}
+	if entry.Title != originalTitle {
+		t.Errorf(`Persisted title should not change when only tags are updated, got %q`, entry.Title)
+	}
+	if entry.Content != originalContent {
+		t.Errorf(`Persisted content should not change when only tags are updated, got %q`, entry.Content)
+	}
+
+	tags = []string{}
+	updatedEntry, err = regularUserClient.UpdateEntry(result.Entries[0].ID, &miniflux.EntryModificationRequest{
+		Tags: &tags,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(updatedEntry.Tags) != 0 {
+		t.Errorf(`Expected tags to be cleared, got %v`, updatedEntry.Tags)
 	}
 }
 

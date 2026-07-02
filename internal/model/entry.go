@@ -86,8 +86,9 @@ type EntriesStatusUpdateRequest struct {
 
 // EntryUpdateRequest represents a request to update an entry.
 type EntryUpdateRequest struct {
-	Title   *string `json:"title"`
-	Content *string `json:"content"`
+	Title   *string   `json:"title"`
+	Content *string   `json:"content"`
+	Tags    *[]string `json:"tags"`
 }
 
 func (e *EntryUpdateRequest) Patch(entry *Entry) {
@@ -97,5 +98,9 @@ func (e *EntryUpdateRequest) Patch(entry *Entry) {
 
 	if e.Content != nil && *e.Content != "" {
 		entry.Content = *e.Content
+	}
+
+	if e.Tags != nil {
+		entry.Tags = append([]string(nil), (*e.Tags)...)
 	}
 }

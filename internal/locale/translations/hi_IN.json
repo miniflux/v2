@@ -25,6 +25,7 @@
     "alert.no_search_result": "इस खोज के लिए कोई परिणाम नहीं हैं।",
     "alert.no_shared_entry": "कोई साझा प्रविष्टि नहीं है",
     "alert.no_tag_entry": "इस टैग से मेल खाती कोई प्रविष्टियाँ नहीं हैं।",
+    "alert.no_tag": "कोई टैग नहीं है।",
     "alert.no_unread_entry": "कोई अपठित वस्तुत नहीं है।",
     "alert.no_user": "आप एकमात्र उपयोगकर्ता हैं।",
     "alert.prefs_saved": "प्राथमिकताएं सहेजी गईं!",
@@ -461,6 +462,7 @@
     "page.categories.feeds": "सदस्यता ले",
     "page.categories.no_feed": "कोई फ़ीड नहीं है।",
     "page.categories.title": "श्रेणियाँ",
+    "page.tags.title": "टैग",
     "page.categories_count": [
         "%d श्रेणी",
         "%d श्रेणियाँ"

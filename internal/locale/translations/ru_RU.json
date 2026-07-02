@@ -25,6 +25,7 @@
     "alert.no_search_result": "Нет результатов для данного поискового запроса.",
     "alert.no_shared_entry": "Общедоступные статьи отсутствуют.",
     "alert.no_tag_entry": "Нет записей, соответствующих этому тегу.",
+    "alert.no_tag": "Нет тегов.",
     "alert.no_unread_entry": "Нет непрочитанных статей.",
     "alert.no_user": "Вы единственный пользователь.",
     "alert.prefs_saved": "Предпочтения сохранены!",
@@ -465,6 +466,7 @@
     "page.categories.feeds": "Подписки",
     "page.categories.no_feed": "Нет подписок.",
     "page.categories.title": "Категории",
+    "page.tags.title": "Теги",
     "page.categories_count": [
         "%d категория",
         "%d категории",

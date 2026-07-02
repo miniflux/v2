@@ -25,6 +25,7 @@
     "alert.no_search_result": "There are no results for this search.",
     "alert.no_shared_entry": "There is no shared entry.",
     "alert.no_tag_entry": "There are no entries matching this tag.",
+    "alert.no_tag": "There is no tag.",
     "alert.no_unread_entry": "There are no unread entries.",
     "alert.no_user": "You are the only user.",
     "alert.prefs_saved": "Preferences saved!",
@@ -461,6 +462,7 @@
     "page.categories.feeds": "Feeds",
     "page.categories.no_feed": "No feed.",
     "page.categories.title": "Categories",
+    "page.tags.title": "Tags",
     "page.categories_count": [
         "%d category",
         "%d categories"

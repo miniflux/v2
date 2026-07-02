@@ -25,6 +25,7 @@
     "alert.no_search_result": "Bu arama için sonuç yok",
     "alert.no_shared_entry": "Paylaşılan bir makele yok.",
     "alert.no_tag_entry": "Bu etiketle eşleşen hiçbir giriş yok.",
+    "alert.no_tag": "Etiket yok.",
     "alert.no_unread_entry": "Okunmamış makele yok",
     "alert.no_user": "Tek kullanıcı sizsiniz",
     "alert.prefs_saved": "Tercihler kaydedildi!",
@@ -461,6 +462,7 @@
     "page.categories.feeds": "Beslemeler",
     "page.categories.no_feed": "Besleme yok.",
     "page.categories.title": "Kategoriler",
+    "page.tags.title": "Etiketler",
     "page.categories_count": [
         "%d kategori",
         "%d kategori"

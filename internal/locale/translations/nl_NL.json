@@ -25,6 +25,7 @@
     "alert.no_search_result": "Er is geen resultaat voor deze zoekopdracht.",
     "alert.no_shared_entry": "Er is geen gedeeld artikel.",
     "alert.no_tag_entry": "Er zijn geen artikelen die overeenkomen met deze tag.",
+    "alert.no_tag": "Er zijn geen labels.",
     "alert.no_unread_entry": "Er zijn geen ongelezen artikelen.",
     "alert.no_user": "Je bent de enige gebruiker.",
     "alert.prefs_saved": "Instellingen opgeslagen!",
@@ -461,6 +462,7 @@
     "page.categories.feeds": "Feeds",
     "page.categories.no_feed": "Geen feed.",
     "page.categories.title": "Categorieën",
+    "page.tags.title": "Labels",
     "page.categories_count": [
         "%d categorie",
         "%d categorieën"

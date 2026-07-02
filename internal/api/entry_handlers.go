@@ -324,12 +324,24 @@ func (h *handler) updateEntryHandler(w http.ResponseWriter, r *http.Request) {
 		entryUpdateRequest.Content = &sanitizedContent
 	}
 
+	hasTitleOrContentUpdate := entryUpdateRequest.Title != nil || entryUpdateRequest.Content != nil
+	hasTagsUpdate := entryUpdateRequest.Tags != nil
+
 	entryUpdateRequest.Patch(entry)
-	if user.ShowReadingTime {
+	if hasTitleOrContentUpdate && user.ShowReadingTime {
 		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
 	}
 
-	if err := h.store.UpdateEntryTitleAndContent(entry); err != nil {
+	if hasTagsUpdate {
+		if hasTitleOrContentUpdate {
+			err = h.store.UpdateEntryTitleContentAndTags(entry)
+		} else {
+			err = h.store.UpdateEntryTags(entry)
+		}
+	} else if hasTitleOrContentUpdate {
+		err = h.store.UpdateEntryTitleAndContent(entry)
+	}
+	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
 	}
