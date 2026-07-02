@@ -184,9 +184,8 @@ func (f *subscriptionFinder) findSubscriptionsFromWebPage(websiteURL string, doc
 }
 
 func (f *subscriptionFinder) findSubscriptionsFromWellKnownURLs(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
-	knownURLs := [...]struct {
-		path, format string
-	}{
+	type pair struct{ path, format string }
+	knownURLs := []pair{
 		{"atom.xml", parser.FormatAtom},
 		{"feed.atom", parser.FormatAtom},
 		{"feed.xml", parser.FormatAtom},
@@ -208,6 +207,11 @@ func (f *subscriptionFinder) findSubscriptionsFromWellKnownURLs(websiteURL strin
 	websiteURL, _ = urllib.ResolveToAbsoluteURL(websiteURL, "./")
 	if websiteURL != websiteURLRoot {
 		baseURLs = append(baseURLs, websiteURL)
+	}
+
+	// github.com has atom feeds for pretty much everything, but it's not advertised anywhere.
+	if websiteURLRoot == "github.com" || websiteURLRoot == "www.github.com" {
+		knownURLs = append([]pair{{".atom", parser.FormatAtom}}, knownURLs...)
 	}
 
 	var subscriptions Subscriptions
