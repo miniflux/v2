@@ -17,6 +17,7 @@ import (
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
+	"miniflux.app/v2/internal/reader/language"
 	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/urllib"
 )
@@ -31,7 +32,7 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 		FeedURL:     strings.TrimSpace(baseURL),
 		SiteURL:     strings.TrimSpace(r.rss.Channel.Link),
 		Description: strings.TrimSpace(r.rss.Channel.Description),
-		Language:    model.NormalizeLanguage(r.rss.Channel.Language),
+		Language:    language.Normalize(r.rss.Channel.Language),
 	}
 
 	// Ensure the Site URL is absolute.
@@ -114,7 +115,7 @@ func (r *rssAdapter) buildFeed(baseURL string) *model.Feed {
 			entry.Author = findFeedAuthor(&r.rss.Channel)
 		}
 
-		entry.Language = model.NormalizeLanguage(item.DublinCoreLanguage)
+		entry.Language = language.Normalize(item.DublinCoreLanguage)
 
 		// Generate the entry hash.
 		//
