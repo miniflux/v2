@@ -828,6 +828,12 @@ dialog {
     overflow: hidden;
 }
 
+.entry-item,
+.feed-item {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 100px;
+}
+
 .item.current-item {
     border: var(--current-item-border-width) solid var(--current-item-border-color);
     padding: 3px;
