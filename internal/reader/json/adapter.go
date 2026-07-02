@@ -71,7 +71,14 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 
 	for _, item := range j.jsonFeed.Items {
 		entry := model.NewEntry()
+
+		// Populate the entry language. Per the JSON Feed spec, an item
+		// declares a language only when it differs from the primary
+		// language of the feed.
 		entry.Language = language.Normalize(item.Language)
+		if entry.Language == "" {
+			entry.Language = feed.Language
+		}
 
 		for _, itemURL := range []string{item.URL, item.ExternalURL} {
 			if itemURL = strings.TrimSpace(itemURL); itemURL == "" {

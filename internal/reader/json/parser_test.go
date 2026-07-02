@@ -1174,7 +1174,7 @@ func TestParseItemWithLanguage(t *testing.T) {
 	}
 }
 
-func TestParseItemWithoutLanguage(t *testing.T) {
+func TestParseItemWithoutLanguageInheritsFeedLanguage(t *testing.T) {
 	data := `{
 		"version": "https://jsonfeed.org/version/1.1",
 		"title": "Example",
@@ -1199,7 +1199,7 @@ func TestParseItemWithoutLanguage(t *testing.T) {
 		t.Fatalf("Expected 1 entry, got: %d", len(feed.Entries))
 	}
 
-	if feed.Entries[0].Language != "" {
-		t.Errorf("Expected empty entry language, got: %q", feed.Entries[0].Language)
+	if feed.Entries[0].Language != "en-us" {
+		t.Errorf("Expected entry to inherit feed language, got: %q", feed.Entries[0].Language)
 	}
 }
