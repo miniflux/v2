@@ -44,6 +44,7 @@ var predefinedRules = map[string]string{
 	"royalroad.com":        	".author-note-portlet,.chapter-content",
 	"slate.fr":             	".field-items",
 	"smbc-comics.com":      	"div#cc-comicbody, div#aftercomic",
+	"steamcommunity.com":		".announcement_body",
 	"store.steampowered.com":	".EventDetailsBody",
 	"swordscomic.com":      	"img#comic-image, div#info-frame.tab-content-area",
 	"techcrunch.com":       	"div.entry-content",
