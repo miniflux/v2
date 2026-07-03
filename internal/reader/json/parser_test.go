@@ -1203,3 +1203,31 @@ func TestParseItemWithoutLanguageInheritsFeedLanguage(t *testing.T) {
 		t.Errorf("Expected entry to inherit feed language, got: %q", feed.Entries[0].Language)
 	}
 }
+
+func TestParseItemWithPlainTextContentContainingHTMLCharacters(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1.1",
+		"title": "Example",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"items": [
+			{
+				"id": "1",
+				"url": "https://example.org/1",
+				"content_text": "Use <div> literally: a & b < c"
+			}
+		]
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// content_text is plain text (JSON Feed 1.1), so it must be HTML-escaped
+	// before being stored as HTML, otherwise the sanitizer drops the markup.
+	want := "Use &lt;div&gt; literally: a &amp; b &lt; c"
+	if feed.Entries[0].Content != want {
+		t.Errorf("Incorrect entry content, got: %q, want: %q", feed.Entries[0].Content, want)
+	}
+}
