@@ -95,6 +95,14 @@
             <label for="form-discord-webhook-link">{{ t "form.integration.discord_webhook_link" }}</label>
             <input type="url" name="discord_webhook_link" id="form-discord-webhook-link" value="{{ .form.DiscordWebhookLink }}" placeholder="https://discord.com/api/webhooks/xxx/xxx" spellcheck="false">
 
+            <label for="form-discord-message-template">{{ t "form.integration.discord_message_template" }}</label>
+            <textarea name="discord_message_template" id="form-discord-message-template" rows="6" spellcheck="false" placeholder="**{title}**
+{url}">{{ .form.DiscordMessageTemplate }}</textarea>
+            <details>
+                <summary>{{ t "form.integration.discord_template_help" }}</summary>
+                <pre>{{ t "form.integration.discord_template_variables" }}</pre>
+            </details>
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>

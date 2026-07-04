@@ -137,6 +137,7 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		CuboxAPILink:                     integration.CuboxAPILink,
 		DiscordEnabled:                   integration.DiscordEnabled,
 		DiscordWebhookLink:               integration.DiscordWebhookLink,
+		DiscordMessageTemplate:           integration.DiscordMessageTemplate,
 		SlackEnabled:                     integration.SlackEnabled,
 		SlackWebhookLink:                 integration.SlackWebhookLink,
 		PushoverEnabled:                  integration.PushoverEnabled,

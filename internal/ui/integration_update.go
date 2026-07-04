@@ -11,6 +11,7 @@ import (
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
+	"miniflux.app/v2/internal/integration/discord"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/ui/form"
 )
@@ -28,6 +29,14 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 
 	integrationForm := form.NewIntegrationForm(r)
 	integrationForm.Merge(integration)
+
+	if integration.DiscordMessageTemplate != "" {
+		if !discord.ValidateTemplate(integration.DiscordMessageTemplate) {
+			sess.SetErrorMessage(printer.Print("error.discord_invalid_template"))
+			response.HTMLRedirect(w, r, h.routePath("/integrations"))
+			return
+		}
+	}
 
 	if integration.FeverUsername != "" && h.store.HasDuplicateFeverUsername(userID, integration.FeverUsername) {
 		sess.SetErrorMessage(printer.Print("error.duplicate_fever_username"))

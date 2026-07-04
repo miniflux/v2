@@ -214,6 +214,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			cubox_api_link,
 			discord_enabled,
 			discord_webhook_link,
+			discord_message_template,
 			slack_enabled,
 			slack_webhook_link,
 			pushover_enabled,
@@ -343,6 +344,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.CuboxAPILink,
 		&integration.DiscordEnabled,
 		&integration.DiscordWebhookLink,
+		&integration.DiscordMessageTemplate,
 		&integration.SlackEnabled,
 		&integration.SlackWebhookLink,
 		&integration.PushoverEnabled,
@@ -498,9 +500,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			linktaco_visibility=$118,
 			archiveorg_enabled=$119,
 			linkwarden_collection_id=$120,
-			readeck_push_enabled=$121
+			readeck_push_enabled=$121,
+			discord_message_template=$122
 		WHERE
-			user_id=$122
+			user_id=$123
 	`
 	_, err := s.db.Exec(
 		query,
@@ -625,6 +628,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.ArchiveorgEnabled,
 		integration.LinkwardenCollectionID,
 		integration.ReadeckPushEnabled,
+		integration.DiscordMessageTemplate,
 		integration.UserID,
 	)
 

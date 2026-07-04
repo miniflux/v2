@@ -634,5 +634,9 @@
     ],
     "time_elapsed.yesterday": "yesterday",
     "tooltip.keyboard_shortcuts": "Keyboard Shortcut: %s",
-    "tooltip.logged_user": "Logged in as %s"
+    "tooltip.logged_user": "Logged in as %s",
+    "form.integration.discord_message_template": "Discord Message Template",
+    "form.integration.discord_template_help": "Available Tokens",
+    "form.integration.discord_template_variables": "Use these tokens in your message. They will be replaced with actual values.\n\n  {title}       - Article title\n  {url}         - Article URL\n  {description} - Article content (plain text)\n  {author}      - Article author\n  {date}        - Publish date\n  {feed_title}  - Feed name\n  {feed_url}    - Feed site URL\n\nDiscord markdown works: **bold**, *italic*, [link text](url)\n\nLeave empty to use the default format.",
+    "error.discord_invalid_template": "Invalid Discord template syntax!"
 }

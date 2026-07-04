@@ -24,42 +24,20 @@ const defaultClientTimeout = 10 * time.Second
 const discordMsgColor = 5793266
 
 type Client struct {
-	webhookURL string
+	webhookURL      string
+	messageTemplate string
 }
 
-func NewClient(webhookURL string) *Client {
-	return &Client{webhookURL: webhookURL}
+func NewClient(webhookURL, messageTemplate string) *Client {
+	return &Client{webhookURL: webhookURL, messageTemplate: messageTemplate}
 }
 
 func (c *Client) SendDiscordMsg(feed *model.Feed, entries model.Entries) error {
 	for _, entry := range entries {
+		embed := c.buildEmbed(feed, entry)
+
 		requestBody, err := json.Marshal(&discordMessage{
-			Embeds: []discordEmbed{
-				{
-					Title: "RSS feed update from Miniflux",
-					Color: discordMsgColor,
-					Fields: []discordFields{
-						{
-							Name:  "Updated feed",
-							Value: feed.Title,
-						},
-						{
-							Name:  "Article link",
-							Value: "[" + entry.Title + "]" + "(" + entry.URL + ")",
-						},
-						{
-							Name:   "Author",
-							Value:  entry.Author,
-							Inline: true,
-						},
-						{
-							Name:   "Source website",
-							Value:  urllib.RootURL(feed.SiteURL),
-							Inline: true,
-						},
-					},
-				},
-			},
+			Embeds: []discordEmbed{embed},
 		})
 		if err != nil {
 			return fmt.Errorf("discord: unable to encode request body: %v", err)
@@ -94,6 +72,46 @@ func (c *Client) SendDiscordMsg(feed *model.Feed, entries model.Entries) error {
 	return nil
 }
 
+func (c *Client) buildEmbed(feed *model.Feed, entry *model.Entry) discordEmbed {
+	if c.messageTemplate != "" {
+		data := buildTemplateData(feed, entry)
+		rendered := renderTemplate(c.messageTemplate, data)
+
+		return discordEmbed{
+			Description: rendered,
+			Color:       discordMsgColor,
+		}
+	}
+	return defaultEmbed(feed, entry)
+}
+
+func defaultEmbed(feed *model.Feed, entry *model.Entry) discordEmbed {
+	return discordEmbed{
+		Title: "RSS feed update from Miniflux",
+		Color: discordMsgColor,
+		Fields: []discordFields{
+			{
+				Name:  "Updated feed",
+				Value: feed.Title,
+			},
+			{
+				Name:  "Article link",
+				Value: "[" + entry.Title + "]" + "(" + entry.URL + ")",
+			},
+			{
+				Name:   "Author",
+				Value:  entry.Author,
+				Inline: true,
+			},
+			{
+				Name:   "Source website",
+				Value:  urllib.RootURL(feed.SiteURL),
+				Inline: true,
+			},
+		},
+	}
+}
+
 type discordFields struct {
 	Name   string `json:"name"`
 	Value  string `json:"value"`
@@ -101,9 +119,10 @@ type discordFields struct {
 }
 
 type discordEmbed struct {
-	Title  string          `json:"title"`
-	Color  int             `json:"color"`
-	Fields []discordFields `json:"fields"`
+	Title       string          `json:"title,omitempty"`
+	Description string          `json:"description,omitempty"`
+	Color       int             `json:"color"`
+	Fields      []discordFields `json:"fields,omitempty"`
 }
 
 type discordMessage struct {
