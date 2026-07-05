@@ -273,6 +273,21 @@
                 <input type="url" name="webhook_url" id="form-webhook-url" value="{{ .form.WebhookURL }}" spellcheck="false" autocomplete="off">
             </details>
 
+            <details {{ if .form.DiscordMessageTemplate }}open{{ end }}>
+                <summary>Discord</summary>
+                <div class="form-label-row">
+                    <label for="form-discord-message-template">
+                        {{ t "form.feed.label.discord_message_template" }}
+                    </label>
+                </div>
+                <textarea name="discord_message_template" id="form-discord-message-template" rows="6" spellcheck="false" placeholder="**{title}**
+{url}">{{ .form.DiscordMessageTemplate }}</textarea>
+                <details>
+                    <summary>{{ t "form.integration.discord_template_help" }}</summary>
+                    <pre>{{ t "form.integration.discord_template_variables" }}</pre>
+                </details>
+            </details>
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>

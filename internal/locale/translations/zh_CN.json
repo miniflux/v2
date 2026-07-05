@@ -176,6 +176,7 @@
     "form.feed.label.crawler": "获取原始内容",
     "form.feed.label.ignore_entry_updates": "忽略条目更新",
     "form.feed.label.description": "描述",
+    "form.feed.label.discord_message_template": "Discord 消息模板（可选，覆盖用户级模板）",
     "form.feed.label.disable_http2": "禁用 HTTP/2 以避免指纹识别",
     "form.feed.label.disabled": "不刷新此订阅",
     "form.feed.label.feed_password": "订阅源密码",

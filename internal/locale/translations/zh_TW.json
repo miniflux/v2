@@ -176,6 +176,7 @@
     "form.feed.label.crawler": "下載原文內容",
     "form.feed.label.ignore_entry_updates": "忽略條目更新",
     "form.feed.label.description": "描述",
+    "form.feed.label.discord_message_template": "Discord 訊息範本（選用，覆蓋使用者層級範本）",
     "form.feed.label.disable_http2": "停用 HTTP/2 以避免指紋追蹤",
     "form.feed.label.disabled": "不要更新此 Feed",
     "form.feed.label.feed_password": "Feed 密碼",

@@ -179,6 +179,7 @@
     "form.feed.label.crawler": "Originalinhalt herunterladen",
     "form.feed.label.ignore_entry_updates": "Updates ignorieren",
     "form.feed.label.description": "Beschreibung",
+    "form.feed.label.discord_message_template": "Discord-Nachrichtenvorlage (optional, überschreibt die Vorlage auf Benutzerebene)",
     "form.feed.label.disable_http2": "HTTP/2 deaktivieren, um Fingerprinting zu verhindern",
     "form.feed.label.disabled": "Dieses Abonnement nicht aktualisieren",
     "form.feed.label.feed_password": "Passwort des Abonnements",

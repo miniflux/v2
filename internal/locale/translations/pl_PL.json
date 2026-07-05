@@ -182,6 +182,7 @@
     "form.feed.label.crawler": "Pobierz oryginalną treść",
     "form.feed.label.ignore_entry_updates": "Ignoruj ​​aktualizacje wpisów",
     "form.feed.label.description": "Opis",
+    "form.feed.label.discord_message_template": "Szablon wiadomości Discord (opcjonalny, zastępuje szablon użytkownika)",
     "form.feed.label.disable_http2": "Wyłącz protokół HTTP/2, aby uniknąć identyfikowania",
     "form.feed.label.disabled": "Nie aktualizuj tego kanału",
     "form.feed.label.feed_password": "Hasło do subskrypcji",

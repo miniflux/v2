@@ -176,6 +176,7 @@
     "form.feed.label.crawler": "Lia̍h goân-tóe lōe-iông",
     "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Biâu-su̍t",
+    "form.feed.label.discord_message_template": "Discord sìn-sek bōan-bân (ū-iōng, chhiau-kòe iōng-chiá kap-pō͘ ê bōan-bân)",
     "form.feed.label.disable_http2": "Thêng iōng HTTP/2 pī-bián chéng-thâu-á-hûn tui-chong",
     "form.feed.label.disabled": "Mài tha̍k chit ê siau-sit lâi-goân ê sin siau-sit",
     "form.feed.label.feed_password": "Siau-sit lâi-goân bi̍t-bé",

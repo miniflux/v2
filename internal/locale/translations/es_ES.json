@@ -179,6 +179,7 @@
     "form.feed.label.crawler": "Obtener rastreador original",
     "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Descripción",
+    "form.feed.label.discord_message_template": "Plantilla de mensaje de Discord (opcional, sobrescribe la plantilla del usuario)",
     "form.feed.label.disable_http2": "Deshabilite HTTP/2 para evitar huellas digitales",
     "form.feed.label.disabled": "No actualice este feed",
     "form.feed.label.feed_password": "Contraseña de la fuente",

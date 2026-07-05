@@ -179,6 +179,7 @@
     "form.feed.label.crawler": "Download originele inhoud",
     "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Omschrijving",
+    "form.feed.label.discord_message_template": "Discord berichtsjabloon (optioneel, overschrijft sjabloon op gebruikersniveau)",
     "form.feed.label.disable_http2": "HTTP/2 uitschakelen om fingerprinting te voorkomen",
     "form.feed.label.disabled": "Deze feed niet vernieuwen",
     "form.feed.label.feed_password": "Feed wachtwoord",

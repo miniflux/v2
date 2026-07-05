@@ -176,6 +176,7 @@
     "form.feed.label.crawler": "게시물 본문도 함께 다운로드",
     "form.feed.label.ignore_entry_updates": "업데이트된 게시물 무시",
     "form.feed.label.description": "설명",
+    "form.feed.label.discord_message_template": "Discord 메시지 템플릿 (선택사항, 사용자 수준 템플릿을 재정의함)",
     "form.feed.label.disable_http2": "핑거프린팅 회피를 위해 HTTP/2 비활성화",
     "form.feed.label.disabled": "이 피드를 업데이트하지 않음",
     "form.feed.label.feed_password": "피드 비밀번호",

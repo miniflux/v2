@@ -1556,4 +1556,8 @@ var migrations = [...]func(tx *sql.Tx) error{
 		_, err = tx.Exec(`ALTER TABLE integrations ADD COLUMN discord_message_template text default '';`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN discord_message_template text default '';`)
+		return err
+	},
 }

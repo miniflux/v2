@@ -179,6 +179,7 @@
     "form.feed.label.crawler": "Λήψη αρχικού περιεχομένου",
     "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Περιγραφή",
+    "form.feed.label.discord_message_template": "Πρότυπο μηνύματος Discord (προαιρετικό, αντικαθιστά το πρότυπο χρήστη)",
     "form.feed.label.disable_http2": "Απενεργοποίηση HTTP/2 για αποφυγή δακτυλικών αποτυπωμάτων",
     "form.feed.label.disabled": "Μη ανανέωση αυτής της ροής",
     "form.feed.label.feed_password": "Κωδικός Πρόσβασης ροής",

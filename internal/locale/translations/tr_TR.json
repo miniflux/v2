@@ -179,6 +179,7 @@
     "form.feed.label.crawler": "Orijinal içeriği çek",
     "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Açıklama",
+    "form.feed.label.discord_message_template": "Discord Mesaj Şablonu (isteğe bağlı, kullanıcı düzeyindeki şablonu geçersiz kılar)",
     "form.feed.label.disable_http2": "Parmak izini önlemek için HTTP/2'yi devre dışı bırakın",
     "form.feed.label.disabled": "Bu beslemeyi yenileme",
     "form.feed.label.feed_password": "Besleme Parolası",

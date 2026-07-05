@@ -179,6 +179,7 @@
     "form.feed.label.crawler": "Scarica il contenuto integrale",
     "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Descrizione",
+    "form.feed.label.discord_message_template": "Modello messaggio Discord (opzionale, sovrascrive il modello dell'utente)",
     "form.feed.label.disable_http2": "Disabilita HTTP/2 per evitare il fingerprinting",
     "form.feed.label.disabled": "Non aggiornare questo feed",
     "form.feed.label.feed_password": "Password del feed",

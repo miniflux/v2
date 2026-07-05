@@ -185,7 +185,8 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			f.pushover_enabled,
 			f.pushover_priority,
 			f.proxy_url,
-			f.ignore_entry_updates
+			f.ignore_entry_updates,
+			f.discord_message_template
 		FROM
 			feeds f
 		LEFT JOIN
@@ -269,6 +270,7 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.PushoverPriority,
 			&feed.ProxyURL,
 			&feed.IgnoreEntryUpdates,
+			&feed.DiscordMessageTemplate,
 		)
 		if err != nil {
 			return nil, fmt.Errorf(`store: unable to fetch feeds row: %w`, err)

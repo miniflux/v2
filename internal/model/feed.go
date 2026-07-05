@@ -62,6 +62,7 @@ type Feed struct {
 	NtfyPriority                int       `json:"ntfy_priority"`
 	NtfyTopic                   string    `json:"ntfy_topic"`
 	PushoverPriority            int       `json:"pushover_priority"`
+	DiscordMessageTemplate      string    `json:"discord_message_template"`
 	ProxyURL                    string    `json:"proxy_url"`
 
 	// Non-persisted attributes

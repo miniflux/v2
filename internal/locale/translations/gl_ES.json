@@ -178,6 +178,7 @@
     "form.feed.label.cookie": "Establecer rastros",
     "form.feed.label.crawler": "Obter contido orixinal",
     "form.feed.label.description": "Descrición",
+    "form.feed.label.discord_message_template": "Modelo de mensaxe de Discord (opcional, substitúe o modelo do usuario)",
     "form.feed.label.disable_http2": "Desactivar HTTP/2 para evitar «fingerprinting»",
     "form.feed.label.disabled": "Non actualizar esta canle",
     "form.feed.label.feed_password": "Contrasinal para a canle",
