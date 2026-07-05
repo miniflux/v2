@@ -33,13 +33,18 @@ func StripTags(input string) string {
 func stripIter(src io.Reader, yield func(string) bool) error {
 	tokenizer := html.NewTokenizer(src)
 
-	for tokenizer.Next() != html.ErrorToken {
-		token := tokenizer.Token()
-		if token.Type != html.TextToken {
+	for {
+		tokenType := tokenizer.Next()
+		if tokenType == html.ErrorToken {
+			break
+		}
+		if tokenType != html.TextToken {
 			continue
 		}
 
-		if !yield(token.Data) {
+		// Use Text() instead of Token() to avoid allocating a Token
+		// struct (and parsing attribute slices) for every non-text tag.
+		if !yield(string(tokenizer.Text())) {
 			break
 		}
 	}
