@@ -98,10 +98,12 @@
             <label for="form-discord-message-template">{{ t "form.integration.discord_message_template" }}</label>
             <textarea name="discord_message_template" id="form-discord-message-template" rows="6" spellcheck="false" placeholder="**{title}**
 {url}">{{ .form.DiscordMessageTemplate }}</textarea>
-            <details>
-                <summary>{{ t "form.integration.discord_template_help" }}</summary>
-                <pre>{{ t "form.integration.discord_template_variables" }}</pre>
-            </details>
+            <p>{{ t "form.integration.discord_template_description" }}</p>
+            <br>
+            <pre>{{ t "form.integration.discord_template_variables" }}</pre>
+            <br>
+            <p>{{ t "form.integration.discord_template_markdown" }} <a href="https://support.discord.com/hc/en-us/articles/210298617" target="_blank" rel="noopener noreferrer">https://support.discord.com/hc/en-us/articles/210298617</a></p>
+            <p>{{ t "form.integration.discord_template_empty" }}</p>
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
