@@ -6,6 +6,8 @@ It's simple, fast, lightweight and super easy to install.
 
 Official website: <https://miniflux.app>
 
+Prefer a managed instance? [![Deploy with Zenith](https://cdn.zenith.hosting/buttons/deploy-with-zenith.svg)](https://zenith.hosting/host/miniflux)
+
 Features
 --------
 
