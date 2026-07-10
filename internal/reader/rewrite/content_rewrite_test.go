@@ -21,7 +21,10 @@ func TestParseRules(t *testing.T) {
 		{name: "remove", args: []string{".spam, .ads:not(.keep)"}},
 	}
 
-	actual := parseRules(rulesText)
+	actual, errs := parseRules(rulesText)
+	if len(errs) != 0 {
+		t.Errorf(`Unexpected errors while parsing rules: %v`, errs)
+	}
 
 	if !reflect.DeepEqual(expected, actual) {
 		t.Errorf(`Parsed rules do not match expected rules: got %v instead of %v`, actual, expected)
