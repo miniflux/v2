@@ -528,6 +528,31 @@ input::placeholder {
     padding-top: 2px;
 }
 
+/* Rule editor fields (scraper, content/URL rewrite, block/keep filters) are
+   essentially code, so render them monospaced and the same width as the filter
+   textareas. */
+input.code-input,
+textarea.code-input {
+    width: 350px;
+    max-width: 100%;
+    font-family: ui-monospace, Consolas, monospace;
+    /* Match the page's base text size; a bare <textarea> otherwise falls back to
+       the small UA monospace default. */
+    font-size: 1rem;
+}
+
+textarea.code-input {
+    resize: both;
+}
+
+/* Short, usually single-line rules: start compact and grow to fit their
+   content. field-sizing is ignored by older browsers, which fall back to the
+   rows attribute. */
+textarea.code-input-autogrow {
+    field-sizing: content;
+    min-height: 3.4em;
+}
+
 .form-label-row {
     display: flex;
 }
