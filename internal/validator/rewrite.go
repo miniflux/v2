@@ -8,6 +8,14 @@ import (
 	"miniflux.app/v2/internal/reader/rewrite"
 )
 
+// IsValidURLRewriteRules reports whether the feed URL rewrite rules are
+// well-formed. Unlike a bare regex check, it verifies the rule matches the
+// rewrite("search"|"replacement") form that RewriteEntryURL actually applies,
+// so malformed rules are rejected at save time rather than silently ignored.
+func IsValidURLRewriteRules(rules string) bool {
+	return rewrite.IsValidURLRewriteRules(rules)
+}
+
 // IsValidRewriteRules validates content rewrite rules, returning a localized
 // error describing the first problem found, or nil when the rules are valid.
 func IsValidRewriteRules(rules string) *locale.LocalizedError {
