@@ -100,7 +100,7 @@
     "error.feed_invalid_blocklist_rule": "The block list rule is invalid.",
     "error.feed_invalid_keeplist_rule": "The keep list rule is invalid.",
     "error.feed_invalid_rewrite_rule": "The rewrite rule is invalid.",
-    "error.feed_invalid_urlrewrite_rule": "The URL rewrite rule is invalid.",
+    "error.feed_invalid_urlrewrite_rule": "The URL rewrite rule is invalid (expected format: rewrite(\"search\"|\"replacement\")).",
     "error.feed_mandatory_fields": "The URL and the category are mandatory.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.feed_rewrite_rule_invalid_syntax": "Invalid rewrite rule syntax near column %d: %s (use \\\\ for a literal backslash).",
