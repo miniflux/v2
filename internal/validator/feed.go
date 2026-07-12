@@ -54,7 +54,7 @@ func ValidateFeedCreation(store *storage.Storage, userID int64, request *model.F
 		return locale.NewLocalizedError("error.feed_invalid_keeplist_rule")
 	}
 
-	if !IsValidRegex(request.UrlRewriteRules) {
+	if !IsValidURLRewriteRules(request.UrlRewriteRules) {
 		return locale.NewLocalizedError("error.feed_invalid_urlrewrite_rule")
 	}
 
@@ -148,7 +148,7 @@ func ValidateFeedModification(store *storage.Storage, userID, feedID int64, requ
 	}
 
 	if request.UrlRewriteRules != nil {
-		if !IsValidRegex(*request.UrlRewriteRules) {
+		if !IsValidURLRewriteRules(*request.UrlRewriteRules) {
 			return locale.NewLocalizedError("error.feed_invalid_urlrewrite_rule")
 		}
 	}
