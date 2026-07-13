@@ -125,6 +125,7 @@ type IntegrationForm struct {
 	CuboxAPILink                     string
 	DiscordEnabled                   bool
 	DiscordWebhookLink               string
+	DiscordMessageTemplate           string
 	SlackEnabled                     bool
 	SlackWebhookLink                 string
 	PushoverEnabled                  bool
@@ -247,6 +248,7 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.CuboxAPILink = i.CuboxAPILink
 	integration.DiscordEnabled = i.DiscordEnabled
 	integration.DiscordWebhookLink = i.DiscordWebhookLink
+	integration.DiscordMessageTemplate = i.DiscordMessageTemplate
 	integration.SlackEnabled = i.SlackEnabled
 	integration.SlackWebhookLink = i.SlackWebhookLink
 	integration.PushoverEnabled = i.PushoverEnabled
@@ -372,6 +374,7 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		CuboxAPILink:                     r.FormValue("cubox_api_link"),
 		DiscordEnabled:                   r.FormValue("discord_enabled") == "1",
 		DiscordWebhookLink:               r.FormValue("discord_webhook_link"),
+		DiscordMessageTemplate:           r.FormValue("discord_message_template"),
 		SlackEnabled:                     r.FormValue("slack_enabled") == "1",
 		SlackWebhookLink:                 r.FormValue("slack_webhook_link"),
 		PushoverEnabled:                  r.FormValue("pushover_enabled") == "1",

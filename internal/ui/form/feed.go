@@ -45,6 +45,7 @@ type FeedForm struct {
 	NtfyTopic                   string
 	PushoverEnabled             bool
 	PushoverPriority            int
+	DiscordMessageTemplate      string
 	ProxyURL                    string
 }
 
@@ -84,6 +85,7 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.NtfyTopic = f.NtfyTopic
 	feed.PushoverEnabled = f.PushoverEnabled
 	feed.PushoverPriority = f.PushoverPriority
+	feed.DiscordMessageTemplate = f.DiscordMessageTemplate
 	feed.ProxyURL = f.ProxyURL
 	return feed
 }
@@ -138,6 +140,7 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		NtfyTopic:                   r.FormValue("ntfy_topic"),
 		PushoverEnabled:             r.FormValue("pushover_enabled") == "1",
 		PushoverPriority:            pushoverPriority,
+		DiscordMessageTemplate:      r.FormValue("discord_message_template"),
 		ProxyURL:                    r.FormValue("proxy_url"),
 	}
 }

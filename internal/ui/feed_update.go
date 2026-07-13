@@ -9,6 +9,8 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
+	"miniflux.app/v2/internal/integration/discord"
+	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/view"
@@ -52,6 +54,15 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", navMetadata.CountUnread)
 	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 	view.Set("defaultUserAgent", config.Opts.HTTPClientUserAgent())
+
+	if feedForm.DiscordMessageTemplate != "" {
+		if !discord.ValidateTemplate(feedForm.DiscordMessageTemplate) {
+			printer := locale.NewPrinter(loggedUser.Language)
+			view.Set("errorMessage", printer.Print("error.discord_invalid_template"))
+			response.HTML(w, r, view.Render("edit_feed"))
+			return
+		}
+	}
 
 	feedModificationRequest := &model.FeedModificationRequest{
 		FeedURL:               model.OptionalString(feedForm.FeedURL),

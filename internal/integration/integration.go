@@ -617,8 +617,14 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 			slog.Int64("feed_id", feed.ID),
 		)
 
+		discordMessageTemplate := userIntegrations.DiscordMessageTemplate
+		if feed.DiscordMessageTemplate != "" {
+			discordMessageTemplate = feed.DiscordMessageTemplate
+		}
+
 		client := discord.NewClient(
 			userIntegrations.DiscordWebhookLink,
+			discordMessageTemplate,
 		)
 
 		if err := client.SendDiscordMsg(feed, entries); err != nil {

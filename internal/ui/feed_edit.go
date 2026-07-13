@@ -72,6 +72,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		NtfyTopic:                   feed.NtfyTopic,
 		PushoverEnabled:             feed.PushoverEnabled,
 		PushoverPriority:            feed.PushoverPriority,
+		DiscordMessageTemplate:      feed.DiscordMessageTemplate,
 		ProxyURL:                    feed.ProxyURL,
 	}
 

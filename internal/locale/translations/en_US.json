@@ -178,6 +178,7 @@
     "form.feed.label.crawler": "Fetch original content",
     "form.feed.label.ignore_entry_updates": "Ignore entry updates",
     "form.feed.label.description": "Description",
+    "form.feed.label.discord_message_template": "Discord Message Template (optional, overrides user-level template)",
     "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",
     "form.feed.label.disabled": "Do not refresh this feed",
     "form.feed.label.feed_password": "Feed Password",
@@ -634,5 +635,11 @@
     ],
     "time_elapsed.yesterday": "yesterday",
     "tooltip.keyboard_shortcuts": "Keyboard Shortcut: %s",
-    "tooltip.logged_user": "Logged in as %s"
+    "tooltip.logged_user": "Logged in as %s",
+    "form.integration.discord_message_template": "Discord Message Template",
+    "form.integration.discord_template_description": "Use these tokens in your message. They will be replaced with actual values.",
+    "form.integration.discord_template_variables": "  {title}       - Article title\n  {url}         - Article URL\n  {description} - Article content (plain text)\n  {author}      - Article author\n  {date}        - Publish date\n  {feed_title}  - Feed name\n  {feed_url}    - Feed site URL",
+    "form.integration.discord_template_markdown": "Discord markdown is supported.",
+    "form.integration.discord_template_empty": "Leave empty to use the default format.",
+    "error.discord_invalid_template": "Invalid Discord template syntax!"
 }
