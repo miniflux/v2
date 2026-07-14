@@ -218,10 +218,11 @@ func startUnixSocketServer(server *http.Server, socketFile string) {
 }
 
 func startUnixSocketTLSServer(server *http.Server, socketFile string, certLoader *certificateLoader) {
-	config := &tls.Config{
+	server.TLSConfig = &tls.Config{
 		GetCertificate: certLoader.getCertificate,
+		// NextProtos intentionally nil — ServeTLS auto-configures it
+		// based on the http2server GODEBUG setting.
 	}
-	server.TLSConfig = config
 
 	listener := createUnixSocketListener(socketFile)
 
@@ -229,8 +230,7 @@ func startUnixSocketTLSServer(server *http.Server, socketFile string, certLoader
 		slog.Info("Starting TLS server using a Unix socket",
 			slog.String("socket", socketFile),
 		)
-		tlsListener := tls.NewListener(listener, config)
-		if err := server.Serve(tlsListener); err != http.ErrServerClosed {
+		if err := server.ServeTLS(listener, "", ""); err != http.ErrServerClosed {
 			printErrorAndExit("TLS Unix socket server failed to start on %s: %v", socketFile, err)
 		}
 	}()
@@ -270,10 +270,11 @@ func startAutoCertTLSServer(server *http.Server, autoTLSConfig *tls.Config) {
 }
 
 func startTLSServer(server *http.Server, certLoader *certificateLoader) {
-	config := &tls.Config{
+	server.TLSConfig = &tls.Config{
 		GetCertificate: certLoader.getCertificate,
+		// NextProtos intentionally nil — ServeTLS auto-configures it
+		// based on the http2server GODEBUG setting.
 	}
-	server.TLSConfig = config
 
 	listener, err := net.Listen("tcp", server.Addr)
 	if err != nil {
@@ -284,8 +285,7 @@ func startTLSServer(server *http.Server, certLoader *certificateLoader) {
 		slog.Info("Starting TLS server using a certificate",
 			slog.String("listen_address", server.Addr),
 		)
-		tlsListener := tls.NewListener(listener, config)
-		if err := server.Serve(tlsListener); err != http.ErrServerClosed {
+		if err := server.ServeTLS(listener, "", ""); err != http.ErrServerClosed {
 			printErrorAndExit("TLS server failed to start on %s: %v", server.Addr, err)
 		}
 	}()
