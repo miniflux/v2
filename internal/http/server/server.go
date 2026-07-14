@@ -220,8 +220,8 @@ func startUnixSocketServer(server *http.Server, socketFile string) {
 func startUnixSocketTLSServer(server *http.Server, socketFile string, certLoader *certificateLoader) {
 	config := &tls.Config{
 		GetCertificate: certLoader.getCertificate,
-		NextProtos:     []string{"h2", "http/1.1"},
 	}
+	server.TLSConfig = config
 
 	listener := createUnixSocketListener(socketFile)
 
@@ -272,8 +272,8 @@ func startAutoCertTLSServer(server *http.Server, autoTLSConfig *tls.Config) {
 func startTLSServer(server *http.Server, certLoader *certificateLoader) {
 	config := &tls.Config{
 		GetCertificate: certLoader.getCertificate,
-		NextProtos:     []string{"h2", "http/1.1"},
 	}
+	server.TLSConfig = config
 
 	listener, err := net.Listen("tcp", server.Addr)
 	if err != nil {
