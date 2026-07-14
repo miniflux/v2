@@ -1479,10 +1479,15 @@ var migrations = [...]func(tx *sql.Tx) error{
 			CREATE INDEX entry_tombstones_deleted_at_idx
 				ON entry_tombstones (deleted_at);
 
+			-- Some databases contain orphaned entries whose feed is gone,
+			-- e.g. restored from a dump without foreign key enforcement.
+			-- Skip them: their tombstones would be useless anyway, and the
+			-- rows are deleted just below.
 			INSERT INTO entry_tombstones (feed_id, hash, deleted_at)
 				SELECT feed_id, hash, changed_at
 				FROM entries
 				WHERE status = 'removed' AND hash <> ''
+					AND feed_id IN (SELECT id FROM feeds)
 				ON CONFLICT (feed_id, hash) DO NOTHING;
 
 			DELETE FROM entries WHERE status = 'removed';
