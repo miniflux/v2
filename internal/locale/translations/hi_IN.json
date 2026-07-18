@@ -103,6 +103,7 @@
     "error.feed_invalid_rewrite_rule": "रीराइट नियम अमान्य है।",
     "error.feed_invalid_urlrewrite_rule": "URL रीराइट नियम अमान्य है।",
     "error.feed_rewrite_rule_invalid_syntax": "कॉलम %d के पास अमान्य रीराइट नियम सिंटैक्स: %s (शाब्दिक बैकस्लैश के लिए \\\\ का उपयोग करें)।",
+    "error.feed_rewrite_rule_invalid_regex": "रीराइट नियम '%s' में अमान्य रेगुलर एक्सप्रेशन है: %s।",
     "error.feed_rewrite_rule_missing_args": "रीराइट नियम '%s' में आवश्यक तर्क अनुपस्थित हैं।",
     "error.feed_rewrite_rule_unknown_name": "अज्ञात रीराइट नियम: '%s'।",
     "error.feed_title_not_empty": "फ़ीड शीर्षक खाली नहीं हो सकता.",

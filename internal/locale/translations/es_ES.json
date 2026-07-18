@@ -103,6 +103,7 @@
     "error.feed_invalid_rewrite_rule": "La regla de reescritura no es válida.",
     "error.feed_invalid_urlrewrite_rule": "La regla de reescritura de URL no es válida.",
     "error.feed_rewrite_rule_invalid_syntax": "Sintaxis de regla de reescritura no válida cerca de la columna %d: %s (use \\\\ para una barra invertida literal).",
+    "error.feed_rewrite_rule_invalid_regex": "La regla de reescritura '%s' tiene una expresión regular no válida: %s.",
     "error.feed_rewrite_rule_missing_args": "A la regla de reescritura '%s' le faltan argumentos obligatorios.",
     "error.feed_rewrite_rule_unknown_name": "Regla de reescritura desconocida: '%s'.",
     "error.feed_title_not_empty": "El título del feed no puede estar vacío.",

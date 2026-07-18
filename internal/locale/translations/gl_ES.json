@@ -104,6 +104,7 @@
     "error.feed_invalid_rewrite_rule": "A regra de reescritura non é válida.",
     "error.feed_invalid_urlrewrite_rule": "A regra de reescritura de URL non é válida.",
     "error.feed_rewrite_rule_invalid_syntax": "Sintaxe de regra de reescritura non válida preto da columna %d: %s (usa \\\\ para unha barra invertida literal).",
+    "error.feed_rewrite_rule_invalid_regex": "A regra de reescritura '%s' ten unha expresión regular non válida: %s.",
     "error.feed_rewrite_rule_missing_args": "Á regra de reescritura '%s' fáltanlle argumentos obrigatorios.",
     "error.feed_rewrite_rule_unknown_name": "Regra de reescritura descoñecida: '%s'.",
     "error.feed_title_not_empty": "O título da canle non pode quedar baleiro.",

@@ -100,6 +100,7 @@
     "error.feed_invalid_rewrite_rule": "Tiông-siá kui-chek bô-hāu.",
     "error.feed_invalid_urlrewrite_rule": "URL tiông-siá kui-chek bô-hāu.",
     "error.feed_rewrite_rule_invalid_syntax": "Tī %d chōa hù-kīn ê tiông-siá kui-chek gí-hoat bô-hāu: %s (iōng \\\\ lâi piáu-sī jī-bīn ê péng-siâ-sòaⁿ).",
+    "error.feed_rewrite_rule_invalid_regex": "Tiông-siá kui-chek '%s' ê chèng-kui piáu-ta̍t-sek bô-hāu: %s.",
     "error.feed_rewrite_rule_missing_args": "Tiông-siá kui-chek '%s' khiàm su-iàu ê chham-sò·.",
     "error.feed_rewrite_rule_unknown_name": "Bô se-sek ê tiông-siá kui-chek: '%s'.",
     "error.feed_title_not_empty": "Beh tēng ê siau-sit lâi-goân ê piau-tôe bōe-sái sī khang--ê.",

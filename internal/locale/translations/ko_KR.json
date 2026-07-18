@@ -100,6 +100,7 @@
     "error.feed_invalid_rewrite_rule": "다시 쓰기 규칙이 잘못되었습니다.",
     "error.feed_invalid_urlrewrite_rule": "URL 다시 쓰기 규칙이 잘못되었습니다.",
     "error.feed_rewrite_rule_invalid_syntax": "%d열 부근의 다시 쓰기 규칙 구문이 잘못되었습니다: %s (리터럴 백슬래시는 \\\\ 를 사용하세요).",
+    "error.feed_rewrite_rule_invalid_regex": "다시 쓰기 규칙 '%s'의 정규 표현식이 잘못되었습니다: %s.",
     "error.feed_rewrite_rule_missing_args": "다시 쓰기 규칙 '%s'에 필요한 인수가 없습니다.",
     "error.feed_rewrite_rule_unknown_name": "알 수 없는 다시 쓰기 규칙: '%s'.",
     "error.feed_title_not_empty": "피드 제목은 비워 둘 수 없습니다.",

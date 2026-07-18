@@ -116,6 +116,7 @@
     "error.feed_invalid_rewrite_rule": "قاعدة إعادة الكتابة غير صالحة.",
     "error.feed_invalid_urlrewrite_rule": "قاعدة إعادة كتابة عنوان URL غير صالحة.",
     "error.feed_rewrite_rule_invalid_syntax": "بناء جملة غير صالح لقاعدة إعادة الكتابة بالقرب من العمود %d: %s (استخدم \\\\ لشرطة مائلة عكسية حرفية).",
+    "error.feed_rewrite_rule_invalid_regex": "تحتوي قاعدة إعادة الكتابة '%s' على تعبير نمطي غير صالح: %s.",
     "error.feed_rewrite_rule_missing_args": "قاعدة إعادة الكتابة '%s' تفتقر إلى وسائط مطلوبة.",
     "error.feed_rewrite_rule_unknown_name": "قاعدة إعادة كتابة غير معروفة: '%s'.",
     "error.feed_title_not_empty": "عنوان المصدر لا يمكن أن يكون فارغاً.",

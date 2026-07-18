@@ -106,6 +106,7 @@
     "error.feed_invalid_rewrite_rule": "Reguła przepisywania jest nieprawidłowa.",
     "error.feed_invalid_urlrewrite_rule": "Reguła przepisywania adresu URL jest nieprawidłowa.",
     "error.feed_rewrite_rule_invalid_syntax": "Nieprawidłowa składnia reguły przepisywania w pobliżu kolumny %d: %s (użyj \\\\ dla dosłownego ukośnika wstecznego).",
+    "error.feed_rewrite_rule_invalid_regex": "Reguła przepisywania '%s' ma nieprawidłowe wyrażenie regularne: %s.",
     "error.feed_rewrite_rule_missing_args": "W regule przepisywania „%s” brakuje wymaganych argumentów.",
     "error.feed_rewrite_rule_unknown_name": "Nieznana reguła przepisywania: „%s”.",
     "error.feed_title_not_empty": "Tytuł kanału nie może być pusty.",

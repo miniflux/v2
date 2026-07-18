@@ -100,6 +100,7 @@
     "error.feed_invalid_rewrite_rule": "Aturan penulisan ulang tidak valid.",
     "error.feed_invalid_urlrewrite_rule": "Aturan penulisan ulang URL tidak valid.",
     "error.feed_rewrite_rule_invalid_syntax": "Sintaks aturan penulisan ulang tidak valid di dekat kolom %d: %s (gunakan \\\\ untuk garis miring terbalik literal).",
+    "error.feed_rewrite_rule_invalid_regex": "Aturan penulisan ulang '%s' memiliki ekspresi reguler yang tidak valid: %s.",
     "error.feed_rewrite_rule_missing_args": "Aturan penulisan ulang '%s' tidak memiliki argumen yang diperlukan.",
     "error.feed_rewrite_rule_unknown_name": "Aturan penulisan ulang tidak dikenal: '%s'.",
     "error.feed_title_not_empty": "Judul umpan tidak boleh kosong.",

@@ -103,6 +103,7 @@
     "error.feed_invalid_rewrite_rule": "Yeniden yazma kuralı geçersiz.",
     "error.feed_invalid_urlrewrite_rule": "URL yeniden yazma kuralı geçersiz.",
     "error.feed_rewrite_rule_invalid_syntax": "%d. sütun yakınında geçersiz yeniden yazma kuralı sözdizimi: %s (gerçek ters eğik çizgi için \\\\ kullanın).",
+    "error.feed_rewrite_rule_invalid_regex": "Yeniden yazma kuralı '%s' geçersiz bir düzenli ifadeye sahip: %s.",
     "error.feed_rewrite_rule_missing_args": "'%s' yeniden yazma kuralında gerekli argümanlar eksik.",
     "error.feed_rewrite_rule_unknown_name": "Bilinmeyen yeniden yazma kuralı: '%s'.",
     "error.feed_title_not_empty": "Besleme başlığı boş olamaz.",

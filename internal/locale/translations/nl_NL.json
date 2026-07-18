@@ -103,6 +103,7 @@
     "error.feed_invalid_rewrite_rule": "De herschrijfregel is ongeldig.",
     "error.feed_invalid_urlrewrite_rule": "De URL-herschrijfregel is ongeldig.",
     "error.feed_rewrite_rule_invalid_syntax": "Ongeldige syntaxis van herschrijfregel nabij kolom %d: %s (gebruik \\\\ voor een letterlijke backslash).",
+    "error.feed_rewrite_rule_invalid_regex": "Herschrijfregel '%s' heeft een ongeldige reguliere expressie: %s.",
     "error.feed_rewrite_rule_missing_args": "Herschrijfregel '%s' mist vereiste argumenten.",
     "error.feed_rewrite_rule_unknown_name": "Onbekende herschrijfregel: '%s'.",
     "error.feed_title_not_empty": "De feed titel mag niet leeg zijn.",

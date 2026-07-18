@@ -103,6 +103,7 @@
     "error.feed_invalid_rewrite_rule": "Uudelleenkirjoitussääntö on virheellinen.",
     "error.feed_invalid_urlrewrite_rule": "URL-uudelleenkirjoitussääntö on virheellinen.",
     "error.feed_rewrite_rule_invalid_syntax": "Virheellinen uudelleenkirjoitussäännön syntaksi sarakkeen %d lähellä: %s (käytä \\\\ kirjaimellista kenoviivaa varten).",
+    "error.feed_rewrite_rule_invalid_regex": "Uudelleenkirjoitussäännöllä '%s' on virheellinen säännöllinen lauseke: %s.",
     "error.feed_rewrite_rule_missing_args": "Uudelleenkirjoitussäännöstä '%s' puuttuu vaadittuja argumentteja.",
     "error.feed_rewrite_rule_unknown_name": "Tuntematon uudelleenkirjoitussääntö: '%s'.",
     "error.feed_title_not_empty": "Syötteen otsikko ei voi olla tyhjä.",

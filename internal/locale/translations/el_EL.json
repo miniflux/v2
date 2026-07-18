@@ -103,6 +103,7 @@
     "error.feed_invalid_rewrite_rule": "Ο κανόνας επανεγγραφής δεν είναι έγκυρος.",
     "error.feed_invalid_urlrewrite_rule": "Ο κανόνας επανεγγραφής URL δεν είναι έγκυρος.",
     "error.feed_rewrite_rule_invalid_syntax": "Μη έγκυρη σύνταξη κανόνα επανεγγραφής κοντά στη στήλη %d: %s (χρησιμοποιήστε \\\\ για κυριολεκτική ανάποδη κάθετο).",
+    "error.feed_rewrite_rule_invalid_regex": "Ο κανόνας επανεγγραφής '%s' έχει μη έγκυρη κανονική έκφραση: %s.",
     "error.feed_rewrite_rule_missing_args": "Στον κανόνα επανεγγραφής '%s' λείπουν απαιτούμενα ορίσματα.",
     "error.feed_rewrite_rule_unknown_name": "Άγνωστος κανόνας επανεγγραφής: '%s'.",
     "error.feed_title_not_empty": "Ο τίτλος ροής δεν μπορεί να είναι κενός.",

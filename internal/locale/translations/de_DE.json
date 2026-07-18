@@ -103,6 +103,7 @@
     "error.feed_invalid_rewrite_rule": "Die Rewrite-Regel ist ungültig.",
     "error.feed_invalid_urlrewrite_rule": "Die URL-Rewrite-Regel ist ungültig.",
     "error.feed_rewrite_rule_invalid_syntax": "Ungültige Syntax der Rewrite-Regel bei Spalte %d: %s (verwenden Sie \\\\ für einen wörtlichen Backslash).",
+    "error.feed_rewrite_rule_invalid_regex": "Die Rewrite-Regel '%s' enthält einen ungültigen regulären Ausdruck: %s.",
     "error.feed_rewrite_rule_missing_args": "Der Rewrite-Regel „%s“ fehlen erforderliche Argumente.",
     "error.feed_rewrite_rule_unknown_name": "Unbekannte Rewrite-Regel: „%s“.",
     "error.feed_title_not_empty": "Der Feed-Titel darf nicht leer sein.",

@@ -106,6 +106,7 @@
     "error.feed_invalid_rewrite_rule": "Regula de rescriere nu este validă.",
     "error.feed_invalid_urlrewrite_rule": "Regula de rescriere a URL-ului nu este validă.",
     "error.feed_rewrite_rule_invalid_syntax": "Sintaxă de regulă de rescriere nevalidă lângă coloana %d: %s (utilizați \\\\ pentru o bară oblică inversă literală).",
+    "error.feed_rewrite_rule_invalid_regex": "Regula de rescriere '%s' are o expresie regulată nevalidă: %s.",
     "error.feed_rewrite_rule_missing_args": "Regulii de rescriere '%s' îi lipsesc argumente obligatorii.",
     "error.feed_rewrite_rule_unknown_name": "Regulă de rescriere necunoscută: '%s'.",
     "error.feed_title_not_empty": "Titlul fluxului nu poate fi gol.",

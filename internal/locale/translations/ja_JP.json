@@ -100,6 +100,7 @@
     "error.feed_invalid_rewrite_rule": "書き換えルールが無効です。",
     "error.feed_invalid_urlrewrite_rule": "URL書き換えルールが無効です。",
     "error.feed_rewrite_rule_invalid_syntax": "列 %d 付近の書き換えルールの構文が無効です: %s（リテラルのバックスラッシュには \\\\ を使用してください）。",
+    "error.feed_rewrite_rule_invalid_regex": "書き換えルール '%s' の正規表現が無効です: %s。",
     "error.feed_rewrite_rule_missing_args": "書き換えルール「%s」に必要な引数がありません。",
     "error.feed_rewrite_rule_unknown_name": "不明な書き換えルール: 「%s」。",
     "error.feed_title_not_empty": "フィードのタイトルを空にすることはできません。",
