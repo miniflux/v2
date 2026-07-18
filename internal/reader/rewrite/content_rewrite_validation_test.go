@@ -56,6 +56,21 @@ func TestParseRulesMissingArgs(t *testing.T) {
 	}
 }
 
+func TestParseRulesInvalidRegexp(t *testing.T) {
+	rulesText := `replace("["|"x")`
+	_, errs := parseRules(rulesText)
+
+	var found bool
+	for _, e := range errs {
+		if e.Kind == RuleErrInvalidRegexp && e.Rule == "replace" {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf(`Expected an error with Kind RuleErrInvalidRegexp and Rule "replace", got %v`, errs)
+	}
+}
+
 func TestParseRulesWellFormed(t *testing.T) {
 	rulesText := `replace("a"|"b") nl2br`
 	rules, errs := parseRules(rulesText)
