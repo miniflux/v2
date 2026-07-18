@@ -52,6 +52,7 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", navMetadata.CountUnread)
 	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 	view.Set("defaultUserAgent", config.Opts.HTTPClientUserAgent())
+	view.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyURLConfigured())
 
 	feedModificationRequest := &model.FeedModificationRequest{
 		FeedURL:               model.OptionalString(feedForm.FeedURL),
