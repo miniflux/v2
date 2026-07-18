@@ -3,7 +3,10 @@
 
 package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 
-import "text/scanner"
+import (
+	"regexp"
+	"text/scanner"
+)
 
 type RuleErrorKind int
 
@@ -13,6 +16,7 @@ const (
 	RuleErrOrphanArg
 	RuleErrUnknownName
 	RuleErrMissingArgs
+	RuleErrInvalidRegexp
 )
 
 // RuleError describes one problem found while parsing rewrite rules.
@@ -37,6 +41,13 @@ func validateParsedRules(rules []rule) (errs []RuleError) {
 		if len(r.args) < spec.minArgs {
 			errs = append(errs, RuleError{Kind: RuleErrMissingArgs, Rule: r.name,
 				Message: "missing required arguments"})
+			continue
+		}
+		if spec.regexArg && len(r.args) > 0 {
+			if _, err := regexp.Compile(r.args[0]); err != nil {
+				errs = append(errs, RuleError{Kind: RuleErrInvalidRegexp, Rule: r.name,
+					Token: r.args[0], Message: err.Error()})
+			}
 		}
 	}
 	return errs
