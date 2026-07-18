@@ -19,10 +19,13 @@ type rule struct {
 }
 
 // ruleSpec describes a rewrite rule: the minimum number of arguments it requires
-// (used for save-time validation) and the handler that applies it.
+// (used for save-time validation), whether its first argument is a regular
+// expression (so it can be compile-checked at save time), and the handler that
+// applies it.
 type ruleSpec struct {
-	minArgs int
-	apply   func(entryURL string, entry *model.Entry, args []string)
+	minArgs  int
+	regexArg bool
+	apply    func(entryURL string, entry *model.Entry, args []string)
 }
 
 // convertTextLinksRule is shared by the "convert_text_link" and
@@ -73,11 +76,11 @@ var knownRules = map[string]ruleSpec{
 	"use_noscript_figure_images": {apply: func(_ string, entry *model.Entry, _ []string) {
 		entry.Content = useNoScriptImages(entry.Content)
 	}},
-	"replace": {minArgs: 2, apply: func(_ string, entry *model.Entry, args []string) {
+	"replace": {minArgs: 2, regexArg: true, apply: func(_ string, entry *model.Entry, args []string) {
 		// Format: replace("search-term"|"replace-term")
 		entry.Content = replaceCustom(entry.Content, args[0], args[1])
 	}},
-	"replace_title": {minArgs: 2, apply: func(_ string, entry *model.Entry, args []string) {
+	"replace_title": {minArgs: 2, regexArg: true, apply: func(_ string, entry *model.Entry, args []string) {
 		// Format: replace_title("search-term"|"replace-term")
 		entry.Title = replaceCustom(entry.Title, args[0], args[1])
 	}},

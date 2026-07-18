@@ -104,6 +104,7 @@
     "error.feed_mandatory_fields": "The URL and the category are mandatory.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.feed_rewrite_rule_invalid_syntax": "Invalid rewrite rule syntax near column %d: %s (use \\\\ for a literal backslash).",
+    "error.feed_rewrite_rule_invalid_regex": "Rewrite rule '%s' has an invalid regular expression: %s.",
     "error.feed_rewrite_rule_missing_args": "Rewrite rule '%s' is missing required arguments.",
     "error.feed_rewrite_rule_unknown_name": "Unknown rewrite rule: '%s'.",
     "error.feed_title_not_empty": "The feed title cannot be empty.",
