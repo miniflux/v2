@@ -21,24 +21,33 @@ func (s *Storage) HasFeedIcon(feedID int64) bool {
 	return result
 }
 
-// IconByID fetches a single icon by its internal identifier, returning nil when it is not found.
-func (s *Storage) IconByID(iconID int64) (*model.Icon, error) {
+// IconByUserAndIconID fetches a single icon by its internal identifier, scoped
+// to the given user. It returns nil when the icon does not exist or is not
+// associated with any feed owned by the user.
+func (s *Storage) IconByUserAndIconID(userID, iconID int64) (*model.Icon, error) {
 	var icon model.Icon
 	query := `
 		SELECT
-			id,
-			hash,
-			mime_type,
-			content,
-			external_id
-		FROM icons
-		WHERE id=$1`
-	err := s.db.QueryRow(query, iconID).Scan(&icon.ID, &icon.Hash, &icon.MimeType, &icon.Content, &icon.ExternalID)
+			i.id,
+			i.hash,
+			i.mime_type,
+			i.content,
+			i.external_id
+		FROM icons AS i
+		WHERE i.id = $2
+			AND EXISTS (
+				SELECT 1
+				FROM feeds AS f
+				INNER JOIN feed_icons AS fi ON fi.feed_id = f.id
+				WHERE f.user_id = $1
+					AND fi.icon_id = $2
+			)`
+	err := s.db.QueryRow(query, userID, iconID).Scan(&icon.ID, &icon.Hash, &icon.MimeType, &icon.Content, &icon.ExternalID)
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
 		return nil, nil
 	case err != nil:
-		return nil, fmt.Errorf("store: cannot load icon id=%d: %w", iconID, err)
+		return nil, fmt.Errorf("store: cannot load icon id=%d for user_id=%d: %w", iconID, userID, err)
 	default:
 		return &icon, nil
 	}
