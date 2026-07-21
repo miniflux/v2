@@ -245,7 +245,7 @@ func createUnixSocketListener(socketFile string) net.Listener {
 		printErrorAndExit(`Server failed to listen on Unix socket %s: %v`, socketFile, err)
 	}
 
-	if err := os.Chmod(socketFile, 0666); err != nil {
+	if err := os.Chmod(socketFile, 0660); err != nil {
 		printErrorAndExit(`Unable to change socket permission for %s: %v`, socketFile, err)
 	}
 
