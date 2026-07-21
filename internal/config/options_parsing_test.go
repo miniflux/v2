@@ -1149,6 +1149,14 @@ func TestSchedulerEntryFrequencyFactorOptionParsing(t *testing.T) {
 	if configParser.options.SchedulerEntryFrequencyFactor() != 2 {
 		t.Fatalf("Expected SCHEDULER_ENTRY_FREQUENCY_FACTOR to be 2")
 	}
+
+	if err := configParser.parseLines([]string{"SCHEDULER_ENTRY_FREQUENCY_FACTOR=0"}); err == nil {
+		t.Fatalf("Expected an error for SCHEDULER_ENTRY_FREQUENCY_FACTOR=0")
+	}
+
+	if err := configParser.parseLines([]string{"SCHEDULER_ENTRY_FREQUENCY_FACTOR=-1"}); err == nil {
+		t.Fatalf("Expected an error for SCHEDULER_ENTRY_FREQUENCY_FACTOR=-1")
+	}
 }
 
 func TestYouTubeEmbedUrlOverrideOptionParsing(t *testing.T) {

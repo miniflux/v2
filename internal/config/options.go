@@ -528,6 +528,9 @@ func NewConfigOptions() *configOptions {
 				parsedIntValue: 1,
 				rawValue:       "1",
 				valueType:      intType,
+				validator: func(rawValue string) error {
+					return validateGreaterOrEqualThan(rawValue, 1)
+				},
 			},
 			"SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL": {
 				parsedDuration: 24 * time.Hour,
