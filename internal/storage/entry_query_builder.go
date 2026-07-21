@@ -273,10 +273,22 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 }
 
 // GetEntriesWithCount returns a list of entries and the total count of matching
-// rows (ignoring limit/offset) in a single query using a window function.
-// This avoids a separate CountEntries() round-trip.
+// rows, ignoring limit and offset. It uses a window function for non-empty pages
+// and falls back to a separate count when the requested offset returns no rows.
 func (e *EntryQueryBuilder) GetEntriesWithCount() (model.Entries, int, error) {
-	return e.fetchEntries(true)
+	entries, total, err := e.fetchEntries(true)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	if len(entries) == 0 && e.offset > 0 {
+		total, err = e.CountEntries()
+		if err != nil {
+			return nil, 0, err
+		}
+	}
+
+	return entries, total, nil
 }
 
 // fetchEntries is the shared implementation for GetEntries and GetEntriesWithCount.

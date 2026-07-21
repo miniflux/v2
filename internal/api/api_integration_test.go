@@ -2517,6 +2517,23 @@ func TestGetAllEntriesEndpointWithFilter(t *testing.T) {
 		t.Fatalf(`Invalid title, got empty`)
 	}
 
+	emptyPage, err := regularUserClient.Entries(&miniflux.Filter{
+		FeedID: feedID,
+		Limit:  1,
+		Offset: feedEntries.Total,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(emptyPage.Entries) != 0 {
+		t.Fatalf(`Expected no entries beyond the final page, got %d`, len(emptyPage.Entries))
+	}
+
+	if emptyPage.Total != feedEntries.Total {
+		t.Fatalf(`Expected total %d beyond the final page, got %d`, feedEntries.Total, emptyPage.Total)
+	}
+
 	recentEntries, err := regularUserClient.Entries(&miniflux.Filter{Order: "published_at", Direction: "desc"})
 	if err != nil {
 		t.Fatal(err)
