@@ -123,6 +123,25 @@ func TestValidateEntriesPerPage(t *testing.T) {
 	}
 }
 
+func TestValidateEntrySortingOrder(t *testing.T) {
+	for _, order := range []string{"published_at", "created_at"} {
+		if err := validateEntrySortingOrder(order); err != nil {
+			t.Errorf("expected valid order %q to pass, got %v", order, err)
+		}
+	}
+
+	// Valid entry-listing orders that are not part of the entry_sorting_order enum.
+	for _, order := range []string{"id", "status", "changed_at", "category_title", "category_id", "title", "author"} {
+		if err := validateEntrySortingOrder(order); err == nil {
+			t.Errorf("expected order %q to be rejected", order)
+		}
+	}
+
+	if err := validateEntrySortingOrder("invalid"); err == nil {
+		t.Error("expected invalid order to fail")
+	}
+}
+
 func TestValidateCategoriesSortingOrder(t *testing.T) {
 	for _, order := range []string{"alphabetical", "unread_count"} {
 		if err := validateCategoriesSortingOrder(order); err != nil {
