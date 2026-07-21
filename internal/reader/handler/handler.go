@@ -167,6 +167,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.BlockFilterEntryRules = feedCreationRequest.BlockFilterEntryRules
 	subscription.KeepFilterEntryRules = feedCreationRequest.KeepFilterEntryRules
 	subscription.HideGlobally = feedCreationRequest.HideGlobally
+	subscription.NoMediaPlayer = feedCreationRequest.NoMediaPlayer
 	subscription.EtagHeader = responseHandler.ETag()
 	subscription.LastModifiedHeader = responseHandler.LastModified()
 	subscription.FeedURL = responseHandler.EffectiveURL()
