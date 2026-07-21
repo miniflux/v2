@@ -241,8 +241,9 @@ func (s *Storage) RemoveCategory(userID, categoryID int64) error {
 	return nil
 }
 
-// RemoveAndReplaceCategoriesByName deletes the given categories, replacing those categories with the user's first
-// category on affected feeds.
+// RemoveAndReplaceCategoriesByName deletes categories with the given titles and
+// reassigns affected feeds to the user's first remaining category. It returns
+// an error if the deletion would leave the user without any categories.
 func (s *Storage) RemoveAndReplaceCategoriesByName(userid int64, titles []string) error {
 	tx, err := s.db.Begin()
 	if err != nil {
@@ -251,7 +252,7 @@ func (s *Storage) RemoveAndReplaceCategoriesByName(userid int64, titles []string
 
 	titleParam := pq.Array(titles)
 	var count int
-	query := "SELECT count(*) FROM categories WHERE user_id = $1 and title != ANY($2)"
+	query := "SELECT count(*) FROM categories WHERE user_id = $1 AND title <> ALL($2)"
 	err = tx.QueryRow(query, userid, titleParam).Scan(&count)
 	if err != nil {
 		tx.Rollback()
