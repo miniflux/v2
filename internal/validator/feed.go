@@ -117,11 +117,7 @@ func ValidateFeedModification(store *storage.Storage, userID, feedID int64, requ
 		}
 	}
 
-	if request.ProxyURL != nil {
-		if *request.ProxyURL == "" {
-			return locale.NewLocalizedError("error.proxy_url_not_empty")
-		}
-
+	if request.ProxyURL != nil && *request.ProxyURL != "" {
 		if !urllib.IsValidProxyURL(*request.ProxyURL) {
 			return locale.NewLocalizedError("error.invalid_feed_proxy_url")
 		}
