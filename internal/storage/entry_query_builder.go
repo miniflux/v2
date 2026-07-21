@@ -199,19 +199,19 @@ func (e *EntryQueryBuilder) WithSorting(column, direction string) *EntryQueryBui
 	return e
 }
 
-// WithLimit set the limit.
+// WithLimit sets the limit. A non-positive limit is clamped to
+// model.MaxEntryLimit so callers cannot request an unbounded result set.
 func (e *EntryQueryBuilder) WithLimit(limit int) *EntryQueryBuilder {
-	if limit > 0 {
-		e.limit = min(limit, model.MaxEntryLimit)
-	}
-	return e
+	return e.WithLimitAndMaximum(limit, model.MaxEntryLimit)
 }
 
 // WithLimitAndMaximum sets the limit, capped at the given maximum.
+// A non-positive limit is clamped to the maximum.
 func (e *EntryQueryBuilder) WithLimitAndMaximum(limit, maximum int) *EntryQueryBuilder {
-	if limit > 0 {
-		e.limit = min(limit, maximum)
+	if limit <= 0 || limit > maximum {
+		limit = maximum
 	}
+	e.limit = limit
 	return e
 }
 
