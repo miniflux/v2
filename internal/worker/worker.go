@@ -20,15 +20,22 @@ type worker struct {
 	store *storage.Storage
 }
 
-// Run processes feed refresh jobs from the channel until it is closed.
-func (w *worker) Run(c <-chan model.Job, wg *sync.WaitGroup) {
+// Run processes feed refresh jobs from the channel until the pool is shut down.
+func (w *worker) Run(c <-chan model.Job, shutdown <-chan struct{}, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	slog.Debug("Worker started",
 		slog.Int("worker_id", w.id),
 	)
 
-	for job := range c {
+	for {
+		var job model.Job
+		select {
+		case <-shutdown:
+			return
+		case job = <-c:
+		}
+
 		slog.Debug("Job received by worker",
 			slog.Int("worker_id", w.id),
 			slog.Int64("user_id", job.UserID),
