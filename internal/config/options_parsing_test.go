@@ -1508,8 +1508,25 @@ func TestMediaProxyResourceTypesOptionParsing(t *testing.T) {
 		t.Fatalf("Expected MEDIA_PROXY_RESOURCE_TYPES to contain image and video")
 	}
 
+	if err := configParser.parseLines([]string{"MEDIA_PROXY_RESOURCE_TYPES=image, video"}); err != nil {
+		t.Fatalf("Unexpected error for value with spaces: %v", err)
+	}
+
+	resourceTypes = configParser.options.MediaProxyResourceTypes()
+	if len(resourceTypes) != 2 || resourceTypes[0] != "image" || resourceTypes[1] != "video" {
+		t.Fatalf("Expected MEDIA_PROXY_RESOURCE_TYPES to contain image and video")
+	}
+
+	if err := configParser.parseLines([]string{"MEDIA_PROXY_RESOURCE_TYPES=image,video,"}); err != nil {
+		t.Fatalf("Unexpected error for value with trailing comma: %v", err)
+	}
+
 	if err := configParser.parseLines([]string{"MEDIA_PROXY_RESOURCE_TYPES=image,invalid,video"}); err == nil {
 		t.Fatal("Expected error due to invalid resource type")
+	}
+
+	if err := configParser.parseLines([]string{"MEDIA_PROXY_RESOURCE_TYPES=,"}); err == nil {
+		t.Fatal("Expected error for value without any resource type")
 	}
 }
 
@@ -1652,9 +1669,29 @@ func TestTrustedReverseProxyNetworksOptionParsing(t *testing.T) {
 		t.Errorf("Expected 192.168.1.0/24 in allowed networks")
 	}
 
+	// Test value with spaces and trailing comma
+	if err := configParser.parseLines([]string{"TRUSTED_REVERSE_PROXY_NETWORKS=192.168.0.0/16, 10.0.0.0/8,"}); err != nil {
+		t.Fatalf("Unexpected error for value with spaces: %v", err)
+	}
+
+	allowedNetworks = configParser.options.TrustedReverseProxyNetworks()
+	if len(allowedNetworks) != 2 {
+		t.Fatalf("Expected 2 allowed networks, got %d", len(allowedNetworks))
+	}
+	if !slices.Contains(allowedNetworks, "192.168.0.0/16") {
+		t.Errorf("Expected 192.168.0.0/16 in allowed networks")
+	}
+	if !slices.Contains(allowedNetworks, "10.0.0.0/8") {
+		t.Errorf("Expected 10.0.0.0/8 in allowed networks")
+	}
+
 	// Test invalid value
 	if err := configParser.parseLines([]string{"TRUSTED_REVERSE_PROXY_NETWORKS=127.0.0.1"}); err == nil {
 		t.Fatal("Expected error when parsing invalid CIDR notation IP 127.0.0.1, got nil")
+	}
+
+	if err := configParser.parseLines([]string{"TRUSTED_REVERSE_PROXY_NETWORKS=,"}); err == nil {
+		t.Fatal("Expected error for value without any network")
 	}
 }
 

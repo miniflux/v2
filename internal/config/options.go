@@ -4,6 +4,7 @@
 package config // import "miniflux.app/v2/internal/config"
 
 import (
+	"errors"
 	"maps"
 	"net"
 	"net/url"
@@ -383,7 +384,11 @@ func NewConfigOptions() *configOptions {
 				rawValue:         "image",
 				valueType:        stringListType,
 				validator: func(rawValue string) error {
-					return validateListChoices(strings.Split(rawValue, ","), []string{"image", "video", "audio"})
+					resourceTypes := parseStringListValue(rawValue, nil)
+					if len(resourceTypes) == 0 {
+						return errors.New("at least one resource type is required")
+					}
+					return validateListChoices(resourceTypes, []string{"image", "video", "audio"})
 				},
 			},
 			"METRICS_ALLOWED_NETWORKS": {
@@ -569,7 +574,11 @@ func NewConfigOptions() *configOptions {
 				rawValue:         "",
 				valueType:        stringListType,
 				validator: func(rawValue string) error {
-					for ip := range strings.SplitSeq(rawValue, ",") {
+					networks := parseStringListValue(rawValue, nil)
+					if len(networks) == 0 {
+						return errors.New("at least one CIDR notation network is required")
+					}
+					for _, ip := range networks {
 						if _, _, err := net.ParseCIDR(ip); err != nil {
 							return err
 						}
