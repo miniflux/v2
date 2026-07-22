@@ -19,7 +19,13 @@ type Client struct {
 }
 
 func NewClient(token, collectionID, tags string) *Client {
-	return &Client{token: token, collectionID: collectionID, tags: strings.Split(tags, ",")}
+	var tagList []string
+	for tag := range strings.SplitSeq(tags, ",") {
+		if trimmedTag := strings.TrimSpace(tag); trimmedTag != "" {
+			tagList = append(tagList, trimmedTag)
+		}
+	}
+	return &Client{token: token, collectionID: collectionID, tags: tagList}
 }
 
 // https://developer.raindrop.io/v1/raindrops/single#create-raindrop
@@ -54,7 +60,7 @@ type raindrop struct {
 	Link       string     `json:"link"`
 	Title      string     `json:"title"`
 	Collection collection `json:"collection"`
-	Tags       []string   `json:"tags"`
+	Tags       []string   `json:"tags,omitempty"`
 }
 
 type collection struct {
