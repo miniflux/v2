@@ -47,7 +47,11 @@ func (h *handler) sharedEntry(w http.ResponseWriter, r *http.Request) {
 			WithShareCode(shareCode).
 			GetEntry()
 
-		if err != nil || entry == nil {
+		if err != nil {
+			response.HTMLServerError(w, r, err)
+			return
+		}
+		if entry == nil {
 			response.HTMLNotFound(w, r)
 			return
 		}
