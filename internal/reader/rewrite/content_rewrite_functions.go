@@ -265,7 +265,8 @@ func getYoutubVideoIDFromURL(entryURL string) string {
 		return ""
 	}
 
-	if !strings.HasSuffix(u.Hostname(), "youtube.com") {
+	hostname := u.Hostname()
+	if hostname != "youtube.com" && !strings.HasSuffix(hostname, ".youtube.com") {
 		return ""
 	}
 
