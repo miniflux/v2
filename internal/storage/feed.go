@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log/slog"
 	"sort"
 	"time"
 
@@ -36,7 +37,19 @@ func (l byStateAndName) Less(i, j int) bool {
 func (s *Storage) FeedExists(userID, feedID int64) bool {
 	var result bool
 	query := `SELECT true FROM feeds WHERE user_id=$1 AND id=$2 LIMIT 1`
-	s.db.QueryRow(query, userID, feedID).Scan(&result)
+	if err := s.db.QueryRow(query, userID, feedID).Scan(&result); err != nil && !errors.Is(err, sql.ErrNoRows) {
+		// A real query/connection error is not the same thing as "this feed
+		// doesn't exist" -- callers treat a false return as a 404, so a
+		// swallowed error here would silently misreport a genuine
+		// infrastructure failure as a missing resource. Logging at least
+		// makes it observable in server logs, matching the pattern already
+		// used by CountWebAuthnCredentialsByUserID in webauthn.go.
+		slog.Error("store: unable to check if feed exists",
+			slog.Int64("user_id", userID),
+			slog.Int64("feed_id", feedID),
+			slog.Any("error", err),
+		)
+	}
 	return result
 }
 
@@ -55,7 +68,14 @@ func (s *Storage) CheckedAt(userID, feedID int64) (time.Time, error) {
 func (s *Storage) CategoryFeedExists(userID, categoryID, feedID int64) bool {
 	var result bool
 	query := `SELECT true FROM feeds WHERE user_id=$1 AND category_id=$2 AND id=$3 LIMIT 1`
-	s.db.QueryRow(query, userID, categoryID, feedID).Scan(&result)
+	if err := s.db.QueryRow(query, userID, categoryID, feedID).Scan(&result); err != nil && !errors.Is(err, sql.ErrNoRows) {
+		slog.Error("store: unable to check if feed exists in category",
+			slog.Int64("user_id", userID),
+			slog.Int64("category_id", categoryID),
+			slog.Int64("feed_id", feedID),
+			slog.Any("error", err),
+		)
+	}
 	return result
 }
 
