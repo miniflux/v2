@@ -4,21 +4,14 @@
 package linkding // import "miniflux.app/v2/internal/integration/linkding"
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"strings"
-	"time"
 
-	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/urllib"
-	"miniflux.app/v2/internal/version"
 )
-
-const defaultClientTimeout = 10 * time.Second
 
 type Client struct {
 	baseURL string
@@ -45,30 +38,18 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 		return fmt.Errorf(`linkding: invalid API endpoint: %v`, err)
 	}
 
-	requestBody, err := json.Marshal(&linkdingBookmark{
-		URL:      entryURL,
-		Title:    entryTitle,
-		TagNames: strings.FieldsFunc(c.tags, tagsSplitFn),
-		Unread:   c.unread,
-	})
-
+	response, err := client.NewRequestBuilder(apiEndpoint).
+		WithMethod(http.MethodPost).
+		WithJSON(&linkdingBookmark{
+			URL:      entryURL,
+			Title:    entryTitle,
+			TagNames: strings.FieldsFunc(c.tags, tagsSplitFn),
+			Unread:   c.unread,
+		}).
+		WithHeader("Authorization", "Token "+c.apiKey).
+		Do()
 	if err != nil {
-		return fmt.Errorf("linkding: unable to encode request body: %v", err)
-	}
-
-	request, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBody))
-	if err != nil {
-		return fmt.Errorf("linkding: unable to create request: %v", err)
-	}
-
-	request.Header.Set("Content-Type", "application/json")
-	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
-	request.Header.Set("Authorization", "Token "+c.apiKey)
-
-	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
-	response, err := httpClient.Do(request)
-	if err != nil {
-		return fmt.Errorf("linkding: unable to send request: %v", err)
+		return fmt.Errorf("linkding: %w", err)
 	}
 	defer response.Body.Close()
 

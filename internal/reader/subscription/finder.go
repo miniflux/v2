@@ -88,7 +88,16 @@ func (f *subscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string, 
 		return subscriptions, nil
 	}
 
-	// Step 4) Parse web page to find feeds from HTML meta tags.
+	// Step 4) Check if the website URL is a GitHub page.
+	slog.Debug("Try to detect feeds for a GitHub page", slog.String("website_url", websiteURL))
+	if subscriptions, localizedError := f.findSubscriptionsFromGitHub(websiteURL); localizedError != nil {
+		return nil, localizedError
+	} else if len(subscriptions) > 0 {
+		slog.Debug("Subscriptions found from GitHub page", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
+		return subscriptions, nil
+	}
+
+	// Step 5) Parse web page to find feeds from HTML meta tags.
 	slog.Debug("Try to detect feeds from HTML meta tags",
 		slog.String("website_url", websiteURL),
 		slog.String("content_type", responseHandler.ContentType()),
@@ -101,7 +110,7 @@ func (f *subscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string, 
 		return subscriptions, nil
 	}
 
-	// Step 5) Check if the website URL can use RSS-Bridge.
+	// Step 6) Check if the website URL can use RSS-Bridge.
 	if rssBridgeURL != "" {
 		slog.Debug("Try to detect feeds with RSS-Bridge", slog.String("website_url", websiteURL))
 		if subscriptions, localizedError := f.findSubscriptionsFromRSSBridge(websiteURL, rssBridgeURL, rssBridgeToken); localizedError != nil {
@@ -112,7 +121,7 @@ func (f *subscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string, 
 		}
 	}
 
-	// Step 6) Check if the website has a known feed URL.
+	// Step 7) Check if the website has a known feed URL.
 	slog.Debug("Try to detect feeds from well-known URLs", slog.String("website_url", websiteURL))
 	if subscriptions, localizedError := f.findSubscriptionsFromWellKnownURLs(websiteURL); localizedError != nil {
 		return nil, localizedError
@@ -184,9 +193,8 @@ func (f *subscriptionFinder) findSubscriptionsFromWebPage(websiteURL string, doc
 }
 
 func (f *subscriptionFinder) findSubscriptionsFromWellKnownURLs(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
-	knownURLs := [...]struct {
-		path, format string
-	}{
+	type pair struct{ path, format string }
+	knownURLs := []pair{
 		{"atom.xml", parser.FormatAtom},
 		{"feed.atom", parser.FormatAtom},
 		{"feed.xml", parser.FormatAtom},
@@ -332,6 +340,53 @@ func (f *subscriptionFinder) findSubscriptionsFromYouTube(websiteURL string) (Su
 	}
 
 	return nil, nil
+}
+
+// findSubscriptionsFromGitHub builds the Atom feed URLs that GitHub exposes for
+// user/organization profiles and repositories. These feeds are not advertised
+// in the HTML of the pages, so they cannot be discovered through the usual
+// mechanisms.
+func (f *subscriptionFinder) findSubscriptionsFromGitHub(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
+	decodedURL, err := url.Parse(websiteURL)
+	if err != nil {
+		return nil, locale.NewLocalizedErrorWrapper(err, "error.invalid_site_url", err)
+	}
+
+	if decodedURL.Host != "github.com" && decodedURL.Host != "www.github.com" {
+		slog.Debug("GitHub feed discovery skipped: not a GitHub domain", slog.String("website_url", websiteURL))
+		return nil, nil
+	}
+
+	// Split the path into at most three segments to determine the kind of page.
+	// We only care about the first two, so there is no need to keep splitting.
+	path := strings.Trim(decodedURL.Path, "/")
+	if path == "" {
+		// The root page (https://github.com/) has no feed.
+		return nil, nil
+	}
+	segments := strings.SplitN(path, "/", 3)
+
+	switch len(segments) {
+	case 1:
+		// User or organization profile: https://github.com/<user>
+		// The activity feed lives at https://github.com/<user>.atom
+		user := segments[0]
+		feedURL := "https://github.com/" + user + ".atom"
+		return Subscriptions{NewSubscription(user, feedURL, parser.FormatAtom)}, nil
+	case 2:
+		// Repository: https://github.com/<owner>/<repo>
+		// GitHub exposes commits, releases and tags Atom feeds for repositories.
+		repoPath := "https://github.com/" + segments[0] + "/" + segments[1] + "/"
+		return Subscriptions{
+			NewSubscription("Commits", repoPath+"commits.atom", parser.FormatAtom),
+			NewSubscription("Releases", repoPath+"releases.atom", parser.FormatAtom),
+			NewSubscription("Tags", repoPath+"tags.atom", parser.FormatAtom),
+		}, nil
+	default:
+		// Deeper paths that don't map to a user profile or a repository (e.g.
+		// https://github.com/owner/repo/tree/branch/dir) have no dedicated feed.
+		return nil, nil
+	}
 }
 
 // findCanonicalURL extracts the canonical URL from the HTML <link rel="canonical"> tag.

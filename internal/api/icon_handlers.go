@@ -43,7 +43,7 @@ func (h *handler) getIconByIconIDHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	icon, err := h.store.IconByID(iconID)
+	icon, err := h.store.IconByUserAndIconID(request.UserID(r), iconID)
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return

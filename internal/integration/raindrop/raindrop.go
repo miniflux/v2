@@ -4,20 +4,13 @@
 package raindrop // import "miniflux.app/v2/internal/integration/raindrop"
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"strings"
-	"time"
 
-	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/client"
-	"miniflux.app/v2/internal/version"
 )
-
-const defaultClientTimeout = 10 * time.Second
 
 type Client struct {
 	token        string
@@ -26,7 +19,13 @@ type Client struct {
 }
 
 func NewClient(token, collectionID, tags string) *Client {
-	return &Client{token: token, collectionID: collectionID, tags: strings.Split(tags, ",")}
+	var tagList []string
+	for tag := range strings.SplitSeq(tags, ",") {
+		if trimmedTag := strings.TrimSpace(tag); trimmedTag != "" {
+			tagList = append(tagList, trimmedTag)
+		}
+	}
+	return &Client{token: token, collectionID: collectionID, tags: tagList}
 }
 
 // https://developer.raindrop.io/v1/raindrops/single#create-raindrop
@@ -35,30 +34,18 @@ func (c *Client) CreateRaindrop(entryURL, entryTitle string) error {
 		return errors.New("raindrop: missing token")
 	}
 
-	var request *http.Request
-	requestBodyJson, err := json.Marshal(&raindrop{
-		Link:       entryURL,
-		Title:      entryTitle,
-		Collection: collection{Id: c.collectionID},
-		Tags:       c.tags,
-	})
+	response, err := client.NewRequestBuilder("https://api.raindrop.io/rest/v1/raindrop").
+		WithMethod(http.MethodPost).
+		WithJSON(&raindrop{
+			Link:       entryURL,
+			Title:      entryTitle,
+			Collection: collection{Id: c.collectionID},
+			Tags:       c.tags,
+		}).
+		WithHeader("Authorization", "Bearer "+c.token).
+		Do()
 	if err != nil {
-		return fmt.Errorf("raindrop: unable to encode request body: %v", err)
-	}
-
-	request, err = http.NewRequest(http.MethodPost, "https://api.raindrop.io/rest/v1/raindrop", bytes.NewReader(requestBodyJson))
-	if err != nil {
-		return fmt.Errorf("raindrop: unable to create request: %v", err)
-	}
-	request.Header.Set("Content-Type", "application/json")
-
-	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
-	request.Header.Set("Authorization", "Bearer "+c.token)
-
-	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout, BlockPrivateNetworks: !config.Opts.IntegrationAllowPrivateNetworks()})
-	response, err := httpClient.Do(request)
-	if err != nil {
-		return fmt.Errorf("raindrop: unable to send request: %v", err)
+		return fmt.Errorf("raindrop: %w", err)
 	}
 	defer response.Body.Close()
 
@@ -73,7 +60,7 @@ type raindrop struct {
 	Link       string     `json:"link"`
 	Title      string     `json:"title"`
 	Collection collection `json:"collection"`
-	Tags       []string   `json:"tags"`
+	Tags       []string   `json:"tags,omitempty"`
 }
 
 type collection struct {

@@ -4,6 +4,7 @@
 package locale // import "miniflux.app/v2/internal/locale"
 
 import (
+	"sync"
 	"testing"
 )
 
@@ -28,6 +29,35 @@ func TestParser(t *testing.T) {
 	if value != "v" {
 		t.Fatal(`The translation key should contains the defined value`)
 	}
+}
+
+// TestGetTranslationDictConcurrency exercises the lazy population of the
+// catalog from concurrent goroutines, as HTTP request handlers do. It must be
+// run with the race detector enabled to catch unsynchronized catalog access.
+func TestGetTranslationDictConcurrency(t *testing.T) {
+	defaultCatalog = make(catalog, len(AvailableLanguages))
+
+	const iterations = 10
+
+	var wg sync.WaitGroup
+	for i := 0; i < iterations; i++ {
+		for language := range AvailableLanguages {
+			wg.Add(1)
+			go func(language string) {
+				defer wg.Done()
+
+				dict, err := getTranslationDict(language)
+				if err != nil {
+					t.Errorf(`Unable to get translation dictionary for language %q: %v`, language, err)
+					return
+				}
+				if len(dict.singulars) == 0 {
+					t.Errorf(`The translation dictionary for language %q should not be empty`, language)
+				}
+			}(language)
+		}
+	}
+	wg.Wait()
 }
 
 func TestLoadCatalog(t *testing.T) {

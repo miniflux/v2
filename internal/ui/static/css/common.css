@@ -828,6 +828,12 @@ dialog {
     overflow: hidden;
 }
 
+.entry-item,
+.feed-item {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 100px;
+}
+
 .item.current-item {
     border: var(--current-item-border-width) solid var(--current-item-border-color);
     padding: 3px;
@@ -1104,6 +1110,12 @@ article.category-has-unread {
 .entry-content h1, h2, h3, h4, h5, h6 {
     margin-top: 15px;
     margin-bottom: 10px;
+}
+
+.entry-content h1,
+.entry-content h2,
+.entry-content h3 {
+    line-height: 1.2;
 }
 
 .entry-content iframe,

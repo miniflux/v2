@@ -4,6 +4,8 @@
 package server
 
 import (
+	"os"
+	"runtime"
 	"testing"
 )
 
@@ -37,7 +39,7 @@ func TestDetermineListenTargets(t *testing.T) {
 			certFile:  "/path/to/cert.pem",
 			keyFile:   "/path/to/key.pem",
 			expected: []listenTarget{
-				{address: ":443", mode: modeTLS, certFile: "/path/to/cert.pem", keyFile: "/path/to/key.pem"},
+				{address: ":443", mode: modeTLS},
 			},
 		},
 		{
@@ -94,7 +96,7 @@ func TestDetermineListenTargets(t *testing.T) {
 			certFile:  "/path/to/cert.pem",
 			keyFile:   "/path/to/key.pem",
 			expected: []listenTarget{
-				{address: "/var/run/miniflux.sock", mode: modeUnixSocketTLS, certFile: "/path/to/cert.pem", keyFile: "/path/to/key.pem"},
+				{address: "/var/run/miniflux.sock", mode: modeUnixSocketTLS},
 			},
 		},
 		{
@@ -103,8 +105,8 @@ func TestDetermineListenTargets(t *testing.T) {
 			certFile:  "/path/to/cert.pem",
 			keyFile:   "/path/to/key.pem",
 			expected: []listenTarget{
-				{address: "/var/run/miniflux.sock", mode: modeUnixSocketTLS, certFile: "/path/to/cert.pem", keyFile: "/path/to/key.pem"},
-				{address: ":8080", mode: modeTLS, certFile: "/path/to/cert.pem", keyFile: "/path/to/key.pem"},
+				{address: "/var/run/miniflux.sock", mode: modeUnixSocketTLS},
+				{address: ":8080", mode: modeTLS},
 			},
 		},
 		{
@@ -185,5 +187,36 @@ func TestAnyTLS(t *testing.T) {
 				t.Errorf("anyTLS() = %v, want %v", got, tc.expected)
 			}
 		})
+	}
+}
+
+func TestCreateUnixSocketListenerPermissions(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Unix sockets are not supported on Windows")
+	}
+
+	tempFile, err := os.CreateTemp("/tmp", "miniflux-*.sock")
+	if err != nil {
+		t.Fatalf("Unable to allocate Unix socket path: %v", err)
+	}
+	socketFile := tempFile.Name()
+	if err := tempFile.Close(); err != nil {
+		t.Fatalf("Unable to close temporary file: %v", err)
+	}
+	if err := os.Remove(socketFile); err != nil {
+		t.Fatalf("Unable to prepare Unix socket path: %v", err)
+	}
+	t.Cleanup(func() { os.Remove(socketFile) })
+
+	listener := createUnixSocketListener(socketFile)
+	t.Cleanup(func() { listener.Close() })
+
+	fileInfo, err := os.Stat(socketFile)
+	if err != nil {
+		t.Fatalf("Unable to stat Unix socket: %v", err)
+	}
+
+	if got, want := fileInfo.Mode().Perm(), os.FileMode(0660); got != want {
+		t.Errorf("Unix socket permissions = %04o, want %04o", got, want)
 	}
 }

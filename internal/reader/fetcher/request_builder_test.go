@@ -563,25 +563,25 @@ func TestRequestBuilder_RefusePrivateNetworkOnRedirect(t *testing.T) {
 }
 
 func TestRequestBuilder_TimeoutConfiguration(t *testing.T) {
-	// Create a slow server
+	// Create a slow server that blocks until the client disconnects, so
+	// server.Close() does not have to wait for a fixed sleep to elapse.
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		time.Sleep(2 * time.Second)
-		w.WriteHeader(http.StatusOK)
+		<-r.Context().Done()
 	}))
 	defer server.Close()
 
 	builder := NewRequestBuilder()
 	start := time.Now()
-	_, err := builder.WithTimeout(1 * time.Second).ExecuteRequest(server.URL)
+	_, err := builder.WithTimeout(100 * time.Millisecond).ExecuteRequest(server.URL)
 	duration := time.Since(start)
 
 	if err == nil {
 		t.Error("Expected timeout error")
 	}
 
-	// Should timeout around 1 second, allow some margin
-	if duration > 1500*time.Millisecond {
-		t.Errorf("Expected timeout around 1s, took %v", duration)
+	// Should timeout around 100ms, allow some margin
+	if duration > 500*time.Millisecond {
+		t.Errorf("Expected timeout around 100ms, took %v", duration)
 	}
 }
 

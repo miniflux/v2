@@ -7,6 +7,7 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"sync"
 )
 
 type translationDict struct {
@@ -15,19 +16,37 @@ type translationDict struct {
 }
 type catalog map[string]translationDict
 
-var defaultCatalog = make(catalog, len(AvailableLanguages))
+// defaultCatalog is populated lazily by getTranslationDict, which runs on
+// concurrent request goroutines, so every access must hold defaultCatalogMutex.
+var (
+	defaultCatalog      = make(catalog, len(AvailableLanguages))
+	defaultCatalogMutex sync.RWMutex
+)
 
 //go:embed translations/*.json
 var translationFiles embed.FS
 
 func getTranslationDict(language string) (translationDict, error) {
-	if _, ok := defaultCatalog[language]; !ok {
-		var err error
-		if defaultCatalog[language], err = loadTranslationFile(language); err != nil {
-			return translationDict{}, err
-		}
+	defaultCatalogMutex.RLock()
+	dict, found := defaultCatalog[language]
+	defaultCatalogMutex.RUnlock()
+	if found {
+		return dict, nil
 	}
-	return defaultCatalog[language], nil
+
+	defaultCatalogMutex.Lock()
+	defer defaultCatalogMutex.Unlock()
+
+	if dict, found := defaultCatalog[language]; found {
+		return dict, nil
+	}
+
+	dict, err := loadTranslationFile(language)
+	if err != nil {
+		return translationDict{}, err
+	}
+	defaultCatalog[language] = dict
+	return dict, nil
 }
 
 func loadTranslationFile(language string) (translationDict, error) {
