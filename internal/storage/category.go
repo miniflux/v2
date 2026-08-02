@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log/slog"
 
 	"github.com/lib/pq"
 	"miniflux.app/v2/internal/model"
@@ -30,21 +29,16 @@ func (s *Storage) CategoryTitleExists(userID int64, title string) bool {
 }
 
 // CategoryIDExists checks if the given category exists into the database.
-func (s *Storage) CategoryIDExists(userID, categoryID int64) bool {
+// The returned error is non-nil only for a genuine query/connection failure;
+// a category that doesn't exist is reported as (false, nil), matching the
+// underlying sql.ErrNoRows case.
+func (s *Storage) CategoryIDExists(userID, categoryID int64) (bool, error) {
 	var result bool
 	query := `SELECT true FROM categories WHERE user_id=$1 AND id=$2 LIMIT 1`
 	if err := s.db.QueryRow(query, userID, categoryID).Scan(&result); err != nil && !errors.Is(err, sql.ErrNoRows) {
-		// See FeedExists in feed.go for why a real query error is worth
-		// logging here: callers treat a false return as "no such category",
-		// so a swallowed error would silently misreport an infrastructure
-		// failure as a missing resource.
-		slog.Error("store: unable to check if category exists",
-			slog.Int64("user_id", userID),
-			slog.Int64("category_id", categoryID),
-			slog.Any("error", err),
-		)
+		return false, fmt.Errorf(`store: unable to check if category exists: %w`, err)
 	}
-	return result
+	return result, nil
 }
 
 // Category returns a category from the database.

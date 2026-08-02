@@ -59,7 +59,12 @@ func (h *handler) refreshFeedHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := request.UserID(r)
-	if !h.store.FeedExists(userID, feedID) {
+	exists, err := h.store.FeedExists(userID, feedID)
+	if err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
+	if !exists {
 		response.JSONNotFound(w, r)
 		return
 	}
@@ -154,7 +159,12 @@ func (h *handler) markFeedAsReadHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if !h.store.FeedExists(userID, feedID) {
+	exists, err := h.store.FeedExists(userID, feedID)
+	if err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
+	if !exists {
 		response.JSONNotFound(w, r)
 		return
 	}
@@ -245,7 +255,12 @@ func (h *handler) removeFeedHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := request.UserID(r)
-	if !h.store.FeedExists(userID, feedID) {
+	exists, err := h.store.FeedExists(userID, feedID)
+	if err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
+	if !exists {
 		response.JSONNotFound(w, r)
 		return
 	}
