@@ -13,7 +13,12 @@ import (
 func (h *handler) removeFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 
-	if !h.store.FeedExists(request.UserID(r), feedID) {
+	exists, err := h.store.FeedExists(request.UserID(r), feedID)
+	if err != nil {
+		response.HTMLServerError(w, r, err)
+		return
+	}
+	if !exists {
 		response.HTMLNotFound(w, r)
 		return
 	}
