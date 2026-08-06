@@ -113,6 +113,38 @@ func TestParseRss2Sample(t *testing.T) {
 	}
 }
 
+func TestParseFeedWithDefaultNamespace(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss xmlns="http://backend.userland.com/rss2" version="2.0" xmlns:yandex="https://example.org/">
+		<channel>
+			<title>Example Feed</title>
+			<link>https://example.org/</link>
+			<description>Example description</description>
+			<item>
+				<title>Example Item</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != "Example Feed" {
+		t.Errorf("Incorrect title, got: %q", feed.Title)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].Title != "Example Item" {
+		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
+	}
+}
+
 func TestParseFeedWithFeedURLWithTrailingSpace(t *testing.T) {
 	data := `<?xml version="1.0"?>
 		<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
