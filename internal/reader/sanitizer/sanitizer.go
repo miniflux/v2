@@ -201,7 +201,24 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 }
 
 func findAllowedIframeSourceDomain(iframeSourceURL string) (string, bool) {
-	iframeSourceDomain := urllib.DomainWithoutWWW(iframeSourceURL)
+	parsedURL, err := url.Parse(iframeSourceURL)
+	if err != nil {
+		return "", false
+	}
+
+	switch parsedURL.Scheme {
+	case "http", "https":
+		// Only web URLs are allowed for embedded content.
+	case "":
+		// Preserve support for protocol-relative iframe URLs.
+	default:
+		return "", false
+	}
+
+	iframeSourceDomain := strings.TrimPrefix(parsedURL.Host, "www.")
+	if iframeSourceDomain == "" {
+		return "", false
+	}
 
 	if _, ok := iframeAllowList[iframeSourceDomain]; ok {
 		return iframeSourceDomain, true
