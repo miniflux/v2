@@ -417,7 +417,7 @@ Required query parameters:
 
 Optional query parameters:
 
-- `n`: maximum number of items to return
+- `n`: maximum number of items to return, capped at 10000
 - `c`: numeric offset continuation token
 - `r`: sort direction, `o` for ascending, anything else for descending
 - `ot`: only items published after this Unix timestamp in seconds
@@ -437,7 +437,8 @@ Notes:
 - exactly one `s` value is expected
 - label streams are not supported here
 - when `xt` contains the `read` stream, `reading-list` and `feed/<id>` behave as unread-only queries
-- if `n` is omitted, the query is effectively unbounded
+- if `n` is omitted, or is above 10000 or non-positive, 10000 items are returned at most
+- clients must follow `continuation` to retrieve the remaining items
 - `continuation` is a numeric offset encoded as a JSON string, not an opaque token
 
 Response shape:

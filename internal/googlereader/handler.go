@@ -1012,7 +1012,7 @@ func (h *greaderHandler) handleReadingListStreamHandler(w http.ResponseWriter, r
 	)
 
 	builder := h.store.NewEntryQueryBuilder(rm.UserID).
-		WithLimit(rm.Count).
+		WithLimitAndMaximum(rm.Count, model.MaxEntryIDsLimit).
 		WithOffset(rm.Offset).
 		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 
@@ -1049,7 +1049,7 @@ func (h *greaderHandler) handleReadingListStreamHandler(w http.ResponseWriter, r
 func (h *greaderHandler) handleStarredStreamHandler(w http.ResponseWriter, r *http.Request, rm requestModifiers) {
 	builder := h.store.NewEntryQueryBuilder(rm.UserID).
 		WithStarred(true).
-		WithLimit(rm.Count).
+		WithLimitAndMaximum(rm.Count, model.MaxEntryIDsLimit).
 		WithOffset(rm.Offset).
 		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 
@@ -1073,7 +1073,7 @@ func (h *greaderHandler) handleStarredStreamHandler(w http.ResponseWriter, r *ht
 func (h *greaderHandler) handleReadStreamHandler(w http.ResponseWriter, r *http.Request, rm requestModifiers) {
 	builder := h.store.NewEntryQueryBuilder(rm.UserID).
 		WithStatuses(model.EntryStatusRead).
-		WithLimit(rm.Count).
+		WithLimitAndMaximum(rm.Count, model.MaxEntryIDsLimit).
 		WithOffset(rm.Offset).
 		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 
@@ -1125,7 +1125,7 @@ func (h *greaderHandler) handleFeedStreamHandler(w http.ResponseWriter, r *http.
 
 	builder := h.store.NewEntryQueryBuilder(rm.UserID).
 		WithFeedID(feedID).
-		WithLimit(rm.Count).
+		WithLimitAndMaximum(rm.Count, model.MaxEntryIDsLimit).
 		WithOffset(rm.Offset).
 		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 
