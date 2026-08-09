@@ -1,5 +1,6 @@
 {
     "action.cancel": "peru",
+    "action.documentation": "Dokumentaatio: %s",
     "action.download": "Lataa",
     "action.edit": "Muokkaa",
     "action.home_screen": "Lisää aloitusnäytölle",

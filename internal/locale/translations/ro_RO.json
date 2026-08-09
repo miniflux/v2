@@ -1,5 +1,6 @@
 {
     "action.cancel": "abandon",
+    "action.documentation": "Documentație: %s",
     "action.download": "Descărcare",
     "action.edit": "Editare",
     "action.home_screen": "Adaugă pe ecranul principal",

@@ -1,5 +1,6 @@
 {
     "action.cancel": "取り消し",
+    "action.documentation": "ドキュメント: %s",
     "action.download": "ダウンロード",
     "action.edit": "編集",
     "action.home_screen": "ホームスクリーンに追加",

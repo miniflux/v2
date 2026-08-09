@@ -1,5 +1,6 @@
 {
     "action.cancel": "закрыть",
+    "action.documentation": "Документация: %s",
     "action.download": "Загрузить",
     "action.edit": "Изменить",
     "action.home_screen": "Добавить на домашний экран",

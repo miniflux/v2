@@ -1,5 +1,6 @@
 {
     "action.cancel": "cancel",
+    "action.documentation": "Documentation: %s",
     "action.download": "Download",
     "action.edit": "Edit",
     "action.home_screen": "Add to home screen",

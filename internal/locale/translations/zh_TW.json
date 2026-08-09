@@ -1,5 +1,6 @@
 {
     "action.cancel": "取消",
+    "action.documentation": "說明文件：%s",
     "action.download": "下載",
     "action.edit": "編輯",
     "action.home_screen": "新增到主螢幕",

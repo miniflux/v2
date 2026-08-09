@@ -1,5 +1,6 @@
 {
     "action.cancel": "취소",
+    "action.documentation": "문서: %s",
     "action.download": "다운로드",
     "action.edit": "편집",
     "action.home_screen": "홈 화면에 추가",

@@ -1,5 +1,6 @@
 {
     "action.cancel": "abbrechen",
+    "action.documentation": "Dokumentation: %s",
     "action.download": "Herunterladen",
     "action.edit": "Bearbeiten",
     "action.home_screen": "Zum Startbildschirm hinzufügen",

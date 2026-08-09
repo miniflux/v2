@@ -38,7 +38,7 @@
             <input type="url" name="apprise_url" id="form-apprise-url" value="{{ .form.AppriseURL }}" placeholder="http://apprise:8080" spellcheck="false">
 
             <label for="form-apprise-services-urls">{{ t "form.integration.apprise_services_url" }}
-                <a href="https://github.com/caronc/apprise/wiki" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
+                <a href="https://github.com/caronc/apprise/wiki" aria-label="{{ t "action.documentation" (t "form.integration.apprise_services_url") }}" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
                     {{ icon "external-link" }}
                 </a>
             </label>
