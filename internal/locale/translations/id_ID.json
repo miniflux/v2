@@ -1,5 +1,6 @@
 {
     "action.cancel": "batal",
+    "action.documentation": "Dokumentasi: %s",
     "action.download": "Unduh",
     "action.edit": "Sunting",
     "action.home_screen": "Tambahkan ke beranda",

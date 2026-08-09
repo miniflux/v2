@@ -1,5 +1,6 @@
 {
     "action.cancel": "скасувати",
+    "action.documentation": "Документація: %s",
     "action.download": "Завантажити",
     "action.edit": "Редагувати",
     "action.home_screen": "Додати до головного екрану",

@@ -1,5 +1,6 @@
 {
     "action.cancel": "iptal",
+    "action.documentation": "Belgeler: %s",
     "action.download": "İndir",
     "action.edit": "Düzenle",
     "action.home_screen": "Ana ekrana ekle",

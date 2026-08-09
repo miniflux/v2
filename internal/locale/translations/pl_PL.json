@@ -1,5 +1,6 @@
 {
     "action.cancel": "anuluj",
+    "action.documentation": "Dokumentacja: %s",
     "action.download": "Pobierz",
     "action.edit": "Edytuj",
     "action.home_screen": "Dodaj do ekranu głównego",

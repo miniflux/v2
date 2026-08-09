@@ -1,5 +1,6 @@
 {
     "action.cancel": "إلغاء",
+    "action.documentation": "التوثيق: %s",
     "action.download": "تحميل",
     "action.edit": "تعديل",
     "action.home_screen": "إضافة إلى الشاشة الرئيسية",

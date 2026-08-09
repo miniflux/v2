@@ -1,5 +1,6 @@
 {
     "action.cancel": "ακύρωση",
+    "action.documentation": "Τεκμηρίωση: %s",
     "action.download": "Λήψη",
     "action.edit": "Επεξεργασία",
     "action.home_screen": "Προσθήκη στην αρχική οθόνη",
