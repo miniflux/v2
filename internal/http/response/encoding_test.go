@@ -25,14 +25,9 @@ func TestAcceptEncoding(t *testing.T) {
 			want:           "identity",
 		},
 		{
-			name:           "q=0 and identity",
-			acceptEncoding: "identity;q=0",
-			want:           "",
-		},
-		{
 			name:           "q=0 and *",
 			acceptEncoding: "*;q=0",
-			want:           "",
+			want:           "identity",
 		},
 		{
 			name:           "gzip",
@@ -42,7 +37,7 @@ func TestAcceptEncoding(t *testing.T) {
 		{
 			name:           "gzip and br",
 			acceptEncoding: "gzip,br",
-			want:           "gzip",
+			want:           "br",
 		},
 		{
 			name:           "br and gzip",
@@ -68,12 +63,12 @@ func TestAcceptEncoding(t *testing.T) {
 			// We want br here but weights are not supported.
 			name:           "multiple encodings and q values",
 			acceptEncoding: "gzip;q=0.5,br;q=0.8",
-			want:           "gzip",
+			want:           "br",
 		},
 		{
 			name:           "multiple encodings and wildcard",
 			acceptEncoding: "*;q=0,gzip,br",
-			want:           "gzip",
+			want:           "br",
 		},
 		{
 			name:           "multiple encodings and wildcard and q=0",
@@ -84,7 +79,7 @@ func TestAcceptEncoding(t *testing.T) {
 			// We want br here but weights are not supported.
 			name:           "multiple encodings and wildcard and q values",
 			acceptEncoding: "*;q=0.5,gzip;q=0.8,br",
-			want:           "gzip",
+			want:           "br",
 		},
 		{
 			name:           "multiple encodings and wildcard and q values and q=0",
@@ -104,6 +99,39 @@ func TestAcceptEncoding(t *testing.T) {
 		{
 			name:           "correct spaces placing around q value",
 			acceptEncoding: "gzip ; q=0.5, deflate;q=0.8",
+			want:           "gzip",
+		},
+		{
+			name:           "default for chrome / safari as of 2026",
+			acceptEncoding: "gzip, deflate, br, zstd",
+			want:           "br",
+		},
+		{
+			// Server preference order wins over the client's listed order.
+			name:           "server preference over client order",
+			acceptEncoding: "deflate, gzip",
+			want:           "gzip",
+		},
+		{
+			// q=0 excludes a specific supported encoding; next server pick wins.
+			name:           "q=0 excludes specific supported encoding",
+			acceptEncoding: "br;q=0, gzip",
+			want:           "gzip",
+		},
+		{
+			// A bare wildcard is not treated as opting into compression.
+			name:           "bare wildcard",
+			acceptEncoding: "*",
+			want:           "identity",
+		},
+		{
+			name:           "identity only",
+			acceptEncoding: "identity",
+			want:           "identity",
+		},
+		{
+			name:           "whitespace-only and empty segments",
+			acceptEncoding: " , gzip , ",
 			want:           "gzip",
 		},
 	}
