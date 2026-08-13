@@ -17,15 +17,15 @@ import (
 func NewXMLDecoder(data io.ReadSeeker) *xml.Decoder {
 	var decoder *xml.Decoder
 
-	// This is way fasted than io.ReadAll(data) as the buffer can be allocated in one go instead of dynamically grown.
 	buffer := &bytes.Buffer{}
-	io.Copy(buffer, data)
-
-	if hasUTF8XMLDeclaration(buffer.Bytes()) {
+	if hasUTF8XMLDeclaration(data, buffer) {
 		// TODO: detect actual encoding from bytes if not UTF-8 and convert to UTF-8 if needed.
 		// For now we just expect the invalid characters to be stripped out.
 
-		// Filter invalid chars now, since decoder.CharsetReader isn't called for utf-8 content
+		// The whole document is needed to filter invalid chars now, since
+		// decoder.CharsetReader isn't called for utf-8 content.
+		io.Copy(buffer, data)
+
 		filteredBytes := filterValidXMLChars(buffer.Bytes())
 
 		decoder = xml.NewDecoder(bytes.NewReader(filteredBytes))
@@ -116,7 +116,26 @@ func getEncoding(b []byte) []byte {
 	return v[1 : idx+1]
 }
 
-func hasUTF8XMLDeclaration(data []byte) bool {
-	enc := getEncoding(data)
+// hasUTF8XMLDeclaration reads data chunk by chunk into buffer until the XML
+// declaration's encoding can be resolved, then reports whether it is UTF-8.
+// The encoding sits in the XML declaration at the start of the document, but
+// pathological documents may pad it with a lot of whitespace, so buffering the
+// whole document up-front would be wasted work in the non-UTF-8 case.
+func hasUTF8XMLDeclaration(data io.Reader, buffer *bytes.Buffer) bool {
+	chunk := make([]byte, 1024)
+	var enc []byte
+	for {
+		n, err := data.Read(chunk)
+		if n > 0 {
+			buffer.Write(chunk[:n])
+		}
+		enc = getEncoding(buffer.Bytes())
+		// Stop once a complete encoding value or the end of the XML declaration
+		// ("?>") is seen, after which no encoding declaration can appear.
+		if err != nil || enc != nil || bytes.Contains(buffer.Bytes(), []byte("?>")) {
+			break
+		}
+	}
+
 	return enc == nil || bytes.EqualFold(enc, []byte("utf-8"))
 }
