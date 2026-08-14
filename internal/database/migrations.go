@@ -1557,4 +1557,15 @@ var migrations = [...]func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		// entries_user_status_changed_idx(user_id, status, changed_at) is
+		// redundant: it is a strict prefix of
+		// entries_user_status_changed_published_idx(user_id, status,
+		// changed_at, published_at), which serves every query the shorter
+		// index could (including the history page and changed_at pagination).
+		_, err = tx.Exec(`
+			DROP INDEX IF EXISTS entries_user_status_changed_idx;
+		`)
+		return err
+	},
 }
