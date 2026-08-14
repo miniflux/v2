@@ -1557,4 +1557,10 @@ var migrations = [...]func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			DROP INDEX IF EXISTS entries_feed_id_status_hash_idx;
+		`)
+		return err
+	},
 }
