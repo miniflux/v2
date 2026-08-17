@@ -491,6 +491,18 @@ endpoint HTTP authentication\&.
 .br
 Default is empty\&.
 .TP
+.B OAUTH2_ADDITIONAL_SCOPES
+Additional OAuth2 scopes to request\&.
+.br
+Default is empty\&.
+.TP
+.B OAUTH2_ADMIN_GROUP
+Group for administrators\&.
+.br
+When set, the admin role is mapped based on the specified group.\&.
+.br
+Default is empty\&.
+.TP
 .B OAUTH2_CLIENT_ID
 OAuth2 client ID\&.
 .br
@@ -510,6 +522,13 @@ Default is empty\&.
 .B OAUTH2_CLIENT_SECRET_FILE
 Path to a secret key exposed as a file, it should contain the
 \fBOAUTH2_CLIENT_SECRET\fR value\&.
+.br
+Default is empty\&.
+.TP
+.B OAUTH2_GROUP_CLAIM
+Claim that contains user groups\&.
+.br
+Used for obtaining user groups, which can be used for mapping the admin role.\&.
 .br
 Default is empty\&.
 .TP
