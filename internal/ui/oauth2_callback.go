@@ -8,6 +8,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"slices"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
@@ -116,6 +117,11 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	groupClaim := config.Opts.Oauth2GroupClaim()
+	adminGroup := config.Opts.Oauth2AdminGroup()
+	adminRoleMappingEnabled := groupClaim != "" && adminGroup != ""
+	isAdmin := adminRoleMappingEnabled && slices.Contains(profile.Groups, adminGroup)
+
 	if user == nil {
 		if !config.Opts.IsOAuth2UserCreationAllowed() {
 			response.HTMLForbidden(w, r)
@@ -127,7 +133,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		userCreationRequest := &model.UserCreationRequest{Username: profile.Username}
+		userCreationRequest := &model.UserCreationRequest{Username: profile.Username, IsAdmin: isAdmin}
 		authProvider.PopulateUserCreationWithProfileID(userCreationRequest, profile)
 
 		user, err = h.store.CreateUser(userCreationRequest)
@@ -144,6 +150,14 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		slog.Int64("user_id", user.ID),
 		slog.String("username", user.Username),
 	)
+
+	if adminRoleMappingEnabled && user.IsAdmin != isAdmin {
+		user.IsAdmin = isAdmin
+		if err := h.store.UpdateUser(user); err != nil {
+			response.HTMLServerError(w, r, err)
+			return
+		}
+	}
 
 	h.store.SetLastLogin(user.ID)
 	if err := authenticateWebSession(w, r, h.store, user); err != nil {
