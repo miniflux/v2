@@ -21,6 +21,8 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/proxyrotator"
 	"miniflux.app/v2/internal/urllib"
+
+	"golang.org/x/net/http/httpproxy"
 )
 
 const (
@@ -175,7 +177,19 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		KeepAlive: 15 * time.Second, // Default is 30s.
 	}
 
+	// http.ProxyFromEnvironment caches the environment on first use and needs a
+	// request that does not exist yet here, so read the variables directly. This
+	// keeps routing and the private-network exemption below in agreement.
+	envProxyFunc := httpproxy.FromEnvironment().ProxyFunc()
+
 	proxyDialAddress := normalizeProxyDialAddress(clientProxyURL)
+	if clientProxyURL == nil {
+		if parsedRequestURL, err := url.Parse(requestURL); err == nil {
+			if envProxyURL, err := envProxyFunc(parsedRequestURL); err == nil {
+				proxyDialAddress = normalizeProxyDialAddress(envProxyURL)
+			}
+		}
+	}
 
 	// Perform the private-network check inside the dialer's Control callback,
 	// which fires after DNS resolution but before the TCP connection is made.
@@ -199,7 +213,9 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	}
 
 	transport := &http.Transport{
-		Proxy: http.ProxyFromEnvironment,
+		Proxy: func(req *http.Request) (*url.URL, error) {
+			return envProxyFunc(req.URL)
+		},
 		// Setting `DialContext` disables HTTP/2, this option forces the transport to try HTTP/2 regardless.
 		ForceAttemptHTTP2: true,
 		MaxIdleConns:      50,               // Default is 100.
