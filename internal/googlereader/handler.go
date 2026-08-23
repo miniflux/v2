@@ -371,7 +371,11 @@ func (h *greaderHandler) quickAddHandler(w http.ResponseWriter, r *http.Request)
 	category := Stream{NoStream, ""}
 	newFeed, err := subscribe(toSubscribe, category, "", h.store, userID)
 	if err != nil {
-		response.JSONServerError(w, r, err)
+		if errors.Is(err, errCategoryNotFound) {
+			response.JSONBadRequest(w, r, err)
+		} else {
+			response.JSONServerError(w, r, err)
+		}
 		return
 	}
 
@@ -415,7 +419,13 @@ func getOrCreateCategory(streamCategory Stream, store *storage.Storage, userID i
 func subscribe(newFeed Stream, category Stream, title string, store *storage.Storage, userID int64) (*model.Feed, error) {
 	destCategory, err := getOrCreateCategory(category, store, userID)
 	if err != nil {
+		if errors.Is(err, storage.ErrNoCategory) {
+			return nil, errCategoryNotFound
+		}
 		return nil, err
+	}
+	if destCategory == nil {
+		return nil, errCategoryNotFound
 	}
 
 	feedRequest := model.FeedCreationRequest{
@@ -557,7 +567,11 @@ func (h *greaderHandler) editSubscriptionHandler(w http.ResponseWriter, r *http.
 	case "subscribe":
 		_, err := subscribe(streamIds[0], newLabel, title, h.store, userID)
 		if err != nil {
-			response.JSONServerError(w, r, err)
+			if errors.Is(err, errCategoryNotFound) {
+				response.JSONBadRequest(w, r, err)
+			} else {
+				response.JSONServerError(w, r, err)
+			}
 			return
 		}
 	case "unsubscribe":

@@ -12,6 +12,9 @@ import (
 	"miniflux.app/v2/internal/model"
 )
 
+// ErrNoCategory is returned when a user does not have any category.
+var ErrNoCategory = errors.New("store: no category found")
+
 // AnotherCategoryExists checks if another category exists with the same title.
 func (s *Storage) AnotherCategoryExists(userID, categoryID int64, title string) bool {
 	var result bool
@@ -59,6 +62,7 @@ func (s *Storage) Category(userID, categoryID int64) (*model.Category, error) {
 }
 
 // FirstCategory returns the first category for the given user.
+// It returns ErrNoCategory if the user does not have any category.
 func (s *Storage) FirstCategory(userID int64) (*model.Category, error) {
 	query := `SELECT id, user_id, title, hide_globally FROM categories WHERE user_id=$1 ORDER BY title ASC LIMIT 1`
 
@@ -67,7 +71,7 @@ func (s *Storage) FirstCategory(userID int64) (*model.Category, error) {
 
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
-		return nil, nil
+		return nil, ErrNoCategory
 	case err != nil:
 		return nil, fmt.Errorf(`store: unable to fetch category: %v`, err)
 	default:
