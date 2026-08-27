@@ -35,6 +35,15 @@
     {{ if .form.AllowSelfSignedCertificates }}
         <input type="hidden" name="allow_self_signed_certificates" value="1">
     {{ end }}
+    {{ if .form.ClientCertificate }}
+        <input type="hidden" name="client_certificate" value="{{ .form.ClientCertificate }}">
+    {{ end }}
+    {{ if .form.ClientKey }}
+        <input type="hidden" name="client_key" value="{{ .form.ClientKey }}">
+    {{ end }}
+    {{ if .form.CACertificate }}
+        <input type="hidden" name="ca_certificate" value="{{ .form.CACertificate }}">
+    {{ end }}
     {{ if .form.DisableHTTP2 }}
         <input type="hidden" name="disable_http2" value="1">
     {{ end }}

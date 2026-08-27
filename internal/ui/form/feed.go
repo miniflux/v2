@@ -32,6 +32,9 @@ type FeedForm struct {
 	WebhookURL                  string
 	IgnoreHTTPCache             bool
 	AllowSelfSignedCertificates bool
+	ClientCertificate           string
+	ClientKey                   string
+	CACertificate               string
 	FetchViaProxy               bool
 	Disabled                    bool
 	NoMediaPlayer               bool
@@ -75,6 +78,9 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.Password = f.Password
 	feed.IgnoreHTTPCache = f.IgnoreHTTPCache
 	feed.AllowSelfSignedCertificates = f.AllowSelfSignedCertificates
+	feed.ClientCertificate = f.ClientCertificate
+	feed.ClientKey = f.ClientKey
+	feed.CACertificate = f.CACertificate
 	feed.FetchViaProxy = f.FetchViaProxy
 	feed.Disabled = f.Disabled
 	feed.NoMediaPlayer = f.NoMediaPlayer
@@ -129,6 +135,9 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		Password:                    r.FormValue("feed_password"),
 		IgnoreHTTPCache:             r.FormValue("ignore_http_cache") == "1",
 		AllowSelfSignedCertificates: r.FormValue("allow_self_signed_certificates") == "1",
+		ClientCertificate:           r.FormValue("client_certificate"),
+		ClientKey:                   r.FormValue("client_key"),
+		CACertificate:               r.FormValue("ca_certificate"),
 		FetchViaProxy:               r.FormValue("fetch_via_proxy") == "1",
 		Disabled:                    r.FormValue("disabled") == "1",
 		NoMediaPlayer:               r.FormValue("no_media_player") == "1",
