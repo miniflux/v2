@@ -15,6 +15,8 @@
     "alert.account_linked": "Í-keng kah lí ê gōa-pō͘ kháu-chō kiat chòe-hé--ah!",
     "alert.account_unlinked": "Kah lí ê gōa-pō͘ kháu-chō ê kiat í-keng phah khui--ah!",
     "alert.background_feed_refresh": "Tng leh pōe-āu ōaⁿ-sin só͘-ū siau-sit lâi-goân, lí ē-sái kè-sio̍k sú-iōng Miniflux。",
+    "alert.bulk_feeds_none_selected": "Bô soán tiāu jīm-hô tēng-tsū-goân.",
+    "alert.bulk_feeds_updated": "Soán tiāu ê tēng-tsū-goân í-king kái-sin.",
     "alert.feed_error": "Chit ê siau-sit lâi-goân ū būn-tôe",
     "alert.no_starred": "Chit-má ah bô siu-chông",
     "alert.no_category": "Chit-má ah bô lūi-pia̍t",
@@ -471,6 +473,12 @@
     "page.edit_feed.title": "Pian-chi̍p Siau-sit lâi-goân: %s",
     "page.edit_user.title": "pian-chi̍p sú-iōng-lâng: %s",
     "page.entry.attachments": "Hù-kiāⁿ",
+    "page.feeds.bulk.actions": "Phue-liōng tsau-tsok",
+    "page.feeds.bulk.disable": "Thêng-iōng",
+    "page.feeds.bulk.enable": "Khé-iōng",
+    "page.feeds.bulk.move": "Sóa khì hun-lūi",
+    "page.feeds.bulk.select_all": "Choân-pō͘ soán",
+    "page.feeds.bulk.selected": "Í-king soán:",
     "page.feeds.error_count": [
         "%d ê m̄-tio̍h"
     ],

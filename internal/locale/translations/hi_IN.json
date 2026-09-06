@@ -15,6 +15,8 @@
     "alert.account_linked": "आपका बाहरी खाता अब लिंक हो गया है!",
     "alert.account_unlinked": "आपका बाहरी खाता अब अलग कर दिया गया है!",
     "alert.background_feed_refresh": "सभी फ़ीड्स पृष्ठभूमि में ताज़ा की जा रही हैं। जब यह प्रक्रिया चल रही हो, तो आप मिनीफ्लक्स का उपयोग जारी रख सकते हैं।",
+    "alert.bulk_feeds_none_selected": "कोई फ़ीड चयनित नहीं है।",
+    "alert.bulk_feeds_updated": "चयनित फ़ीड अपडेट कर दिए गए हैं।",
     "alert.feed_error": "इस फ़ीड में एक समस्या है",
     "alert.no_starred": "इस समय कोई बुकमार्क नहीं है",
     "alert.no_category": "कोई श्रेणी नहीं है।",
@@ -476,6 +478,12 @@
     "page.edit_feed.title": "%s फ़ीड संपाद करे",
     "page.edit_user.title": "%s उपभोक्ता संपाद करे",
     "page.entry.attachments": "संलग्नक",
+    "page.feeds.bulk.actions": "बल्क क्रियाएँ",
+    "page.feeds.bulk.disable": "अक्षम करें",
+    "page.feeds.bulk.enable": "सक्षम करें",
+    "page.feeds.bulk.move": "श्रेणी में ले जाएँ",
+    "page.feeds.bulk.select_all": "सभी चुनें",
+    "page.feeds.bulk.selected": "चयनित:",
     "page.feeds.error_count": [
         "%d समस्या",
         "%d समस्याए"

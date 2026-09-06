@@ -15,6 +15,8 @@
     "alert.account_linked": "Il tuo account esterno ora è collegato!",
     "alert.account_unlinked": "Il tuo account esterno ora è scollegato!",
     "alert.background_feed_refresh": "Tutti i feed vengono aggiornati in background. Puoi continuare a usare Miniflux mentre questo processo è in esecuzione.",
+    "alert.bulk_feeds_none_selected": "Nessun feed selezionato.",
+    "alert.bulk_feeds_updated": "I feed selezionati sono stati aggiornati.",
     "alert.feed_error": "Sembra ci sia un problema con questo feed",
     "alert.no_starred": "Nessun preferito disponibile.",
     "alert.no_category": "Nessuna categoria disponibile.",
@@ -476,6 +478,12 @@
     "page.edit_feed.title": "Modifica feed: %s",
     "page.edit_user.title": "Modifica utente: %s",
     "page.entry.attachments": "Allegati",
+    "page.feeds.bulk.actions": "Azioni di massa",
+    "page.feeds.bulk.disable": "Disabilita",
+    "page.feeds.bulk.enable": "Abilita",
+    "page.feeds.bulk.move": "Sposta nella categoria",
+    "page.feeds.bulk.select_all": "Seleziona tutto",
+    "page.feeds.bulk.selected": "Selezionati:",
     "page.feeds.error_count": [
         "%d errore",
         "%d errori"

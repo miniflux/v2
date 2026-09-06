@@ -15,6 +15,8 @@
     "alert.account_linked": "Ulkoinen tilisi on nyt linkitetty!",
     "alert.account_unlinked": "Ulkoinen tilisi on nyt irrotettu!",
     "alert.background_feed_refresh": "Kaikki syötteet päivitetään taustalla. Voit jatkaa Minifluxin käyttöä tämän prosessin aikana.",
+    "alert.bulk_feeds_none_selected": "Syötettä ei ole valittu.",
+    "alert.bulk_feeds_updated": "Valitut syötteet on päivitetty.",
     "alert.feed_error": "Tässä syötteessä on ongelma",
     "alert.no_starred": "Tällä hetkellä ei ole kirjanmerkkiä.",
     "alert.no_category": "Ei ole kategoriaa.",
@@ -476,6 +478,12 @@
     "page.edit_feed.title": "Muokkaa syöte: %s",
     "page.edit_user.title": "Muokkaa käyttäjä: %s",
     "page.entry.attachments": "Liitteet",
+    "page.feeds.bulk.actions": "Massatoiminnot",
+    "page.feeds.bulk.disable": "Poista käytöstä",
+    "page.feeds.bulk.enable": "Ota käyttöön",
+    "page.feeds.bulk.move": "Siirrä kategoriaan",
+    "page.feeds.bulk.select_all": "Valitse kaikki",
+    "page.feeds.bulk.selected": "Valittu:",
     "page.feeds.error_count": [
         "%d virhe",
         "%d virhettä"

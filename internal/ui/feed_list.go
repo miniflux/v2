@@ -18,6 +18,12 @@ func (h *handler) showFeedsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	categories, err := h.store.Categories(user.ID)
+	if err != nil {
+		response.HTMLServerError(w, r, err)
+		return
+	}
+
 	feeds, err := h.store.FeedsWithCounters(user.ID)
 	if err != nil {
 		response.HTMLServerError(w, r, err)
@@ -26,6 +32,7 @@ func (h *handler) showFeedsPage(w http.ResponseWriter, r *http.Request) {
 
 	view := view.New(h.tpl, r)
 	view.Set("feeds", feeds)
+	view.Set("categories", categories)
 	view.Set("total", len(feeds))
 	view.Set("menu", "feeds")
 	view.Set("user", user)
