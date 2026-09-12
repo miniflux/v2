@@ -606,6 +606,9 @@ func (s *Storage) MarkFeedAsRead(userID, feedID int64, before time.Time) error {
 
 // MarkCategoryAsRead updates all category entries to the read status.
 func (s *Storage) MarkCategoryAsRead(userID, categoryID int64, before time.Time) error {
+	// entries.user_id is redundant with feeds.user_id here (an entry always
+	// shares its feed's owner), but including it lets the planner use
+	// entries_user_status_feed_idx(user_id, status, feed_id).
 	query := `
 		UPDATE
 			entries
@@ -615,13 +618,15 @@ func (s *Storage) MarkCategoryAsRead(userID, categoryID int64, before time.Time)
 		FROM
 			feeds
 		WHERE
-			feed_id=feeds.id
+			entries.feed_id=feeds.id
+		AND
+			entries.user_id=$2
 		AND
 			feeds.user_id=$2
 		AND
-			status=$3
+			entries.status=$3
 		AND
-			published_at < $4
+			entries.published_at < $4
 		AND
 			feeds.category_id=$5
 	`
