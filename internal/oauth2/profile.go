@@ -12,6 +12,7 @@ type UserProfile struct {
 	Key      string
 	ID       string
 	Username string
+	Groups   []string
 }
 
 // String returns a formatted string representation of the user profile.

@@ -7,7 +7,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
 
 	"github.com/coreos/go-oidc/v3/oidc"
@@ -56,7 +58,7 @@ func (o *oidcProvider) Config() *oauth2.Config {
 		RedirectURL:  o.redirectURL,
 		ClientID:     o.clientID,
 		ClientSecret: o.clientSecret,
-		Scopes:       []string{oidc.ScopeOpenID, "profile", "email"},
+		Scopes:       slices.Concat([]string{oidc.ScopeOpenID, "profile", "email"}, config.Opts.Oauth2AdditionalScopes()),
 		Endpoint:     o.provider.Endpoint(),
 	}
 }
@@ -104,6 +106,28 @@ func (o *oidcProvider) Profile(ctx context.Context, code, codeVerifier string) (
 		if value != "" {
 			profile.Username = value
 			break
+		}
+	}
+
+	if groupClaim := config.Opts.Oauth2GroupClaim(); groupClaim != "" {
+		var rawUserClaims map[string]any
+		if err := userInfo.Claims(&rawUserClaims); err != nil {
+			return nil, fmt.Errorf(`oidc: failed to parse user claims: %w`, err)
+		}
+
+		rawValue := rawUserClaims[groupClaim]
+		switch value := rawValue.(type) {
+		case string:
+			profile.Groups = []string{value}
+		case []any:
+			profile.Groups = make([]string, len(value))
+			for i, rawEntry := range value {
+				if entry, ok := rawEntry.(string); ok {
+					profile.Groups[i] = entry
+				} else {
+					return nil, fmt.Errorf(`oidc: failed to parse user claims: %q must only contain strings`, groupClaim)
+				}
+			}
 		}
 	}
 
