@@ -9,6 +9,11 @@ import (
 	"testing"
 )
 
+func TestParseTemplates(t *testing.T) {
+	engine := NewEngine("")
+	engine.ParseTemplates()
+}
+
 // TestRenderConcurrency renders the same template concurrently in different
 // languages. Because Render binds per-request, language-specific functions
 // ("t", "plural", "elapsed") onto the template, doing so on a shared template
