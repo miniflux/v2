@@ -6,6 +6,7 @@ package xml // import "miniflux.app/v2/internal/reader/xml"
 import (
 	"encoding/xml"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 	"testing"
@@ -226,4 +227,78 @@ func FuzzFilterValidXMLChars(f *testing.F) {
 	f.Fuzz(func(t *testing.T, s []byte) {
 		filterValidXMLChars(s)
 	})
+}
+
+func TestHasUTF8XMLDeclaration(t *testing.T) {
+	// Build a declaration whose closing "?>" straddles the 1024-byte chunk
+	// boundary, to exercise the overlap in the chunked reader.
+	declPrefix := `<?xml version="1.0" encoding="utf-8"`
+	boundaryDocument := declPrefix + strings.Repeat(" ", 1023-len(declPrefix)) + `?><rss></rss>`
+
+	scenarios := []struct {
+		name     string
+		document string
+		want     bool
+	}{
+		{"explicit utf-8", `<?xml version="1.0" encoding="utf-8"?><rss></rss>`, true},
+		{"uppercase utf-8", `<?xml version="1.0" encoding="UTF-8"?><rss></rss>`, true},
+		{"non utf-8", `<?xml version="1.0" encoding="iso-8859-1"?><rss></rss>`, false},
+		{"no encoding attribute", `<?xml version="1.0"?><rss></rss>`, true},
+		{"no declaration", `<rss></rss>`, true},
+		// An "encoding=" in the body must not be mistaken for the declaration.
+		{"encoding in body is ignored", `<?xml version="1.0"?><rss><title>encoding="iso-8859-1"</title></rss>`, true},
+		{"declaration longer than one chunk", `<?xml version="1.0"` + strings.Repeat(" ", 4096) + `encoding="iso-8859-1"?><rss></rss>`, false},
+		{"declaration end split across chunk boundary", boundaryDocument, true},
+		{"utf-8 bom before declaration", "\xEF\xBB\xBF" + `<?xml version="1.0" encoding="iso-8859-1"?><rss></rss>`, false},
+		{"leading whitespace before declaration", strings.Repeat("\n", 8192) + `<?xml version="1.0" encoding="iso-8859-1"?><rss></rss>`, false},
+		{"leading whitespace without declaration", "\n\n  <rss></rss>", true},
+	}
+
+	for _, scenario := range scenarios {
+		t.Run(scenario.name, func(t *testing.T) {
+			got := hasUTF8XMLDeclaration(strings.NewReader(scenario.document))
+			if got != scenario.want {
+				t.Errorf("hasUTF8XMLDeclaration() = %v, want %v", got, scenario.want)
+			}
+		})
+	}
+}
+
+func BenchmarkNewXMLDecoder(b *testing.B) {
+	body := strings.Repeat("<item><title>hello world</title></item>", 12*1024)
+
+	benchmarks := []struct {
+		name     string
+		document string
+	}{
+		{"UTF8", `<?xml version="1.0" encoding="utf-8"?><rss>` + body + `</rss>`},
+		{"NonUTF8", `<?xml version="1.0" encoding="iso-8859-1"?><rss>` + body + `</rss>`},
+		{"NoDeclaration", `<rss>` + body + `</rss>`},
+	}
+
+	for _, bm := range benchmarks {
+		b.Run(bm.name, func(b *testing.B) {
+			reader := strings.NewReader(bm.document)
+			b.ReportAllocs()
+			for b.Loop() {
+				reader.Seek(0, io.SeekStart)
+				NewXMLDecoder(reader)
+			}
+		})
+	}
+}
+
+func BenchmarkNewXMLDecoderPaddedDeclaration(b *testing.B) {
+	// A non-UTF-8 declaration padded with more than one chunk of whitespace
+	// before the encoding attribute, followed by a real body: detection must
+	// read only the padded declaration, not buffer the whole document.
+	body := strings.Repeat("<item><title>hello world</title></item>", 12*1024)
+	document := `<?xml version="1.0"` + strings.Repeat(" ", 8192) + `encoding="iso-8859-1"?><rss>` + body + `</rss>`
+	reader := strings.NewReader(document)
+
+	b.ReportAllocs()
+	for b.Loop() {
+		reader.Seek(0, io.SeekStart)
+		NewXMLDecoder(reader)
+	}
 }

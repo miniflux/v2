@@ -4,6 +4,7 @@
 package xml // import "miniflux.app/v2/internal/reader/xml"
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/xml"
 	"fmt"
@@ -17,15 +18,17 @@ import (
 func NewXMLDecoder(data io.ReadSeeker) *xml.Decoder {
 	var decoder *xml.Decoder
 
-	// This is way fasted than io.ReadAll(data) as the buffer can be allocated in one go instead of dynamically grown.
-	buffer := &bytes.Buffer{}
-	io.Copy(buffer, data)
-
-	if hasUTF8XMLDeclaration(buffer.Bytes()) {
+	if hasUTF8XMLDeclaration(data) {
 		// TODO: detect actual encoding from bytes if not UTF-8 and convert to UTF-8 if needed.
 		// For now we just expect the invalid characters to be stripped out.
 
-		// Filter invalid chars now, since decoder.CharsetReader isn't called for utf-8 content
+		// The whole document is needed to filter invalid chars now, since
+		// decoder.CharsetReader isn't called for utf-8 content. Copy it in one
+		// go: io.Copy uses the reader's WriteTo, allocating the buffer once.
+		data.Seek(0, io.SeekStart)
+		buffer := &bytes.Buffer{}
+		io.Copy(buffer, data)
+
 		filteredBytes := filterValidXMLChars(buffer.Bytes())
 
 		decoder = xml.NewDecoder(bytes.NewReader(filteredBytes))
@@ -116,7 +119,25 @@ func getEncoding(b []byte) []byte {
 	return v[1 : idx+1]
 }
 
-func hasUTF8XMLDeclaration(data []byte) bool {
-	enc := getEncoding(data)
+// hasUTF8XMLDeclaration reports whether the XML declaration at the start of the
+// document selects UTF-8 (or omits the encoding, which defaults to UTF-8).
+//
+// Only the "<?xml ... ?>" declaration is inspected: it is the first tag of the
+// document, so reading up to the first '>' is enough. That avoids scanning the
+// whole document and keeps an "encoding=" in the body from being mistaken for
+// the real one. An optional byte-order mark and leading whitespace are skipped.
+func hasUTF8XMLDeclaration(data io.Reader) bool {
+	reader := bufio.NewReader(data)
+
+	if bom, _ := reader.Peek(3); bytes.Equal(bom, []byte{0xEF, 0xBB, 0xBF}) {
+		reader.Discard(3)
+	}
+
+	tag, _ := reader.ReadBytes('>')
+	if !bytes.HasPrefix(bytes.TrimLeft(tag, " \t\r\n"), []byte("<?xml")) {
+		return true
+	}
+
+	enc := getEncoding(tag)
 	return enc == nil || bytes.EqualFold(enc, []byte("utf-8"))
 }
