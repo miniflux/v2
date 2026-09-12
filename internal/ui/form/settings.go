@@ -123,7 +123,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.MarkReadOnView = MarkReadOnView
 	user.MarkReadOnMediaPlayerCompletion = MarkReadOnMediaPlayerCompletion
 
-	if s.Password != "" {
+	if s.Password != "" && !config.Opts.DisableLocalAuth() {
 		user.Password = s.Password
 	}
 

@@ -134,6 +134,7 @@
     "error.invalid_site_url": "Nieprawidłowy adres URL witryny.",
     "error.invalid_theme": "Nieprawidłowy motyw.",
     "error.invalid_timezone": "Nieprawidłowa strefa czasowa.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux nie może połączyć się z tą witryną z powodu błędu sieci: %v.",
     "error.network_timeout": "Ta witryna internetowa jest zbyt wolna i upłynął limit czasu żądania: %v",
     "error.password_min_length": "Musisz użyć co najmniej 6 znaków.",

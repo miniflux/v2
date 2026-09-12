@@ -131,6 +131,7 @@
     "error.invalid_site_url": "अमान्य साइट यूआरएल",
     "error.invalid_theme": "अमान्य थीम.",
     "error.invalid_timezone": "अमान्य समयक्षेत्र.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "नेटवर्क त्रुटि के कारण मिनीफ्लक्स इस वेबसाइट तक नहीं पहुँच पा रहा: %v.",
     "error.network_timeout": "यह वेबसाइट बहुत धीमी है और अनुरोध का समय समाप्त हो गया: %v",
     "error.password_min_length": "पासवर्ड में कम से कम 6 अक्षर होने चाहिए।",

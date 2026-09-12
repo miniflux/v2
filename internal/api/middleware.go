@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/storage"
@@ -100,6 +101,17 @@ func (m *middleware) validateBasicAuth(next http.Handler) http.Handler {
 		username, password, authOK := r.BasicAuth()
 		if !authOK {
 			slog.Warn("[API] No Basic HTTP Authentication header sent with the request",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", clientIP),
+				slog.String("user_agent", r.UserAgent()),
+				slog.String("request_uri", r.RequestURI),
+			)
+			response.JSONUnauthorized(w, r)
+			return
+		}
+
+		if config.Opts.DisableLocalAuth() {
+			slog.Warn("[API] Blocking Basic HTTP Authentication attempt, local auth is disabled",
 				slog.Bool("authentication_failed", true),
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),

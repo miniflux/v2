@@ -128,6 +128,7 @@
     "error.invalid_site_url": "Siau-sit lâi-goân ê bāng-chām ê bāng-chí ū būn-tôe.",
     "error.invalid_theme": "Ū būn-tôe ê chú-tôe.",
     "error.invalid_timezone": "Ū būn-tôe ê sî-khu.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux bô-hoat-tō͘ liân kàu chit ê bāng-chām, ū khó-lêng sī bāng-lō͘ būn-tôe: %v.",
     "error.network_timeout": "Chit ê bāng-chām ê hôe-èng siuⁿ bān, chhéng-kiû chhiau-kè sî-kan: %v.",
     "error.password_min_length": "Chhiáⁿ chì-chió ài su-li̍p la̍k ê lī goân.",

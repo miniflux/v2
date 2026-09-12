@@ -131,6 +131,7 @@
     "error.invalid_site_url": "Geçersiz site URL'si.",
     "error.invalid_theme": "Geçersiz tema.",
     "error.invalid_timezone": "Geçersiz saat dilimi.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux bir ağ hatası nedeniyle bu websitesine erişemiyor: %v.",
     "error.network_timeout": "Bu websitesi çok yavaş ve istek zaman aşımına uğradı: %v",
     "error.password_min_length": "Parola en az 6 karakter içermeli.",

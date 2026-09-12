@@ -145,6 +145,7 @@
     "error.invalid_site_url": "رابط الموقع غير صالح.",
     "error.invalid_theme": "السمة غير صالحة.",
     "error.invalid_timezone": "المنطقة الزمنية غير صالحة.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux غير قادر على الوصول إلى هذا الموقع بسبب خطأ في الشبكة: %v.",
     "error.network_timeout": "هذا الموقع بطيء جداً وانتهى وقت الطلب: %v",
     "error.password_min_length": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.",

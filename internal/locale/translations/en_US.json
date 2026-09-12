@@ -133,6 +133,7 @@
     "error.invalid_site_url": "Invalid site URL.",
     "error.invalid_theme": "Invalid theme.",
     "error.invalid_timezone": "Invalid timezone.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux is not able to reach this website due to a network error: %v.",
     "error.network_timeout": "This website is too slow and the request timed out: %v",
     "error.password_min_length": "The password must have at least 6 characters.",

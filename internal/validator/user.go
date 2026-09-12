@@ -7,6 +7,7 @@ import (
 	"strings"
 	"unicode"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
@@ -45,6 +46,10 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 	}
 
 	if changes.Password != nil {
+		if config.Opts.DisableLocalAuth() {
+			return locale.NewLocalizedError("error.local_auth_disabled")
+		}
+
 		if err := validatePassword(*changes.Password); err != nil {
 			return err
 		}

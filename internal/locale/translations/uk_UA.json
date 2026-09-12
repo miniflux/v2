@@ -134,6 +134,7 @@
     "error.invalid_site_url": "Недійсна URL-адреса сайту.",
     "error.invalid_theme": "Недійсна тема.",
     "error.invalid_timezone": "Недійсний часовий пояс.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux не може отримати доступ до цього сайту через помилку мережі: %v.",
     "error.network_timeout": "Цей сайт занадто повільний і запит перевищив час очікування: %v",
     "error.password_min_length": "Пароль має складати щонайменше 6 символів.",

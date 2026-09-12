@@ -128,6 +128,7 @@
     "error.invalid_site_url": "사이트 URL이 유효하지 않습니다.",
     "error.invalid_theme": "테마가 유효하지 않습니다.",
     "error.invalid_timezone": "시간대가 유효하지 않습니다.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "네트워크 오류로 인해 Miniflux가 이 웹사이트에 도달할 수 없습니다: %v.",
     "error.network_timeout": "이 웹사이트의 응답이 너무 느려 시간 초과되었습니다: %v",
     "error.password_min_length": "비밀번호는 6자 이상이어야 합니다.",

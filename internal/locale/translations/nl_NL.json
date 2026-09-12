@@ -131,6 +131,7 @@
     "error.invalid_site_url": "Ongeldige site URL.",
     "error.invalid_theme": "Ongeldig thema.",
     "error.invalid_timezone": "Ongeldige tijdzone.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux kan deze website niet bereiken vanwege een netwerkfout: %v.",
     "error.network_timeout": "Deze website is te traag en de aanvraag gaf timeout: %v",
     "error.password_min_length": "Minimaal 6 tekens gebruiken.",

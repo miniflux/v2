@@ -134,6 +134,7 @@
     "error.invalid_site_url": "Недействительный ссылка сайта.",
     "error.invalid_theme": "Недопустимая тема.",
     "error.invalid_timezone": "Недопустимый часовой пояс.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux не может открыть сайт из-за ошибки сети: %v.",
     "error.network_timeout": "Этот сайт слишком медленный и время ожидания запроса истекло: %v",
     "error.password_min_length": "Вы должны использовать минимум 6 символов.",

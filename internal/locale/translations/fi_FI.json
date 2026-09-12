@@ -131,6 +131,7 @@
     "error.invalid_site_url": "Virheellinen sivuston URL-osoite.",
     "error.invalid_theme": "Virheellinen teema.",
     "error.invalid_timezone": "Virheellinen aikavyöhyke.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux ei tavoita tätä sivustoa verkkovirheen vuoksi: %v.",
     "error.network_timeout": "Tämä sivusto on liian hidas ja pyyntö aikakatkaistiin: %v",
     "error.password_min_length": "Salasanassa on oltava vähintään 6 merkkiä.",

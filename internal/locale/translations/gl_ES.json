@@ -133,6 +133,7 @@
     "error.invalid_site_url": "URL da web non válido.",
     "error.invalid_theme": "Decorado non válido.",
     "error.invalid_timezone": "Zona horaria non válida.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux non pode acadar esta web por mor dun erro na rede: %v.",
     "error.network_timeout": "Esta web é demasiado lenta e caducou a petición: %v",
     "error.password_min_length": "O contrasinal ten que ter 6 caracteres polo menos.",

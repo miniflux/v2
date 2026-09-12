@@ -128,6 +128,7 @@
     "error.invalid_site_url": "サイト URL が無効です。",
     "error.invalid_theme": "テーマが無効です。",
     "error.invalid_timezone": "タイムゾーンが無効です。",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux はネットワークエラーのためこのウェブサイトに到達できません: %v.",
     "error.network_timeout": "このウェブサイトは応答が遅すぎるためタイムアウトしました: %v",
     "error.password_min_length": "パスワードは6文字以上である必要があります。",

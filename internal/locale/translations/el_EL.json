@@ -131,6 +131,7 @@
     "error.invalid_site_url": "Μη έγκυρη διεύθυνση URL ιστότοπου.",
     "error.invalid_theme": "Μη έγκυρο θέμα.",
     "error.invalid_timezone": "Μη έγκυρη ζώνη ώρας.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Το Miniflux δεν μπορεί να φτάσει σε αυτόν τον ιστότοπο λόγω σφάλματος δικτύου: %v.",
     "error.network_timeout": "Αυτός ο ιστότοπος είναι πολύ αργός και το αίτημα έληξε: %v",
     "error.password_min_length": "Ο κωδικός πρόσβασης πρέπει να έχει τουλάχιστον 6 χαρακτήρες.",
