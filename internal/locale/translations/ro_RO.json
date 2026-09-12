@@ -166,6 +166,7 @@
     "error.user_already_exists": "Acest utilizator există deja.",
     "error.user_mandatory_fields": "Numele utilizatorului este obligatoriu.",
     "error.linktaco_missing_required_fields": "LinkTaco API Token și Organization Slug sunt necesare",
+    "error.googlereader_missing_required_fields": "Numele de utilizator și parola Google Reader sunt necesare",
     "form.api_key.label.description": "Etichetă Cheie API",
     "form.category.hide_globally": "Ascunde intrările în lista globală de articole necitite",
     "form.category.label.title": "Titlu",

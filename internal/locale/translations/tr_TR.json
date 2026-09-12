@@ -163,6 +163,7 @@
     "error.user_already_exists": "Bu kullanıcı zaten mevcut.",
     "error.user_mandatory_fields": "Kullanıcı adı zorunlu.",
     "error.linktaco_missing_required_fields": "LinkTaco API Token ve Organization Slug gereklidir",
+    "error.googlereader_missing_required_fields": "Google Reader kullanıcı adı ve parolası gereklidir",
     "form.api_key.label.description": "API Anahtar Etiketi",
     "form.category.hide_globally": "Genel okunmamış listesindeki girişleri gizle",
     "form.category.label.title": "Başlık",

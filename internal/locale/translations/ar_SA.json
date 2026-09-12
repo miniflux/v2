@@ -103,6 +103,7 @@
     "error.duplicate_fever_username": "يوجد بالفعل شخص آخر بنفس اسم مستخدم Fever!",
     "error.duplicate_googlereader_username": "يوجد بالفعل شخص آخر بنفس اسم مستخدم Google Reader!",
     "error.linktaco_missing_required_fields": "مطلوب رمز LinkTaco API و Organization Slug",
+    "error.googlereader_missing_required_fields": "مطلوب اسم مستخدم وكلمة مرور Google Reader",
     "error.duplicate_linked_account": "يوجد بالفعل شخص مرتبط بهذا الموفر!",
     "error.duplicated_feed": "هذا المصدر موجود بالفعل.",
     "error.empty_file": "هذا الملف فارغ.",

@@ -163,6 +163,7 @@
     "error.user_already_exists": "Käyttäjä on jo olemassa.",
     "error.user_mandatory_fields": "Käyttäjätunnus on pakollinen.",
     "error.linktaco_missing_required_fields": "LinkTaco API Token ja Organization Slug vaaditaan",
+    "error.googlereader_missing_required_fields": "Google Reader -käyttäjätunnus ja -salasana vaaditaan",
     "form.api_key.label.description": "API-avaimen nimi",
     "form.category.hide_globally": "Piilota artikkelit lukemattomien listassa",
     "form.category.label.title": "Otsikko",

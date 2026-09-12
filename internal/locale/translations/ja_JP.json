@@ -160,6 +160,7 @@
     "error.user_already_exists": "このユーザーは既に存在します。",
     "error.user_mandatory_fields": "ユーザー名が必要です。",
     "error.linktaco_missing_required_fields": "LinkTaco API TokenとOrganization Slugが必要です",
+    "error.googlereader_missing_required_fields": "Google Readerのユーザー名とパスワードが必要です",
     "form.api_key.label.description": "API キーラベル",
     "form.category.hide_globally": "未読一覧に記事を表示しない",
     "form.category.label.title": "タイトル",

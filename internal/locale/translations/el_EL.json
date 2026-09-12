@@ -163,6 +163,7 @@
     "error.user_already_exists": "Αυτός ο χρήστης υπάρχει ήδη.",
     "error.user_mandatory_fields": "Το όνομα χρήστη είναι υποχρεωτικό.",
     "error.linktaco_missing_required_fields": "Το LinkTaco API Token και το Organization Slug είναι απαραίτητα",
+    "error.googlereader_missing_required_fields": "Το όνομα χρήστη και ο κωδικός πρόσβασης του Google Reader είναι απαραίτητα",
     "form.api_key.label.description": "Ετικέτα κλειδιού API",
     "form.category.hide_globally": "Απόκρυψη καταχωρήσεων σε γενική λίστα μη αναγνωσμένων",
     "form.category.label.title": "Τίτλος",

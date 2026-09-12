@@ -112,7 +112,7 @@ func (m *authMiddleware) serveValidated(w http.ResponseWriter, r *http.Request, 
 	}
 
 	parts := strings.Split(token, "/")
-	if len(parts) != 2 {
+	if len(parts) != 2 || parts[0] == "" {
 		slog.Warn("[GoogleReader] Auth token does not have the expected structure username/hash",
 			slog.Bool("authentication_failed", true),
 			slog.String("client_ip", clientIP),

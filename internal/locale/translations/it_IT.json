@@ -163,6 +163,7 @@
     "error.user_already_exists": "Questo utente esiste già.",
     "error.user_mandatory_fields": "Il nome utente è obbligatorio.",
     "error.linktaco_missing_required_fields": "LinkTaco API Token e Organization Slug sono richiesti",
+    "error.googlereader_missing_required_fields": "Nome utente e password di Google Reader sono richiesti",
     "form.api_key.label.description": "Etichetta chiave API",
     "form.category.hide_globally": "Nascondere le voci nella lista globale dei non letti",
     "form.category.label.title": "Titolo",

@@ -160,6 +160,7 @@
     "error.user_already_exists": "이 사용자는 이미 존재합니다.",
     "error.user_mandatory_fields": "사용자명이 필요합니다.",
     "error.linktaco_missing_required_fields": "LinkTaco API 토큰과 조직 슬러그가 필요합니다",
+    "error.googlereader_missing_required_fields": "Google Reader 사용자 이름과 비밀번호가 필요합니다",
     "form.api_key.label.description": "API키 설명",
     "form.category.hide_globally": "읽지 않음 목록에 게시물을 표시하지 않음",
     "form.category.label.title": "제목",

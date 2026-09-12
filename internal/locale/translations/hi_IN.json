@@ -163,6 +163,7 @@
     "error.user_already_exists": "यह उपयोगकर्ता पहले से ही मौजूद है।",
     "error.user_mandatory_fields": "उपयोगकर्ता नाम अनिवार्य है।",
     "error.linktaco_missing_required_fields": "LinkTaco API Token और Organization Slug आवश्यक हैं",
+    "error.googlereader_missing_required_fields": "Google Reader उपयोगकर्ता नाम और पासवर्ड आवश्यक हैं",
     "form.api_key.label.description": "एपीआई कुंजी लेबल",
     "form.category.hide_globally": "वैश्विक अपठित सूची में प्रविष्टियां छिपाएं",
     "form.category.label.title": "शीर्षक",

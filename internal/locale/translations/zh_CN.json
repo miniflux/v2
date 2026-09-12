@@ -160,6 +160,7 @@
     "error.user_already_exists": "此用户已存在。",
     "error.user_mandatory_fields": "必须填写用户名。",
     "error.linktaco_missing_required_fields": "LinkTaco API Token 和 Organization Slug 是必需的",
+    "error.googlereader_missing_required_fields": "Google Reader 用户名和密码是必需的",
     "form.api_key.label.description": "API 密钥标签",
     "form.category.hide_globally": "在全局未读列表中隐藏条目",
     "form.category.label.title": "标题",

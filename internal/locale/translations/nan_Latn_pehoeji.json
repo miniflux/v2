@@ -160,6 +160,7 @@
     "error.user_already_exists": "Chit ê sú-iōng-lâng í-keng chûn-chāi.",
     "error.user_mandatory_fields": "Tio̍h-ài su-li̍p kháu-chō miâ",
     "error.linktaco_missing_required_fields": "LinkTaco API Token kâh Organization Slug sio̍kêi",
+    "error.googlereader_missing_required_fields": "Google Reader ê sú-iōng-chiá miâ kah bi̍t-bé sī pit-iàu ê",
     "form.api_key.label.description": "API só-sîkhan-á",
     "form.category.hide_globally": "Mài hián-sī siau-sit tī choân-he̍k ah-bōe tha̍k lia̍t-pió lāi",
     "form.category.label.title": "Piau-tôe",

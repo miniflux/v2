@@ -160,6 +160,7 @@
     "error.user_already_exists": "Pengguna ini sudah ada.",
     "error.user_mandatory_fields": "Harus ada nama pengguna.",
     "error.linktaco_missing_required_fields": "LinkTaco API Token dan Organization Slug diperlukan",
+    "error.googlereader_missing_required_fields": "Nama pengguna dan kata sandi Google Reader diperlukan",
     "form.api_key.label.description": "Label Kunci API",
     "form.category.hide_globally": "Sembunyikan entri di daftar belum dibaca global",
     "form.category.label.title": "Judul",

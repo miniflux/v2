@@ -166,6 +166,7 @@
     "error.user_already_exists": "Такий користувач вже існує.",
     "error.user_mandatory_fields": "Ім'я користувача є обов'язковим.",
     "error.linktaco_missing_required_fields": "LinkTaco API Token і Organization Slug є обов'язковими",
+    "error.googlereader_missing_required_fields": "Ім'я користувача та пароль Google Reader є обов'язковими",
     "form.api_key.label.description": "Назва ключа API",
     "form.category.hide_globally": "Приховати записи в глобальному списку непрочитаного",
     "form.category.label.title": "Назва",

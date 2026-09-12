@@ -163,6 +163,7 @@
     "error.user_already_exists": "Dieser Benutzer existiert bereits.",
     "error.user_mandatory_fields": "Der Benutzername ist obligatorisch.",
     "error.linktaco_missing_required_fields": "LinkTaco API Token und Organization Slug sind erforderlich.",
+    "error.googlereader_missing_required_fields": "Google Reader Benutzername und Passwort sind erforderlich.",
     "form.api_key.label.description": "API-Schlüsselbezeichnung",
     "form.category.hide_globally": "Artikel in der globalen Ungelesen-Liste ausblenden",
     "form.category.label.title": "Titel",

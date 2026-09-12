@@ -43,6 +43,12 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 		integration.FeverToken = ""
 	}
 
+	if validationErr := integrationForm.ValidateGoogleReader(integration.GoogleReaderPassword); validationErr != nil {
+		sess.SetErrorMessage(validationErr.Translate(sess.Language()))
+		response.HTMLRedirect(w, r, h.routePath("/integrations"))
+		return
+	}
+
 	if integration.GoogleReaderUsername != "" && h.store.HasDuplicateGoogleReaderUsername(userID, integration.GoogleReaderUsername) {
 		sess.SetErrorMessage(printer.Print("error.duplicate_googlereader_username"))
 		response.HTMLRedirect(w, r, h.routePath("/integrations"))

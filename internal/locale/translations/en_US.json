@@ -91,6 +91,7 @@
     "error.duplicate_fever_username": "There is already someone else with the same Fever username!",
     "error.duplicate_googlereader_username": "There is already someone else with the same Google Reader username!",
     "error.linktaco_missing_required_fields": "LinkTaco API Token and Organization Slug are required",
+    "error.googlereader_missing_required_fields": "Google Reader username and password are required",
     "error.duplicate_linked_account": "There is already someone associated with this provider!",
     "error.duplicated_feed": "This feed already exists.",
     "error.empty_file": "This file is empty.",

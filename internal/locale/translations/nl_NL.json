@@ -163,6 +163,7 @@
     "error.user_already_exists": "Deze gebruiker bestaat al.",
     "error.user_mandatory_fields": "Gebruikersnaam is verplicht",
     "error.linktaco_missing_required_fields": "LinkTaco API Token en Organization Slug zijn verplicht",
+    "error.googlereader_missing_required_fields": "Google Reader gebruikersnaam en wachtwoord zijn verplicht",
     "form.api_key.label.description": "API-sleutel omschrijving",
     "form.category.hide_globally": "Verberg artikelen in de globale ongelezen lijst",
     "form.category.label.title": "Titel",

@@ -91,6 +91,7 @@
     "error.duplicate_fever_username": "Xa hai alguén con ese identificador en Fever!",
     "error.duplicate_googlereader_username": "Xa hai alguén con ese identificador en Google Reader!",
     "error.linktaco_missing_required_fields": "Requírese LinkTaco API Token e Organization Slug",
+    "error.googlereader_missing_required_fields": "Requírense o nome de usuario e o contrasinal de Google Reader",
     "error.duplicate_linked_account": "Xa hai alguén asociado con este provedor!",
     "error.duplicated_feed": "Xa existe a canle.",
     "error.empty_file": "O ficheiro está baleiro.",
