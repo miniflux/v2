@@ -15,6 +15,8 @@
     "alert.account_linked": "외부 계정과 연동되었습니다!",
     "alert.account_unlinked": "외부 계정과의 연동이 해제되었습니다!",
     "alert.background_feed_refresh": "모든 피드를 백그라운드에서 새로 고치는 중입니다. 이 작업 중에도 Miniflux를 계속 사용할 수 있습니다.",
+    "alert.bulk_feeds_none_selected": "선택된 피드가 없습니다.",
+    "alert.bulk_feeds_updated": "선택한 피드가 업데이트되었습니다.",
     "alert.feed_error": "이 피드에 문제가 있습니다.",
     "alert.no_starred": "현재 즐겨찾기 표시된 게시물이 없습니다.",
     "alert.no_category": "카테고리가 없습니다.",
@@ -473,6 +475,12 @@
     "page.edit_feed.title": "피드 편집: %s",
     "page.edit_user.title": "사용자 편집: %s",
     "page.entry.attachments": "첨부 파일",
+    "page.feeds.bulk.actions": "일괄 작업",
+    "page.feeds.bulk.disable": "비활성화",
+    "page.feeds.bulk.enable": "활성화",
+    "page.feeds.bulk.move": "카테고리로 이동",
+    "page.feeds.bulk.select_all": "모두 선택",
+    "page.feeds.bulk.selected": "선택됨:",
     "page.feeds.error_count": [
         "오류 %d개"
     ],

@@ -15,6 +15,8 @@
     "alert.account_linked": "外部アカウントとリンクされました!",
     "alert.account_unlinked": "外部アカウントとのリンクが解除されました!",
     "alert.background_feed_refresh": "すべてのフィードがバックグラウンドで更新されています。この処理中も Miniflux を使い続けることができます。",
+    "alert.bulk_feeds_none_selected": "フィードが選択されていません。",
+    "alert.bulk_feeds_updated": "選択したフィードを更新しました。",
     "alert.feed_error": "このフィードには問題があります。",
     "alert.no_starred": "現在星付きはありません。",
     "alert.no_category": "カテゴリが存在しません。",
@@ -473,6 +475,12 @@
     "page.edit_feed.title": "フィードを編集: %s",
     "page.edit_user.title": "ユーザーを編集: %s",
     "page.entry.attachments": "添付ファイル",
+    "page.feeds.bulk.actions": "一括操作",
+    "page.feeds.bulk.disable": "無効化",
+    "page.feeds.bulk.enable": "有効化",
+    "page.feeds.bulk.move": "カテゴリへ移動",
+    "page.feeds.bulk.select_all": "すべて選択",
+    "page.feeds.bulk.selected": "選択済み:",
     "page.feeds.error_count": [
         "%d 個のエラー"
     ],
