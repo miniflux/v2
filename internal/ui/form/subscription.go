@@ -33,6 +33,9 @@ type SubscriptionForm struct {
 	IgnoreEntryUpdates          bool
 	FetchViaProxy               bool
 	AllowSelfSignedCertificates bool
+	ClientCertificate           string
+	ClientKey                   string
+	CACertificate               string
 }
 
 // Validate makes sure the form values locale.are valid.
@@ -89,6 +92,9 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		Crawler:                     r.FormValue("crawler") == "1",
 		IgnoreEntryUpdates:          r.FormValue("ignore_entry_updates") == "1",
 		AllowSelfSignedCertificates: r.FormValue("allow_self_signed_certificates") == "1",
+		ClientCertificate:           r.FormValue("client_certificate"),
+		ClientKey:                   r.FormValue("client_key"),
+		CACertificate:               r.FormValue("ca_certificate"),
 		FetchViaProxy:               r.FormValue("fetch_via_proxy") == "1",
 		UserAgent:                   r.FormValue("user_agent"),
 		Cookie:                      r.FormValue("cookie"),

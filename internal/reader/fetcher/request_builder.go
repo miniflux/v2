@@ -6,6 +6,7 @@ package fetcher // import "miniflux.app/v2/internal/reader/fetcher"
 import (
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -44,6 +45,9 @@ type RequestBuilder struct {
 	disableCompression bool
 	proxyRotator       *proxyrotator.ProxyRotator
 	feedProxyURL       string
+	clientCertificate  string
+	clientKey          string
+	caCertificate      string
 }
 
 func NewRequestBuilder() *RequestBuilder {
@@ -101,6 +105,21 @@ func (r *RequestBuilder) WithUsernameAndPassword(username, password string) *Req
 	if username != "" && password != "" {
 		r.headers.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(username+":"+password)))
 	}
+	return r
+}
+
+// WithClientCertificate configures a PEM-encoded client certificate and its
+// PEM-encoded private key for mutual TLS authentication with the feed server.
+func (r *RequestBuilder) WithClientCertificate(certificate, key string) *RequestBuilder {
+	r.clientCertificate = certificate
+	r.clientKey = key
+	return r
+}
+
+// WithCACertificate configures a PEM-encoded CA certificate used to verify the
+// feed server, for feeds served behind a private certificate authority.
+func (r *RequestBuilder) WithCACertificate(certificate string) *RequestBuilder {
+	r.caCertificate = certificate
 	return r
 }
 
@@ -230,6 +249,28 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 			CipherSuites:       cipherSuites,
 			InsecureSkipVerify: true,
 		}
+	}
+
+	if r.clientCertificate != "" && r.clientKey != "" {
+		certificate, err := tls.X509KeyPair([]byte(r.clientCertificate), []byte(r.clientKey))
+		if err != nil {
+			return nil, fmt.Errorf("fetcher: unable to load client certificate: %w", err)
+		}
+		if transport.TLSClientConfig == nil {
+			transport.TLSClientConfig = &tls.Config{}
+		}
+		transport.TLSClientConfig.Certificates = append(transport.TLSClientConfig.Certificates, certificate)
+	}
+
+	if r.caCertificate != "" {
+		caCertPool := x509.NewCertPool()
+		if !caCertPool.AppendCertsFromPEM([]byte(r.caCertificate)) {
+			return nil, errors.New("fetcher: unable to parse CA certificate")
+		}
+		if transport.TLSClientConfig == nil {
+			transport.TLSClientConfig = &tls.Config{}
+		}
+		transport.TLSClientConfig.RootCAs = caCertPool
 	}
 
 	if r.disableHTTP2 {
