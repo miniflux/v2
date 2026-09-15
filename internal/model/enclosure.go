@@ -57,11 +57,13 @@ func (e *Enclosure) ProxifyEnclosureURL(mediaProxyOption string, mediaProxyResou
 }
 
 // EnclosureList represents a list of attachments.
-type EnclosureList []*Enclosure
+type EnclosureList []Enclosure
 
 // FindMediaPlayerEnclosure returns the first enclosure that can be played by a media player.
 func (el EnclosureList) FindMediaPlayerEnclosure() *Enclosure {
-	for _, enclosure := range el {
+	for i := range el {
+		enclosure := &el[i]
+
 		if enclosure.URL != "" {
 			if enclosure.IsAudio() || enclosure.IsVideo() {
 				return enclosure
@@ -82,7 +84,7 @@ func (el EnclosureList) ContainsAudioOrVideo() bool {
 }
 
 func (el EnclosureList) ProxifyEnclosureURL(mediaProxyOption string, mediaProxyResourceTypes []string) {
-	for _, enclosure := range el {
-		enclosure.ProxifyEnclosureURL(mediaProxyOption, mediaProxyResourceTypes)
+	for i := range el {
+		el[i].ProxifyEnclosureURL(mediaProxyOption, mediaProxyResourceTypes)
 	}
 }

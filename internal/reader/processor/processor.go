@@ -62,7 +62,9 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 		DisableHTTP2(feed.DisableHTTP2)
 
 	// Processing older entries first ensures that their creation timestamp is lower than newer entries.
-	for _, entry := range slices.Backward(feed.Entries) {
+	for i := range slices.Backward(feed.Entries) {
+		entry := &feed.Entries[i]
+
 		slog.Debug("Processing entry",
 			slog.Int64("user_id", user.ID),
 			slog.String("entry_url", entry.URL),
@@ -166,7 +168,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 
 		updateEntryReadingTime(store, feed, entry, entryIsNew, user)
 
-		filteredEntries = append(filteredEntries, entry)
+		filteredEntries = append(filteredEntries, *entry)
 	}
 
 	if user.ShowReadingTime && shouldFetchYouTubeWatchTimeInBulk() {

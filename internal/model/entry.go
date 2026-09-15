@@ -47,10 +47,10 @@ type Entry struct {
 	Tags        []string      `json:"tags"`
 }
 
-func NewEntry() *Entry {
-	return &Entry{
-		Enclosures: make(EnclosureList, 0),
-		Tags:       make([]string, 0),
+func NewEntry() Entry {
+	return Entry{
+		Enclosures: EnclosureList{},
+		Tags:       []string{},
 		Feed: &Feed{
 			Category: &Category{},
 			Icon:     &FeedIcon{},
@@ -75,7 +75,7 @@ func (e *Entry) ShouldMarkAsReadOnView(user *User) bool {
 }
 
 // Entries represents a list of entries.
-type Entries []*Entry
+type Entries []Entry
 
 // EntriesStatusUpdateRequest represents a request to change entries status.
 type EntriesStatusUpdateRequest struct {

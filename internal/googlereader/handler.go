@@ -308,11 +308,10 @@ func (h *greaderHandler) editTagHandler(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 
-		for _, entry := range entries {
-			e := entry
-			go func() {
-				integration.SendEntry(e, settings)
-			}()
+		for i := range entries {
+			entry := &entries[i]
+
+			go integration.SendEntry(entry, settings)
 		}
 	}
 

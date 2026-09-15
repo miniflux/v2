@@ -50,12 +50,11 @@ func (s *Storage) EnclosuresByEntryID(entryID int64) (model.EnclosureList, error
 			&enclosure.MimeType,
 			&enclosure.MediaProgression,
 		)
-
 		if err != nil {
 			return nil, fmt.Errorf(`store: unable to fetch enclosure row: %v`, err)
 		}
 
-		enclosures = append(enclosures, &enclosure)
+		enclosures = append(enclosures, enclosure)
 	}
 
 	return enclosures, nil
@@ -101,7 +100,7 @@ func (s *Storage) EnclosuresByEntryIDs(entryIDs []int64) (map[int64]model.Enclos
 			return nil, fmt.Errorf("store: unable to scan enclosure row: %w", err)
 		}
 
-		enclosuresMap[enclosure.EntryID] = append(enclosuresMap[enclosure.EntryID], &enclosure)
+		enclosuresMap[enclosure.EntryID] = append(enclosuresMap[enclosure.EntryID], enclosure)
 	}
 
 	return enclosuresMap, nil
@@ -194,12 +193,13 @@ func (s *Storage) updateEnclosures(tx *sql.Tx, entry *model.Entry) error {
 	}
 
 	sqlValues := make([]string, 0, len(entry.Enclosures))
-	for _, enclosure := range entry.Enclosures {
-		sqlValues = append(sqlValues, strings.TrimSpace(enclosure.URL))
-
+	for i := range entry.Enclosures {
+		enclosure := &entry.Enclosures[i]
 		if err := s.createEnclosure(tx, enclosure); err != nil {
 			return err
 		}
+
+		sqlValues = append(sqlValues, enclosure.URL)
 	}
 
 	query := `
@@ -241,7 +241,6 @@ func (s *Storage) UpdateEnclosure(enclosure *model.Enclosure) error {
 		enclosure.MediaProgression,
 		enclosure.ID,
 	)
-
 	if err != nil {
 		return fmt.Errorf(`store: unable to update enclosure #%d : %v`, enclosure.ID, err)
 	}

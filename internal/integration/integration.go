@@ -664,7 +664,9 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 
 	// Integrations that only support sending individual entries
 	if userIntegrations.TelegramBotEnabled {
-		for _, entry := range entries {
+		for i := range entries {
+			entry := &entries[i]
+
 			slog.Debug("Sending a new entry to Telegram",
 				slog.Int64("user_id", userIntegrations.UserID),
 				slog.Int64("entry_id", entry.ID),

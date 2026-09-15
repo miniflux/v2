@@ -42,11 +42,13 @@ func fetchYouTubeWatchTimeForSingleEntry(websiteURL string) (int, error) {
 	return fetchWatchTime(websiteURL, `meta[itemprop="duration"]`, true)
 }
 
-func fetchYouTubeWatchTimeInBulk(entries []*model.Entry) {
+func fetchYouTubeWatchTimeInBulk(entries model.Entries) {
 	videosEntriesMapping := make(map[string]*model.Entry, len(entries))
 	videoIDs := make([]string, 0, len(entries))
 
-	for _, entry := range entries {
+	for i := range entries {
+		entry := &entries[i]
+
 		if !isYouTubeVideoURL(entry.URL) {
 			continue
 		}
