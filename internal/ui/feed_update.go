@@ -69,7 +69,7 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := validator.ValidateFeedModification(h.store, loggedUser.ID, feed.ID, feedModificationRequest); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
-		response.HTML(w, r, view.Render("edit_feed"))
+		view.HTML(w, r, "edit_feed")
 		return
 	}
 

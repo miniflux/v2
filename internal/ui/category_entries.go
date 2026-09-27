@@ -75,5 +75,5 @@ func (h *handler) showCategoryEntriesPage(w http.ResponseWriter, r *http.Request
 	view.Set("hasSaveEntry", navMetadata.HasSaveEntry)
 	view.Set("showOnlyUnreadEntries", true)
 
-	response.HTML(w, r, view.Render("category_entries"))
+	view.HTML(w, r, "category_entries")
 }

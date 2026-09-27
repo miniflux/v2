@@ -78,5 +78,5 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countWebAuthnCerts", h.store.CountWebAuthnCredentialsByUserID(user.ID))
 	view.Set("webAuthnCerts", creds)
 
-	response.HTML(w, r, view.Render("settings"))
+	view.HTML(w, r, "settings")
 }
