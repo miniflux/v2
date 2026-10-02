@@ -86,6 +86,7 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 	subscription.WithCategoryID(feedCreationRequest.CategoryID)
 	subscription.ProxyURL = feedCreationRequest.ProxyURL
 	subscription.CheckedNow()
+	subscription.LastSuccessfulRefreshAt = &subscription.CheckedAt
 
 	processor.ProcessFeedEntries(store, subscription, userID, true)
 
@@ -182,6 +183,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.ProxyURL = feedCreationRequest.ProxyURL
 	subscription.WithCategoryID(feedCreationRequest.CategoryID)
 	subscription.CheckedNow()
+	subscription.LastSuccessfulRefreshAt = &subscription.CheckedAt
 
 	processor.ProcessFeedEntries(store, subscription, userID, true)
 
@@ -371,6 +373,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	originalFeed.ResetErrorCounter()
+	originalFeed.LastSuccessfulRefreshAt = &originalFeed.CheckedAt
 
 	if storeErr := store.UpdateFeed(originalFeed); storeErr != nil {
 		localizedError := locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
