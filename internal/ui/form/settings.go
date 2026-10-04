@@ -34,19 +34,15 @@ type SettingsForm struct {
 	EntryDirection         string
 	EntryOrder             string
 	EntriesPerPage         int
-	KeyboardShortcuts      bool
-	ShowReadingTime        bool
 	CustomCSS              string
 	CustomJS               string
 	ExternalFontHosts      string
-	EntrySwipe             bool
 	GestureNav             string
 	DisplayMode            string
 	DefaultReadingSpeed    int
 	CJKReadingSpeed        int
 	DefaultHomePage        string
 	CategoriesSortingOrder string
-	MarkReadOnView         bool
 	// MarkReadBehavior is a string representation of the MarkReadOnView and MarkReadOnMediaPlayerCompletion fields together
 	MarkReadBehavior          markReadBehavior
 	MediaPlaybackRate         float64
@@ -54,6 +50,10 @@ type SettingsForm struct {
 	KeepFilterEntryRules      string
 	AlwaysOpenExternalLinks   bool
 	OpenExternalLinksInNewTab bool
+	KeyboardShortcuts         bool
+	EntrySwipe                bool
+	MarkReadOnView            bool
+	ShowReadingTime           bool
 }
 
 // MarkAsReadBehavior returns the MarkReadBehavior from the given MarkReadOnView and MarkReadOnMediaPlayerCompletion values.
@@ -123,7 +123,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.MarkReadOnView = MarkReadOnView
 	user.MarkReadOnMediaPlayerCompletion = MarkReadOnMediaPlayerCompletion
 
-	if s.Password != "" {
+	if s.Password != "" && !config.Opts.DisableLocalAuth() {
 		user.Password = s.Password
 	}
 

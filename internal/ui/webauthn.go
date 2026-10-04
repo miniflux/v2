@@ -22,6 +22,7 @@ import (
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/view"
+	"miniflux.app/v2/internal/urllib"
 )
 
 type WebAuthnUser struct {
@@ -260,7 +261,11 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.NoContent(w, r)
+	redirectURL := request.QueryStringParam(r, "redirect_url", "")
+	if !urllib.IsRelativePath(redirectURL) {
+		redirectURL = h.basePath + "/" + user.DefaultHomePage
+	}
+	response.JSON(w, r, map[string]string{"redirect": redirectURL})
 }
 
 func (h *handler) renameCredential(w http.ResponseWriter, r *http.Request) {

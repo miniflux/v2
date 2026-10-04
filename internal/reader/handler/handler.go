@@ -44,7 +44,11 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 		slog.String("proxy_url", feedCreationRequest.ProxyURL),
 	)
 
-	if !store.CategoryIDExists(userID, feedCreationRequest.CategoryID) {
+	categoryExists, storeErr := store.CategoryIDExists(userID, feedCreationRequest.CategoryID)
+	if storeErr != nil {
+		return nil, locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
+	}
+	if !categoryExists {
 		return nil, locale.NewLocalizedErrorWrapper(ErrCategoryNotFound, "error.category_not_found")
 	}
 
@@ -108,7 +112,11 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 		slog.String("proxy_url", feedCreationRequest.ProxyURL),
 	)
 
-	if !store.CategoryIDExists(userID, feedCreationRequest.CategoryID) {
+	categoryExists, storeErr := store.CategoryIDExists(userID, feedCreationRequest.CategoryID)
+	if storeErr != nil {
+		return nil, locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
+	}
+	if !categoryExists {
 		return nil, locale.NewLocalizedErrorWrapper(ErrCategoryNotFound, "error.category_not_found")
 	}
 

@@ -4,11 +4,14 @@
 package api // import "miniflux.app/v2/internal/api"
 
 import (
+	"errors"
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
+	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/reader/opml"
+	"miniflux.app/v2/internal/storage"
 )
 
 func (h *handler) exportFeedsHandler(w http.ResponseWriter, r *http.Request) {
@@ -27,6 +30,10 @@ func (h *handler) importFeedsHandler(w http.ResponseWriter, r *http.Request) {
 	err := opmlHandler.Import(request.UserID(r), r.Body)
 	defer r.Body.Close()
 	if err != nil {
+		if errors.Is(err, storage.ErrNoCategory) {
+			response.JSONBadRequest(w, r, locale.NewLocalizedError("error.feed_category_not_found").Error())
+			return
+		}
 		response.JSONServerError(w, r, err)
 		return
 	}

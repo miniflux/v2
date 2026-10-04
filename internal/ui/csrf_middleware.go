@@ -39,7 +39,13 @@ func (m *csrfMiddleware) handle(next http.Handler) http.Handler {
 }
 
 func (m *csrfMiddleware) validate(w http.ResponseWriter, r *http.Request) bool {
-	csrfToken := request.WebSession(r).CSRF()
+	session := request.WebSession(r)
+	if session == nil {
+		response.HTMLBadRequest(w, r, errors.New("invalid or missing CSRF"))
+		return false
+	}
+
+	csrfToken := session.CSRF()
 	formValue := r.FormValue("csrf")
 	headerValue := r.Header.Get("X-Csrf-Token")
 

@@ -12,6 +12,9 @@ import (
 	"miniflux.app/v2/internal/model"
 )
 
+// ErrNoCategory is returned when a user does not have any category.
+var ErrNoCategory = errors.New("store: no category found")
+
 // AnotherCategoryExists checks if another category exists with the same title.
 func (s *Storage) AnotherCategoryExists(userID, categoryID int64, title string) bool {
 	var result bool
@@ -29,11 +32,16 @@ func (s *Storage) CategoryTitleExists(userID int64, title string) bool {
 }
 
 // CategoryIDExists checks if the given category exists into the database.
-func (s *Storage) CategoryIDExists(userID, categoryID int64) bool {
+// The returned error is non-nil only for a genuine query/connection failure;
+// a category that doesn't exist is reported as (false, nil), matching the
+// underlying sql.ErrNoRows case.
+func (s *Storage) CategoryIDExists(userID, categoryID int64) (bool, error) {
 	var result bool
 	query := `SELECT true FROM categories WHERE user_id=$1 AND id=$2 LIMIT 1`
-	s.db.QueryRow(query, userID, categoryID).Scan(&result)
-	return result
+	if err := s.db.QueryRow(query, userID, categoryID).Scan(&result); err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return false, fmt.Errorf(`store: unable to check if category exists: %w`, err)
+	}
+	return result, nil
 }
 
 // Category returns a category from the database.
@@ -54,6 +62,7 @@ func (s *Storage) Category(userID, categoryID int64) (*model.Category, error) {
 }
 
 // FirstCategory returns the first category for the given user.
+// It returns ErrNoCategory if the user does not have any category.
 func (s *Storage) FirstCategory(userID int64) (*model.Category, error) {
 	query := `SELECT id, user_id, title, hide_globally FROM categories WHERE user_id=$1 ORDER BY title ASC LIMIT 1`
 
@@ -62,7 +71,7 @@ func (s *Storage) FirstCategory(userID int64) (*model.Category, error) {
 
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
-		return nil, nil
+		return nil, ErrNoCategory
 	case err != nil:
 		return nil, fmt.Errorf(`store: unable to fetch category: %v`, err)
 	default:

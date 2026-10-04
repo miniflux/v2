@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -255,6 +256,17 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.PushoverDevice = i.PushoverDevice
 	integration.PushoverPrefix = i.PushoverPrefix
 	integration.ArchiveorgEnabled = i.ArchiveorgEnabled
+}
+
+// ValidateGoogleReader ensures the Google Reader integration is not enabled without credentials.
+func (i IntegrationForm) ValidateGoogleReader(storedPasswordHash string) *locale.LocalizedError {
+	if !i.GoogleReaderEnabled {
+		return nil
+	}
+	if i.GoogleReaderUsername == "" || (i.GoogleReaderPassword == "" && storedPasswordHash == "") {
+		return locale.NewLocalizedError("error.googlereader_missing_required_fields")
+	}
+	return nil
 }
 
 // NewIntegrationForm returns a new IntegrationForm.

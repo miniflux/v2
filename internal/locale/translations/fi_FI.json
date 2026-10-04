@@ -1,5 +1,6 @@
 {
     "action.cancel": "peru",
+    "action.documentation": "Dokumentaatio: %s",
     "action.download": "Lataa",
     "action.edit": "Muokkaa",
     "action.home_screen": "Lisää aloitusnäytölle",
@@ -130,6 +131,7 @@
     "error.invalid_site_url": "Virheellinen sivuston URL-osoite.",
     "error.invalid_theme": "Virheellinen teema.",
     "error.invalid_timezone": "Virheellinen aikavyöhyke.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux ei tavoita tätä sivustoa verkkovirheen vuoksi: %v.",
     "error.network_timeout": "Tämä sivusto on liian hidas ja pyyntö aikakatkaistiin: %v",
     "error.password_min_length": "Salasanassa on oltava vähintään 6 merkkiä.",
@@ -162,6 +164,7 @@
     "error.user_already_exists": "Käyttäjä on jo olemassa.",
     "error.user_mandatory_fields": "Käyttäjätunnus on pakollinen.",
     "error.linktaco_missing_required_fields": "LinkTaco API Token ja Organization Slug vaaditaan",
+    "error.googlereader_missing_required_fields": "Google Reader -käyttäjätunnus ja -salasana vaaditaan",
     "form.api_key.label.description": "API-avaimen nimi",
     "form.category.hide_globally": "Piilota artikkelit lukemattomien listassa",
     "form.category.label.title": "Otsikko",

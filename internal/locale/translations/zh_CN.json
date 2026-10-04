@@ -1,5 +1,6 @@
 {
     "action.cancel": "取消",
+    "action.documentation": "文档：%s",
     "action.download": "下载",
     "action.edit": "编辑",
     "action.home_screen": "添加到主屏幕",
@@ -127,6 +128,7 @@
     "error.invalid_site_url": "无效的网站 URL。",
     "error.invalid_theme": "无效的主题。",
     "error.invalid_timezone": "无效的时区。",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "由于网络错误，Miniflux 无法访问此网站：%v。",
     "error.network_timeout": "该网站响应过慢，请求已超时：%v",
     "error.password_min_length": "密码长度至少为 6 个字符。",
@@ -159,6 +161,7 @@
     "error.user_already_exists": "此用户已存在。",
     "error.user_mandatory_fields": "必须填写用户名。",
     "error.linktaco_missing_required_fields": "LinkTaco API Token 和 Organization Slug 是必需的",
+    "error.googlereader_missing_required_fields": "Google Reader 用户名和密码是必需的",
     "form.api_key.label.description": "API 密钥标签",
     "form.category.hide_globally": "在全局未读列表中隐藏条目",
     "form.category.label.title": "标题",

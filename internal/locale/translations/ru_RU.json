@@ -1,5 +1,6 @@
 {
     "action.cancel": "закрыть",
+    "action.documentation": "Документация: %s",
     "action.download": "Загрузить",
     "action.edit": "Изменить",
     "action.home_screen": "Добавить на домашний экран",
@@ -133,6 +134,7 @@
     "error.invalid_site_url": "Недействительный ссылка сайта.",
     "error.invalid_theme": "Недопустимая тема.",
     "error.invalid_timezone": "Недопустимый часовой пояс.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux не может открыть сайт из-за ошибки сети: %v.",
     "error.network_timeout": "Этот сайт слишком медленный и время ожидания запроса истекло: %v",
     "error.password_min_length": "Вы должны использовать минимум 6 символов.",
@@ -165,6 +167,7 @@
     "error.user_already_exists": "Этот пользователь уже существует.",
     "error.user_mandatory_fields": "Имя пользователя обязательно.",
     "error.linktaco_missing_required_fields": "LinkTaco API Token и Organization Slug обязательны",
+    "error.googlereader_missing_required_fields": "Имя пользователя и пароль Google Reader обязательны",
     "form.api_key.label.description": "Описание API-ключа",
     "form.category.hide_globally": "Скрыть записи в глобальном списке непрочитанных",
     "form.category.label.title": "Название",

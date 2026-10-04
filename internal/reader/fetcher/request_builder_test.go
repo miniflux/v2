@@ -534,6 +534,111 @@ func TestRequestBuilder_AllowPrivateConfiguredProxy(t *testing.T) {
 	}
 }
 
+func TestRequestBuilder_AllowPrivateEnvironmentProxy(t *testing.T) {
+	configureFetcherAllowPrivateNetworksOption(t, "0")
+
+	targetURL := "http://feed.invalid/rss.xml"
+	proxyRequests := make(chan string, 1)
+	proxyServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case proxyRequests <- r.URL.String():
+		default:
+		}
+
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer proxyServer.Close()
+
+	t.Setenv("HTTP_PROXY", proxyServer.URL)
+
+	resp, err := NewRequestBuilder().ExecuteRequest(targetURL)
+	if err != nil {
+		t.Fatalf("Expected request through the environment proxy to succeed: %v", err)
+	}
+	defer resp.Body.Close()
+
+	select {
+	case gotURL := <-proxyRequests:
+		if gotURL != targetURL {
+			t.Fatalf("Expected proxy request URL to be %q, got %q", targetURL, gotURL)
+		}
+	default:
+		t.Fatal("Expected request to be sent through the environment proxy")
+	}
+}
+
+func TestRequestBuilder_RefusePrivateNetworkWhenExcludedFromEnvironmentProxy(t *testing.T) {
+	configureFetcherAllowPrivateNetworksOption(t, "0")
+
+	privateServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer privateServer.Close()
+
+	proxyRequests := make(chan string, 1)
+	proxyServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case proxyRequests <- r.URL.String():
+		default:
+		}
+
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer proxyServer.Close()
+
+	t.Setenv("HTTP_PROXY", proxyServer.URL)
+	t.Setenv("NO_PROXY", "feed.invalid")
+
+	_, err := NewRequestBuilder().ExecuteRequest("http://feed.invalid/rss.xml")
+	if err == nil {
+		t.Fatal("Expected request excluded from the environment proxy to fail")
+	}
+
+	select {
+	case gotURL := <-proxyRequests:
+		t.Fatalf("Expected request to bypass the environment proxy, but the proxy received %q", gotURL)
+	default:
+	}
+}
+
+func TestRequestBuilder_AllowPrivateEnvironmentProxyOnRedirect(t *testing.T) {
+	configureFetcherAllowPrivateNetworksOption(t, "0")
+
+	connectRequests := make(chan string, 1)
+	httpsProxyServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case connectRequests <- r.Host:
+		default:
+		}
+
+		http.Error(w, "tunneling is not supported by this test proxy", http.StatusBadGateway)
+	}))
+	defer httpsProxyServer.Close()
+
+	httpProxyServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "https://secure.invalid/rss.xml", http.StatusFound)
+	}))
+	defer httpProxyServer.Close()
+
+	t.Setenv("HTTP_PROXY", httpProxyServer.URL)
+	t.Setenv("HTTPS_PROXY", httpsProxyServer.URL)
+
+	if _, err := NewRequestBuilder().ExecuteRequest("http://feed.invalid/rss.xml"); err != nil {
+		if strings.Contains(err.Error(), "refusing to access private network host") {
+			t.Fatalf("Expected the proxy selected after the redirect to be reachable: %v", err)
+		}
+	}
+
+	select {
+	case gotHost := <-connectRequests:
+		if gotHost != "secure.invalid:443" {
+			t.Fatalf("Expected the HTTPS proxy to receive a CONNECT request for %q, got %q", "secure.invalid:443", gotHost)
+		}
+	default:
+		t.Fatal("Expected the redirect to be sent through the HTTPS environment proxy")
+	}
+}
+
 func TestRequestBuilder_RefusePrivateNetworkOnRedirect(t *testing.T) {
 	configureFetcherAllowPrivateNetworksOption(t, "0")
 

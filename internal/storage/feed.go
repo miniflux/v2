@@ -32,12 +32,17 @@ func (l byStateAndName) Less(i, j int) bool {
 	return l.f[i].Title < l.f[j].Title
 }
 
-// FeedExists checks if the given feed exists.
-func (s *Storage) FeedExists(userID, feedID int64) bool {
+// FeedExists checks if the given feed exists. The returned error is
+// non-nil only for a genuine query/connection failure; a feed that doesn't
+// exist is reported as (false, nil), matching the underlying sql.ErrNoRows
+// case.
+func (s *Storage) FeedExists(userID, feedID int64) (bool, error) {
 	var result bool
 	query := `SELECT true FROM feeds WHERE user_id=$1 AND id=$2 LIMIT 1`
-	s.db.QueryRow(query, userID, feedID).Scan(&result)
-	return result
+	if err := s.db.QueryRow(query, userID, feedID).Scan(&result); err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return false, fmt.Errorf(`store: unable to check if feed exists: %w`, err)
+	}
+	return result, nil
 }
 
 // CheckedAt returns when the feed was last checked.
@@ -51,12 +56,16 @@ func (s *Storage) CheckedAt(userID, feedID int64) (time.Time, error) {
 	return result, nil
 }
 
-// CategoryFeedExists returns true if the given feed exists and belongs to the given category.
-func (s *Storage) CategoryFeedExists(userID, categoryID, feedID int64) bool {
+// CategoryFeedExists returns true if the given feed exists and belongs to
+// the given category. The returned error is non-nil only for a genuine
+// query/connection failure; see FeedExists above for the same convention.
+func (s *Storage) CategoryFeedExists(userID, categoryID, feedID int64) (bool, error) {
 	var result bool
 	query := `SELECT true FROM feeds WHERE user_id=$1 AND category_id=$2 AND id=$3 LIMIT 1`
-	s.db.QueryRow(query, userID, categoryID, feedID).Scan(&result)
-	return result
+	if err := s.db.QueryRow(query, userID, categoryID, feedID).Scan(&result); err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return false, fmt.Errorf(`store: unable to check if feed exists in category: %w`, err)
+	}
+	return result, nil
 }
 
 // FeedURLExists returns true if the given feed URL already exists for the user.

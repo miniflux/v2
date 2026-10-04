@@ -1,5 +1,6 @@
 {
     "action.cancel": "Chhú-siau",
+    "action.documentation": "Soat-bêng bûn-kiāⁿ: %s",
     "action.download": "Lia̍h----loh-lâi",
     "action.edit": "Pian-chi̍p",
     "action.home_screen": "Chng tī chú ōe-bīn",
@@ -127,6 +128,7 @@
     "error.invalid_site_url": "Siau-sit lâi-goân ê bāng-chām ê bāng-chí ū būn-tôe.",
     "error.invalid_theme": "Ū būn-tôe ê chú-tôe.",
     "error.invalid_timezone": "Ū būn-tôe ê sî-khu.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux bô-hoat-tō͘ liân kàu chit ê bāng-chām, ū khó-lêng sī bāng-lō͘ būn-tôe: %v.",
     "error.network_timeout": "Chit ê bāng-chām ê hôe-èng siuⁿ bān, chhéng-kiû chhiau-kè sî-kan: %v.",
     "error.password_min_length": "Chhiáⁿ chì-chió ài su-li̍p la̍k ê lī goân.",
@@ -159,6 +161,7 @@
     "error.user_already_exists": "Chit ê sú-iōng-lâng í-keng chûn-chāi.",
     "error.user_mandatory_fields": "Tio̍h-ài su-li̍p kháu-chō miâ",
     "error.linktaco_missing_required_fields": "LinkTaco API Token kâh Organization Slug sio̍kêi",
+    "error.googlereader_missing_required_fields": "Google Reader ê sú-iōng-chiá miâ kah bi̍t-bé sī pit-iàu ê",
     "form.api_key.label.description": "API só-sîkhan-á",
     "form.category.hide_globally": "Mài hián-sī siau-sit tī choân-he̍k ah-bōe tha̍k lia̍t-pió lāi",
     "form.category.label.title": "Piau-tôe",

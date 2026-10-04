@@ -146,7 +146,12 @@ func (h *handler) removeCategoryHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if !h.store.CategoryIDExists(userID, categoryID) {
+	exists, err := h.store.CategoryIDExists(userID, categoryID)
+	if err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
+	if !exists {
 		response.JSONNotFound(w, r)
 		return
 	}

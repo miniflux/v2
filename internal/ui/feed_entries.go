@@ -33,18 +33,33 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 
 	offset := request.QueryIntParam(r, "offset", 0)
 
-	entries, count, err := h.store.NewEntryQueryBuilder(user.ID).
-		WithFeedID(feed.ID).
-		WithStatuses(model.EntryStatusUnread).
-		WithSorting(user.EntryOrder, user.EntryDirection).
-		WithSorting("id", user.EntryDirection).
-		WithOffset(offset).
-		WithLimit(user.EntriesPerPage).
-		WithoutContent().
-		GetEntriesWithCount()
+	unreadEntries := func(offset int) (model.Entries, int, error) {
+		return h.store.NewEntryQueryBuilder(user.ID).
+			WithFeedID(feed.ID).
+			WithStatuses(model.EntryStatusUnread).
+			WithSorting(user.EntryOrder, user.EntryDirection).
+			WithSorting("id", user.EntryDirection).
+			WithOffset(offset).
+			WithLimit(user.EntriesPerPage).
+			WithoutContent().
+			GetEntriesWithCount()
+	}
+
+	entries, count, err := unreadEntries(offset)
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
+	}
+
+	// Restart from the first page when marking entries as read leaves the offset past the end.
+	if offset >= count && count > 0 {
+		offset = 0
+
+		entries, count, err = unreadEntries(offset)
+		if err != nil {
+			response.HTMLServerError(w, r, err)
+			return
+		}
 	}
 
 	view := view.New(h.tpl, r)

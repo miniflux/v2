@@ -63,7 +63,7 @@ func (s *Storage) GoogleReaderUserCheckPassword(username, password string) error
 		FROM
 			integrations
 		WHERE
-			integrations.googlereader_enabled='t' AND integrations.googlereader_username=$1
+			integrations.googlereader_enabled='t' AND integrations.googlereader_username=$1 AND integrations.googlereader_password <> ''
 	`
 
 	err := s.db.QueryRow(query, username).Scan(&hash)
@@ -93,7 +93,7 @@ func (s *Storage) GoogleReaderUserGetIntegration(username string) (*model.Integr
 		FROM
 			integrations
 		WHERE
-			integrations.googlereader_enabled='t' AND integrations.googlereader_username=$1
+			integrations.googlereader_enabled='t' AND integrations.googlereader_username=$1 AND integrations.googlereader_password <> ''
 	`
 
 	err := s.db.QueryRow(query, username).Scan(&integration.UserID, &integration.GoogleReaderEnabled, &integration.GoogleReaderUsername, &integration.GoogleReaderPassword)

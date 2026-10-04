@@ -1,5 +1,6 @@
 {
     "action.cancel": "abandon",
+    "action.documentation": "Documentație: %s",
     "action.download": "Descărcare",
     "action.edit": "Editare",
     "action.home_screen": "Adaugă pe ecranul principal",
@@ -133,6 +134,7 @@
     "error.invalid_site_url": "Adresa URL a site-ului este invalidă.",
     "error.invalid_theme": "Temă invalidă.",
     "error.invalid_timezone": "Dată/oră invalide.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux nu poate ajunge la acest site din cauza unei erori de rețea: %v.",
     "error.network_timeout": "Acest site web este prea lent și conexiunea nu s-a realizat: %v",
     "error.password_min_length": "Parola trebuie să aibă cel puțin 6 caractere.",
@@ -165,6 +167,7 @@
     "error.user_already_exists": "Acest utilizator există deja.",
     "error.user_mandatory_fields": "Numele utilizatorului este obligatoriu.",
     "error.linktaco_missing_required_fields": "LinkTaco API Token și Organization Slug sunt necesare",
+    "error.googlereader_missing_required_fields": "Numele de utilizator și parola Google Reader sunt necesare",
     "form.api_key.label.description": "Etichetă Cheie API",
     "form.category.hide_globally": "Ascunde intrările în lista globală de articole necitite",
     "form.category.label.title": "Titlu",

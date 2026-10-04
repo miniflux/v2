@@ -1,5 +1,6 @@
 {
     "action.cancel": "ακύρωση",
+    "action.documentation": "Τεκμηρίωση: %s",
     "action.download": "Λήψη",
     "action.edit": "Επεξεργασία",
     "action.home_screen": "Προσθήκη στην αρχική οθόνη",
@@ -130,6 +131,7 @@
     "error.invalid_site_url": "Μη έγκυρη διεύθυνση URL ιστότοπου.",
     "error.invalid_theme": "Μη έγκυρο θέμα.",
     "error.invalid_timezone": "Μη έγκυρη ζώνη ώρας.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Το Miniflux δεν μπορεί να φτάσει σε αυτόν τον ιστότοπο λόγω σφάλματος δικτύου: %v.",
     "error.network_timeout": "Αυτός ο ιστότοπος είναι πολύ αργός και το αίτημα έληξε: %v",
     "error.password_min_length": "Ο κωδικός πρόσβασης πρέπει να έχει τουλάχιστον 6 χαρακτήρες.",
@@ -162,6 +164,7 @@
     "error.user_already_exists": "Αυτός ο χρήστης υπάρχει ήδη.",
     "error.user_mandatory_fields": "Το όνομα χρήστη είναι υποχρεωτικό.",
     "error.linktaco_missing_required_fields": "Το LinkTaco API Token και το Organization Slug είναι απαραίτητα",
+    "error.googlereader_missing_required_fields": "Το όνομα χρήστη και ο κωδικός πρόσβασης του Google Reader είναι απαραίτητα",
     "form.api_key.label.description": "Ετικέτα κλειδιού API",
     "form.category.hide_globally": "Απόκρυψη καταχωρήσεων σε γενική λίστα μη αναγνωσμένων",
     "form.category.label.title": "Τίτλος",

@@ -20,6 +20,14 @@ func IsRelativePath(link string) bool {
 		return false
 	}
 
+	// Reject surrounding whitespace: browsers strip leading and trailing C0
+	// control characters and spaces before parsing a target, while Go's url.Parse
+	// treats spaces as path characters. Without this check, a target like
+	// " //evil.com" is accepted here and becomes //evil.com in the browser.
+	if link != strings.TrimSpace(link) {
+		return false
+	}
+
 	// Reject backslashes: Go's url.Parse treats them as ordinary path
 	// characters, but browsers normalize them to forward slashes, so a target
 	// like "/\evil.com" would parse as relative here yet redirect to

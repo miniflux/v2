@@ -1,5 +1,6 @@
 {
     "action.cancel": "annuleren",
+    "action.documentation": "Documentatie: %s",
     "action.download": "Downloaden",
     "action.edit": "Bewerken",
     "action.home_screen": "Toevoegen aan startscherm",
@@ -130,6 +131,7 @@
     "error.invalid_site_url": "Ongeldige site URL.",
     "error.invalid_theme": "Ongeldig thema.",
     "error.invalid_timezone": "Ongeldige tijdzone.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux kan deze website niet bereiken vanwege een netwerkfout: %v.",
     "error.network_timeout": "Deze website is te traag en de aanvraag gaf timeout: %v",
     "error.password_min_length": "Minimaal 6 tekens gebruiken.",
@@ -162,6 +164,7 @@
     "error.user_already_exists": "Deze gebruiker bestaat al.",
     "error.user_mandatory_fields": "Gebruikersnaam is verplicht",
     "error.linktaco_missing_required_fields": "LinkTaco API Token en Organization Slug zijn verplicht",
+    "error.googlereader_missing_required_fields": "Google Reader gebruikersnaam en wachtwoord zijn verplicht",
     "form.api_key.label.description": "API-sleutel omschrijving",
     "form.category.hide_globally": "Verberg artikelen in de globale ongelezen lijst",
     "form.category.label.title": "Titel",

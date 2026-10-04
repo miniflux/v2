@@ -1,5 +1,6 @@
 {
     "action.cancel": "إلغاء",
+    "action.documentation": "التوثيق: %s",
     "action.download": "تحميل",
     "action.edit": "تعديل",
     "action.home_screen": "إضافة إلى الشاشة الرئيسية",
@@ -102,6 +103,7 @@
     "error.duplicate_fever_username": "يوجد بالفعل شخص آخر بنفس اسم مستخدم Fever!",
     "error.duplicate_googlereader_username": "يوجد بالفعل شخص آخر بنفس اسم مستخدم Google Reader!",
     "error.linktaco_missing_required_fields": "مطلوب رمز LinkTaco API و Organization Slug",
+    "error.googlereader_missing_required_fields": "مطلوب اسم مستخدم وكلمة مرور Google Reader",
     "error.duplicate_linked_account": "يوجد بالفعل شخص مرتبط بهذا الموفر!",
     "error.duplicated_feed": "هذا المصدر موجود بالفعل.",
     "error.empty_file": "هذا الملف فارغ.",
@@ -143,6 +145,7 @@
     "error.invalid_site_url": "رابط الموقع غير صالح.",
     "error.invalid_theme": "السمة غير صالحة.",
     "error.invalid_timezone": "المنطقة الزمنية غير صالحة.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux غير قادر على الوصول إلى هذا الموقع بسبب خطأ في الشبكة: %v.",
     "error.network_timeout": "هذا الموقع بطيء جداً وانتهى وقت الطلب: %v",
     "error.password_min_length": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.",

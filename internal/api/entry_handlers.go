@@ -148,15 +148,29 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 
 	userID := request.UserID(r)
 	categoryID = request.QueryInt64Param(r, "category_id", categoryID)
-	if categoryID > 0 && !h.store.CategoryIDExists(userID, categoryID) {
-		response.JSONBadRequest(w, r, errors.New("invalid category ID"))
-		return
+	if categoryID > 0 {
+		exists, err := h.store.CategoryIDExists(userID, categoryID)
+		if err != nil {
+			response.JSONServerError(w, r, err)
+			return
+		}
+		if !exists {
+			response.JSONBadRequest(w, r, errors.New("invalid category ID"))
+			return
+		}
 	}
 
 	feedID = request.QueryInt64Param(r, "feed_id", feedID)
-	if feedID > 0 && !h.store.FeedExists(userID, feedID) {
-		response.JSONBadRequest(w, r, errors.New("invalid feed ID"))
-		return
+	if feedID > 0 {
+		exists, err := h.store.FeedExists(userID, feedID)
+		if err != nil {
+			response.JSONServerError(w, r, err)
+			return
+		}
+		if !exists {
+			response.JSONBadRequest(w, r, errors.New("invalid feed ID"))
+			return
+		}
 	}
 
 	tags := request.QueryStringParamList(r, "tags")
@@ -346,7 +360,12 @@ func (h *handler) importFeedEntryHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	if !h.store.FeedExists(userID, feedID) {
+	exists, err := h.store.FeedExists(userID, feedID)
+	if err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
+	if !exists {
 		response.JSONBadRequest(w, r, errors.New("feed does not exist"))
 		return
 	}

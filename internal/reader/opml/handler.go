@@ -100,6 +100,9 @@ func (h *Handler) resolveCategory(userID int64, categoryName string) (*model.Cat
 		if err != nil {
 			return nil, fmt.Errorf("opml: unable to find first category: %w", err)
 		}
+		if category == nil {
+			return nil, storage.ErrNoCategory
+		}
 		return category, nil
 	}
 

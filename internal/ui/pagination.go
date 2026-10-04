@@ -5,19 +5,19 @@ package ui // import "miniflux.app/v2/internal/ui"
 
 type pagination struct {
 	Route        string
+	SearchQuery  string
 	Total        int
 	Offset       int
 	ItemsPerPage int
-	ShowNext     bool
-	ShowLast     bool
-	ShowFirst    bool
-	ShowPrev     bool
 	NextOffset   int
 	LastOffset   int
 	PrevOffset   int
 	FirstOffset  int
-	SearchQuery  string
 	UnreadOnly   bool
+	ShowNext     bool
+	ShowLast     bool
+	ShowFirst    bool
+	ShowPrev     bool
 }
 
 func getPagination(route string, total, offset, nbItemsPerPage int) pagination {

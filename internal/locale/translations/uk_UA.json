@@ -1,5 +1,6 @@
 {
     "action.cancel": "скасувати",
+    "action.documentation": "Документація: %s",
     "action.download": "Завантажити",
     "action.edit": "Редагувати",
     "action.home_screen": "Додати до головного екрану",
@@ -133,6 +134,7 @@
     "error.invalid_site_url": "Недійсна URL-адреса сайту.",
     "error.invalid_theme": "Недійсна тема.",
     "error.invalid_timezone": "Недійсний часовий пояс.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux не може отримати доступ до цього сайту через помилку мережі: %v.",
     "error.network_timeout": "Цей сайт занадто повільний і запит перевищив час очікування: %v",
     "error.password_min_length": "Пароль має складати щонайменше 6 символів.",
@@ -165,6 +167,7 @@
     "error.user_already_exists": "Такий користувач вже існує.",
     "error.user_mandatory_fields": "Ім'я користувача є обов'язковим.",
     "error.linktaco_missing_required_fields": "LinkTaco API Token і Organization Slug є обов'язковими",
+    "error.googlereader_missing_required_fields": "Ім'я користувача та пароль Google Reader є обов'язковими",
     "form.api_key.label.description": "Назва ключа API",
     "form.category.hide_globally": "Приховати записи в глобальному списку непрочитаного",
     "form.category.label.title": "Назва",

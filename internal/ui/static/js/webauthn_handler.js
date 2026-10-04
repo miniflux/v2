@@ -45,8 +45,13 @@ class WebAuthnHandler {
             .replace(/=+$/g, "");
     }
 
-    async post(urlKey, data) {
-        const url = document.body.dataset[urlKey];
+    async post(urlKey, data, queryParams) {
+        let url = document.body.dataset[urlKey];
+        if (queryParams) {
+            const parsedURL = new URL(url, window.location.origin);
+            parsedURL.search = queryParams.toString();
+            url = parsedURL.toString();
+        }
         return sendPOSTRequest(url, data);
     }
 
@@ -172,6 +177,11 @@ class WebAuthnHandler {
 
         let loginFinishResponse;
         try {
+            const queryParams = new URLSearchParams();
+            const redirectURL = new URLSearchParams(window.location.search).get("redirect_url");
+            if (redirectURL) {
+                queryParams.set("redirect_url", redirectURL);
+            }
             loginFinishResponse = await this.post("webauthnLoginFinishUrl", {
                 id: assertion.id,
                 rawId: this.encodeBuffer(assertion.rawId),
@@ -182,7 +192,7 @@ class WebAuthnHandler {
                     signature: this.encodeBuffer(assertion.response.signature),
                     userHandle: this.encodeBuffer(assertion.response.userHandle),
                 },
-            });
+            }, queryParams);
         } catch (err) {
             WebAuthnHandler.showErrorMessage(err);
             return;
@@ -192,6 +202,7 @@ class WebAuthnHandler {
             throw new Error(`Login failed with HTTP status code ${loginFinishResponse.status}`);
         }
 
-        window.location.reload();
+        const jsonData = await loginFinishResponse.json();
+        window.location.href = jsonData.redirect;
     }
 }

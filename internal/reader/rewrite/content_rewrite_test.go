@@ -126,6 +126,26 @@ func TestRewriteIncorrectYoutubeLink(t *testing.T) {
 	}
 }
 
+func TestRewriteYoutubeLinkRejectsLookalikeDomain(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	controlEntry := &model.Entry{
+		URL:     "https://notyoutube.com/watch?v=1234",
+		Title:   `A title`,
+		Content: `Video Description`,
+	}
+	testEntry := &model.Entry{
+		URL:     "https://notyoutube.com/watch?v=1234",
+		Title:   `A title`,
+		Content: `Video Description`,
+	}
+	ApplyContentRewriteRules(testEntry, `add_youtube_video`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`A domain that merely ends in "youtube.com" must not be treated as YouTube: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
 func TestRewriteYoutubeLinkAndCustomEmbedURL(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("YOUTUBE_EMBED_URL_OVERRIDE", "https://invidious.custom/embed/")

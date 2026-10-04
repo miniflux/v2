@@ -1,5 +1,6 @@
 {
     "action.cancel": "annuler",
+    "action.documentation": "Documentation : %s",
     "action.download": "Télécharger",
     "action.edit": "Modifier",
     "action.home_screen": "Ajouter à l'écran d'accueil",
@@ -130,6 +131,7 @@
     "error.invalid_site_url": "URL de site non valide.",
     "error.invalid_theme": "Thème non valide.",
     "error.invalid_timezone": "Fuseau horaire non valide.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux n'est pas en mesure de se connecter à ce site web à cause d'un problème réseau : %v.",
     "error.network_timeout": "Ce site web est trop lent à répondre : %v.",
     "error.password_min_length": "Vous devez utiliser au moins 6 caractères pour le mot de passe.",
@@ -162,6 +164,7 @@
     "error.user_already_exists": "Cet utilisateur existe déjà.",
     "error.user_mandatory_fields": "Le nom d'utilisateur est obligatoire.",
     "error.linktaco_missing_required_fields": "Le token API LinkTaco et le slug de l'organisation sont requis.",
+    "error.googlereader_missing_required_fields": "Le nom d'utilisateur et le mot de passe Google Reader sont requis.",
     "form.api_key.label.description": "Libellé de la clé d'API",
     "form.category.hide_globally": "Masquer les entrées dans la liste globale non lue",
     "form.category.label.title": "Titre",

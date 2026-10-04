@@ -1508,6 +1508,56 @@ func TestCannotCreateDuplicatedFeed(t *testing.T) {
 	}
 }
 
+func TestFeedCreationWithoutCategoryReturnsBadRequest(t *testing.T) {
+	t.Parallel()
+
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	categories, err := regularUserClient.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, category := range categories {
+		if err := regularUserClient.DeleteCategory(category.ID); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	t.Run("REST API", func(t *testing.T) {
+		_, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{FeedURL: testConfig.testFeedURL})
+		if !errors.Is(err, miniflux.ErrBadRequest) {
+			t.Fatalf(`Expected a bad request error, got %v`, err)
+		}
+	})
+
+	t.Run("OPML import", func(t *testing.T) {
+		data := `<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+    <body>
+        <outline title="Test" text="Test" xmlUrl="` + testConfig.testFeedURL + `"></outline>
+    </body>
+</opml>`
+
+		err := regularUserClient.Import(io.NopCloser(bytes.NewReader([]byte(data))))
+		if !errors.Is(err, miniflux.ErrBadRequest) {
+			t.Fatalf(`Expected a bad request error, got %v`, err)
+		}
+	})
+}
+
 func TestCreateFeedWithInexistingCategory(t *testing.T) {
 	t.Parallel()
 

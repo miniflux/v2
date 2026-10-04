@@ -285,6 +285,10 @@ When set to true, the username/password form is hidden from
 the login screen, and the options to change username/password
 or unlink OAuth2 account are hidden from the settings page.
 .br
+Password authentication is also rejected by the login form and
+by the REST API HTTP Basic Authentication, and passwords can no
+longer be changed. API clients must use an API key instead.
+.br
 This option requires an alternative authentication source
 such as OAuth2 or auth proxy\&.
 .br

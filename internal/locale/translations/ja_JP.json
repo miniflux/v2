@@ -1,5 +1,6 @@
 {
     "action.cancel": "取り消し",
+    "action.documentation": "ドキュメント: %s",
     "action.download": "ダウンロード",
     "action.edit": "編集",
     "action.home_screen": "ホームスクリーンに追加",
@@ -127,6 +128,7 @@
     "error.invalid_site_url": "サイト URL が無効です。",
     "error.invalid_theme": "テーマが無効です。",
     "error.invalid_timezone": "タイムゾーンが無効です。",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux はネットワークエラーのためこのウェブサイトに到達できません: %v.",
     "error.network_timeout": "このウェブサイトは応答が遅すぎるためタイムアウトしました: %v",
     "error.password_min_length": "パスワードは6文字以上である必要があります。",
@@ -159,6 +161,7 @@
     "error.user_already_exists": "このユーザーは既に存在します。",
     "error.user_mandatory_fields": "ユーザー名が必要です。",
     "error.linktaco_missing_required_fields": "LinkTaco API TokenとOrganization Slugが必要です",
+    "error.googlereader_missing_required_fields": "Google Readerのユーザー名とパスワードが必要です",
     "form.api_key.label.description": "API キーラベル",
     "form.category.hide_globally": "未読一覧に記事を表示しない",
     "form.category.label.title": "タイトル",

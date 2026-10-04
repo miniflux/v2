@@ -1,5 +1,6 @@
 {
     "action.cancel": "iptal",
+    "action.documentation": "Belgeler: %s",
     "action.download": "İndir",
     "action.edit": "Düzenle",
     "action.home_screen": "Ana ekrana ekle",
@@ -130,6 +131,7 @@
     "error.invalid_site_url": "Geçersiz site URL'si.",
     "error.invalid_theme": "Geçersiz tema.",
     "error.invalid_timezone": "Geçersiz saat dilimi.",
+    "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux bir ağ hatası nedeniyle bu websitesine erişemiyor: %v.",
     "error.network_timeout": "Bu websitesi çok yavaş ve istek zaman aşımına uğradı: %v",
     "error.password_min_length": "Parola en az 6 karakter içermeli.",
@@ -162,6 +164,7 @@
     "error.user_already_exists": "Bu kullanıcı zaten mevcut.",
     "error.user_mandatory_fields": "Kullanıcı adı zorunlu.",
     "error.linktaco_missing_required_fields": "LinkTaco API Token ve Organization Slug gereklidir",
+    "error.googlereader_missing_required_fields": "Google Reader kullanıcı adı ve parolası gereklidir",
     "form.api_key.label.description": "API Anahtar Etiketi",
     "form.category.hide_globally": "Genel okunmamış listesindeki girişleri gizle",
     "form.category.label.title": "Başlık",
