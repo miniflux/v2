@@ -45,6 +45,9 @@ func Parse() {
 		flagMigrate              bool
 		flagFlushSessions        bool
 		flagCreateAdmin          bool
+		flagCreateAPIKey         string
+		flagAPIKeyDescription    string
+		flagAPIKeyFile           string
 		flagResetPassword        bool
 		flagResetFeedErrors      bool
 		flagResetFeedNextCheckAt bool
@@ -75,7 +78,13 @@ func Parse() {
 	flag.BoolVar(&flagRefreshFeeds, "refresh-feeds", false, flagRefreshFeedsHelp)
 	flag.BoolVar(&flagRunCleanupTasks, "run-cleanup-tasks", false, flagRunCleanupTasksHelp)
 	flag.StringVar(&flagExportUserFeeds, "export-user-feeds", "", flagExportUserFeedsHelp)
+	flag.StringVar(&flagCreateAPIKey, "create-api-key", "", "Provision an API key for the given username")
+	flag.StringVar(&flagAPIKeyDescription, "api-key-description", "", "Description of the API key to provision")
+	flag.StringVar(&flagAPIKeyFile, "api-key-file", "", "Read the API key from this secret file")
 	flag.Parse()
+	if flagCreateAPIKey == "" && (flagAPIKeyDescription != "" || flagAPIKeyFile != "") {
+		printfAndExit("api-key-description and api-key-file require create-api-key")
+	}
 
 	cfg := config.NewConfigParser()
 
@@ -199,6 +208,14 @@ func Parse() {
 
 	if flagFlushSessions {
 		flushSessions(store)
+		return
+	}
+
+	if flagCreateAPIKey != "" {
+		if err := provisionAPIKey(store, flagCreateAPIKey, flagAPIKeyDescription, flagAPIKeyFile); err != nil {
+			printErrorAndExit(err)
+		}
+		fmt.Println("API key provisioned")
 		return
 	}
 

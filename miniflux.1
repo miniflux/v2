@@ -38,6 +38,20 @@ Load configuration file\&.
 Create an admin user from an interactive terminal\&.
 .RE
 .PP
+.B \-create-api-key <username> \-api-key-description <description> \-api-key-file <path>
+.RS 4
+Provision an API key for an existing user without starting the HTTP server\&.
+The database must already be migrated. The secret file must contain 64 hexadecimal
+characters (32 random bytes), optionally followed by a newline. Protect the file
+with restrictive permissions; for example, generate it with
+\fB(umask 077; openssl rand -hex 32 > api-key)\fR\&.
+.br
+Repeating the command with the same user, description and token succeeds without
+changing the key. A different token under an existing description, or a token
+already used by another key, is rejected. Existing keys are never rotated implicitly.
+The token is not printed. Delete the old key explicitly before replacing it\&.
+.RE
+.PP
 .B \-debug
 .RS 4
 Set log level to debug\&.
