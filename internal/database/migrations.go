@@ -1579,4 +1579,8 @@ var migrations = [...]func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN last_successful_refresh_at timestamp with time zone;`)
+		return err
+	},
 }

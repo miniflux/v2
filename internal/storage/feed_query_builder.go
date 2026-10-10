@@ -149,6 +149,7 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			f.last_modified_header,
 			f.user_id,
 			f.checked_at at time zone u.timezone,
+			f.last_successful_refresh_at at time zone u.timezone,
 			f.next_check_at at time zone u.timezone,
 			f.parsing_error_count,
 			f.parsing_error_msg,
@@ -232,6 +233,7 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.LastModifiedHeader,
 			&feed.UserID,
 			&feed.CheckedAt,
+			&feed.LastSuccessfulRefreshAt,
 			&feed.NextCheckAt,
 			&feed.ParsingErrorCount,
 			&feed.ParsingErrorMsg,
@@ -293,6 +295,9 @@ func (f *feedQueryBuilder) GetFeeds() (model.Feeds, error) {
 
 		feed.NumberOfVisibleEntries = feed.ReadCount + feed.UnreadCount
 		feed.CheckedAt = timezone.Convert(tz, feed.CheckedAt)
+		if feed.LastSuccessfulRefreshAt != nil {
+			*feed.LastSuccessfulRefreshAt = timezone.Convert(tz, *feed.LastSuccessfulRefreshAt)
+		}
 		feed.NextCheckAt = timezone.Convert(tz, feed.NextCheckAt)
 		feed.Category.UserID = feed.UserID
 		feeds = append(feeds, &feed)
