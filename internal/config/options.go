@@ -432,6 +432,16 @@ func NewConfigOptions() *configOptions {
 				valueType:         secretFileType,
 				targetKey:         "METRICS_USERNAME",
 			},
+			"OAUTH2_ADDITIONAL_SCOPES": {
+				parsedStringList: []string{},
+				rawValue:         "",
+				valueType:        stringListType,
+			},
+			"OAUTH2_ADMIN_GROUP": {
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
+			},
 			"OAUTH2_CLIENT_ID": {
 				parsedStringValue: "",
 				rawValue:          "",
@@ -455,6 +465,11 @@ func NewConfigOptions() *configOptions {
 				rawValue:          "",
 				valueType:         secretFileType,
 				targetKey:         "OAUTH2_CLIENT_SECRET",
+			},
+			"OAUTH2_GROUP_CLAIM": {
+				parsedStringValue: "",
+				rawValue:          "",
+				valueType:         stringType,
 			},
 			"OAUTH2_OIDC_DISCOVERY_ENDPOINT": {
 				parsedStringValue: "",
@@ -900,6 +915,18 @@ func (c *configOptions) MetricsRefreshInterval() time.Duration {
 
 func (c *configOptions) MetricsUsername() string {
 	return c.options["METRICS_USERNAME"].parsedStringValue
+}
+
+func (c *configOptions) Oauth2GroupClaim() string {
+	return c.options["OAUTH2_GROUP_CLAIM"].parsedStringValue
+}
+
+func (c *configOptions) Oauth2AdditionalScopes() []string {
+	return c.options["OAUTH2_ADDITIONAL_SCOPES"].parsedStringList
+}
+
+func (c *configOptions) Oauth2AdminGroup() string {
+	return c.options["OAUTH2_ADMIN_GROUP"].parsedStringValue
 }
 
 func (c *configOptions) OAuth2ClientID() string {
