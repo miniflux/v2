@@ -136,10 +136,6 @@ func (c *Client) SaveURL(entryURL string) error {
 		return fmt.Errorf("karakeep: failed to parse response: %s", err)
 	}
 
-	if resp.Header.Get("Content-Type") != "application/json" {
-		return fmt.Errorf("karakeep: unexpected content type response: %s", resp.Header.Get("Content-Type"))
-	}
-
 	if resp.StatusCode != http.StatusCreated {
 		var errResponse errorResponse
 		if err := json.Unmarshal(responseBody, &errResponse); err != nil {
