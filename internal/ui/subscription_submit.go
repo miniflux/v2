@@ -67,6 +67,8 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		WithCookie(subscriptionForm.Cookie).
 		WithUsernameAndPassword(subscriptionForm.Username, subscriptionForm.Password).
 		IgnoreTLSErrors(subscriptionForm.AllowSelfSignedCertificates).
+		WithClientCertificate(subscriptionForm.ClientCertificate, subscriptionForm.ClientKey).
+		WithCACertificate(subscriptionForm.CACertificate).
 		DisableHTTP2(subscriptionForm.DisableHTTP2)
 
 	subscriptionFinder := subscription.NewSubscriptionFinder(requestBuilder)
@@ -97,6 +99,9 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 				CategoryID:                  subscriptionForm.CategoryID,
 				FeedURL:                     subscriptions[0].URL,
 				AllowSelfSignedCertificates: subscriptionForm.AllowSelfSignedCertificates,
+				ClientCertificate:           subscriptionForm.ClientCertificate,
+				ClientKey:                   subscriptionForm.ClientKey,
+				CACertificate:               subscriptionForm.CACertificate,
 				Crawler:                     subscriptionForm.Crawler,
 				IgnoreEntryUpdates:          subscriptionForm.IgnoreEntryUpdates,
 				UserAgent:                   subscriptionForm.UserAgent,
@@ -130,6 +135,9 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 			Crawler:                     subscriptionForm.Crawler,
 			IgnoreEntryUpdates:          subscriptionForm.IgnoreEntryUpdates,
 			AllowSelfSignedCertificates: subscriptionForm.AllowSelfSignedCertificates,
+			ClientCertificate:           subscriptionForm.ClientCertificate,
+			ClientKey:                   subscriptionForm.ClientKey,
+			CACertificate:               subscriptionForm.CACertificate,
 			UserAgent:                   subscriptionForm.UserAgent,
 			Cookie:                      subscriptionForm.Cookie,
 			Username:                    subscriptionForm.Username,

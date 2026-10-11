@@ -35,6 +35,8 @@ func (c *iconChecker) UpdateOrCreateFeedIcon() {
 		WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL()).
 		UseCustomApplicationProxyURL(c.feed.FetchViaProxy).
 		IgnoreTLSErrors(c.feed.AllowSelfSignedCertificates).
+		WithClientCertificate(c.feed.ClientCertificate, c.feed.ClientKey).
+		WithCACertificate(c.feed.CACertificate).
 		DisableHTTP2(c.feed.DisableHTTP2)
 
 	iconFinder := newIconFinder(requestBuilder, c.feed.SiteURL, c.feed.IconURL)
