@@ -64,7 +64,7 @@
             <input type="url" name="feed_url" id="form-feed-url" placeholder="https://domain.tld/" value="{{ .form.FeedURL }}" spellcheck="false" required>
 
             <label for="form-description">{{ t "form.feed.label.description" }}</label>
-            <textarea name="description" id="form-description" cols="40" rows="10" >{{ .form.Description }}</textarea>
+            <textarea id="form-description" name="description" cols="40" rows="10" >{{ .form.Description }}</textarea>
 
             {{ if not .form.CategoryHidden }}
             <label><input type="checkbox" name="hide_globally" value="1"{{ if .form.HideGlobally }} checked{{ end }}> {{ t "form.feed.label.hide_globally" }}</label>
@@ -129,7 +129,7 @@
                     {{ icon "external-link" }}
                 </a>
             </div>
-            <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}" spellcheck="false">
+            <textarea id="form-scraper-rules" name="scraper_rules" cols="40" rows="10" spellcheck="false">{{ .form.ScraperRules }}</textarea>
 
             <div class="form-label-row">
                 <label for="form-rewrite-rules">
@@ -140,7 +140,7 @@
                     {{ icon "external-link" }}
                 </a>
             </div>
-            <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}" spellcheck="false">
+            <textarea id="form-rewrite-rules" name="rewrite_rules" cols="40" rows="10" spellcheck="false">{{ .form.RewriteRules }}</textarea>
 
             <div class="form-label-row">
                 <label for="form-urlrewrite-rules">
@@ -151,7 +151,7 @@
                     {{ icon "external-link" }}
                 </a>
             </div>
-            <input type="text" name="urlrewrite_rules" id="form-urlrewrite-rules" value="{{ .form.UrlRewriteRules }}" spellcheck="false">
+            <textarea id="form-urlrewrite-rules" name="urlrewrite_rules" cols="40" rows="10" spellcheck="false">{{ .form.UrlRewriteRules }}</textarea>
 
             <div class="form-label-row">
                 <label for="form-blocklist-rules">
@@ -162,7 +162,7 @@
                     {{ icon "external-link" }}
                 </a>
             </div>
-            <input type="text" name="blocklist_rules" id="form-blocklist-rules" value="{{ .form.BlocklistRules }}" spellcheck="false">
+            <textarea id="form-blocklist-rules" name="blocklist_rules" cols="40" rows="10" spellcheck="false">{{ .form.BlocklistRules }}</textarea>
 
             <div class="form-label-row">
                 <label for="form-keeplist-rules">
@@ -173,7 +173,7 @@
                     {{ icon "external-link" }}
                 </a>
             </div>
-            <input type="text" name="keeplist_rules" id="form-keeplist-rules" value="{{ .form.KeeplistRules }}" spellcheck="false">
+            <textarea id="form-keeplist-rules" name="keeplist_rules" cols="40" rows="10" spellcheck="false">{{ .form.KeeplistRules }}</textarea>
 
             <div class="form-label-row">
                 <label for="form-block-filter-rules">
