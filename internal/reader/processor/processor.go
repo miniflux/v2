@@ -108,7 +108,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 
 			startTime := time.Now()
 
-			scrapedPageBaseURL, extractedContent, scraperErr := scraper.ScrapeWebsite(
+			scrapedPageBaseURL, extractedContent, scrapedSetCookies, scraperErr := scraper.ScrapeWebsite(
 				requestBuilder,
 				entry.URL,
 				feed.ScraperRules,
@@ -116,6 +116,17 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 
 			if scrapedPageBaseURL != "" {
 				webpageBaseURL = scrapedPageBaseURL
+			}
+
+			if feed.AutoRefreshCookies && len(scrapedSetCookies) > 0 {
+				feed.Cookie = fetcher.MergeCookies(feed.Cookie, scrapedSetCookies)
+				requestBuilder.WithCookie(feed.Cookie)
+				if storeErr := store.UpdateFeedCookie(feed.ID, feed.UserID, feed.Cookie); storeErr != nil {
+					slog.Warn("Unable to update feed cookie after scrape",
+						slog.Int64("feed_id", feed.ID),
+						slog.Any("error", storeErr),
+					)
+				}
 			}
 
 			if config.Opts.HasMetricsCollector() {
@@ -192,7 +203,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 		IgnoreTLSErrors(feed.AllowSelfSignedCertificates).
 		DisableHTTP2(feed.DisableHTTP2)
 
-	webpageBaseURL, extractedContent, scraperErr := scraper.ScrapeWebsite(
+	webpageBaseURL, extractedContent, entrySetCookies, scraperErr := scraper.ScrapeWebsite(
 		requestBuilder,
 		entry.URL,
 		feed.ScraperRules,
@@ -209,6 +220,8 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	if scraperErr != nil {
 		return scraperErr
 	}
+
+	_ = entrySetCookies // auto_refresh_cookies is handled during feed refresh, not per-entry manual fetch
 
 	if extractedContent != "" {
 		entry.Content = minifyContent(extractedContent)

@@ -54,6 +54,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		IgnoreEntryUpdates:          feed.IgnoreEntryUpdates,
 		UserAgent:                   feed.UserAgent,
 		Cookie:                      feed.Cookie,
+		AutoRefreshCookies:          feed.AutoRefreshCookies,
 		CategoryID:                  feed.Category.ID,
 		Username:                    feed.Username,
 		Password:                    feed.Password,

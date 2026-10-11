@@ -177,6 +177,7 @@
     "form.feed.label.block_filter_entry_rules": "Regras de Bloqueio de Entradas",
     "form.feed.label.blocklist_rules": "Filtros de Bloqueio Baseados em Regex",
     "form.feed.label.category": "Categoria",
+    "form.feed.label.auto_refresh_cookies": "Atualizar cookies automaticamente a partir das respostas do servidor",
     "form.feed.label.cookie": "Definir Cookies",
     "form.feed.label.crawler": "Obter conteúdo original",
     "form.feed.label.ignore_entry_updates": "Ignore entry updates",

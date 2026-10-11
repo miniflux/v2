@@ -180,6 +180,7 @@
     "form.feed.label.block_filter_entry_rules": "Правила блокування записів",
     "form.feed.label.blocklist_rules": "Фільтри блокування на основі регулярних виразів",
     "form.feed.label.category": "Категорія",
+    "form.feed.label.auto_refresh_cookies": "Автоматично оновлювати файли cookie з відповідей сервера",
     "form.feed.label.cookie": "Встановити кукі",
     "form.feed.label.crawler": "Завантажувати оригінальний вміст",
     "form.feed.label.ignore_entry_updates": "Ignore entry updates",

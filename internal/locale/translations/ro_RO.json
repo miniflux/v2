@@ -180,6 +180,7 @@
     "form.feed.label.block_filter_entry_rules": "Reguli de Blocare a Intrărilor",
     "form.feed.label.blocklist_rules": "Filtre de Blocare Bazate pe Regex",
     "form.feed.label.category": "Categorie",
+    "form.feed.label.auto_refresh_cookies": "Actualizați automat cookie-urile din răspunsurile serverului",
     "form.feed.label.cookie": "Setare Cookie-uri",
     "form.feed.label.crawler": "Aduce conținutul original",
     "form.feed.label.ignore_entry_updates": "Ignore entry updates",

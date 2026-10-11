@@ -178,6 +178,7 @@
     "form.feed.label.blocklist_rules": "Regex-basierte Sperrfilter",
     "form.feed.label.category": "Kategorie",
     "form.feed.label.cookie": "Cookies setzen",
+    "form.feed.label.auto_refresh_cookies": "Cookies automatisch aus Server-Antworten aktualisieren",
     "form.feed.label.crawler": "Originalinhalt herunterladen",
     "form.feed.label.ignore_entry_updates": "Updates ignorieren",
     "form.feed.label.description": "Beschreibung",

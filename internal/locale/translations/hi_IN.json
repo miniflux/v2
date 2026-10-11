@@ -177,6 +177,7 @@
     "form.feed.label.block_filter_entry_rules": "प्रविष्टि अवरोधन नियम",
     "form.feed.label.blocklist_rules": "रेगेक्स-आधारित अवरोधन फिल्टर",
     "form.feed.label.category": "श्रेणी",
+    "form.feed.label.auto_refresh_cookies": "सर्वर प्रतिक्रियाओं से कुकीज़ स्वचालित रूप से अपडेट करें",
     "form.feed.label.cookie": "कुकीज़ सेट करें",
     "form.feed.label.crawler": "मूल सामग्री प्राप्त करें",
     "form.feed.label.ignore_entry_updates": "Ignore entry updates",

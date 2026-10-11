@@ -180,6 +180,7 @@
     "form.feed.label.block_filter_entry_rules": "Reguły blokowania wpisów",
     "form.feed.label.blocklist_rules": "Filtry blokowania oparte na wyrażeniach regularnych",
     "form.feed.label.category": "Kategoria",
+    "form.feed.label.auto_refresh_cookies": "Automatycznie aktualizuj pliki cookie z odpowiedzi serwera",
     "form.feed.label.cookie": "Ustaw ciasteczka",
     "form.feed.label.crawler": "Pobierz oryginalną treść",
     "form.feed.label.ignore_entry_updates": "Ignoruj ​​aktualizacje wpisów",

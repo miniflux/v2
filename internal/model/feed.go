@@ -63,6 +63,7 @@ type Feed struct {
 	NtfyTopic                   string    `json:"ntfy_topic"`
 	PushoverPriority            int       `json:"pushover_priority"`
 	ProxyURL                    string    `json:"proxy_url"`
+	AutoRefreshCookies          bool      `json:"auto_refresh_cookies"`
 
 	// Non-persisted attributes
 	Category *Category `json:"category,omitempty"`
@@ -174,6 +175,7 @@ type FeedCreationRequest struct {
 	KeepFilterEntryRules        string `json:"keep_filter_entry_rules"`
 	UrlRewriteRules             string `json:"urlrewrite_rules"`
 	ProxyURL                    string `json:"proxy_url"`
+	AutoRefreshCookies          bool   `json:"auto_refresh_cookies"`
 }
 
 type FeedCreationRequestFromSubscriptionDiscovery struct {
@@ -212,6 +214,7 @@ type FeedModificationRequest struct {
 	HideGlobally                *bool   `json:"hide_globally"`
 	DisableHTTP2                *bool   `json:"disable_http2"`
 	ProxyURL                    *string `json:"proxy_url"`
+	AutoRefreshCookies          *bool   `json:"auto_refresh_cookies"`
 }
 
 // Patch updates a feed with modified values.
@@ -318,6 +321,10 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 
 	if f.ProxyURL != nil {
 		feed.ProxyURL = *f.ProxyURL
+	}
+
+	if f.AutoRefreshCookies != nil {
+		feed.AutoRefreshCookies = *f.AutoRefreshCookies
 	}
 }
 

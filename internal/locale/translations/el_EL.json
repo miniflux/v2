@@ -177,6 +177,7 @@
     "form.feed.label.block_filter_entry_rules": "Κανόνες Αποκλεισμού Καταχωρήσεων",
     "form.feed.label.blocklist_rules": "Φίλτρα Αποκλεισμού Βασισμένα σε Regex",
     "form.feed.label.category": "Κατηγορία",
+    "form.feed.label.auto_refresh_cookies": "Αυτόματη ενημέρωση cookies από αποκρίσεις διακομιστή",
     "form.feed.label.cookie": "Ορισμός Cookies",
     "form.feed.label.crawler": "Λήψη αρχικού περιεχομένου",
     "form.feed.label.ignore_entry_updates": "Ignore entry updates",
