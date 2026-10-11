@@ -15,6 +15,8 @@
     "alert.account_linked": "¡Tu cuenta externa ya está vinculada!",
     "alert.account_unlinked": "¡Tu cuenta externa ya está desvinculada!",
     "alert.background_feed_refresh": "Todos los feeds se actualizan en segundo plano. Puede continuar usando Miniflux mientras se ejecuta este proceso.",
+    "alert.bulk_feeds_none_selected": "No se ha seleccionado ninguna fuente.",
+    "alert.bulk_feeds_updated": "Las fuentes seleccionadas se han actualizado.",
     "alert.feed_error": "Hay un problema con esta fuente.",
     "alert.no_starred": "No hay marcador en este momento.",
     "alert.no_category": "No hay categoría.",
@@ -478,6 +480,12 @@
     "page.edit_feed.title": "Editar fuente: %s",
     "page.edit_user.title": "Editar usuario: %s",
     "page.entry.attachments": "Archivos adjuntos",
+    "page.feeds.bulk.actions": "Acciones masivas",
+    "page.feeds.bulk.disable": "Desactivar",
+    "page.feeds.bulk.enable": "Activar",
+    "page.feeds.bulk.move": "Mover a la categoría",
+    "page.feeds.bulk.select_all": "Seleccionar todo",
+    "page.feeds.bulk.selected": "Seleccionadas:",
     "page.feeds.error_count": [
         "%d error",
         "%d errores"

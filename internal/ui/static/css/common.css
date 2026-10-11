@@ -953,6 +953,72 @@ dialog {
 }
 
 /* Feeds list */
+.feeds-bulk-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 14px;
+    margin-bottom: 10px;
+    padding: 5px var(--item-padding, 5px);
+    border: 1px dotted var(--item-border-color);
+    font-size: 0.9rem;
+}
+
+.feeds-bulk-select-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.feeds-bulk-selected-count {
+    white-space: nowrap;
+}
+
+.feeds-bulk-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 10px;
+    margin: 0;
+    padding: 0;
+}
+
+.feeds-bulk-actions li {
+    list-style-type: none;
+    white-space: nowrap;
+}
+
+.feeds-bulk-actions .page-button {
+    font-size: 0.9rem;
+}
+
+.feeds-bulk-actions .page-button:disabled,
+.feeds-bulk-actions select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.feeds-bulk-actions .page-button:disabled:active {
+    translate: none;
+}
+
+.feeds-bulk-move {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.feeds-bulk-move select {
+    max-width: 12em;
+}
+
+.feed-bulk-checkbox {
+    margin: 0 6px 0 0;
+    vertical-align: middle;
+}
+
 article.feed-parsing-error {
     background-color: var(--feed-parsing-error-background-color);
     border-style: var(--feed-parsing-error-border-style);

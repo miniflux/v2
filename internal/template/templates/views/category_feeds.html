@@ -55,7 +55,7 @@
 {{ if not .feeds }}
     <p role="alert" class="alert">{{ t "alert.no_feed_in_category" }}</p>
 {{ else }}
-    {{ template "feed_list" dict "categoryID" .category.ID "user" .user "feeds" .feeds "ParsingErrorCount" .ParsingErrorCount "csrf" .csrf }}
+    {{ template "feed_list" dict "categoryID" .category.ID "user" .user "feeds" .feeds "categories" .categories "ParsingErrorCount" .ParsingErrorCount "csrf" .csrf }}
 {{ end }}
 
 {{ end }}

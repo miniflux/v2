@@ -15,6 +15,8 @@
     "alert.account_linked": "Conectouse a túa conta externa!",
     "alert.account_unlinked": "Desconectouse a túa conta externa!",
     "alert.background_feed_refresh": "Estanse actualizando en segundo plano todas as canles. Podes continuar usando Miniflux mentras se realiza a actualización.",
+    "alert.bulk_feeds_none_selected": "Non se seleccionou ningunha fonte.",
+    "alert.bulk_feeds_updated": "As fontes seleccionadas foron actualizadas.",
     "alert.feed_error": "Hai un problema con esta canle.",
     "alert.no_starred": "Non hai artigos con estrela.",
     "alert.no_category": "Non hai categorías.",
@@ -478,6 +480,12 @@
     "page.edit_feed.title": "Editar canle: %s",
     "page.edit_user.title": "Editar usuaria: %s",
     "page.entry.attachments": "Anexos",
+    "page.feeds.bulk.actions": "Accións en masa",
+    "page.feeds.bulk.disable": "Desactivar",
+    "page.feeds.bulk.enable": "Activar",
+    "page.feeds.bulk.move": "Mover á categoría",
+    "page.feeds.bulk.select_all": "Seleccionar todo",
+    "page.feeds.bulk.selected": "Seleccionadas:",
     "page.feeds.error_count": [
         "%d erro",
         "%d erros"

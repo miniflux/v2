@@ -15,6 +15,8 @@
     "alert.account_linked": "Ihr externes Konto wurde verknüpft!",
     "alert.account_unlinked": "Ihr externer Account ist jetzt getrennt!",
     "alert.background_feed_refresh": "Alle Abonnements werden derzeit im Hintergrund aktualisiert. Sie können Miniflux weiterhin benutzen, während dieser Prozess ausgeführt wird.",
+    "alert.bulk_feeds_none_selected": "Kein Feed ausgewählt.",
+    "alert.bulk_feeds_updated": "Die ausgewählten Feeds wurden aktualisiert.",
     "alert.feed_error": "Es gibt ein Problem mit diesem Abonnement",
     "alert.no_starred": "Es existieren derzeit keine markierten Artikel.",
     "alert.no_category": "Es ist keine Kategorie vorhanden.",
@@ -478,6 +480,12 @@
     "page.edit_feed.title": "Abonnement bearbeiten: %s",
     "page.edit_user.title": "Benutzer bearbeiten: %s",
     "page.entry.attachments": "Anhänge",
+    "page.feeds.bulk.actions": "Massenaktionen",
+    "page.feeds.bulk.disable": "Deaktivieren",
+    "page.feeds.bulk.enable": "Aktivieren",
+    "page.feeds.bulk.move": "In Kategorie verschieben",
+    "page.feeds.bulk.select_all": "Alle auswählen",
+    "page.feeds.bulk.selected": "Ausgewählt:",
     "page.feeds.error_count": [
         "%d Fehler",
         "%d Fehler"

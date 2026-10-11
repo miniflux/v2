@@ -565,6 +565,80 @@ function initializeFormHandlers() {
 }
 
 /**
+ * Initialize the bulk selection toolbar of the feeds list.
+ *
+ * Handles the "select all" checkbox, keeps the selected counter in sync,
+ * enables the action buttons only when at least one feed is selected,
+ * and submits the form with the chosen action (asking for confirmation when required).
+ */
+function initializeBulkFeedHandlers() {
+    const formElement = document.querySelector("form[data-bulk-form]");
+    if (!formElement) return;
+
+    const checkboxes = Array.from(formElement.querySelectorAll("input[data-bulk-checkbox]"));
+    const selectAllElement = formElement.querySelector("input[data-bulk-select-all]");
+    const counterElement = formElement.querySelector("[data-bulk-selected-count]");
+    const actionInputElement = formElement.querySelector("input[data-bulk-action-input]");
+    const actionButtons = formElement.querySelectorAll("button[data-bulk-action]");
+    const categoryElement = formElement.querySelector("select[data-bulk-category]");
+
+    function updateSelectionState() {
+        const selectedCount = checkboxes.filter((checkbox) => checkbox.checked).length;
+        const hasSelection = selectedCount > 0;
+
+        if (counterElement) {
+            counterElement.textContent = selectedCount;
+        }
+
+        if (selectAllElement) {
+            selectAllElement.checked = hasSelection && selectedCount === checkboxes.length;
+            selectAllElement.indeterminate = hasSelection && selectedCount < checkboxes.length;
+        }
+
+        actionButtons.forEach((button) => {
+            button.disabled = !hasSelection;
+        });
+
+        if (categoryElement) {
+            categoryElement.disabled = !hasSelection;
+        }
+    }
+
+    function submitAction(actionName) {
+        actionInputElement.value = actionName;
+        formElement.requestSubmit();
+    }
+
+    checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", updateSelectionState);
+    });
+
+    if (selectAllElement) {
+        selectAllElement.addEventListener("change", () => {
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = selectAllElement.checked;
+            });
+            updateSelectionState();
+        });
+    }
+
+    actionButtons.forEach((button) => {
+        button.onclick = (event) => {
+            event.preventDefault();
+
+            const actionName = button.dataset.bulkAction;
+            if (button.dataset.bulkConfirm) {
+                handleConfirmationMessage(button, () => submitAction(actionName));
+            } else {
+                submitAction(actionName);
+            }
+        };
+    });
+
+    updateSelectionState();
+}
+
+/**
  * Show the keyboard shortcuts modal.
  */
 function showKeyboardShortcutsAction() {
@@ -1285,6 +1359,7 @@ function initializeClickHandlers() {
 // Initialize application handlers
 initializeMainMenuHandlers();
 initializeFormHandlers();
+initializeBulkFeedHandlers();
 initializeMediaPlayerHandlers();
 initializeWebAuthn();
 initializeKeyboardShortcuts();
