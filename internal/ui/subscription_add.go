@@ -37,5 +37,5 @@ func (h *handler) showAddSubscriptionPage(w http.ResponseWriter, r *http.Request
 	view.Set("form", &form.SubscriptionForm{CategoryID: 0})
 	view.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyURLConfigured())
 
-	response.HTML(w, r, view.Render("add_subscription"))
+	view.HTML(w, r, "add_subscription")
 }

@@ -52,13 +52,13 @@ func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
 
 	if fileHeader.Size == 0 {
 		view.Set("errorMessage", locale.NewLocalizedError("error.empty_file").Translate(user.Language))
-		response.HTML(w, r, view.Render("import"))
+		view.HTML(w, r, "import")
 		return
 	}
 
 	if impErr := opml.NewHandler(h.store).Import(user.ID, file); impErr != nil {
 		view.Set("errorMessage", impErr)
-		response.HTML(w, r, view.Render("import"))
+		view.HTML(w, r, "import")
 		return
 	}
 
@@ -100,13 +100,13 @@ func (h *handler) fetchOPML(w http.ResponseWriter, r *http.Request) {
 	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
 		slog.Warn("Unable to fetch OPML file", slog.String("opml_file_url", opmlFileURL), slog.Any("error", localizedError.Error()))
 		view.Set("errorMessage", localizedError.Translate(user.Language))
-		response.HTML(w, r, view.Render("import"))
+		view.HTML(w, r, "import")
 		return
 	}
 
 	if impErr := opml.NewHandler(h.store).Import(user.ID, responseHandler.Body(config.Opts.HTTPClientMaxBodySize())); impErr != nil {
 		view.Set("errorMessage", impErr)
-		response.HTML(w, r, view.Render("import"))
+		view.HTML(w, r, "import")
 		return
 	}
 

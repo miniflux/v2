@@ -39,13 +39,13 @@ func (h *handler) saveUser(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := userForm.ValidateCreation(); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		response.HTML(w, r, view.Render("create_user"))
+		view.HTML(w, r, "create_user")
 		return
 	}
 
 	if h.store.UserExists(userForm.Username) {
 		view.Set("errorMessage", locale.NewLocalizedError("error.user_already_exists").Translate(user.Language))
-		response.HTML(w, r, view.Render("create_user"))
+		view.HTML(w, r, "create_user")
 		return
 	}
 
@@ -57,7 +57,7 @@ func (h *handler) saveUser(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := validator.ValidateUserCreationWithPassword(h.store, userCreationRequest); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		response.HTML(w, r, view.Render("create_user"))
+		view.HTML(w, r, "create_user")
 		return
 	}
 

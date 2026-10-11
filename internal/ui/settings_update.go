@@ -54,7 +54,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := settingsForm.Validate(); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		response.HTML(w, r, view.Render("settings"))
+		view.HTML(w, r, "settings")
 		return
 	}
 
@@ -81,7 +81,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := validator.ValidateUserModification(h.store, user.ID, userModificationRequest); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		response.HTML(w, r, view.Render("settings"))
+		view.HTML(w, r, "settings")
 		return
 	}
 

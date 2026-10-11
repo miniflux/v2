@@ -58,5 +58,5 @@ func (h *handler) showFeedEntriesAllPage(w http.ResponseWriter, r *http.Request)
 	view.Set("hasSaveEntry", navMetadata.HasSaveEntry)
 	view.Set("showOnlyUnreadEntries", false)
 
-	response.HTML(w, r, view.Render("feed_entries"))
+	view.HTML(w, r, "feed_entries")
 }
