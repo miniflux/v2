@@ -74,6 +74,10 @@ func ValidateFeedCreation(store *storage.Storage, userID int64, request *model.F
 		return err
 	}
 
+	if err := IsValidScraperRules(request.ScraperRules); err != nil {
+		return err
+	}
+
 	if request.ProxyURL != "" && !urllib.IsValidProxyURL(request.ProxyURL) {
 		return locale.NewLocalizedError("error.invalid_feed_proxy_url")
 	}
@@ -143,6 +147,12 @@ func ValidateFeedModification(store *storage.Storage, userID, feedID int64, requ
 
 	if request.RewriteRules != nil {
 		if err := IsValidRewriteRules(*request.RewriteRules); err != nil {
+			return err
+		}
+	}
+
+	if request.ScraperRules != nil {
+		if err := IsValidScraperRules(*request.ScraperRules); err != nil {
 			return err
 		}
 	}

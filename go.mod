@@ -8,6 +8,7 @@ go 1.26.0
 require (
 	github.com/PuerkitoBio/goquery v1.13.0
 	github.com/andybalholm/brotli v1.2.6
+	github.com/andybalholm/cascadia v1.3.4
 	github.com/coreos/go-oidc/v3 v3.21.0
 	github.com/go-webauthn/webauthn v0.18.2
 	github.com/lib/pq v1.12.3
@@ -28,7 +29,6 @@ require (
 )
 
 require (
-	github.com/andybalholm/cascadia v1.3.4 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.4 // indirect

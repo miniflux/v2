@@ -34,6 +34,8 @@ func IsValidRewriteRules(rules string) *locale.LocalizedError {
 		return locale.NewLocalizedError("error.feed_rewrite_rule_missing_args", e.Rule)
 	case rewrite.RuleErrInvalidRegexp:
 		return locale.NewLocalizedError("error.feed_rewrite_rule_invalid_regex", e.Rule, e.Message)
+	case rewrite.RuleErrInvalidSelector:
+		return locale.NewLocalizedError("error.feed_rewrite_rule_invalid_selector", e.Rule, e.Message)
 	case rewrite.RuleErrUnquote, rewrite.RuleErrLexical:
 		// Lexical (scanner) errors carry a descriptive Message but no token,
 		// while unquote errors carry the offending token; show whichever we have.

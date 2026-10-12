@@ -71,6 +71,34 @@ func TestParseRulesInvalidRegexp(t *testing.T) {
 	}
 }
 
+func TestParseRulesInvalidSelector(t *testing.T) {
+	for _, rulesText := range []string{
+		`remove("div:has(> p)")`,
+		`remove(".a,,.b")`,
+		`base64_decode("div[")`,
+	} {
+		_, errs := parseRules(rulesText)
+		if len(errs) != 1 || errs[0].Kind != RuleErrInvalidSelector {
+			t.Errorf(`Expected one RuleErrInvalidSelector error for %s, got %v`, rulesText, errs)
+		}
+	}
+}
+
+func TestParseRulesValidSelector(t *testing.T) {
+	rulesText := `remove(".newsletter, div.share > a, p:contains(Subscribe)") base64_decode base64_decode("pre")`
+	if _, errs := parseRules(rulesText); len(errs) != 0 {
+		t.Errorf(`Expected zero errors, got %v`, errs)
+	}
+}
+
+func TestPredefinedRulesAreValid(t *testing.T) {
+	for domain, rulesText := range predefinedRules {
+		if errs := ValidateRules(rulesText); len(errs) != 0 {
+			t.Errorf(`Predefined rewrite rules for %s are invalid: %v`, domain, errs)
+		}
+	}
+}
+
 func TestParseRulesWellFormed(t *testing.T) {
 	rulesText := `replace("a"|"b") nl2br`
 	rules, errs := parseRules(rulesText)
