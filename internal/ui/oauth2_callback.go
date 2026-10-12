@@ -119,7 +119,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 
 	groupClaim := config.Opts.Oauth2GroupClaim()
 	adminGroup := config.Opts.Oauth2AdminGroup()
-	adminRoleMappingEnabled := groupClaim != "" && adminGroup != ""
+	adminRoleMappingEnabled := provider == "oidc" && groupClaim != "" && adminGroup != ""
 	isAdmin := adminRoleMappingEnabled && slices.Contains(profile.Groups, adminGroup)
 
 	if user == nil {
