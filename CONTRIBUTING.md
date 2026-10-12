@@ -106,6 +106,7 @@ Miniflux supports multiple architectures. When making changes, ensure compatibil
 - Linux (amd64, arm64, armv7, armv6, armv5, riscv64)
 - macOS (amd64, arm64)
 - FreeBSD, OpenBSD, Windows (amd64)
+- NetBSD (arm64)
 
 ## Pull Request Guidelines
 
