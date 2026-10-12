@@ -256,10 +256,11 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			description,
 			proxy_url,
 			ignore_entry_updates,
-			language
+			language,
+			auto_refresh_cookies
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33)
 		RETURNING
 			id
 	`
@@ -297,6 +298,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.ProxyURL,
 		feed.IgnoreEntryUpdates,
 		feed.Language,
+		feed.AutoRefreshCookies,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
@@ -381,9 +383,10 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			pushover_priority=$37,
 			proxy_url=$38,
 			ignore_entry_updates=$39,
-			language=$40
+			language=$40,
+			auto_refresh_cookies=$41
 		WHERE
-			id=$41 AND user_id=$42
+			id=$42 AND user_id=$43
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -426,6 +429,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.ProxyURL,
 		feed.IgnoreEntryUpdates,
 		feed.Language,
+		feed.AutoRefreshCookies,
 		feed.ID,
 		feed.UserID,
 	)
@@ -433,6 +437,16 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		return fmt.Errorf(`store: unable to update feed #%d (%s): %v`, feed.ID, feed.FeedURL, err)
 	}
 
+	return nil
+}
+
+// UpdateFeedCookie updates only the cookie field of a feed.
+func (s *Storage) UpdateFeedCookie(feedID, userID int64, cookie string) error {
+	query := `UPDATE feeds SET cookie=$1 WHERE id=$2 AND user_id=$3`
+	_, err := s.db.Exec(query, cookie, feedID, userID)
+	if err != nil {
+		return fmt.Errorf(`store: unable to update cookie for feed #%d: %v`, feedID, err)
+	}
 	return nil
 }
 

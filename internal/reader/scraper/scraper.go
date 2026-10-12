@@ -18,17 +18,19 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-func ScrapeWebsite(requestBuilder *fetcher.RequestBuilder, pageURL, rules string) (baseURL string, extractedContent string, err error) {
+func ScrapeWebsite(requestBuilder *fetcher.RequestBuilder, pageURL, rules string) (baseURL string, extractedContent string, setCookies []string, err error) {
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(pageURL))
 	defer responseHandler.Close()
 
 	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
 		slog.Warn("Unable to scrape website", slog.String("website_url", pageURL), slog.Any("error", localizedError.Error()))
-		return "", "", localizedError.Error()
+		return "", "", nil, localizedError.Error()
 	}
 
+	setCookies = responseHandler.SetCookies()
+
 	if !isAllowedContentType(responseHandler.ContentType()) {
-		return "", "", fmt.Errorf("scraper: this resource is not a HTML document (%s)", responseHandler.ContentType())
+		return "", "", setCookies, fmt.Errorf("scraper: this resource is not a HTML document (%s)", responseHandler.ContentType())
 	}
 
 	// The entry URL could redirect somewhere else.
@@ -45,7 +47,7 @@ func ScrapeWebsite(requestBuilder *fetcher.RequestBuilder, pageURL, rules string
 	)
 
 	if err != nil {
-		return "", "", fmt.Errorf("scraper: unable to read HTML document with charset reader: %v", err)
+		return "", "", setCookies, fmt.Errorf("scraper: unable to read HTML document with charset reader: %v", err)
 	}
 
 	if sameSite && rules != "" {
@@ -67,7 +69,7 @@ func ScrapeWebsite(requestBuilder *fetcher.RequestBuilder, pageURL, rules string
 		slog.Debug("Using base URL from HTML document", "base_url", baseURL)
 	}
 
-	return baseURL, extractedContent, nil
+	return baseURL, extractedContent, setCookies, nil
 }
 
 func findContentUsingCustomRules(page io.Reader, rules string) (baseURL string, extractedContent string, err error) {

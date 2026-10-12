@@ -102,6 +102,7 @@
 
             <label for="form-cookie">{{ t "form.feed.label.cookie" }}</label>
             <input type="text" name="cookie" id="form-cookie" value="{{ .form.Cookie }}" spellcheck="false">
+            <label style="margin-top:0.25em; margin-bottom:1.5em"><input type="checkbox" name="auto_refresh_cookies" value="1" {{ if .form.AutoRefreshCookies }}checked{{ end }}> {{ t "form.feed.label.auto_refresh_cookies" }}</label>
 
             <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
             <label><input type="checkbox" name="ignore_entry_updates" value="1" {{ if .form.IgnoreEntryUpdates }}checked{{ end }}> {{ t "form.feed.label.ignore_entry_updates" }}</label>

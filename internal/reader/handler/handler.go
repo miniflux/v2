@@ -372,6 +372,12 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 	originalFeed.ResetErrorCounter()
 
+	if originalFeed.AutoRefreshCookies {
+		if setCookies := responseHandler.SetCookies(); len(setCookies) > 0 {
+			originalFeed.Cookie = fetcher.MergeCookies(originalFeed.Cookie, setCookies)
+		}
+	}
+
 	if storeErr := store.UpdateFeed(originalFeed); storeErr != nil {
 		localizedError := locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
 		return getTranslatedLocalizedError(store, userID, originalFeed, localizedError)

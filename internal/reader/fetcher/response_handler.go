@@ -95,6 +95,14 @@ func (r *ResponseHandler) ParseRetryDelay() time.Duration {
 	return 0
 }
 
+// SetCookies returns the values of all Set-Cookie response headers.
+func (r *ResponseHandler) SetCookies() []string {
+	if r.httpResponse == nil {
+		return nil
+	}
+	return r.httpResponse.Header["Set-Cookie"]
+}
+
 func (r *ResponseHandler) IsRateLimited() bool {
 	return r.httpResponse != nil && r.httpResponse.StatusCode == http.StatusTooManyRequests
 }

@@ -175,6 +175,56 @@ func addDynamicImage(entryContent string) string {
 		})
 	}
 
+	// Fix lazy-loaded images where src is a placeholder data URI (SVG or GIF).
+	// Case 1: <img src="data:image/gif;..." data-src="real-url"> → replace src with data-src.
+	// Case 2: <picture><source srcset="real-url"><img src="data:image/svg+xml;..."></picture>
+	//         → extract first URL from srcset and set it as img src.
+	// Case 3: <picture><source srcset="..."><img srcset="real-url" (no src)></picture>
+	//         → extract first URL from img srcset and set it as img src (ORF.at opener pattern).
+	doc.Find("img").Each(func(i int, img *goquery.Selection) {
+		src := img.AttrOr("src", "")
+
+		// Case 3: img has no src at all but has a srcset — set src from first srcset entry.
+		if src == "" {
+			if imgSrcset, ok := img.Attr("srcset"); ok && imgSrcset != "" {
+				firstURL := strings.Fields(imgSrcset)[0]
+				firstURL = strings.TrimSuffix(firstURL, ",")
+				if firstURL != "" {
+					img.SetAttr("src", firstURL)
+					changed = true
+				}
+			}
+			return
+		}
+
+		if !strings.HasPrefix(src, "data:image/gif") && !strings.HasPrefix(src, "data:image/svg+xml") {
+			return
+		}
+
+		// Case 1: data-src present on the img itself.
+		if dataSrc, ok := img.Attr("data-src"); ok && dataSrc != "" {
+			img.SetAttr("src", dataSrc)
+			changed = true
+			return
+		}
+
+		// Case 2: parent is <picture> with a <source srcset="..."> child.
+		parent := img.Parent()
+		if goquery.NodeName(parent) == "picture" {
+			parent.Find("source").Each(func(j int, source *goquery.Selection) {
+				if srcset, ok := source.Attr("srcset"); ok && srcset != "" {
+					// srcset may look like "url1 2x, url2 1x" — take the first token.
+					firstURL := strings.Fields(srcset)[0]
+					firstURL = strings.TrimSuffix(firstURL, ",")
+					if firstURL != "" {
+						img.SetAttr("src", firstURL)
+						changed = true
+					}
+				}
+			})
+		}
+	})
+
 	if changed {
 		output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 		return output
