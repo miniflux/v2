@@ -165,6 +165,28 @@
         </div>
     </details>
 
+    <details {{ if .form.GotifyEnabled }}open{{ end }}>
+        <summary>Gotify</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="gotify_enabled" value="1" {{ if .form.GotifyEnabled }}checked{{ end }}> {{ t "form.integration.gotify_activate" }}
+            </label>
+
+            <label for="form-gotify-url">{{ t "form.integration.gotify_server_url" }}</label>
+            <input type="url" name="gotify_url" id="form-gotify-url" value="{{ .form.GotifyURL }}" placeholder="https://gotify.example.com" spellcheck="false">
+
+            <label for="form-gotify-token">{{ t "form.integration.gotify_token" }}</label>
+            <input type="password" name="gotify_token" id="form-gotify-token" value="{{ .form.GotifyToken }}" spellcheck="false" autocomplete="new-password">
+
+            <label for="form-gotify-priority">{{ t "form.integration.gotify_priority" }}</label>
+            <input type="number" name="gotify_priority" id="form-gotify-priority" value="{{ .form.GotifyPriority }}" min="0" max="10">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.InstapaperEnabled }}open{{ end }}>
         <summary>Instapaper</summary>
         <div class="form-section">

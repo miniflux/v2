@@ -127,4 +127,8 @@ type Integration struct {
 	PushoverDevice                   string
 	PushoverPrefix                   string
 	ArchiveorgEnabled                bool
+	GotifyEnabled                    bool
+	GotifyURL                        string
+	GotifyToken                      string
+	GotifyPriority                   int
 }

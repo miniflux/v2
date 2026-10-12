@@ -134,6 +134,10 @@ type IntegrationForm struct {
 	PushoverDevice                   string
 	PushoverPrefix                   string
 	ArchiveorgEnabled                bool
+	GotifyEnabled                    bool
+	GotifyURL                        string
+	GotifyToken                      string
+	GotifyPriority                   int
 }
 
 // Merge copy form values to the model.
@@ -256,6 +260,10 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.PushoverDevice = i.PushoverDevice
 	integration.PushoverPrefix = i.PushoverPrefix
 	integration.ArchiveorgEnabled = i.ArchiveorgEnabled
+	integration.GotifyEnabled = i.GotifyEnabled
+	integration.GotifyURL = i.GotifyURL
+	integration.GotifyToken = i.GotifyToken
+	integration.GotifyPriority = i.GotifyPriority
 }
 
 // ValidateGoogleReader ensures the Google Reader integration is not enabled without credentials.
@@ -271,6 +279,8 @@ func (i IntegrationForm) ValidateGoogleReader(storedPasswordHash string) *locale
 
 // NewIntegrationForm returns a new IntegrationForm.
 func NewIntegrationForm(r *http.Request) *IntegrationForm {
+	gotifyPriority, _ := strconv.Atoi(r.FormValue("gotify_priority"))
+
 	return &IntegrationForm{
 		PinboardEnabled:                  r.FormValue("pinboard_enabled") == "1",
 		PinboardToken:                    r.FormValue("pinboard_token"),
@@ -392,6 +402,10 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		PushoverDevice:                   r.FormValue("pushover_device"),
 		PushoverPrefix:                   r.FormValue("pushover_prefix"),
 		ArchiveorgEnabled:                r.FormValue("archiveorg_enabled") == "1",
+		GotifyEnabled:                    r.FormValue("gotify_enabled") == "1",
+		GotifyURL:                        r.FormValue("gotify_url"),
+		GotifyToken:                      r.FormValue("gotify_token"),
+		GotifyPriority:                   gotifyPriority,
 	}
 }
 
