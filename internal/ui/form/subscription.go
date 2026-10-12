@@ -61,6 +61,10 @@ func (s *SubscriptionForm) Validate() *locale.LocalizedError {
 		return err
 	}
 
+	if err := validator.IsValidScraperRules(s.ScraperRules); err != nil {
+		return err
+	}
+
 	if s.ProxyURL != "" && !urllib.IsValidProxyURL(s.ProxyURL) {
 		return locale.NewLocalizedError("error.invalid_feed_proxy_url")
 	}
