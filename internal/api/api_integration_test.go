@@ -1956,6 +1956,122 @@ func TestUpdateFeedWithInvalidURLRewriteRules(t *testing.T) {
 	}
 }
 
+func TestCreateFeedWithInvalidRewriteRuleSelector(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	// cascadia does not support a relative selector inside :has().
+	_, err = regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:      testConfig.testFeedURL,
+		RewriteRules: `remove("div:has(> p)")`,
+	})
+	if err == nil {
+		t.Fatalf(`Creating a feed with an invalid rewrite rule selector should raise an error`)
+	}
+}
+
+func TestUpdateFeedWithInvalidRewriteRuleSelector(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedUpdateRequest := &miniflux.FeedModificationRequest{
+		RewriteRules: new(`remove("div:has(> p)")`),
+	}
+
+	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); err == nil {
+		t.Fatalf(`Updating a feed with an invalid rewrite rule selector should raise an error`)
+	}
+}
+
+func TestCreateFeedWithInvalidScraperRules(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	// cascadia does not support a relative selector inside :has().
+	_, err = regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:      testConfig.testFeedURL,
+		ScraperRules: `div:has(> p)`,
+	})
+	if err == nil {
+		t.Fatalf(`Creating a feed with invalid scraper rules should raise an error`)
+	}
+}
+
+func TestUpdateFeedWithInvalidScraperRules(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedUpdateRequest := &miniflux.FeedModificationRequest{
+		ScraperRules: new(`div:has(> p)`),
+	}
+
+	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); err == nil {
+		t.Fatalf(`Updating a feed with invalid scraper rules should raise an error`)
+	}
+}
+
 func TestMarkFeedAsReadEndpoint(t *testing.T) {
 	t.Parallel()
 

@@ -6,6 +6,8 @@ package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 import (
 	"regexp"
 	"text/scanner"
+
+	"github.com/andybalholm/cascadia"
 )
 
 type RuleErrorKind int
@@ -17,6 +19,7 @@ const (
 	RuleErrUnknownName
 	RuleErrMissingArgs
 	RuleErrInvalidRegexp
+	RuleErrInvalidSelector
 )
 
 // RuleError describes one problem found while parsing rewrite rules.
@@ -46,6 +49,14 @@ func validateParsedRules(rules []rule) (errs []RuleError) {
 		if spec.regexArg && len(r.args) > 0 {
 			if _, err := regexp.Compile(r.args[0]); err != nil {
 				errs = append(errs, RuleError{Kind: RuleErrInvalidRegexp, Rule: r.name,
+					Token: r.args[0], Message: err.Error()})
+			}
+		}
+		// goquery silently matches nothing when a selector does not compile,
+		// so an invalid selector would turn the rule into a no-op.
+		if spec.selectorArg && len(r.args) > 0 {
+			if _, err := cascadia.Compile(r.args[0]); err != nil {
+				errs = append(errs, RuleError{Kind: RuleErrInvalidSelector, Rule: r.name,
 					Token: r.args[0], Message: err.Error()})
 			}
 		}

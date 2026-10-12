@@ -20,12 +20,13 @@ type rule struct {
 
 // ruleSpec describes a rewrite rule: the minimum number of arguments it requires
 // (used for save-time validation), whether its first argument is a regular
-// expression (so it can be compile-checked at save time), and the handler that
-// applies it.
+// expression or a CSS selector (so it can be compile-checked at save time), and
+// the handler that applies it.
 type ruleSpec struct {
-	minArgs  int
-	regexArg bool
-	apply    func(entryURL string, entry *model.Entry, args []string)
+	minArgs     int
+	regexArg    bool
+	selectorArg bool
+	apply       func(entryURL string, entry *model.Entry, args []string)
 }
 
 // convertTextLinksRule is shared by the "convert_text_link" and
@@ -84,7 +85,7 @@ var knownRules = map[string]ruleSpec{
 		// Format: replace_title("search-term"|"replace-term")
 		entry.Title = replaceCustom(entry.Title, args[0], args[1])
 	}},
-	"remove": {minArgs: 1, apply: func(_ string, entry *model.Entry, args []string) {
+	"remove": {minArgs: 1, selectorArg: true, apply: func(_ string, entry *model.Entry, args []string) {
 		// Format: remove("#selector > .element, .another")
 		entry.Content = removeCustom(entry.Content, args[0])
 	}},
@@ -94,7 +95,7 @@ var knownRules = map[string]ruleSpec{
 	"add_castopod_episode": {apply: func(entryURL string, entry *model.Entry, _ []string) {
 		entry.Content = addCastopodEpisode(entryURL, entry.Content)
 	}},
-	"base64_decode": {apply: func(_ string, entry *model.Entry, args []string) {
+	"base64_decode": {selectorArg: true, apply: func(_ string, entry *model.Entry, args []string) {
 		selector := "body"
 		if len(args) >= 1 {
 			selector = args[0]
