@@ -4,6 +4,7 @@
 package storage // import "miniflux.app/v2/internal/storage"
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 
@@ -116,5 +117,39 @@ func (s *Storage) DeleteAPIKey(userID, keyID int64) error {
 		return ErrAPIKeyNotFound
 	}
 
+	return nil
+}
+
+// ProvisionAPIKey inserts a supplied key, or succeeds without changes if it already exists.
+// Existing keys are never rotated implicitly, and token values must not appear in errors.
+func (s *Storage) ProvisionAPIKey(userID int64, description, token string) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return errors.New("store: unable to begin API key provisioning")
+	}
+	defer tx.Rollback()
+
+	// Serialize provisioning for this user, including case-insensitive descriptions.
+	var id int64
+	if err := tx.QueryRow(`SELECT id FROM users WHERE id=$1 FOR UPDATE`, userID).Scan(&id); err != nil {
+		return errors.New("store: unable to lock API key owner")
+	}
+	var existingToken string
+	err = tx.QueryRow(`SELECT token FROM api_keys WHERE user_id=$1 AND lower(description)=lower($2)`, userID, description).Scan(&existingToken)
+	switch {
+	case err == nil:
+		if existingToken != token {
+			return errors.New("store: an API key with this description already exists with a different token")
+		}
+	case errors.Is(err, sql.ErrNoRows):
+		if _, err := tx.Exec(`INSERT INTO api_keys (user_id, description, token) VALUES ($1, $2, $3)`, userID, description, token); err != nil {
+			return errors.New("store: unable to provision API key (the token may already be in use)")
+		}
+	default:
+		return errors.New("store: unable to look up API key")
+	}
+	if err := tx.Commit(); err != nil {
+		return errors.New("store: unable to commit API key provisioning")
+	}
 	return nil
 }
