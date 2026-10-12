@@ -15,6 +15,8 @@
     "alert.account_linked": "Harici hesabınız bağlandı!",
     "alert.account_unlinked": "Harici hesabınızın bağlantısı kaldırıldı!",
     "alert.background_feed_refresh": "Tüm beslemeler arkaplanda yenileniyor. Bu süreç devam ederken Miniflux'ı kullanmaya devam edebilirsiniz.",
+    "alert.bulk_feeds_none_selected": "Hiç besleme seçilmedi.",
+    "alert.bulk_feeds_updated": "Seçilen beslemeler güncellendi.",
     "alert.feed_error": "Bu beslemeyle ilgili bir problem var",
     "alert.no_starred": "Yıldızlanmış makale yok.",
     "alert.no_category": "Hiç kategori yok.",
@@ -478,6 +480,12 @@
     "page.edit_feed.title": "Beslemeyi düzenle: %s",
     "page.edit_user.title": "Kullanıcıyı Düzenle: %s",
     "page.entry.attachments": "Ekler",
+    "page.feeds.bulk.actions": "Toplu işlemler",
+    "page.feeds.bulk.disable": "Devre dışı bırak",
+    "page.feeds.bulk.enable": "Etkinleştir",
+    "page.feeds.bulk.move": "Kategoriye taşı",
+    "page.feeds.bulk.select_all": "Tümünü seç",
+    "page.feeds.bulk.selected": "Seçili:",
     "page.feeds.error_count": [
         "%d hatası",
         "%d hatası"

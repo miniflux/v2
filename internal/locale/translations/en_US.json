@@ -15,6 +15,8 @@
     "alert.account_linked": "Your external account is now linked!",
     "alert.account_unlinked": "Your external account is now dissociated!",
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",
+    "alert.bulk_feeds_none_selected": "No feed selected.",
+    "alert.bulk_feeds_updated": "The selected feeds have been updated.",
     "alert.feed_error": "There is a problem with this feed",
     "alert.no_starred": "There are no starred entries.",
     "alert.no_category": "There is no category.",
@@ -478,6 +480,12 @@
     "page.edit_feed.title": "Edit Feed: %s",
     "page.edit_user.title": "Edit User: %s",
     "page.entry.attachments": "Attachments",
+    "page.feeds.bulk.actions": "Bulk actions",
+    "page.feeds.bulk.disable": "Disable",
+    "page.feeds.bulk.enable": "Enable",
+    "page.feeds.bulk.move": "Move to category",
+    "page.feeds.bulk.select_all": "Select all",
+    "page.feeds.bulk.selected": "Selected:",
     "page.feeds.error_count": [
         "%d error",
         "%d errors"

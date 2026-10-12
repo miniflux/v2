@@ -15,6 +15,8 @@
     "alert.account_linked": "Ο εξωτερικός σας λογαριασμός είναι πλέον συνδεδεμένος!",
     "alert.account_unlinked": "Ο εξωτερικός σας λογαριασμός είναι πλέον αποσυνδεδεμένος!",
     "alert.background_feed_refresh": "Όλες οι ροές ανανεώνονται στο παρασκήνιο. Μπορείτε να συνεχίσετε να χρησιμοποιείτε το Miniflux όσο εκτελείται αυτή η διαδικασία.",
+    "alert.bulk_feeds_none_selected": "Δεν έχει επιλεγεί ροή.",
+    "alert.bulk_feeds_updated": "Οι επιλεγμένες ροές ενημερώθηκαν.",
     "alert.feed_error": "Υπάρχει πρόβλημα με αυτήν τη ροή",
     "alert.no_starred": "Δεν υπάρχει σελιδοδείκτης αυτή τη στιγμή.",
     "alert.no_category": "Δεν υπάρχει κατηγορία.",
@@ -478,6 +480,12 @@
     "page.edit_feed.title": "Επεξεργασία ροής: % s",
     "page.edit_user.title": "Επεξεργασία χρήστη: % s",
     "page.entry.attachments": "Συνημμένα",
+    "page.feeds.bulk.actions": "Μαζικές ενέργειες",
+    "page.feeds.bulk.disable": "Απενεργοποίηση",
+    "page.feeds.bulk.enable": "Ενεργοποίηση",
+    "page.feeds.bulk.move": "Μετακίνηση σε κατηγορία",
+    "page.feeds.bulk.select_all": "Επιλογή όλων",
+    "page.feeds.bulk.selected": "Επιλεγμένες:",
     "page.feeds.error_count": [
         "%d σφάλμα",
         "%d σφάλματα"

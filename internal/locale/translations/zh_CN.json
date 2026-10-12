@@ -15,6 +15,8 @@
     "alert.account_linked": "您的外部账号已关联！",
     "alert.account_unlinked": "您的外部帐户已解除关联！",
     "alert.background_feed_refresh": "所有订阅源正在后台刷新。您可以在刷新过程中继续使用 Miniflux。",
+    "alert.bulk_feeds_none_selected": "未选择任何订阅源。",
+    "alert.bulk_feeds_updated": "所选订阅源已更新。",
     "alert.feed_error": "此订阅源存在问题",
     "alert.no_starred": "没有收藏的条目。",
     "alert.no_category": "没有分类。",
@@ -473,6 +475,12 @@
     "page.edit_feed.title": "编辑订阅源: %s",
     "page.edit_user.title": "编辑用户: %s",
     "page.entry.attachments": "附件",
+    "page.feeds.bulk.actions": "批量操作",
+    "page.feeds.bulk.disable": "停用",
+    "page.feeds.bulk.enable": "启用",
+    "page.feeds.bulk.move": "移动到分类",
+    "page.feeds.bulk.select_all": "全选",
+    "page.feeds.bulk.selected": "已选择：",
     "page.feeds.error_count": [
         "%d 错误"
     ],

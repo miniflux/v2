@@ -15,6 +15,8 @@
     "alert.account_linked": "Jouw externe account is nu gekoppeld!",
     "alert.account_unlinked": "Jouw externe account is nu ontkoppeld!",
     "alert.background_feed_refresh": "Alle feeds worden op de achtergrond vernieuwd. Je kunt Miniflux blijven gebruiker terwijl dit proces draait.",
+    "alert.bulk_feeds_none_selected": "Geen feed geselecteerd.",
+    "alert.bulk_feeds_updated": "De geselecteerde feeds zijn bijgewerkt.",
     "alert.feed_error": "Er is een probleem met deze feed",
     "alert.no_starred": "Er zijn geen favorieten.",
     "alert.no_category": "Er zijn geen categorieën.",
@@ -478,6 +480,12 @@
     "page.edit_feed.title": "Bewerk feed: %s",
     "page.edit_user.title": "Bewerk gebruiker: %s",
     "page.entry.attachments": "Bijlagen",
+    "page.feeds.bulk.actions": "Bulkacties",
+    "page.feeds.bulk.disable": "Uitschakelen",
+    "page.feeds.bulk.enable": "Inschakelen",
+    "page.feeds.bulk.move": "Verplaatsen naar categorie",
+    "page.feeds.bulk.select_all": "Alles selecteren",
+    "page.feeds.bulk.selected": "Geselecteerd:",
     "page.feeds.error_count": [
         "%d fout",
         "%d fouten"

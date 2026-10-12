@@ -15,6 +15,8 @@
     "alert.account_linked": "Akun eksternal Anda sudah terhubung!",
     "alert.account_unlinked": "Akun eksternal Anda sudah terputus!",
     "alert.background_feed_refresh": "Semua umpan sedang disegarkan di latar belakang. Anda bisa lanjut menggunakan Miniflux sembari proses ini berlanjut.",
+    "alert.bulk_feeds_none_selected": "Tidak ada umpan yang dipilih.",
+    "alert.bulk_feeds_updated": "Umpan yang dipilih telah diperbarui.",
     "alert.feed_error": "Ada masalah dengan umpan ini",
     "alert.no_starred": "Tidak ada markah.",
     "alert.no_category": "Tidak ada kategori.",
@@ -473,6 +475,12 @@
     "page.edit_feed.title": "Sunting Umpan: %s",
     "page.edit_user.title": "Sunting Pengguna: %s",
     "page.entry.attachments": "Lampiran",
+    "page.feeds.bulk.actions": "Tindakan massal",
+    "page.feeds.bulk.disable": "Nonaktifkan",
+    "page.feeds.bulk.enable": "Aktifkan",
+    "page.feeds.bulk.move": "Pindahkan ke kategori",
+    "page.feeds.bulk.select_all": "Pilih semua",
+    "page.feeds.bulk.selected": "Dipilih:",
     "page.feeds.error_count": [
         "%d galat"
     ],
