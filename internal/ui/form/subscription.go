@@ -53,8 +53,12 @@ func (s *SubscriptionForm) Validate() *locale.LocalizedError {
 		return locale.NewLocalizedError("error.feed_invalid_keeplist_rule")
 	}
 
-	if !validator.IsValidRegex(s.UrlRewriteRules) {
+	if !validator.IsValidURLRewriteRules(s.UrlRewriteRules) {
 		return locale.NewLocalizedError("error.feed_invalid_urlrewrite_rule")
+	}
+
+	if err := validator.IsValidRewriteRules(s.RewriteRules); err != nil {
+		return err
 	}
 
 	if s.ProxyURL != "" && !urllib.IsValidProxyURL(s.ProxyURL) {
