@@ -1134,6 +1134,7 @@ func TestUpdateEntry(t *testing.T) {
 		ID:    1,
 		Title: "Example",
 	}
+	tags := []string{"digested", "digested-advertisement-false"}
 	client := NewClientWithOptions(
 		"http://mf",
 		WithHTTPClient(
@@ -1141,11 +1142,13 @@ func TestUpdateEntry(t *testing.T) {
 				expectRequest(t, http.MethodPut, "http://mf/v1/entries/1", nil, req)
 				expectFromJSON(t, req.Body, &EntryModificationRequest{
 					Title: &expected.Title,
+					Tags:  &tags,
 				})
 				return jsonResponseFrom(t, http.StatusOK, http.Header{}, expected)
 			})))
 	res, err := client.UpdateEntryContext(t.Context(), 1, &EntryModificationRequest{
 		Title: &expected.Title,
+		Tags:  &tags,
 	})
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
