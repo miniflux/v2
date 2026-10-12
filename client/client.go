@@ -784,6 +784,19 @@ func (c *Client) RefreshFeedContext(ctx context.Context, feedID int64) error {
 	return err
 }
 
+// ForceRefreshFeed refreshes a feed, bypassing the HTTP cache and reprocessing existing entries.
+func (c *Client) ForceRefreshFeed(feedID int64) error {
+	ctx, cancel := withDefaultTimeout()
+	defer cancel()
+	return c.ForceRefreshFeedContext(ctx, feedID)
+}
+
+// ForceRefreshFeedContext refreshes a feed, bypassing the HTTP cache and reprocessing existing entries.
+func (c *Client) ForceRefreshFeedContext(ctx context.Context, feedID int64) error {
+	_, err := c.request.Put(ctx, fmt.Sprintf("/v1/feeds/%d/refresh?force=true", feedID), nil)
+	return err
+}
+
 // DeleteFeed removes a feed.
 func (c *Client) DeleteFeed(feedID int64) error {
 	ctx, cancel := withDefaultTimeout()

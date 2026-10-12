@@ -2117,6 +2117,10 @@ func TestRefreshFeedEndpoint(t *testing.T) {
 	if err := regularUserClient.RefreshFeed(feedID); err != nil {
 		t.Fatal(err)
 	}
+
+	if err := regularUserClient.ForceRefreshFeed(feedID); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestGetFeedEndpoint(t *testing.T) {

@@ -906,6 +906,19 @@ func TestRefreshFeed(t *testing.T) {
 	}
 }
 
+func TestForceRefreshFeed(t *testing.T) {
+	client := NewClientWithOptions(
+		"http://mf",
+		WithHTTPClient(
+			newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
+				expectRequest(t, http.MethodPut, "http://mf/v1/feeds/1/refresh?force=true", nil, req)
+				return jsonResponseFrom(t, http.StatusOK, http.Header{}, nil)
+			})))
+	if err := client.ForceRefreshFeedContext(t.Context(), 1); err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+}
+
 func TestDeleteFeed(t *testing.T) {
 	client := NewClientWithOptions(
 		"http://mf",
