@@ -60,14 +60,7 @@ func StartWebServer(store *storage.Storage, pool *worker.Pool) ([]*http.Server, 
 	}
 
 	for _, t := range targets {
-		srv := &http.Server{
-			Addr:              t.address,
-			ReadTimeout:       config.Opts.HTTPServerTimeout(),
-			WriteTimeout:      config.Opts.HTTPServerTimeout(),
-			IdleTimeout:       config.Opts.HTTPServerTimeout(),
-			ReadHeaderTimeout: config.Opts.HTTPServerTimeout(),
-			Handler:           newRouter(store, pool),
-		}
+		srv := newHTTPServer(t.address, newRouter(store, pool))
 
 		switch t.mode {
 		case modeSystemd:
@@ -158,6 +151,19 @@ func anyTLS(targets []listenTarget) bool {
 	return false
 }
 
+func newHTTPServer(address string, handler http.Handler) *http.Server {
+	timeout := config.Opts.HTTPServerTimeout()
+
+	return &http.Server{
+		Addr:              address,
+		ReadTimeout:       timeout,
+		WriteTimeout:      timeout,
+		IdleTimeout:       timeout,
+		ReadHeaderTimeout: timeout,
+		Handler:           handler,
+	}
+}
+
 func setupAutocert(store *storage.Storage) (*tls.Config, *http.Server) {
 	certDomain := config.Opts.CertDomain()
 	if certDomain == "" {
@@ -176,10 +182,7 @@ func setupAutocert(store *storage.Storage) (*tls.Config, *http.Server) {
 	}
 	tlsConfig.GetCertificate = certManager.GetCertificate
 
-	challengeServer := &http.Server{
-		Handler: certManager.HTTPHandler(nil),
-		Addr:    ":http",
-	}
+	challengeServer := newHTTPServer(":http", certManager.HTTPHandler(nil))
 
 	slog.Info("Starting ACME HTTP challenge server", slog.String("address", challengeServer.Addr))
 	go func() {
