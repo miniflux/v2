@@ -2149,6 +2149,10 @@ func TestGetFeedEndpoint(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	if feed.LastSuccessfulRefreshAt == nil {
+		t.Fatal("expected last successful refresh time after feed creation")
+	}
+
 	if feed.ID != feedID {
 		t.Fatalf(`Invalid feedID, got %d`, feed.ID)
 	}

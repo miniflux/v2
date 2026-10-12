@@ -89,6 +89,8 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 
 	processor.ProcessFeedEntries(store, subscription, userID, true)
 
+	subscription.MarkRefreshSuccessful()
+
 	if storeErr := store.CreateFeed(subscription); storeErr != nil {
 		return nil, locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
 	}
@@ -184,6 +186,8 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.CheckedNow()
 
 	processor.ProcessFeedEntries(store, subscription, userID, true)
+
+	subscription.MarkRefreshSuccessful()
 
 	if storeErr := store.CreateFeed(subscription); storeErr != nil {
 		return nil, locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
@@ -370,6 +374,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		}
 	}
 
+	originalFeed.MarkRefreshSuccessful()
 	originalFeed.ResetErrorCounter()
 
 	if storeErr := store.UpdateFeed(originalFeed); storeErr != nil {
