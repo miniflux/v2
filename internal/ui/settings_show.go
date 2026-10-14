@@ -69,5 +69,5 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("categories_sorting_options", model.CategoriesSortingOptions())
 	view.Set("maxEntriesPerPage", model.MaxEntryLimit)
 
-	response.HTML(w, r, view.Render("settings"))
+	view.HTML(w, r, "settings")
 }

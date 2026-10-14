@@ -45,5 +45,5 @@ func (h *handler) showHistoryPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 	view.Set("hasSaveEntry", navMetadata.HasSaveEntry)
 
-	response.HTML(w, r, view.Render("history_entries"))
+	view.HTML(w, r, "history_entries")
 }

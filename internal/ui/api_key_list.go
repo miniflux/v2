@@ -32,5 +32,5 @@ func (h *handler) showAPIKeysPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", navMetadata.CountUnread)
 	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 
-	response.HTML(w, r, view.Render("api_keys"))
+	view.HTML(w, r, "api_keys")
 }

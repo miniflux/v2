@@ -56,7 +56,7 @@ func (h *handler) updateAuthentication(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := authSettingsForm.Validate(); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		response.HTML(w, r, view.Render("authentication"))
+		view.HTML(w, r, "authentication")
 		return
 	}
 
@@ -71,7 +71,7 @@ func (h *handler) updateAuthentication(w http.ResponseWriter, r *http.Request) {
 				slog.Any("error", err),
 			)
 			view.Set("errorMessage", locale.NewLocalizedError("error.invalid_current_password").Translate(user.Language))
-			response.HTML(w, r, view.Render("authentication"))
+			view.HTML(w, r, "authentication")
 			return
 		}
 	}
@@ -83,7 +83,7 @@ func (h *handler) updateAuthentication(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := validator.ValidateUserModification(h.store, user.ID, userModificationRequest); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		response.HTML(w, r, view.Render("authentication"))
+		view.HTML(w, r, "authentication")
 		return
 	}
 

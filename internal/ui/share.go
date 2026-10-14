@@ -56,5 +56,5 @@ func (h *handler) sharedEntry(w http.ResponseWriter, r *http.Request) {
 	// never be stored by shared caches.
 	view := view.NewPublic(h.tpl, r)
 	view.Set("entry", entry)
-	response.HTML(w, r, view.Render("entry"))
+	view.HTML(w, r, "entry")
 }
