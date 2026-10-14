@@ -42,5 +42,5 @@ func (h *handler) showAboutPage(w http.ResponseWriter, r *http.Request) {
 		view.Set("db_usage", dbSize)
 	}
 
-	response.HTML(w, r, view.Render("about"))
+	view.HTML(w, r, "about")
 }

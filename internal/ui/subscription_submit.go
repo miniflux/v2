@@ -46,7 +46,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	if validationErr := subscriptionForm.Validate(); validationErr != nil {
 		v.Set("form", subscriptionForm)
 		v.Set("errorMessage", validationErr.Translate(user.Language))
-		response.HTML(w, r, v.Render("add_subscription"))
+		v.HTML(w, r, "add_subscription")
 		return
 	}
 
@@ -78,7 +78,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	if localizedError != nil {
 		v.Set("form", subscriptionForm)
 		v.Set("errorMessage", localizedError.Translate(user.Language))
-		response.HTML(w, r, v.Render("add_subscription"))
+		v.HTML(w, r, "add_subscription")
 		return
 	}
 
@@ -87,7 +87,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	case n == 0:
 		v.Set("form", subscriptionForm)
 		v.Set("errorMessage", locale.NewLocalizedError("error.subscription_not_found").Translate(user.Language))
-		response.HTML(w, r, v.Render("add_subscription"))
+		v.HTML(w, r, "add_subscription")
 	case n == 1 && subscriptionFinder.IsFeedAlreadyDownloaded():
 		feed, localizedError := feedHandler.CreateFeedFromSubscriptionDiscovery(h.store, user.ID, &model.FeedCreationRequestFromSubscriptionDiscovery{
 			Content:      subscriptionFinder.FeedResponseInfo().Content,
@@ -118,7 +118,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		if localizedError != nil {
 			v.Set("form", subscriptionForm)
 			v.Set("errorMessage", localizedError.Translate(user.Language))
-			response.HTML(w, r, v.Render("add_subscription"))
+			v.HTML(w, r, "add_subscription")
 			return
 		}
 
@@ -148,7 +148,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		if localizedError != nil {
 			v.Set("form", subscriptionForm)
 			v.Set("errorMessage", localizedError.Translate(user.Language))
-			response.HTML(w, r, v.Render("add_subscription"))
+			v.HTML(w, r, "add_subscription")
 			return
 		}
 
@@ -164,6 +164,6 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 		view.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyURLConfigured())
 
-		response.HTML(w, r, view.Render("choose_subscription"))
+		view.HTML(w, r, "choose_subscription")
 	}
 }

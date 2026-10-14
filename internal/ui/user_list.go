@@ -39,5 +39,5 @@ func (h *handler) showUsersPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", navMetadata.CountUnread)
 	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 
-	response.HTML(w, r, view.Render("users"))
+	view.HTML(w, r, "users")
 }
