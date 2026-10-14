@@ -4,9 +4,13 @@
 package server
 
 import (
+	"net/http"
 	"os"
 	"runtime"
 	"testing"
+	"time"
+
+	"miniflux.app/v2/internal/config"
 )
 
 func TestDetermineListenTargets(t *testing.T) {
@@ -187,6 +191,34 @@ func TestAnyTLS(t *testing.T) {
 				t.Errorf("anyTLS() = %v, want %v", got, tc.expected)
 			}
 		})
+	}
+}
+
+func TestNewHTTPServerConfiguresTimeouts(t *testing.T) {
+	previousOptions := config.Opts
+	config.Opts = config.NewConfigOptions()
+	t.Cleanup(func() { config.Opts = previousOptions })
+
+	handler := http.HandlerFunc(func(http.ResponseWriter, *http.Request) {})
+	server := newHTTPServer(":8080", handler)
+	timeout := config.Opts.HTTPServerTimeout()
+
+	if server.Addr != ":8080" {
+		t.Errorf("server address = %q, want %q", server.Addr, ":8080")
+	}
+	if server.Handler == nil {
+		t.Error("server handler must not be nil")
+	}
+
+	for name, actual := range map[string]time.Duration{
+		"ReadTimeout":       server.ReadTimeout,
+		"WriteTimeout":      server.WriteTimeout,
+		"IdleTimeout":       server.IdleTimeout,
+		"ReadHeaderTimeout": server.ReadHeaderTimeout,
+	} {
+		if actual != timeout {
+			t.Errorf("%s = %v, want %v", name, actual, timeout)
+		}
 	}
 }
 
