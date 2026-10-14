@@ -53,5 +53,5 @@ func (h *handler) showTagEntriesAllPage(w http.ResponseWriter, r *http.Request) 
 	view.Set("hasSaveEntry", navMetadata.HasSaveEntry)
 	view.Set("showOnlyUnreadEntries", false)
 
-	response.HTML(w, r, view.Render("tag_entries"))
+	view.HTML(w, r, "tag_entries")
 }
