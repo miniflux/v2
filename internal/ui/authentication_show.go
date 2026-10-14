@@ -42,5 +42,5 @@ func (h *handler) showAuthenticationPage(w http.ResponseWriter, r *http.Request)
 	view.Set("countWebAuthnCerts", len(creds))
 	view.Set("webAuthnCerts", creds)
 
-	response.HTML(w, r, view.Render("authentication"))
+	view.HTML(w, r, "authentication")
 }

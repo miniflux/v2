@@ -59,7 +59,7 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := userForm.ValidateModification(); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
-		response.HTML(w, r, view.Render("edit_user"))
+		view.HTML(w, r, "edit_user")
 		return
 	}
 
@@ -69,7 +69,7 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := validator.ValidateUserModification(h.store, selectedUser.ID, userModificationRequest); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
-		response.HTML(w, r, view.Render("edit_user"))
+		view.HTML(w, r, "edit_user")
 		return
 	}
 

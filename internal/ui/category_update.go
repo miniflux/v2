@@ -51,7 +51,7 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := validator.ValidateCategoryModification(h.store, user.ID, category.ID, categoryRequest); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		response.HTML(w, r, view.Render("edit_category"))
+		view.HTML(w, r, "edit_category")
 		return
 	}
 

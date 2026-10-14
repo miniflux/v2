@@ -286,7 +286,7 @@ func TestCSPExternalFont(t *testing.T) {
 		`trusted-types html url;`,
 		`manifest-src 'self';`,
 	}
-	got := csp(&model.User{ExternalFontHosts: "test.com"}, "1234")
+	got := CSPPolicy(&model.User{ExternalFontHosts: "test.com"}, "1234")
 
 	for _, value := range want {
 		if !strings.Contains(got, value) {
@@ -308,7 +308,7 @@ func TestCSPNoUser(t *testing.T) {
 		`trusted-types html url;`,
 		`manifest-src 'self';`,
 	}
-	got := csp(nil, "1234")
+	got := CSPPolicy(nil, "1234")
 
 	for _, value := range want {
 		if !strings.Contains(got, value) {
@@ -330,7 +330,7 @@ func TestCSPCustomJSExternalFont(t *testing.T) {
 		`trusted-types html url;`,
 		`manifest-src 'self';`,
 	}
-	got := csp(&model.User{ExternalFontHosts: "test.com", CustomJS: "alert(1)"}, "1234")
+	got := CSPPolicy(&model.User{ExternalFontHosts: "test.com", CustomJS: "alert(1)"}, "1234")
 
 	for _, value := range want {
 		if !strings.Contains(got, value) {
@@ -352,7 +352,7 @@ func TestCSPExternalFontStylesheet(t *testing.T) {
 		`trusted-types html url;`,
 		`manifest-src 'self';`,
 	}
-	got := csp(&model.User{ExternalFontHosts: "test.com", Stylesheet: "a {color: red;}"}, "1234")
+	got := CSPPolicy(&model.User{ExternalFontHosts: "test.com", Stylesheet: "a {color: red;}"}, "1234")
 
 	for _, value := range want {
 		if !strings.Contains(got, value) {

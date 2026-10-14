@@ -35,7 +35,7 @@ func (h *handler) saveCategory(w http.ResponseWriter, r *http.Request) {
 
 	if validationErr := validator.ValidateCategoryCreation(h.store, user.ID, categoryCreationRequest); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		response.HTML(w, r, view.Render("create_category"))
+		view.HTML(w, r, "create_category")
 		return
 	}
 
