@@ -5,9 +5,7 @@
     <meta charset="utf-8">
     <title>{{template "title" .}} - Miniflux</title>
 
-    <meta name="apple-mobile-web-app-title" content="Miniflux">
     <meta name="googlebot" content="notranslate">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="referrer" content="no-referrer">
     <meta name="robots" content="noindex,nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -19,16 +17,14 @@
     <link rel="apple-touch-icon" href="{{ iconPath "icon-180.png" }}">
     <link rel="icon" href="{{ iconPath "icon.svg" }}">
 
-    {{ $cspNonce := nonce }}
-    {{ csp .user $cspNonce | safeHTML }}
-    <link rel="stylesheet" nonce="{{ $cspNonce }}" type="text/css" href="{{ routePath "/stylesheets/%s/%s.css" .theme_checksum .theme }}">
-    <script nonce="{{ $cspNonce }}" src="{{ routePath "/js/%s/%s.js" .app_js_checksum "app" }}" type="module"></script>
+    <link rel="stylesheet" nonce="{{ .cspNonce }}" type="text/css" href="{{ routePath "/stylesheets/%s/%s.css" .theme_checksum .theme }}">
+    <script nonce="{{ .cspNonce }}" src="{{ routePath "/js/%s/%s.js" .app_js_checksum "app" }}" type="module"></script>
     {{ if .user -}}
         {{ if .user.Stylesheet -}}
-        <style nonce="{{ $cspNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
+        <style nonce="{{ .cspNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
         {{ end -}}
         {{ if .user.CustomJS -}}
-        <script type="module" nonce="{{ $cspNonce }}">{{ .user.CustomJS | safeJS }}</script>
+        <script type="module" nonce="{{ .cspNonce }}">{{ .user.CustomJS | safeJS }}</script>
         {{ end -}}
     {{ end -}}
 </head>

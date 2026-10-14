@@ -62,5 +62,5 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 	view.Set("hasSaveEntry", navMetadata.HasSaveEntry)
 
-	response.HTML(w, r, view.Render("unread_entries"))
+	view.HTML(w, r, "unread_entries")
 }
