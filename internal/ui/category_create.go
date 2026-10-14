@@ -25,5 +25,5 @@ func (h *handler) showCreateCategoryPage(w http.ResponseWriter, r *http.Request)
 	view.Set("countUnread", navMetadata.CountUnread)
 	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 
-	response.HTML(w, r, view.Render("create_category"))
+	view.HTML(w, r, "create_category")
 }

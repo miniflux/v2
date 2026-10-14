@@ -54,5 +54,5 @@ func (h *handler) bookmarklet(w http.ResponseWriter, r *http.Request) {
 	view.Set("defaultUserAgent", config.Opts.HTTPClientUserAgent())
 	view.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyURLConfigured())
 
-	response.HTML(w, r, view.Render("add_subscription"))
+	view.HTML(w, r, "add_subscription")
 }

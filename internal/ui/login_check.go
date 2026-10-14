@@ -28,7 +28,7 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 			slog.String("client_ip", clientIP),
 			slog.String("user_agent", r.UserAgent()),
 		)
-		response.HTML(w, r, view.Render("login"))
+		view.HTML(w, r, "login")
 		return
 	}
 
@@ -45,7 +45,7 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 			slog.String("username", authForm.Username),
 			slog.Any("error", translatedErrorMessage),
 		)
-		response.HTML(w, r, view.Render("login"))
+		view.HTML(w, r, "login")
 		return
 	}
 
@@ -57,7 +57,7 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 			slog.String("username", authForm.Username),
 			slog.Any("error", err),
 		)
-		response.HTML(w, r, view.Render("login"))
+		view.HTML(w, r, "login")
 		return
 	}
 

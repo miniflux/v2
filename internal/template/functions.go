@@ -16,7 +16,6 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
@@ -40,7 +39,6 @@ func (f *funcMap) Map() template.FuncMap {
 	}
 	return template.FuncMap{
 		"contains":         strings.Contains,
-		"csp":              csp,
 		"startsWith":       strings.HasPrefix,
 		"formatFileSize":   formatFileSize,
 		"dict":             dict,
@@ -97,12 +95,9 @@ func (f *funcMap) Map() template.FuncMap {
 		"theme_color": model.ThemeColor,
 		"iconPath":    f.iconPath,
 		"icon":        f.iconFunc(),
-		"nonce": func() string {
-			return crypto.GenerateRandomStringHex(16)
-		},
-		"deRef":     func(i *int) int { return *i },
-		"duration":  duration,
-		"urlEncode": url.PathEscape,
+		"deRef":       func(i *int) int { return *i },
+		"duration":    duration,
+		"urlEncode":   url.PathEscape,
 		"subtract": func(a, b int) int {
 			return a - b
 		},
@@ -176,7 +171,7 @@ func (f *funcMap) iconFunc() func(string) template.HTML {
 	}
 }
 
-func csp(user *model.User, nonce string) string {
+func CSPPolicy(user *model.User, nonce string) string {
 	policies := map[string]string{
 		"default-src":               "'none'",
 		"frame-src":                 "*",
@@ -208,7 +203,7 @@ func csp(user *model.User, nonce string) string {
 		policy.WriteString("; ")
 	}
 
-	return `<meta http-equiv="Content-Security-Policy" content="` + policy.String() + `">`
+	return policy.String()
 }
 
 func dict(values ...any) (map[string]any, error) {
