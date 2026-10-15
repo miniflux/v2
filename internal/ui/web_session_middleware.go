@@ -37,6 +37,13 @@ func (m *webSessionMiddleware) handle(next http.Handler) http.Handler {
 			return
 		}
 		if session == nil {
+			// Visitors without a session are sent to the login page and have
+			// nothing to remember yet, so don't persist a session for them.
+			if !isPublicRoute(r) {
+				response.HTMLRedirect(w, r, loginRedirectURL(m.basePath, r.RequestURI))
+				return
+			}
+
 			var secret string
 			session, secret = model.NewWebSession(r.UserAgent(), request.ClientIP(r))
 			if language, theme, ok := preferencesFromCookie(r); ok {
