@@ -35,15 +35,20 @@ func IsTrustedIP(remoteIP string, trustedNetworks []string) bool {
 }
 
 // FindClientIP returns the real client IP address using trusted reverse-proxy headers when allowed.
-func FindClientIP(r *http.Request, isTrustedProxyClient bool) string {
+func FindClientIP(r *http.Request, isTrustedProxyClient bool, trustedNetworks []string) string {
 	if isTrustedProxyClient {
 		headers := [...]string{"X-Forwarded-For", "X-Real-Ip"}
 		for _, header := range headers {
-			value := r.Header.Get(header)
+			value := strings.Join(r.Header.Values(header), ",")
 
 			if value != "" {
+				// Proxies append to the list, so skip trusted hops from the right.
 				addresses := strings.Split(value, ",")
-				address := strings.TrimSpace(addresses[0])
+				i := len(addresses) - 1
+				for i > 0 && IsTrustedIP(dropIPv6zone(strings.TrimSpace(addresses[i])), trustedNetworks) {
+					i--
+				}
+				address := strings.TrimSpace(addresses[i])
 				address = dropIPv6zone(address)
 
 				if net.ParseIP(address) != nil {
