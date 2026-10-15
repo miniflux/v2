@@ -396,6 +396,10 @@ Address to listen on.
 Use absolute path to listen on Unix socket
 (/var/run/miniflux.sock)\&.
 .br
+When Miniflux creates the socket itself, it uses mode \fB0660\fR\&.
+.br
+This mode is hardcoded and cannot be configured\&.
+.br
 Multiple addresses can be specified, separated by commas.
 For example: 127.0.0.1:8080, 127.0.0.1:8081\&.
 .br
