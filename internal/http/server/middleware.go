@@ -16,8 +16,9 @@ import (
 func middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		remoteIP := request.FindRemoteIP(r)
-		isTrustedProxyClientIP := request.IsTrustedIP(remoteIP, config.Opts.TrustedReverseProxyNetworks())
-		clientIP := request.FindClientIP(r, isTrustedProxyClientIP)
+		trustedNetworks := config.Opts.TrustedReverseProxyNetworks()
+		isTrustedProxyClientIP := request.IsTrustedIP(remoteIP, trustedNetworks)
+		clientIP := request.FindClientIP(r, isTrustedProxyClientIP, trustedNetworks)
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, request.ClientIPContextKey, clientIP)
 
