@@ -57,8 +57,8 @@ func (c *configOptions) Validate() error {
 	}
 
 	if c.DisableLocalAuth() {
-		if c.OAuth2Provider() == "" && c.AuthProxyHeader() == "" {
-			return errors.New("DISABLE_LOCAL_AUTH is enabled but neither OAUTH2_PROVIDER nor AUTH_PROXY_HEADER is set. Please enable at least one authentication source")
+		if c.OAuth2Provider() == "" && c.AuthProxyHeader() == "" && !c.WebAuthn() {
+			return errors.New("DISABLE_LOCAL_AUTH is enabled but none of OAUTH2_PROVIDER, AUTH_PROXY_HEADER, or WEBAUTHN is set. Please enable at least one authentication source")
 		}
 	}
 
