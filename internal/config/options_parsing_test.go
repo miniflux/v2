@@ -1835,19 +1835,19 @@ func TestValidateDisableLocalAuthWithoutAlternative(t *testing.T) {
 	}
 }
 
-func TestDisableLocalAuthWithWebAuthn(t *testing.T) {
-    configParser := NewConfigParser()
+func TestValidateDisableLocalAuthWithWebAuthn(t *testing.T) {
+	configParser := NewConfigParser()
 
-    if err := configParser.parseLines([]string{
-        "DISABLE_LOCAL_AUTH=1",
-        "WEBAUTHN=1",
-    }); err != nil {
-        t.Fatalf("Unexpected error: %v", err)
-    }
+	if err := configParser.parseLines([]string{
+		"DISABLE_LOCAL_AUTH=1",
+		"WEBAUTHN=1",
+	}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
 
-    if err := configParser.options.Validate(); err != nil {
-        t.Fatalf("Unexpected validation error: %v", err)
-    }
+	if err := configParser.options.Validate(); err != nil {
+		t.Fatalf("Unexpected validation error: %v", err)
+	}
 }
 
 func TestValidateDisableLocalAuthWithOAuth2ButNoUserCreation(t *testing.T) {
