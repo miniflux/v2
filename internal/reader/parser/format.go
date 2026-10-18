@@ -4,6 +4,7 @@
 package parser // import "miniflux.app/v2/internal/reader/parser"
 
 import (
+	"bytes"
 	"encoding/xml"
 	"errors"
 	"io"
@@ -63,13 +64,16 @@ func DetectFeedFormat(r io.ReadSeeker) (string, string) {
 	return FormatUnknown, ""
 }
 
+var utf8BOM = []byte{0xEF, 0xBB, 0xBF}
+
 // detectJSONFormat checks if the reader contains JSON by reading until it finds
 // the first non-whitespace character or reaches EOF/error.
+// A leading UTF-8 byte order mark is skipped, as allowed by RFC 8259.
 func detectJSONFormat(r io.ReadSeeker) (bool, error) {
 	const bufferSize = 32
 	buffer := make([]byte, bufferSize)
 
-	for {
+	for firstRead := true; ; firstRead = false {
 		n, err := r.Read(buffer)
 		if n == 0 {
 			if errors.Is(err, io.EOF) {
@@ -82,8 +86,13 @@ func detectJSONFormat(r io.ReadSeeker) (bool, error) {
 			panic("unreachable") // bounds check hint to compiler
 		}
 
+		start := 0
+		if firstRead && bytes.HasPrefix(buffer[:n], utf8BOM) {
+			start = len(utf8BOM)
+		}
+
 		// Check each byte in the buffer
-		for i := range n {
+		for i := start; i < n; i++ {
 			ch := buffer[i]
 			// Skip whitespace characters (space, tab, newline, carriage return, etc.)
 			if unicode.IsSpace(rune(ch)) {

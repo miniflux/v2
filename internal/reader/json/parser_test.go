@@ -1092,6 +1092,24 @@ func TestParseInvalidJSON(t *testing.T) {
 	}
 }
 
+func TestParseFeedWithUTF8BOM(t *testing.T) {
+	data := "\xEF\xBB\xBF" + `{
+		"version": "https://jsonfeed.org/version/1.1",
+		"title": "My Example Feed",
+		"home_page_url": "https://example.org/",
+		"items": []
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != "My Example Feed" {
+		t.Errorf("Incorrect title, got: %s", feed.Title)
+	}
+}
+
 func TestParseNullJSONFeed(t *testing.T) {
 	data := `null`
 	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))

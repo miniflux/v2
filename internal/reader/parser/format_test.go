@@ -130,3 +130,12 @@ func TestDetectJSONWithWhitespaceSmallerThanBuffer(t *testing.T) {
 		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatJSON)
 	}
 }
+
+func TestDetectJSONWithUTF8BOM(t *testing.T) {
+	data := "\xEF\xBB\xBF" + `{"version":"https://jsonfeed.org/version/1.1","title":"Example"}`
+	format, _ := DetectFeedFormat(strings.NewReader(data))
+
+	if format != FormatJSON {
+		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatJSON)
+	}
+}
