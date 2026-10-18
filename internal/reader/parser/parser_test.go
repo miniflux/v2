@@ -378,6 +378,38 @@ func TestParseJsonFeedWithRelativeURL(t *testing.T) {
 	}
 }
 
+func TestParseJsonFeedWithUTF8BOM(t *testing.T) {
+	data := "\xEF\xBB\xBF" + `{
+		"version": "https://jsonfeed.org/version/1.1",
+		"title": "My Example Feed",
+		"home_page_url": "https://example.org/",
+		"items": [
+			{
+				"id": "1",
+				"content_text": "Hello, world!",
+				"url": "https://example.org/initial-post"
+			}
+		]
+	}`
+
+	feed, err := ParseFeed("https://example.org/feed.json", strings.NewReader(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != "My Example Feed" {
+		t.Errorf("Incorrect title, got: %s", feed.Title)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].URL != "https://example.org/initial-post" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
+	}
+}
+
 func TestParseUnknownFeed(t *testing.T) {
 	data := `
 		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
