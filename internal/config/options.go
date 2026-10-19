@@ -225,6 +225,11 @@ func NewConfigOptions() *configOptions {
 				rawValue:        "0",
 				valueType:       boolType,
 			},
+			"FETCHER_ALLOW_PRIVATE_FEED_PROXY": {
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
+			},
 			"FETCH_BILIBILI_WATCH_TIME": {
 				parsedBoolValue: false,
 				rawValue:        "0",
@@ -805,6 +810,10 @@ func (c *configOptions) HTTPS() bool {
 
 func (c *configOptions) FetcherAllowPrivateNetworks() bool {
 	return c.options["FETCHER_ALLOW_PRIVATE_NETWORKS"].parsedBoolValue
+}
+
+func (c *configOptions) FetcherAllowPrivateFeedProxy() bool {
+	return c.options["FETCHER_ALLOW_PRIVATE_FEED_PROXY"].parsedBoolValue
 }
 
 func (c *configOptions) IntegrationAllowPrivateNetworks() bool {
