@@ -36,6 +36,15 @@ var (
 	ErrPrivateNetworkHost = errors.New("fetcher: refusing to access private network host")
 )
 
+type proxySource int
+
+const (
+	proxySourceNone proxySource = iota
+	proxySourceFeed
+	proxySourceApplication
+	proxySourceRotator
+)
+
 type RequestBuilder struct {
 	headers            http.Header
 	clientProxyURL     *url.URL
@@ -154,6 +163,7 @@ func (r *RequestBuilder) WithoutCompression() *RequestBuilder {
 
 func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, error) {
 	var clientProxyURL *url.URL
+	proxySource := proxySourceNone
 
 	switch {
 	case r.feedProxyURL != "":
@@ -162,10 +172,13 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		if err != nil {
 			return nil, fmt.Errorf(`fetcher: invalid feed proxy URL %q: %w`, r.feedProxyURL, err)
 		}
+		proxySource = proxySourceFeed
 	case r.useClientProxy && r.clientProxyURL != nil:
 		clientProxyURL = r.clientProxyURL
+		proxySource = proxySourceApplication
 	case r.proxyRotator != nil && r.proxyRotator.HasProxies():
 		clientProxyURL = r.proxyRotator.GetNextProxy()
+		proxySource = proxySourceRotator
 	}
 
 	directDialer := &net.Dialer{
@@ -184,7 +197,10 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	envProxyFunc := httpproxy.FromEnvironment().ProxyFunc()
 
 	trustedProxies := &trustedProxyAddresses{}
-	trustedProxies.add(clientProxyURL)
+	allowPrivateFeedProxy := config.Opts != nil && config.Opts.FetcherAllowPrivateFeedProxy()
+	if proxySource != proxySourceFeed || allowPrivateFeedProxy {
+		trustedProxies.add(clientProxyURL)
+	}
 
 	// Perform the private-network check inside the dialer's Control callback,
 	// which fires after DNS resolution but before the TCP connection is made.

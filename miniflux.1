@@ -306,6 +306,11 @@ Set to 1 to allow outgoing fetcher requests to private or loopback networks\&.
 .br
 Disabled by default, private networks are refused\&.
 .TP
+.B FETCHER_ALLOW_PRIVATE_FEED_PROXY
+Set to 1 to allow feed proxy URLs to use private or loopback network addresses\&.
+.br
+Disabled by default\&. This option applies to all authenticated users and should only be enabled when the private proxy boundary is trusted\&.
+.TP
 .B FETCH_BILIBILI_WATCH_TIME
 Set the value to 1 to scrape video duration from Bilibili website and
 use it as a reading time\&.

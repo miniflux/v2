@@ -468,12 +468,6 @@ func TestRequestBuilder_AllowPrivateConfiguredProxy(t *testing.T) {
 		configure func(t *testing.T, builder *RequestBuilder, proxyURL string) *RequestBuilder
 	}{
 		{
-			name: "feed proxy",
-			configure: func(t *testing.T, builder *RequestBuilder, proxyURL string) *RequestBuilder {
-				return builder.WithCustomFeedProxyURL(proxyURL)
-			},
-		},
-		{
 			name: "application proxy",
 			configure: func(t *testing.T, builder *RequestBuilder, proxyURL string) *RequestBuilder {
 				t.Helper()
@@ -531,6 +525,71 @@ func TestRequestBuilder_AllowPrivateConfiguredProxy(t *testing.T) {
 				t.Fatal("Expected request to be sent through the proxy")
 			}
 		})
+	}
+}
+
+func TestRequestBuilder_RefusePrivateFeedProxyByDefault(t *testing.T) {
+	configureFetcherPrivateNetworkOptions(t, "0", "0")
+
+	proxyRequests := make(chan string, 1)
+	proxyServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case proxyRequests <- r.URL.String():
+		default:
+		}
+
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer proxyServer.Close()
+
+	_, err := NewRequestBuilder().
+		WithCustomFeedProxyURL(proxyServer.URL).
+		ExecuteRequest("http://feed.invalid/rss.xml")
+	if err == nil {
+		t.Fatal("Expected private feed proxy request to be rejected")
+	}
+
+	if !strings.Contains(err.Error(), "refusing to access private network host") {
+		t.Fatalf("Unexpected error for private feed proxy request: %v", err)
+	}
+
+	select {
+	case gotURL := <-proxyRequests:
+		t.Fatalf("Expected private feed proxy to receive no request, got %q", gotURL)
+	default:
+	}
+}
+
+func TestRequestBuilder_AllowPrivateFeedProxyWhenEnabled(t *testing.T) {
+	configureFetcherPrivateNetworkOptions(t, "0", "1")
+
+	targetURL := "http://feed.invalid/rss.xml"
+	proxyRequests := make(chan string, 1)
+	proxyServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case proxyRequests <- r.URL.String():
+		default:
+		}
+
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer proxyServer.Close()
+
+	resp, err := NewRequestBuilder().
+		WithCustomFeedProxyURL(proxyServer.URL).
+		ExecuteRequest(targetURL)
+	if err != nil {
+		t.Fatalf("Expected private feed proxy request to succeed: %v", err)
+	}
+	defer resp.Body.Close()
+
+	select {
+	case gotURL := <-proxyRequests:
+		if gotURL != targetURL {
+			t.Fatalf("Expected proxy request URL to be %q, got %q", targetURL, gotURL)
+		}
+	default:
+		t.Fatal("Expected request to be sent through the private feed proxy")
 	}
 }
 
@@ -691,9 +750,14 @@ func TestRequestBuilder_TimeoutConfiguration(t *testing.T) {
 }
 
 func configureFetcherAllowPrivateNetworksOption(t *testing.T, value string) {
+	configureFetcherPrivateNetworkOptions(t, value, "0")
+}
+
+func configureFetcherPrivateNetworkOptions(t *testing.T, privateNetworks, privateFeedProxy string) {
 	t.Helper()
 
-	t.Setenv("FETCHER_ALLOW_PRIVATE_NETWORKS", value)
+	t.Setenv("FETCHER_ALLOW_PRIVATE_NETWORKS", privateNetworks)
+	t.Setenv("FETCHER_ALLOW_PRIVATE_FEED_PROXY", privateFeedProxy)
 
 	configParser := config.NewConfigParser()
 	parsedOptions, err := configParser.ParseEnvironmentVariables()
