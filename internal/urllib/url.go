@@ -12,7 +12,16 @@ import (
 	"strings"
 )
 
-var rfc6598SharedAddressSpacePrefix = netip.MustParsePrefix("100.64.0.0/10")
+var (
+	rfc6598SharedAddressSpacePrefix = netip.MustParsePrefix("100.64.0.0/10")
+	nat64WellKnownPrefix            = netip.MustParsePrefix("64:ff9b::/96")
+	nonPublicIPPrefixes             = []netip.Prefix{
+		netip.MustParsePrefix("168.63.129.16/32"),
+		netip.MustParsePrefix("192.0.0.192/32"),
+		netip.MustParsePrefix("198.18.0.0/15"),
+		netip.MustParsePrefix("fec0::/10"),
+	}
+)
 
 // IsRelativePath reports whether the link is a relative path (no scheme, host, or scheme-relative // form).
 func IsRelativePath(link string) bool {
@@ -192,21 +201,36 @@ func JoinBaseURLAndPath(baseURL, path string) (string, error) {
 	return finalURL, nil
 }
 
-// IsNonPublicIP returns true if the given IP is private, loopback,
-// link-local, multicast, or unspecified.
+// IsNonPublicIP returns true if the given IP is not safe to access from the network.
 func IsNonPublicIP(ip net.IP) bool {
-	if ip == nil {
+	addr, ok := netip.AddrFromSlice(ip)
+	if !ok {
 		return true
 	}
 
-	if addr, ok := netip.AddrFromSlice(ip); ok && rfc6598SharedAddressSpacePrefix.Contains(addr.Unmap()) {
+	return isNonPublicAddr(addr.Unmap())
+}
+
+func isNonPublicAddr(addr netip.Addr) bool {
+	if nat64WellKnownPrefix.Contains(addr) {
+		addrBytes := addr.As16()
+		return isNonPublicAddr(netip.AddrFrom4([4]byte(addrBytes[12:])))
+	}
+
+	if rfc6598SharedAddressSpacePrefix.Contains(addr) {
 		return true
 	}
 
-	return ip.IsPrivate() ||
-		ip.IsLoopback() ||
-		ip.IsLinkLocalUnicast() ||
-		ip.IsLinkLocalMulticast() ||
-		ip.IsMulticast() ||
-		ip.IsUnspecified()
+	for _, prefix := range nonPublicIPPrefixes {
+		if prefix.Contains(addr) {
+			return true
+		}
+	}
+
+	return addr.IsPrivate() ||
+		addr.IsLoopback() ||
+		addr.IsLinkLocalUnicast() ||
+		addr.IsLinkLocalMulticast() ||
+		addr.IsMulticast() ||
+		addr.IsUnspecified()
 }

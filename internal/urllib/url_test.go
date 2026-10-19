@@ -276,12 +276,19 @@ func TestIsNonPublicIP(t *testing.T) {
 		{"shared address space IPv4", "100.64.0.1", true},
 		{"loopback IPv4", "127.0.0.1", true},
 		{"link-local IPv4", "169.254.42.1", true},
+		{"Azure WireServer IPv4", "168.63.129.16", true},
+		{"Oracle Cloud metadata IPv4", "192.0.0.192", true},
+		{"benchmarking IPv4", "198.18.0.1", true},
 		{"multicast IPv4", "224.0.0.1", true},
 		{"unspecified IPv6", "::", true},
 		{"loopback IPv6", "::1", true},
 		{"multicast IPv6", "ff02::1", true},
+		{"site-local IPv6", "fec0::1", true},
+		{"NAT64 loopback IPv4", "64:ff9b::7f00:1", true},
+		{"NAT64 link-local IPv4", "64:ff9b::a9fe:a9fe", true},
 		{"public IPv4", "93.184.216.34", false},
 		{"public IPv6", "2001:4860:4860::8888", false},
+		{"NAT64 public IPv4", "64:ff9b::5db8:d822", false},
 	}
 
 	for _, tc := range testCases {
