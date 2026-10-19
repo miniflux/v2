@@ -36,9 +36,15 @@ func IsRelativePath(link string) bool {
 		return false
 	}
 
+	// Reject scheme-relative URLs, including forms with extra leading slashes
+	// that url.Parse treats as a relative path but browsers resolve externally.
+	if strings.HasPrefix(link, "//") {
+		return false
+	}
+
 	if parsedURL, err := url.Parse(link); err == nil {
-		// Only allow relative paths (not scheme-relative URLs like //example.org)
-		// and ensure the URL doesn't have a host component
+		// Only allow relative paths and ensure the URL doesn't have a host
+		// component.
 		if !parsedURL.IsAbs() && parsedURL.Host == "" && parsedURL.Scheme == "" {
 			return true
 		}
