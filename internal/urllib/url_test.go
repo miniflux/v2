@@ -29,6 +29,8 @@ func TestIsRelativePath(t *testing.T) {
 		"http://example.org/file.ext":  false,
 		"//example.org/file.ext":       false,
 		"//example.org":                false,
+		"///example.org":               false,
+		"////example.org/path":         false,
 		" //example.org":               false,
 		"  //example.org/path":         false,
 		"\t//example.org":              false,
