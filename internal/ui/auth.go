@@ -6,16 +6,22 @@ package ui // import "miniflux.app/v2/internal/ui"
 import (
 	"context"
 	"net/http"
+	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
+	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/oauth2"
 	"miniflux.app/v2/internal/storage"
 )
 
-const sessionCookieName = "MinifluxSessionID"
+const (
+	sessionCookieName         = "MinifluxSessionID"
+	preferencesCookieName     = "MinifluxPreferences"
+	preferencesCookieLifetime = 365 * 24 * time.Hour
+)
 
 // authenticateWebSession binds the current browser session to the given user,
 // rotates its identifier and secret, and refreshes the client cookie.
@@ -36,20 +42,61 @@ func authenticateWebSession(w http.ResponseWriter, r *http.Request, store *stora
 // security attributes used by miniflux (HttpOnly, SameSite=Lax, Secure
 // when HTTPS).
 func setSessionCookie(w http.ResponseWriter, session *model.WebSession, secret string) {
-	path := config.Opts.BasePath()
-	if path == "" {
-		path = "/"
-	}
-
 	http.SetCookie(w, &http.Cookie{
 		Name:     sessionCookieName,
 		Value:    session.ID + "." + secret,
-		Path:     path,
+		Path:     cookiePath(),
 		Secure:   config.Opts.HTTPS(),
 		HttpOnly: true,
 		Expires:  time.Now().Add(config.Opts.CleanupRemoveSessionsInterval()),
 		SameSite: http.SameSiteLaxMode,
 	})
+}
+
+// setPreferencesCookie remembers the language and theme of a user who logs
+// out, so the login page keeps using them without keeping a session around.
+func setPreferencesCookie(w http.ResponseWriter, language, theme string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     preferencesCookieName,
+		Value:    language + "." + theme,
+		Path:     cookiePath(),
+		Secure:   config.Opts.HTTPS(),
+		HttpOnly: true,
+		Expires:  time.Now().Add(preferencesCookieLifetime),
+		SameSite: http.SameSiteLaxMode,
+	})
+}
+
+// preferencesFromCookie returns the language and theme stored by
+// setPreferencesCookie. It reports false when the cookie is missing or holds
+// an unknown language or theme.
+func preferencesFromCookie(r *http.Request) (language, theme string, ok bool) {
+	cookie, err := r.Cookie(preferencesCookieName)
+	if err != nil {
+		return "", "", false
+	}
+
+	language, theme, ok = strings.Cut(cookie.Value, ".")
+	if !ok {
+		return "", "", false
+	}
+
+	if _, found := locale.AvailableLanguages[language]; !found {
+		return "", "", false
+	}
+
+	if _, found := model.Themes()[theme]; !found {
+		return "", "", false
+	}
+
+	return language, theme, true
+}
+
+func cookiePath() string {
+	if path := config.Opts.BasePath(); path != "" {
+		return path
+	}
+	return "/"
 }
 
 func getOAuth2Manager(ctx context.Context) *oauth2.Manager {

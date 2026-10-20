@@ -39,6 +39,9 @@ func (m *webSessionMiddleware) handle(next http.Handler) http.Handler {
 		if session == nil {
 			var secret string
 			session, secret = model.NewWebSession(r.UserAgent(), request.ClientIP(r))
+			if language, theme, ok := preferencesFromCookie(r); ok {
+				session.SeedPreferences(language, theme)
+			}
 			if err := m.store.CreateWebSession(session); err != nil {
 				response.HTMLServerError(w, r, err)
 				return
