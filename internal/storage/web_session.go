@@ -226,18 +226,26 @@ func (s *Storage) RemoveUserWebSession(userID int64, sessionID string) error {
 	return nil
 }
 
-// CleanOldWebSessions removes web sessions older than the specified interval (24h minimum).
+// anonymousWebSessionLifetime is how long a web session that never signed in
+// is kept. These are created for every visitor of the login page, including
+// crawlers and scanners that never send the cookie back.
+const anonymousWebSessionLifetime = 24 * time.Hour
+
+// CleanOldWebSessions removes web sessions older than the specified interval (24h minimum),
+// and anonymous web sessions older than anonymousWebSessionLifetime.
 func (s *Storage) CleanOldWebSessions(interval time.Duration) (int64, error) {
 	query := `
 		DELETE FROM
 			web_sessions
 		WHERE
-			created_at < now() - $1::interval
+			created_at < now() - $1::interval OR
+			(user_id IS NULL AND created_at < now() - $2::interval)
 	`
 
 	days := max(int(interval/(24*time.Hour)), 1)
+	anonymousHours := int(anonymousWebSessionLifetime / time.Hour)
 
-	result, err := s.db.Exec(query, fmt.Sprintf("%d days", days))
+	result, err := s.db.Exec(query, fmt.Sprintf("%d days", days), fmt.Sprintf("%d hours", anonymousHours))
 	if err != nil {
 		return 0, fmt.Errorf(`store: unable to clean old web sessions: %v`, err)
 	}

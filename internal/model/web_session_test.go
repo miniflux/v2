@@ -250,6 +250,21 @@ func TestWebSession_LanguageAndThemeDefaults(t *testing.T) {
 	}
 }
 
+func TestWebSession_SeedPreferences(t *testing.T) {
+	session, _ := NewWebSession("", "")
+	session.SeedPreferences("de_DE", "light_sans_serif")
+
+	if got := session.Language(); got != "de_DE" {
+		t.Errorf("Language() = %q, want %q", got, "de_DE")
+	}
+	if got := session.Theme(); got != "light_sans_serif" {
+		t.Errorf("Theme() = %q, want %q", got, "light_sans_serif")
+	}
+	if session.IsDirty() {
+		t.Error("SeedPreferences must not mark the session dirty")
+	}
+}
+
 func TestWebSession_OAuth2FlowLifecycle(t *testing.T) {
 	session := &WebSession{}
 
