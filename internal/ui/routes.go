@@ -22,7 +22,8 @@ func isStaticAssetRoute(r *http.Request) bool {
 	return strings.HasPrefix(path, "/stylesheets/") ||
 		strings.HasPrefix(path, "/js/") ||
 		strings.HasPrefix(path, "/icon/") ||
-		strings.HasPrefix(path, "/feed-icon/")
+		strings.HasPrefix(path, "/feed-icon/") ||
+		strings.HasPrefix(path, "/proxy/")
 }
 
 // isPublicRoute checks if the request path corresponds to a route that
@@ -43,8 +44,7 @@ func isPublicRoute(r *http.Request) bool {
 	}
 
 	return strings.HasPrefix(path, "/oauth2/") && (strings.HasSuffix(path, "/redirect") || strings.HasSuffix(path, "/callback")) ||
-		strings.HasPrefix(path, "/share/") ||
-		strings.HasPrefix(path, "/proxy/")
+		strings.HasPrefix(path, "/share/")
 }
 
 // loginRedirectURL builds the login page URL with the given request URI
