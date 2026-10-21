@@ -8,15 +8,15 @@ go 1.26.0
 require (
 	github.com/PuerkitoBio/goquery v1.13.0
 	github.com/andybalholm/brotli v1.2.6
-	github.com/andybalholm/cascadia v1.3.4
+	github.com/andybalholm/cascadia v1.3.5
 	github.com/coreos/go-oidc/v3 v3.21.0
 	github.com/go-webauthn/webauthn v0.18.2
 	github.com/lib/pq v1.12.3
 	github.com/prometheus/client_golang v1.25.0
-	github.com/tdewolff/minify/v2 v2.24.19
+	github.com/tdewolff/minify/v2 v2.24.21
 	golang.org/x/crypto v0.58.0
 	golang.org/x/image v0.47.0
-	golang.org/x/net v0.60.0
+	golang.org/x/net v0.61.0
 	golang.org/x/oauth2 v0.37.0
 	golang.org/x/term v0.47.0
 	golang.org/x/text v0.43.0
@@ -40,7 +40,7 @@ require (
 	github.com/prometheus/client_model v0.6.3 // indirect
 	github.com/prometheus/common v0.72.0 // indirect
 	github.com/prometheus/procfs v0.22.0 // indirect
-	github.com/tdewolff/parse/v2 v2.8.16 // indirect
+	github.com/tdewolff/parse/v2 v2.8.18 // indirect
 	github.com/tinylib/msgp v1.6.4 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	golang.org/x/sys v0.49.0 // indirect
