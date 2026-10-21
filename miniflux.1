@@ -290,7 +290,11 @@ by the REST API HTTP Basic Authentication, and passwords can no
 longer be changed. API clients must use an API key instead.
 .br
 This option requires an alternative authentication source
-such as OAuth2 or auth proxy\&.
+such as OAuth2, auth proxy, or WebAuthn/Passkeys\&.
+.br
+To use WebAuthn as the only authentication method, register at
+least one Passkey while another authentication method is available,
+before enabling DISABLE_LOCAL_AUTH\&.
 .br
 If remote user creation is disabled, only existing users can sign in\&.
 .br
