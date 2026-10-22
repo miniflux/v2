@@ -18,10 +18,13 @@ func (h *handler) logout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if s := request.WebSession(r); s != nil {
-		s.ClearUser()
-		s.SetLanguage(user.Language)
-		s.SetTheme(user.Theme)
+		if err := h.store.RemoveUserWebSession(user.ID, s.ID); err != nil {
+			response.HTMLServerError(w, r, err)
+			return
+		}
 	}
+
+	setPreferencesCookie(w, user.Language, user.Theme)
 
 	response.HTMLRedirect(w, r, h.routePath("/"))
 }

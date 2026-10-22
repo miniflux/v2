@@ -235,9 +235,11 @@ func TestWebSession_LanguageAndThemeDefaults(t *testing.T) {
 	if got := session.Theme(); got != defaultSessionTheme {
 		t.Errorf("default Theme() = %q, want %q", got, defaultSessionTheme)
 	}
+}
 
-	session.SetLanguage("de_DE")
-	session.SetTheme("light_sans_serif")
+func TestWebSession_SeedPreferences(t *testing.T) {
+	session, _ := NewWebSession("", "")
+	session.SeedPreferences("de_DE", "light_sans_serif")
 
 	if got := session.Language(); got != "de_DE" {
 		t.Errorf("Language() = %q, want %q", got, "de_DE")
@@ -245,8 +247,8 @@ func TestWebSession_LanguageAndThemeDefaults(t *testing.T) {
 	if got := session.Theme(); got != "light_sans_serif" {
 		t.Errorf("Theme() = %q, want %q", got, "light_sans_serif")
 	}
-	if !session.IsDirty() {
-		t.Error("SetLanguage/SetTheme must mark the session dirty")
+	if session.IsDirty() {
+		t.Error("SeedPreferences must not mark the session dirty")
 	}
 }
 
@@ -368,8 +370,7 @@ func TestWebSession_MarkForceRefreshed(t *testing.T) {
 
 func TestWebSession_StateRoundTrip(t *testing.T) {
 	original := &WebSession{}
-	original.SetLanguage("de_DE")
-	original.SetTheme("light_sans_serif")
+	original.SeedPreferences("de_DE", "light_sans_serif")
 	original.SetSuccessMessage("saved")
 	original.SetErrorMessage("oops")
 	original.StartOAuth2Flow("state-token", "code-verifier")
@@ -413,7 +414,7 @@ func TestWebSession_StateRoundTrip(t *testing.T) {
 
 func TestWebSession_UnmarshalState_EmptyDataResetsState(t *testing.T) {
 	session := &WebSession{}
-	session.SetLanguage("fr_FR")
+	session.SeedPreferences("fr_FR", "")
 	session.StartOAuth2Flow("s", "v")
 
 	if err := session.UnmarshalState(nil); err != nil {
