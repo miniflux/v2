@@ -60,6 +60,7 @@ func (h *handler) sharedEntry(w http.ResponseWriter, r *http.Request) {
 		view.Set("entry", entry)
 
 		b.WithHeader("Content-Type", "text/html; charset=utf-8")
+		b.WithHeader("Content-Security-Policy", view.CSP())
 		b.WithBodyAsBytes(view.Render("entry"))
 		b.Write()
 	})

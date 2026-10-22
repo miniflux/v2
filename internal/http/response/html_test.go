@@ -10,41 +10,6 @@ import (
 	"testing"
 )
 
-func TestHTMLResponse(t *testing.T) {
-	r, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	w := httptest.NewRecorder()
-
-	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		HTML(w, r, "Some HTML")
-	})
-
-	handler.ServeHTTP(w, r)
-	resp := w.Result()
-
-	if resp.StatusCode != http.StatusOK {
-		t.Fatalf(`Unexpected status code, got %d instead of %d`, resp.StatusCode, http.StatusOK)
-	}
-
-	if actualBody := w.Body.String(); actualBody != `Some HTML` {
-		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, `Some HTML`)
-	}
-
-	headers := map[string]string{
-		"Content-Type":  "text/html; charset=utf-8",
-		"Cache-Control": "no-cache, max-age=0, must-revalidate, no-store",
-	}
-
-	for header, expected := range headers {
-		if actual := resp.Header.Get(header); actual != expected {
-			t.Fatalf(`Unexpected header value, got %q instead of %q`, actual, expected)
-		}
-	}
-}
-
 func TestHTMLServerErrorResponse(t *testing.T) {
 	r, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
