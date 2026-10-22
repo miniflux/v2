@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"io"
 	"math/rand/v2"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
@@ -3754,5 +3756,108 @@ func TestImportFeedEntryEndpoint(t *testing.T) {
 
 	if secondID != firstID {
 		t.Fatalf("expected same entry ID on re-import, got %d and %d", firstID, secondID)
+	}
+}
+
+func TestGetEntriesEndpointPaginationWithIdenticalPublishedDates(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	// Feeds that provide no usable per-item date end up with every entry
+	// sharing a single publication date. The sort column alone is then not a
+	// total order, so LIMIT/OFFSET pagination can only be stable if the query
+	// also sorts by something unique.
+	const totalItems = 120
+	const pageSize = 25
+
+	feedServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/rss+xml")
+		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>Identical Dates</title><link>http://example.org/</link>`)
+		for i := range totalItems {
+			fmt.Fprintf(w, `<item><title>Item %d</title><link>http://example.org/item/%d</link><guid>urn:identical-dates:%d</guid><pubDate>Tue, 01 Jul 2025 00:00:00 +0000</pubDate></item>`, i, i, i)
+		}
+		fmt.Fprint(w, `</channel></rss>`)
+	}))
+	defer feedServer.Close()
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: feedServer.URL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	allEntries, err := regularUserClient.Entries(&miniflux.Filter{FeedID: feedID, Limit: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if allEntries.Total != totalItems {
+		t.Fatalf(`Invalid total, got %d instead of %d`, allEntries.Total, totalItems)
+	}
+
+	for _, direction := range []string{"asc", "desc"} {
+		t.Run(direction, func(t *testing.T) {
+			var paginatedIDs []int64
+
+			for offset := 0; offset < allEntries.Total; offset += pageSize {
+				page, err := regularUserClient.Entries(&miniflux.Filter{
+					FeedID:    feedID,
+					Order:     "published_at",
+					Direction: direction,
+					Limit:     pageSize,
+					Offset:    offset,
+				})
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				for _, entry := range page.Entries {
+					paginatedIDs = append(paginatedIDs, entry.ID)
+				}
+			}
+
+			// Every entry must be returned exactly once: an unstable order
+			// shifts rows across page boundaries, so some are returned twice
+			// and others not at all.
+			if len(paginatedIDs) != totalItems {
+				t.Fatalf(`Invalid number of paginated entries, got %d instead of %d`, len(paginatedIDs), totalItems)
+			}
+
+			uniqueIDs := make(map[int64]struct{}, len(paginatedIDs))
+			for _, entryID := range paginatedIDs {
+				if _, duplicated := uniqueIDs[entryID]; duplicated {
+					t.Fatalf(`Entry #%d was returned more than once while paginating`, entryID)
+				}
+				uniqueIDs[entryID] = struct{}{}
+			}
+
+			// All entries share a publication date, so the entry ID is the
+			// only thing ordering them, and it must follow the requested
+			// direction across page boundaries.
+			for i := 1; i < len(paginatedIDs); i++ {
+				previousID, currentID := paginatedIDs[i-1], paginatedIDs[i]
+
+				if direction == "asc" && previousID >= currentID {
+					t.Fatalf(`Entries are not sorted by ascending ID, got #%d before #%d`, previousID, currentID)
+				}
+
+				if direction == "desc" && previousID <= currentID {
+					t.Fatalf(`Entries are not sorted by descending ID, got #%d before #%d`, previousID, currentID)
+				}
+			}
+		})
 	}
 }
