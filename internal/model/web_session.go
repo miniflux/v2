@@ -202,22 +202,10 @@ func (s *WebSession) ConsumeMessages() (string, string) {
 }
 
 // SeedPreferences sets the language and theme of a session that hasn't been
-// persisted yet. Unlike SetLanguage and SetTheme, it doesn't mark the session
-// dirty, since the values are saved when the session is created.
+// persisted yet. It doesn't mark the session dirty, since the values are saved
+// when the session is created.
 func (s *WebSession) SeedPreferences(language, theme string) {
 	s.state.Language = language
-	s.state.Theme = theme
-}
-
-// SetLanguage updates the language.
-func (s *WebSession) SetLanguage(language string) {
-	s.dirty = true
-	s.state.Language = language
-}
-
-// SetTheme updates the theme.
-func (s *WebSession) SetTheme(theme string) {
-	s.dirty = true
 	s.state.Theme = theme
 }
 
