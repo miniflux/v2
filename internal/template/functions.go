@@ -170,41 +170,6 @@ func (f *funcMap) iconFunc() func(string) template.HTML {
 	}
 }
 
-func CSPPolicy(user *model.User, nonce string) string {
-	policies := map[string]string{
-		"default-src":               "'none'",
-		"frame-src":                 "*",
-		"img-src":                   "* data:",
-		"manifest-src":              "'self'",
-		"media-src":                 "*",
-		"require-trusted-types-for": "'script'",
-		"script-src":                "'nonce-" + nonce + "' 'strict-dynamic'",
-		"style-src":                 "'nonce-" + nonce + "'",
-		"trusted-types":             "html url",
-		"connect-src":               "'self'",
-	}
-
-	if user != nil {
-		if user.ExternalFontHosts != "" {
-			policies["font-src"] = user.ExternalFontHosts
-			if user.Stylesheet != "" {
-				policies["style-src"] += " " + user.ExternalFontHosts
-			}
-		}
-	}
-
-	var policy strings.Builder
-	policy.Grow(350)
-	for key, value := range policies {
-		policy.WriteString(key)
-		policy.WriteString(" ")
-		policy.WriteString(value)
-		policy.WriteString("; ")
-	}
-
-	return policy.String()
-}
-
 func dict(values ...any) (map[string]any, error) {
 	if len(values)%2 != 0 {
 		return nil, errors.New("dict expects an even number of arguments")

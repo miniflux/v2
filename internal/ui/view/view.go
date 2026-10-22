@@ -5,6 +5,7 @@ package view // import "miniflux.app/v2/internal/ui/view"
 
 import (
 	"net/http"
+	"strings"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
@@ -44,7 +45,48 @@ func (v *view) CSP() string {
 		user = u
 	}
 	nonce, _ := v.params["cspNonce"].(string)
-	return template.CSPPolicy(user, nonce)
+	return csp(user, nonce)
+}
+
+// csp builds the Content-Security-Policy header value for templated pages.
+// It lives in the view layer because every templated page ships the policy
+// as a response header (never as a meta tag, see deadhead rule
+// meta/http-equiv-content-security-policy): meta policies drop
+// frame-ancestors/report-uri/sandbox, stop the preload scanner, and apply
+// late.
+func csp(user *model.User, nonce string) string {
+	policies := map[string]string{
+		"default-src":               "'none'",
+		"frame-src":                 "*",
+		"img-src":                   "* data:",
+		"manifest-src":              "'self'",
+		"media-src":                 "*",
+		"require-trusted-types-for": "'script'",
+		"script-src":                "'nonce-" + nonce + "' 'strict-dynamic'",
+		"style-src":                 "'nonce-" + nonce + "'",
+		"trusted-types":             "html url",
+		"connect-src":               "'self'",
+	}
+
+	if user != nil {
+		if user.ExternalFontHosts != "" {
+			policies["font-src"] = user.ExternalFontHosts
+			if user.Stylesheet != "" {
+				policies["style-src"] += " " + user.ExternalFontHosts
+			}
+		}
+	}
+
+	var policy strings.Builder
+	policy.Grow(350)
+	for key, value := range policies {
+		policy.WriteString(key)
+		policy.WriteString(" ")
+		policy.WriteString(value)
+		policy.WriteString("; ")
+	}
+
+	return policy.String()
 }
 
 // HTML renders the given template and writes it as an HTML response with
