@@ -234,6 +234,27 @@ func TestRequestBuilder_CustomAcceptHeaderNotOverridden(t *testing.T) {
 	defer resp.Body.Close()
 }
 
+func TestRequestBuilder_FeedAcceptHeader(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		accept := r.Header.Get("Accept")
+		if accept != feedAcceptHeader {
+			t.Errorf("Expected Accept to be '%s', got '%s'", feedAcceptHeader, accept)
+		}
+		if strings.Contains(accept, "text/html") {
+			t.Errorf("Expected Accept without text/html, got '%s'", accept)
+		}
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	builder := NewRequestBuilder()
+	resp, err := builder.WithFeedAcceptHeader().ExecuteRequest(server.URL)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	defer resp.Body.Close()
+}
+
 func TestRequestBuilder_WithTimeout(t *testing.T) {
 	builder := NewRequestBuilder()
 	builder = builder.WithTimeout(30 * time.Second)

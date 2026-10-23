@@ -29,6 +29,10 @@ import (
 const (
 	defaultHTTPClientTimeout = 20 * time.Second
 	defaultAcceptHeader      = "application/xml,application/atom+xml,application/rss+xml,application/rdf+xml,application/feed+json,text/html,*/*;q=0.9"
+
+	// Used when the URL is already known to be a feed. Some sites treat a request
+	// that accepts text/html as a browser and send it to a login or challenge page.
+	feedAcceptHeader = "application/xml,application/atom+xml,application/rss+xml,application/rdf+xml,application/feed+json,*/*;q=0.9"
 )
 
 var (
@@ -76,6 +80,12 @@ func (r *RequestBuilder) Clone() *RequestBuilder {
 
 func (r *RequestBuilder) WithHeader(key, value string) *RequestBuilder {
 	r.headers.Set(key, value)
+	return r
+}
+
+// WithFeedAcceptHeader asks for feed formats only, without text/html.
+func (r *RequestBuilder) WithFeedAcceptHeader() *RequestBuilder {
+	r.headers.Set("Accept", feedAcceptHeader)
 	return r
 }
 
