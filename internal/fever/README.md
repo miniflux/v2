@@ -188,9 +188,9 @@ The handler applies a fixed limit of 50 items.
 
 Supported parameters:
 
-- `since_id`: when greater than `0`, returns entries with `id > since_id`, ordered by `id ASC`
-- `max_id`: when equal to `0`, returns the most recent entries ordered by `id DESC`; when greater than `0`, returns entries with `id < max_id`, ordered by `id DESC`
-- `with_ids`: comma-separated list of entry IDs to fetch
+- `since_id`: returns entries with `id > since_id` when greater than `0`, and the oldest entries otherwise, ordered by `id ASC`
+- `max_id`: returns entries with `id < max_id` when greater than `0`, and the most recent entries otherwise (including `0`), ordered by `id DESC`
+- `with_ids`: comma-separated list of entry IDs to fetch, ordered by `id ASC`
 
 Selector precedence inside `?items` is:
 
@@ -201,9 +201,9 @@ Selector precedence inside `?items` is:
 
 Notes:
 
-- `with_ids` does not enforce the 50-ID maximum mentioned in older Fever documentation
+- `with_ids` does not enforce the 50-ID maximum mentioned in older Fever documentation, but the 50-row limit still applies: a longer list returns its 50 lowest IDs
 - invalid `with_ids` members are parsed as `0` and do not match normal entries
-- when `items` is requested without `since_id`, `max_id`, or `with_ids`, the code applies no explicit `ORDER BY`, so result ordering is not guaranteed by SQL
+- when `items` is requested without `since_id`, `max_id`, or `with_ids`, the 50 oldest entries are returned, ordered by `id ASC`
 - `html` is returned after Miniflux content rewriting and may include media-proxy-rewritten URLs
 
 Example:
@@ -332,7 +332,6 @@ This implementation is Fever-compatible, but it does not match every detail of h
 - `last_refreshed_on_time` is set to the current response time, not the timestamp of the most recently refreshed feed
 - the `Kindling` and `Sparks` super groups are not returned
 - `feeds[].is_spark` is always `0`
-- item ordering without explicit pagination parameters is unspecified
 - `as=saved` and `as=unsaved` toggle the saved flag instead of setting it absolutely
 
 ## Examples
