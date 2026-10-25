@@ -53,7 +53,6 @@ func TestParseAtomDateWithLowerCaseSeparators(t *testing.T) {
 		"2003-12-13t18:30:02Z":      1071340202,
 		"1985-04-12t23:20:50.52z":   482196050,
 		"1996-12-19t16:39:57-08:00": 851042397,
-		" 2003-12-13t18:30:02z\n":   1071340202,
 	}
 
 	for input, expectedTS := range testCases {
@@ -66,6 +65,19 @@ func TestParseAtomDateWithLowerCaseSeparators(t *testing.T) {
 		if date.Unix() != expectedTS {
 			t.Errorf(`The Unix timestamp for %q should be %v instead of %v`, input, expectedTS, date.Unix())
 		}
+	}
+}
+
+func TestParseAtomDateWithLowerCaseSeparatorsAndSurroundingWhitespace(t *testing.T) {
+	// The separators are looked for at fixed positions, after the input is trimmed.
+	date, err := Parse(" 2003-12-13t18:30:02z\n")
+	if err != nil {
+		t.Fatalf(`Unable to parse date: %v`, err)
+	}
+
+	expectedTS := int64(1071340202)
+	if date.Unix() != expectedTS {
+		t.Errorf(`The Unix timestamp should be %v instead of %v`, expectedTS, date.Unix())
 	}
 }
 
