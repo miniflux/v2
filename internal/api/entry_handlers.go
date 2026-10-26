@@ -194,6 +194,10 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	}
 
 	builder = configureFilters(builder, r)
+	// Keep the unique tiebreak after any search ranking expression.
+	if order != "id" {
+		builder.WithSorting("id", direction)
+	}
 
 	entries, count, err := builder.GetEntriesWithCount()
 	if err != nil {
