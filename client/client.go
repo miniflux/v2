@@ -901,14 +901,14 @@ func (c *Client) EntryContext(ctx context.Context, entryID int64) (*Entry, error
 	return entry, nil
 }
 
-// EntryIDs returns entry IDs for the current user, optionally filtered by starred status and/or read status.
+// EntryIDs returns entry IDs for the current user using the given filter.
 func (c *Client) EntryIDs(filter *EntryIDsFilter) (*EntryIDsResultSet, error) {
 	ctx, cancel := withDefaultTimeout()
 	defer cancel()
 	return c.EntryIDsContext(ctx, filter)
 }
 
-// EntryIDsContext returns entry IDs for the current user, optionally filtered by starred status and/or read status.
+// EntryIDsContext returns entry IDs for the current user using the given filter.
 func (c *Client) EntryIDsContext(ctx context.Context, filter *EntryIDsFilter) (*EntryIDsResultSet, error) {
 	body, err := c.request.Get(ctx, buildEntryIDsFilterQueryString("/v1/entries/ids", filter))
 	if err != nil {
@@ -939,8 +939,44 @@ func buildEntryIDsFilterQueryString(path string, filter *EntryIDsFilter) string 
 	if filter.Starred != nil {
 		params.Set("starred", strconv.FormatBool(*filter.Starred))
 	}
-	if filter.Status != "" {
+	if len(filter.Statuses) > 0 {
+		params["status"] = filter.Statuses
+	} else if filter.Status != "" {
 		params.Set("status", filter.Status)
+	}
+	if filter.Order != "" {
+		params.Set("order", filter.Order)
+	}
+	if filter.Direction != "" {
+		params.Set("direction", filter.Direction)
+	}
+	for _, param := range []struct {
+		name  string
+		value int64
+	}{
+		{"feed_id", filter.FeedID},
+		{"category_id", filter.CategoryID},
+		{"before", filter.Before},
+		{"after", filter.After},
+		{"published_before", filter.PublishedBefore},
+		{"published_after", filter.PublishedAfter},
+		{"changed_before", filter.ChangedBefore},
+		{"changed_after", filter.ChangedAfter},
+		{"before_entry_id", filter.BeforeEntryID},
+		{"after_entry_id", filter.AfterEntryID},
+	} {
+		if param.value != 0 {
+			params.Set(param.name, strconv.FormatInt(param.value, 10))
+		}
+	}
+	if filter.Search != "" {
+		params.Set("search", filter.Search)
+	}
+	for _, tag := range filter.Tags {
+		params.Add("tags", tag)
+	}
+	if filter.GloballyVisible != nil {
+		params.Set("globally_visible", strconv.FormatBool(*filter.GloballyVisible))
 	}
 
 	if len(params) == 0 {
