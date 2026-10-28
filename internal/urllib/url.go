@@ -15,10 +15,12 @@ import (
 var (
 	rfc6598SharedAddressSpacePrefix = netip.MustParsePrefix("100.64.0.0/10")
 	nat64WellKnownPrefix            = netip.MustParsePrefix("64:ff9b::/96")
+	sixToFourPrefix                 = netip.MustParsePrefix("2002::/16")
 	nonPublicIPPrefixes             = []netip.Prefix{
 		netip.MustParsePrefix("168.63.129.16/32"),
 		netip.MustParsePrefix("192.0.0.192/32"),
 		netip.MustParsePrefix("198.18.0.0/15"),
+		netip.MustParsePrefix("::/96"), // Deprecated IPv4-compatible IPv6 addresses (RFC 4291).
 		netip.MustParsePrefix("fec0::/10"),
 	}
 )
@@ -215,6 +217,11 @@ func isNonPublicAddr(addr netip.Addr) bool {
 	if nat64WellKnownPrefix.Contains(addr) {
 		addrBytes := addr.As16()
 		return isNonPublicAddr(netip.AddrFrom4([4]byte(addrBytes[12:])))
+	}
+
+	if sixToFourPrefix.Contains(addr) {
+		addrBytes := addr.As16()
+		return isNonPublicAddr(netip.AddrFrom4([4]byte(addrBytes[2:6])))
 	}
 
 	if rfc6598SharedAddressSpacePrefix.Contains(addr) {
