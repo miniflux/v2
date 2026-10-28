@@ -286,9 +286,17 @@ func TestIsNonPublicIP(t *testing.T) {
 		{"site-local IPv6", "fec0::1", true},
 		{"NAT64 loopback IPv4", "64:ff9b::7f00:1", true},
 		{"NAT64 link-local IPv4", "64:ff9b::a9fe:a9fe", true},
+		{"6to4 loopback IPv4", "2002:7f00:1::", true},
+		{"6to4 private IPv4", "2002:a00:1::", true},
+		{"6to4 link-local IPv4", "2002:a9fe:a9fe::", true},
+		{"IPv4-compatible loopback", "::127.0.0.1", true},
+		{"IPv4-compatible private", "::10.0.0.1", true},
+		{"IPv4-compatible link-local", "::169.254.169.254", true},
+		{"IPv4-compatible public", "::93.184.216.34", true},
 		{"public IPv4", "93.184.216.34", false},
 		{"public IPv6", "2001:4860:4860::8888", false},
 		{"NAT64 public IPv4", "64:ff9b::5db8:d822", false},
+		{"6to4 public IPv4", "2002:5db8:d822::1", false},
 	}
 
 	for _, tc := range testCases {
