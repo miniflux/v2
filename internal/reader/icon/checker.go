@@ -28,7 +28,7 @@ func NewIconChecker(store *storage.Storage, feed *model.Feed) *iconChecker {
 func (c *iconChecker) UpdateOrCreateFeedIcon() {
 	requestBuilder := fetcher.NewRequestBuilder().
 		WithUserAgent(c.feed.UserAgent, config.Opts.HTTPClientUserAgent()).
-		WithCookie(c.feed.Cookie).
+		WithCookie(c.feed.Cookie, c.feed.FeedURL).
 		WithTimeout(config.Opts.HTTPClientTimeout()).
 		WithProxyRotator(proxyrotator.ProxyRotatorInstance).
 		WithCustomFeedProxyURL(c.feed.ProxyURL).

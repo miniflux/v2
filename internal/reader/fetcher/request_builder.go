@@ -24,6 +24,8 @@ import (
 	"miniflux.app/v2/internal/urllib"
 
 	"golang.org/x/net/http/httpproxy"
+	"golang.org/x/net/idna"
+	"golang.org/x/net/publicsuffix"
 )
 
 const (
@@ -47,6 +49,8 @@ const (
 
 type RequestBuilder struct {
 	headers            http.Header
+	cookie             string
+	cookieSiteHost     string
 	clientProxyURL     *url.URL
 	clientTimeout      time.Duration
 	useClientProxy     bool
@@ -102,9 +106,16 @@ func (r *RequestBuilder) WithUserAgent(userAgent string, defaultUserAgent string
 	return r
 }
 
-func (r *RequestBuilder) WithCookie(cookie string) *RequestBuilder {
+// WithCookie sets the Cookie header for requests to the website of siteURL,
+// that is its host or any host sharing its registrable domain. A cookie
+// configured for a feed must not be sent to the other websites it links to.
+func (r *RequestBuilder) WithCookie(cookie, siteURL string) *RequestBuilder {
 	if cookie != "" {
-		r.headers.Set("Cookie", cookie)
+		r.cookie = cookie
+		r.cookieSiteHost = ""
+		if parsedSiteURL, err := url.Parse(siteURL); err == nil {
+			r.cookieSiteHost = parsedSiteURL.Hostname()
+		}
 	}
 	return r
 }
@@ -295,7 +306,11 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		return nil, err
 	}
 
-	req.Header = r.headers
+	req.Header = r.headers.Clone()
+	if r.cookie != "" && isSameSite(req.URL.Hostname(), r.cookieSiteHost) {
+		req.Header.Set("Cookie", r.cookie)
+	}
+
 	if r.disableCompression {
 		req.Header.Set("Accept-Encoding", "identity")
 	} else {
@@ -322,6 +337,44 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	))
 
 	return client.Do(req)
+}
+
+// isSameSite reports whether host and siteHost are the same host, or share the
+// same registrable domain, like "www.example.org" and "feeds.example.org".
+// Hosts under a public suffix, like "alice.github.io" and "bob.github.io", are
+// different websites.
+func isSameSite(host, siteHost string) bool {
+	if host == "" || siteHost == "" {
+		return false
+	}
+
+	if host == siteHost {
+		return true
+	}
+
+	domain, err := registrableDomain(host)
+	if err != nil {
+		return false
+	}
+
+	siteDomain, err := registrableDomain(siteHost)
+	if err != nil {
+		return false
+	}
+
+	return domain == siteDomain
+}
+
+// registrableDomain returns the eTLD+1 of host. The public suffix list only
+// matches lowercase ASCII names, so the host is converted to that form first.
+// IP addresses and single-label hosts don't have one.
+func registrableDomain(host string) (string, error) {
+	asciiHost, err := idna.Lookup.ToASCII(host)
+	if err != nil {
+		return "", err
+	}
+
+	return publicsuffix.EffectiveTLDPlusOne(asciiHost)
 }
 
 func normalizeDialAddress(addr string) string {

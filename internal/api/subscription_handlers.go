@@ -44,7 +44,7 @@ func (h *handler) discoverSubscriptionsHandler(w http.ResponseWriter, r *http.Re
 		WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL()).
 		UseCustomApplicationProxyURL(subscriptionDiscoveryRequest.FetchViaProxy).
 		WithUserAgent(subscriptionDiscoveryRequest.UserAgent, config.Opts.HTTPClientUserAgent()).
-		WithCookie(subscriptionDiscoveryRequest.Cookie).
+		WithCookie(subscriptionDiscoveryRequest.Cookie, subscriptionDiscoveryRequest.URL).
 		WithUsernameAndPassword(subscriptionDiscoveryRequest.Username, subscriptionDiscoveryRequest.Password).
 		IgnoreTLSErrors(subscriptionDiscoveryRequest.AllowSelfSignedCertificates).
 		DisableHTTP2(subscriptionDiscoveryRequest.DisableHTTP2)
