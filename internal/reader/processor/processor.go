@@ -52,7 +52,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 
 	requestBuilder := fetcher.NewRequestBuilder().
 		WithUserAgent(feed.UserAgent, config.Opts.HTTPClientUserAgent()).
-		WithCookie(feed.Cookie).
+		WithCookie(feed.Cookie, feed.FeedURL).
 		WithTimeout(config.Opts.HTTPClientTimeout()).
 		WithProxyRotator(proxyrotator.ProxyRotatorInstance).
 		WithCustomFeedProxyURL(feed.ProxyURL).
@@ -183,7 +183,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 
 	requestBuilder := fetcher.NewRequestBuilder().
 		WithUserAgent(feed.UserAgent, config.Opts.HTTPClientUserAgent()).
-		WithCookie(feed.Cookie).
+		WithCookie(feed.Cookie, feed.FeedURL).
 		WithTimeout(config.Opts.HTTPClientTimeout()).
 		WithProxyRotator(proxyrotator.ProxyRotatorInstance).
 		WithCustomFeedProxyURL(feed.ProxyURL).

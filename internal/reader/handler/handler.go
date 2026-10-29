@@ -123,7 +123,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	requestBuilder := fetcher.NewRequestBuilder().
 		WithUsernameAndPassword(feedCreationRequest.Username, feedCreationRequest.Password).
 		WithUserAgent(feedCreationRequest.UserAgent, config.Opts.HTTPClientUserAgent()).
-		WithCookie(feedCreationRequest.Cookie).
+		WithCookie(feedCreationRequest.Cookie, feedCreationRequest.FeedURL).
 		WithTimeout(config.Opts.HTTPClientTimeout()).
 		WithProxyRotator(proxyrotator.ProxyRotatorInstance).
 		WithCustomFeedProxyURL(feedCreationRequest.ProxyURL).
@@ -232,7 +232,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	requestBuilder := fetcher.NewRequestBuilder().
 		WithUsernameAndPassword(originalFeed.Username, originalFeed.Password).
 		WithUserAgent(originalFeed.UserAgent, config.Opts.HTTPClientUserAgent()).
-		WithCookie(originalFeed.Cookie).
+		WithCookie(originalFeed.Cookie, originalFeed.FeedURL).
 		WithTimeout(config.Opts.HTTPClientTimeout()).
 		WithProxyRotator(proxyrotator.ProxyRotatorInstance).
 		WithCustomFeedProxyURL(originalFeed.ProxyURL).
