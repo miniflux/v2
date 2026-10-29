@@ -69,6 +69,21 @@ func (h *handler) updateAuthentication(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sess := request.WebSession(r)
+
+	if authSettingsForm.Password != "" {
+		// Sign out every other session, and give this one a new identity in
+		// case its cookie leaked along with the old password.
+		if err := h.store.RemoveUserWebSessionsExcept(user.ID, sess.ID); err != nil {
+			response.HTMLServerError(w, r, err)
+			return
+		}
+
+		if err := authenticateWebSession(w, r, h.store, user); err != nil {
+			response.HTMLServerError(w, r, err)
+			return
+		}
+	}
+
 	sess.SetSuccessMessage(locale.NewPrinter(sess.Language()).Printf("alert.prefs_saved"))
 	response.HTMLRedirect(w, r, h.routePath("/authentication"))
 }

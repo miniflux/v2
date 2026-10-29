@@ -226,6 +226,16 @@ func (s *Storage) RemoveUserWebSession(userID int64, sessionID string) error {
 	return nil
 }
 
+// RemoveUserWebSessionsExcept removes all web sessions of the given user except
+// the one identified by keepSessionID. An empty keepSessionID removes them all.
+func (s *Storage) RemoveUserWebSessionsExcept(userID int64, keepSessionID string) error {
+	if _, err := s.db.Exec(`DELETE FROM web_sessions WHERE user_id=$1 AND id<>$2`, userID, keepSessionID); err != nil {
+		return fmt.Errorf(`store: unable to remove web sessions: %v`, err)
+	}
+
+	return nil
+}
+
 // anonymousWebSessionLifetime is how long a web session that never signed in
 // is kept. These are created for every visitor of the login page, including
 // crawlers and scanners that never send the cookie back.
