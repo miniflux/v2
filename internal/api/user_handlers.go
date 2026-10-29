@@ -103,6 +103,13 @@ func (h *handler) updateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if userModificationRequest.Password != nil {
+		if err := h.store.RemoveUserWebSessionsExcept(originalUser.ID, ""); err != nil {
+			response.JSONServerError(w, r, err)
+			return
+		}
+	}
+
 	response.JSONCreated(w, r, originalUser)
 }
 

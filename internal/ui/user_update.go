@@ -66,5 +66,13 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if userForm.Password != "" {
+		// Administrators editing their own account keep their current session.
+		if err := h.store.RemoveUserWebSessionsExcept(selectedUser.ID, request.WebSession(r).ID); err != nil {
+			response.HTMLServerError(w, r, err)
+			return
+		}
+	}
+
 	response.HTMLRedirect(w, r, h.routePath("/users"))
 }
