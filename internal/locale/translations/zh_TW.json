@@ -410,6 +410,7 @@
     "menu.add_feed": "新增 Feed",
     "menu.add_user": "新建使用者",
     "menu.api_keys": "API 金鑰",
+    "menu.authentication": "認證",
     "menu.categories": "分類",
     "menu.create_api_key": "建立一個新的 API 金鑰",
     "menu.create_category": "新建分類",
@@ -465,6 +466,7 @@
     "page.api_keys.table.last_used_at": "最後使用",
     "page.api_keys.table.token": "金鑰",
     "page.api_keys.title": "API 金鑰",
+    "page.authentication.title": "認證",
     "page.categories.entries": "檢視內容",
     "page.categories.feed_count": [
         "有 %d 個 Feed"

@@ -425,6 +425,7 @@
     "menu.add_feed": "إضافة مصدر",
     "menu.add_user": "إضافة مستخدم",
     "menu.api_keys": "مفاتيح API",
+    "menu.authentication": "المصادقة",
     "menu.categories": "الفئات",
     "menu.create_api_key": "إنشاء مفتاح API جديد",
     "menu.create_category": "إنشاء فئة",
@@ -480,6 +481,7 @@
     "page.api_keys.table.last_used_at": "آخر استخدام",
     "page.api_keys.table.token": "الرمز",
     "page.api_keys.title": "مفاتيح API",
+    "page.authentication.title": "المصادقة",
     "page.categories.entries": "المقالات",
     "page.categories.feed_count": [
         "لا يوجد مصادر.",

@@ -413,6 +413,7 @@
     "menu.add_feed": "Προσθήκη συνδρομής",
     "menu.add_user": "Προσθήκη χρήστη",
     "menu.api_keys": "Κλειδιά API",
+    "menu.authentication": "Έλεγχος ταυτότητας",
     "menu.categories": "Κατηγορίες",
     "menu.create_api_key": "Δημιουργήστε ένα νέο κλειδί API",
     "menu.create_category": "Δημιουργήστε μια κατηγορία",
@@ -468,6 +469,7 @@
     "page.api_keys.table.last_used_at": "Τελευταία Χρήση",
     "page.api_keys.table.token": "Διακριτικό",
     "page.api_keys.title": "Κλειδιά API",
+    "page.authentication.title": "Έλεγχος ταυτότητας",
     "page.categories.entries": "Άρθρα",
     "page.categories.feed_count": [
         "Υπάρχει μία %d ροή.",

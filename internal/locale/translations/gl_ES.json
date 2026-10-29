@@ -413,6 +413,7 @@
     "menu.add_feed": "Engadir canle",
     "menu.add_user": "Engadir usuaria",
     "menu.api_keys": "Claves da API",
+    "menu.authentication": "Autenticación",
     "menu.categories": "Categorías",
     "menu.create_api_key": "Crear nova clave da API",
     "menu.create_category": "Crear unha categoría",
@@ -468,6 +469,7 @@
     "page.api_keys.table.last_used_at": "Último uso",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Claves da API",
+    "page.authentication.title": "Autenticación",
     "page.categories.entries": "Entradas",
     "page.categories.feed_count": [
         "Hai %d canle.",

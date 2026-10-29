@@ -410,6 +410,7 @@
     "menu.add_feed": "添加订阅源",
     "menu.add_user": "添加用户",
     "menu.api_keys": "API 密钥",
+    "menu.authentication": "认证",
     "menu.categories": "分类",
     "menu.create_api_key": "创建新 API 密钥",
     "menu.create_category": "创建分类",
@@ -465,6 +466,7 @@
     "page.api_keys.table.last_used_at": "最后使用",
     "page.api_keys.table.token": "令牌",
     "page.api_keys.title": "API 密钥",
+    "page.authentication.title": "认证",
     "page.categories.entries": "条目",
     "page.categories.feed_count": [
         "有 %d 个订阅源"

@@ -413,6 +413,7 @@
     "menu.add_feed": "Aggiungi feed",
     "menu.add_user": "Aggiungi utente",
     "menu.api_keys": "Chiavi API",
+    "menu.authentication": "Autenticazione",
     "menu.categories": "Categorie",
     "menu.create_api_key": "Crea una nuova chiave API",
     "menu.create_category": "Aggiungi una categoria",
@@ -468,6 +469,7 @@
     "page.api_keys.table.last_used_at": "Ultimo uso",
     "page.api_keys.table.token": "Gettone",
     "page.api_keys.title": "Chiavi API",
+    "page.authentication.title": "Autenticazione",
     "page.categories.entries": "Articoli",
     "page.categories.feed_count": [
         "C'è %d feed.",

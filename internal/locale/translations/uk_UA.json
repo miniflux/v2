@@ -416,6 +416,7 @@
     "menu.add_feed": "Додати підписку",
     "menu.add_user": "Додати користувачв",
     "menu.api_keys": "Ключі API",
+    "menu.authentication": "Автентифікація",
     "menu.categories": "Категорії",
     "menu.create_api_key": "Створити новий ключ API",
     "menu.create_category": "Створити категорію",
@@ -471,6 +472,7 @@
     "page.api_keys.table.last_used_at": "Дата останнього використання",
     "page.api_keys.table.token": "Токен",
     "page.api_keys.title": "Ключі API",
+    "page.authentication.title": "Автентифікація",
     "page.categories.entries": "Статті",
     "page.categories.feed_count": [
         "Містить %d стрічку.",

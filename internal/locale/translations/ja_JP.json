@@ -410,6 +410,7 @@
     "menu.add_feed": "フィードを購読",
     "menu.add_user": "ユーザーを追加",
     "menu.api_keys": "API キー",
+    "menu.authentication": "認証",
     "menu.categories": "カテゴリ",
     "menu.create_api_key": "新しい API キーを作成する",
     "menu.create_category": "カテゴリを作成",
@@ -465,6 +466,7 @@
     "page.api_keys.table.last_used_at": "最終使用",
     "page.api_keys.table.token": "トークン",
     "page.api_keys.title": "API キー",
+    "page.authentication.title": "認証",
     "page.categories.entries": "記事一覧",
     "page.categories.feed_count": [
         "%d 件のフィードがあります。"
