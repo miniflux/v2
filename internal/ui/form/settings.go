@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/validator"
@@ -25,9 +24,6 @@ const (
 
 // SettingsForm represents the settings form.
 type SettingsForm struct {
-	Username               string
-	Password               string
-	Confirmation           string
 	Theme                  string
 	Language               string
 	Timezone               string
@@ -92,9 +88,6 @@ func extractMarkAsReadBehavior(behavior markReadBehavior) (markReadOnView, markR
 
 // Merge updates the fields of the given user.
 func (s *SettingsForm) Merge(user *model.User) *model.User {
-	if !config.Opts.DisableLocalAuth() {
-		user.Username = s.Username
-	}
 	user.Theme = s.Theme
 	user.Language = s.Language
 	user.Timezone = s.Timezone
@@ -123,32 +116,17 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.MarkReadOnView = MarkReadOnView
 	user.MarkReadOnMediaPlayerCompletion = MarkReadOnMediaPlayerCompletion
 
-	if s.Password != "" && !config.Opts.DisableLocalAuth() {
-		user.Password = s.Password
-	}
-
 	return user
 }
 
 // Validate makes sure the form values are valid.
 func (s *SettingsForm) Validate() *locale.LocalizedError {
-	if (s.Username == "" && !config.Opts.DisableLocalAuth()) || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" || s.DisplayMode == "" || s.DefaultHomePage == "" {
+	if s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" || s.DisplayMode == "" || s.DefaultHomePage == "" {
 		return locale.NewLocalizedError("error.settings_mandatory_fields")
 	}
 
 	if s.CJKReadingSpeed <= 0 || s.DefaultReadingSpeed <= 0 {
 		return locale.NewLocalizedError("error.settings_reading_speed_is_positive")
-	}
-
-	if s.Confirmation == "" {
-		// Firefox insists on auto-completing the password field.
-		// If the confirmation field is blank, the user probably
-		// didn't intend to change their password.
-		s.Password = ""
-	} else if s.Password != "" {
-		if s.Password != s.Confirmation {
-			return locale.NewLocalizedError("error.different_passwords")
-		}
 	}
 
 	if s.MediaPlaybackRate < 0.25 || s.MediaPlaybackRate > 4 {
@@ -183,9 +161,6 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		mediaPlaybackRate = 1
 	}
 	return &SettingsForm{
-		Username:                  r.FormValue("username"),
-		Password:                  r.FormValue("password"),
-		Confirmation:              r.FormValue("confirmation"),
 		Theme:                     r.FormValue("theme"),
 		Language:                  r.FormValue("language"),
 		Timezone:                  r.FormValue("timezone"),

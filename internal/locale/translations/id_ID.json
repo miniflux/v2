@@ -410,6 +410,7 @@
     "menu.add_feed": "Tambah langganan",
     "menu.add_user": "Tambah pengguna",
     "menu.api_keys": "Kunci API",
+    "menu.authentication": "Autentikasi",
     "menu.categories": "Kategori",
     "menu.create_api_key": "Buat kunci API baru",
     "menu.create_category": "Buat kategori",
@@ -465,6 +466,7 @@
     "page.api_keys.table.last_used_at": "Terakhir Digunakan",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Kunci API",
+    "page.authentication.title": "Autentikasi",
     "page.categories.entries": "Artikel",
     "page.categories.feed_count": [
         "Ada %d umpan."

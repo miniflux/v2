@@ -413,6 +413,7 @@
     "menu.add_feed": "Feed toevoegen",
     "menu.add_user": "Gebruiker toevoegen",
     "menu.api_keys": "API-sleutels",
+    "menu.authentication": "Authenticatie",
     "menu.categories": "Categorieën",
     "menu.create_api_key": "Maak een nieuwe API-sleutel",
     "menu.create_category": "Categorie toevoegen",
@@ -468,6 +469,7 @@
     "page.api_keys.table.last_used_at": "Laatst gebruikt",
     "page.api_keys.table.token": "API-token",
     "page.api_keys.title": "API-sleutels",
+    "page.authentication.title": "Authenticatie",
     "page.categories.entries": "Artikelen",
     "page.categories.feed_count": [
         "Er is %d feed.",

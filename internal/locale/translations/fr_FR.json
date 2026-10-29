@@ -413,6 +413,7 @@
     "menu.add_feed": "Ajouter un abonnement",
     "menu.add_user": "Ajouter un utilisateur",
     "menu.api_keys": "Clés d'API",
+    "menu.authentication": "Authentification",
     "menu.categories": "Catégories",
     "menu.create_api_key": "Créer une nouvelle clé d'API",
     "menu.create_category": "Créer une catégorie",
@@ -468,6 +469,7 @@
     "page.api_keys.table.last_used_at": "Dernière utilisation",
     "page.api_keys.table.token": "Jeton",
     "page.api_keys.title": "Clés d'API",
+    "page.authentication.title": "Authentification",
     "page.categories.entries": "Articles",
     "page.categories.feed_count": [
         "Il y a %d abonnement.",

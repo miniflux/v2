@@ -23,12 +23,6 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	creds, err := h.store.WebAuthnCredentialsByUserID(user.ID)
-	if err != nil {
-		response.HTMLServerError(w, r, err)
-		return
-	}
-
 	settingsForm := form.NewSettingsForm(r)
 
 	view := view.New(h.tpl, r)
@@ -49,8 +43,6 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 	view.Set("default_home_pages", model.HomePages())
 	view.Set("categories_sorting_options", model.CategoriesSortingOptions())
-	view.Set("countWebAuthnCerts", h.store.CountWebAuthnCredentialsByUserID(user.ID))
-	view.Set("webAuthnCerts", creds)
 
 	if validationErr := settingsForm.Validate(); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
@@ -59,8 +51,6 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userModificationRequest := &model.UserModificationRequest{
-		Username:               model.OptionalString(settingsForm.Username),
-		Password:               model.OptionalString(settingsForm.Password),
 		Theme:                  model.OptionalString(settingsForm.Theme),
 		Language:               model.OptionalString(settingsForm.Language),
 		Timezone:               model.OptionalString(settingsForm.Timezone),

@@ -413,6 +413,7 @@
     "menu.add_feed": "सदस्यता जोरीय",
     "menu.add_user": "उपयोगकर्ता जोड़ें",
     "menu.api_keys": "एपीआई कुंजी",
+    "menu.authentication": "प्रमाणीकरण",
     "menu.categories": "श्रेणियाँ",
     "menu.create_api_key": "नई एपीआई कुंजी बनाएं",
     "menu.create_category": "श्रेणी बनाए",
@@ -468,6 +469,7 @@
     "page.api_keys.table.last_used_at": "आखरी इस्त्तमाल किया गया",
     "page.api_keys.table.token": "टोकन",
     "page.api_keys.title": "एपीआई कुंजी",
+    "page.authentication.title": "प्रमाणीकरण",
     "page.categories.entries": "विषयवस्तुया",
     "page.categories.feed_count": [
         "%d फ़ीड बाकी है।",

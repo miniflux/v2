@@ -354,7 +354,7 @@ func (h *handler) saveCredential(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.HTMLRedirect(w, r, h.routePath("/settings"))
+	response.HTMLRedirect(w, r, h.routePath("/authentication"))
 }
 
 func (h *handler) deleteCredential(w http.ResponseWriter, r *http.Request) {

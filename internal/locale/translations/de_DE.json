@@ -413,6 +413,7 @@
     "menu.add_feed": "Abonnement hinzufügen",
     "menu.add_user": "Benutzer anlegen",
     "menu.api_keys": "API-Schlüssel",
+    "menu.authentication": "Authentifizierung",
     "menu.categories": "Kategorien",
     "menu.create_api_key": "Erstellen Sie einen neuen API-Schlüssel",
     "menu.create_category": "Kategorie anlegen",
@@ -468,6 +469,7 @@
     "page.api_keys.table.last_used_at": "Zuletzt verwendeten",
     "page.api_keys.table.token": "Zeichen",
     "page.api_keys.title": "API-Schlüssel",
+    "page.authentication.title": "Authentifizierung",
     "page.categories.entries": "Artikel",
     "page.categories.feed_count": [
         "Es gibt %d Abonnement.",

@@ -416,6 +416,7 @@
     "menu.add_feed": "Добавить подписку",
     "menu.add_user": "Добавить пользователя",
     "menu.api_keys": "API-ключи",
+    "menu.authentication": "Аутентификация",
     "menu.categories": "Категории",
     "menu.create_api_key": "Создать новый API-ключ",
     "menu.create_category": "Создать категорию",
@@ -471,6 +472,7 @@
     "page.api_keys.table.last_used_at": "Последнее использование",
     "page.api_keys.table.token": "Токен",
     "page.api_keys.title": "API-ключи",
+    "page.authentication.title": "Аутентификация",
     "page.categories.entries": "Статьи",
     "page.categories.feed_count": [
         "Есть %d подписка.",

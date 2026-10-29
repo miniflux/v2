@@ -416,6 +416,7 @@
     "menu.add_feed": "Adaugă flux",
     "menu.add_user": "Adaugă utilizator",
     "menu.api_keys": "Chei API",
+    "menu.authentication": "Autentificare",
     "menu.categories": "Categorii",
     "menu.create_api_key": "Crează o nouă cheie API",
     "menu.create_category": "Crează o categorie",
@@ -471,6 +472,7 @@
     "page.api_keys.table.last_used_at": "Utilizat ultima dată",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Chei API",
+    "page.authentication.title": "Autentificare",
     "page.categories.entries": "Intrări",
     "page.categories.feed_count": [
         "Este %d flux.",

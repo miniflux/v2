@@ -416,6 +416,7 @@
     "menu.add_feed": "Dodaj kanał",
     "menu.add_user": "Dodaj użytkownika",
     "menu.api_keys": "Klucze API",
+    "menu.authentication": "Uwierzytelnianie",
     "menu.categories": "Kategorie",
     "menu.create_api_key": "Utwórz nowy klucz API",
     "menu.create_category": "Utwórz kategorię",
@@ -471,6 +472,7 @@
     "page.api_keys.table.last_used_at": "Ostatnio używane",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Klucze API",
+    "page.authentication.title": "Uwierzytelnianie",
     "page.categories.entries": "Wpisy",
     "page.categories.feed_count": [
         "Jest %d kanał.",

@@ -4,6 +4,11 @@
         <li>
             <a href="{{ routePath "/settings" }}">{{ icon "settings" }}{{ t "menu.settings" }}</a>
         </li>
+        {{ if or (not disableLocalAuth) webAuthnEnabled }}
+        <li>
+            <a href="{{ routePath "/authentication" }}">{{ icon "authentication" }}{{ t "menu.authentication" }}</a>
+        </li>
+        {{ end }}
         <li>
             <a href="{{ routePath "/integrations" }}">{{ icon "third-party-services" }}{{ t "menu.integrations" }}</a>
         </li>

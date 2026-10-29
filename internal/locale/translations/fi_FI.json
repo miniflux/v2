@@ -413,6 +413,7 @@
     "menu.add_feed": "Lisää tilaus",
     "menu.add_user": "Lisää käyttäjä",
     "menu.api_keys": "API-avaimet",
+    "menu.authentication": "Todennus",
     "menu.categories": "Kategoriat",
     "menu.create_api_key": "Luo uusi API-avain",
     "menu.create_category": "Luo kategoria",
@@ -468,6 +469,7 @@
     "page.api_keys.table.last_used_at": "Viimeksi käytetty",
     "page.api_keys.table.token": "Tunnus",
     "page.api_keys.title": "API-avaimet",
+    "page.authentication.title": "Todennus",
     "page.categories.entries": "Artikkelit",
     "page.categories.feed_count": [
         "On %d syöte.",

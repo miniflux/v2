@@ -410,6 +410,7 @@
     "menu.add_feed": "피드 구독",
     "menu.add_user": "사용자 추가",
     "menu.api_keys": "API 키",
+    "menu.authentication": "인증",
     "menu.categories": "카테고리",
     "menu.create_api_key": "새 API 키 만들기",
     "menu.create_category": "카테고리 만들기",
@@ -465,6 +466,7 @@
     "page.api_keys.table.last_used_at": "마지막 사용",
     "page.api_keys.table.token": "토큰",
     "page.api_keys.title": "API 키",
+    "page.authentication.title": "인증",
     "page.categories.entries": "게시물 목록",
     "page.categories.feed_count": [
         "피드가 %d개 있습니다."

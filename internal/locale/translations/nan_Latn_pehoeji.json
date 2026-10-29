@@ -410,6 +410,7 @@
     "menu.add_feed": "Sin cheng-ka siau-sit lâi-goân",
     "menu.add_user": "Sin cheng-ka sú-iōng-lâng",
     "menu.api_keys": "API só-sî",
+    "menu.authentication": "Giām-chèng",
     "menu.categories": "Lūi-pia̍t",
     "menu.create_api_key": "Sin cheng-ka chi̍t ê API só-sî",
     "menu.create_category": "Sin cheng-ka lūi-pia̍t",
@@ -465,6 +466,7 @@
     "page.api_keys.table.last_used_at": "Siōng-bóe pái sú-iōng",
     "page.api_keys.table.token": "Só-sî",
     "page.api_keys.title": "API só-sî",
+    "page.authentication.title": "Giām-chèng",
     "page.categories.entries": "Siau-sit",
     "page.categories.feed_count": [
         "Ū %d ê Siau-sit lâi-goân"

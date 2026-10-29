@@ -413,6 +413,7 @@
     "menu.add_feed": "Adicionar inscrição",
     "menu.add_user": "Adicionar usuário",
     "menu.api_keys": "Chaves de API",
+    "menu.authentication": "Autenticação",
     "menu.categories": "Categorias",
     "menu.create_api_key": "Criar uma nova chave de API",
     "menu.create_category": "Criar uma categoria",
@@ -468,6 +469,7 @@
     "page.api_keys.table.last_used_at": "Ultima utilização",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Chaves de API",
+    "page.authentication.title": "Autenticação",
     "page.categories.entries": "Itens",
     "page.categories.feed_count": [
         "Existe %d fonte.",

@@ -413,6 +413,7 @@
     "menu.add_feed": "Add feed",
     "menu.add_user": "Add user",
     "menu.api_keys": "API Keys",
+    "menu.authentication": "Authentication",
     "menu.categories": "Categories",
     "menu.create_api_key": "Create a new API key",
     "menu.create_category": "Create a category",
@@ -468,6 +469,7 @@
     "page.api_keys.table.last_used_at": "Last Used",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "API Keys",
+    "page.authentication.title": "Authentication",
     "page.categories.entries": "Entries",
     "page.categories.feed_count": [
         "There is %d feed.",

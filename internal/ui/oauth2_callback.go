@@ -83,7 +83,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 				slog.String("oauth2_profile_id", profile.ID),
 			)
 			sess.SetErrorMessage(printer.Print("error.duplicate_linked_account"))
-			response.HTMLRedirect(w, r, h.routePath("/settings"))
+			response.HTMLRedirect(w, r, h.routePath("/authentication"))
 			return
 		}
 
@@ -96,7 +96,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 				slog.String("new_profile_id", profile.ID),
 			)
 			sess.SetErrorMessage(printer.Print("error.duplicate_linked_account"))
-			response.HTMLRedirect(w, r, h.routePath("/settings"))
+			response.HTMLRedirect(w, r, h.routePath("/authentication"))
 			return
 		}
 
@@ -107,7 +107,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		}
 
 		sess.SetSuccessMessage(printer.Print("alert.account_linked"))
-		response.HTMLRedirect(w, r, h.routePath("/settings"))
+		response.HTMLRedirect(w, r, h.routePath("/authentication"))
 		return
 	}
 

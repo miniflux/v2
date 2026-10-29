@@ -35,7 +35,7 @@ func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {
 			slog.String("provider", provider),
 			slog.Any("error", err),
 		)
-		response.HTMLRedirect(w, r, h.routePath("/settings"))
+		response.HTMLRedirect(w, r, h.routePath("/authentication"))
 		return
 	}
 
@@ -55,7 +55,7 @@ func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {
 	printer := locale.NewPrinter(sess.Language())
 	if !hasPassword {
 		sess.SetErrorMessage(printer.Print("error.unlink_account_without_password"))
-		response.HTMLRedirect(w, r, h.routePath("/settings"))
+		response.HTMLRedirect(w, r, h.routePath("/authentication"))
 		return
 	}
 
@@ -66,5 +66,5 @@ func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sess.SetSuccessMessage(printer.Print("alert.account_unlinked"))
-	response.HTMLRedirect(w, r, h.routePath("/settings"))
+	response.HTMLRedirect(w, r, h.routePath("/authentication"))
 }
