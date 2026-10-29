@@ -158,6 +158,9 @@ type Feed struct {
 	NoMediaPlayer               bool      `json:"no_media_player"`
 	IgnoreHTTPCache             bool      `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates bool      `json:"allow_self_signed_certificates"`
+	ClientCertificate           string    `json:"client_certificate"`
+	ClientKey                   string    `json:"client_key"`
+	CACertificate               string    `json:"ca_certificate"`
 	FetchViaProxy               bool      `json:"fetch_via_proxy"`
 	ScraperRules                string    `json:"scraper_rules"`
 	RewriteRules                string    `json:"rewrite_rules"`
@@ -200,6 +203,9 @@ type FeedCreationRequest struct {
 	NoMediaPlayer               bool   `json:"no_media_player"`
 	IgnoreHTTPCache             bool   `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
+	ClientCertificate           string `json:"client_certificate"`
+	ClientKey                   string `json:"client_key"`
+	CACertificate               string `json:"ca_certificate"`
 	FetchViaProxy               bool   `json:"fetch_via_proxy"`
 	ScraperRules                string `json:"scraper_rules"`
 	RewriteRules                string `json:"rewrite_rules"`
@@ -237,6 +243,9 @@ type FeedModificationRequest struct {
 	NoMediaPlayer               *bool   `json:"no_media_player"`
 	IgnoreHTTPCache             *bool   `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates *bool   `json:"allow_self_signed_certificates"`
+	ClientCertificate           *string `json:"client_certificate"`
+	ClientKey                   *string `json:"client_key"`
+	CACertificate               *string `json:"ca_certificate"`
 	FetchViaProxy               *bool   `json:"fetch_via_proxy"`
 	HideGlobally                *bool   `json:"hide_globally"`
 	DisableHTTP2                *bool   `json:"disable_http2"`

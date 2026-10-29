@@ -50,6 +50,9 @@ type Feed struct {
 	NoMediaPlayer               bool      `json:"no_media_player"`
 	IgnoreHTTPCache             bool      `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates bool      `json:"allow_self_signed_certificates"`
+	ClientCertificate           string    `json:"client_certificate"`
+	ClientKey                   string    `json:"client_key"`
+	CACertificate               string    `json:"ca_certificate"`
 	FetchViaProxy               bool      `json:"fetch_via_proxy"`
 	HideGlobally                bool      `json:"hide_globally"`
 	DisableHTTP2                bool      `json:"disable_http2"`
@@ -163,6 +166,9 @@ type FeedCreationRequest struct {
 	NoMediaPlayer               bool   `json:"no_media_player"`
 	IgnoreHTTPCache             bool   `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
+	ClientCertificate           string `json:"client_certificate"`
+	ClientKey                   string `json:"client_key"`
+	CACertificate               string `json:"ca_certificate"`
 	FetchViaProxy               bool   `json:"fetch_via_proxy"`
 	HideGlobally                bool   `json:"hide_globally"`
 	DisableHTTP2                bool   `json:"disable_http2"`
@@ -208,6 +214,9 @@ type FeedModificationRequest struct {
 	NoMediaPlayer               *bool   `json:"no_media_player"`
 	IgnoreHTTPCache             *bool   `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates *bool   `json:"allow_self_signed_certificates"`
+	ClientCertificate           *string `json:"client_certificate"`
+	ClientKey                   *string `json:"client_key"`
+	CACertificate               *string `json:"ca_certificate"`
 	FetchViaProxy               *bool   `json:"fetch_via_proxy"`
 	HideGlobally                *bool   `json:"hide_globally"`
 	DisableHTTP2                *bool   `json:"disable_http2"`
@@ -302,6 +311,18 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 
 	if f.AllowSelfSignedCertificates != nil {
 		feed.AllowSelfSignedCertificates = *f.AllowSelfSignedCertificates
+	}
+
+	if f.ClientCertificate != nil {
+		feed.ClientCertificate = *f.ClientCertificate
+	}
+
+	if f.ClientKey != nil {
+		feed.ClientKey = *f.ClientKey
+	}
+
+	if f.CACertificate != nil {
+		feed.CACertificate = *f.CACertificate
 	}
 
 	if f.FetchViaProxy != nil {
