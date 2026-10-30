@@ -12,9 +12,10 @@ import (
 
 // AuthSettingsForm represents the authentication settings form.
 type AuthSettingsForm struct {
-	Username     string
-	Password     string
-	Confirmation string
+	Username        string
+	CurrentPassword string
+	Password        string
+	Confirmation    string
 }
 
 // Merge updates the fields of the given user.
@@ -51,8 +52,9 @@ func (a *AuthSettingsForm) Validate() *locale.LocalizedError {
 // NewAuthSettingsForm returns a new AuthSettingsForm.
 func NewAuthSettingsForm(r *http.Request) *AuthSettingsForm {
 	return &AuthSettingsForm{
-		Username:     r.FormValue("username"),
-		Password:     r.FormValue("password"),
-		Confirmation: r.FormValue("confirmation"),
+		Username:        r.FormValue("username"),
+		CurrentPassword: r.FormValue("current_password"),
+		Password:        r.FormValue("password"),
+		Confirmation:    r.FormValue("confirmation"),
 	}
 }

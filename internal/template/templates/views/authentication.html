@@ -22,6 +22,11 @@
         <label for="form-username">{{ t "form.user.label.username" }}</label>
         <input type="text" name="username" id="form-username" value="{{ .form.Username }}" autocomplete="username" required>
 
+        {{ if .hasPassword }}
+        <label for="form-current-password">{{ t "form.user.label.current_password" }}</label>
+        <input type="password" name="current_password" id="form-current-password" autocomplete="current-password">
+        {{ end }}
+
         <label for="form-password">{{ t "form.user.label.password" }}</label>
         <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">
 

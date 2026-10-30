@@ -4,6 +4,7 @@
 package ui // import "miniflux.app/v2/internal/ui"
 
 import (
+	"log/slog"
 	"net/http"
 
 	"miniflux.app/v2/internal/config"
@@ -34,10 +35,17 @@ func (h *handler) updateAuthentication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	hasPassword, err := h.store.HasPassword(user.ID)
+	if err != nil {
+		response.HTMLServerError(w, r, err)
+		return
+	}
+
 	authSettingsForm := form.NewAuthSettingsForm(r)
 
 	view := view.New(h.tpl, r)
 	view.Set("form", authSettingsForm)
+	view.Set("hasPassword", hasPassword)
 	view.Set("menu", "settings")
 	view.Set("user", user)
 	navMetadata, _ := h.store.GetNavMetadata(user.ID)
@@ -50,6 +58,22 @@ func (h *handler) updateAuthentication(w http.ResponseWriter, r *http.Request) {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
 		response.HTML(w, r, view.Render("authentication"))
 		return
+	}
+
+	// Users created through OAuth2 have no password yet, so there is nothing to confirm.
+	if authSettingsForm.Password != "" && hasPassword {
+		if err := h.store.CheckPassword(user.Username, authSettingsForm.CurrentPassword); err != nil {
+			slog.Warn("Incorrect current password on password change",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", request.ClientIP(r)),
+				slog.String("user_agent", r.UserAgent()),
+				slog.String("username", user.Username),
+				slog.Any("error", err),
+			)
+			view.Set("errorMessage", locale.NewLocalizedError("error.invalid_current_password").Translate(user.Language))
+			response.HTML(w, r, view.Render("authentication"))
+			return
+		}
 	}
 
 	userModificationRequest := &model.UserModificationRequest{

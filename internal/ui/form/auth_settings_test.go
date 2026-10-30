@@ -4,6 +4,10 @@
 package form // import "miniflux.app/v2/internal/ui/form"
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 
 	"miniflux.app/v2/internal/model"
@@ -71,5 +75,22 @@ func TestAuthSettingsMergeKeepsPasswordWhenEmpty(t *testing.T) {
 
 	if user.Password != "existing" {
 		t.Errorf("Expected password to be unchanged, got %q", user.Password)
+	}
+}
+
+func TestNewAuthSettingsFormReadsCurrentPassword(t *testing.T) {
+	values := url.Values{
+		"username":         {"user"},
+		"current_password": {"old-secret"},
+		"password":         {"new-secret"},
+		"confirmation":     {"new-secret"},
+	}
+	request := httptest.NewRequest(http.MethodPost, "/authentication", strings.NewReader(values.Encode()))
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	form := NewAuthSettingsForm(request)
+
+	if form.CurrentPassword != "old-secret" {
+		t.Errorf("Expected current password to be read from the request, got %q", form.CurrentPassword)
 	}
 }
