@@ -4,6 +4,7 @@
 package ui // import "miniflux.app/v2/internal/ui"
 
 import (
+	"errors"
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
@@ -37,6 +38,13 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Changing your own password must go through the authentication page,
+	// which asks for the current password.
+	if selectedUser.ID == loggedUser.ID {
+		response.HTMLBadRequest(w, r, errors.New("you cannot edit yourself"))
+		return
+	}
+
 	userForm := form.NewUserForm(r)
 
 	view := view.New(h.tpl, r)
@@ -67,8 +75,7 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if userForm.Password != "" {
-		// Administrators editing their own account keep their current session.
-		if err := h.store.RemoveUserWebSessionsExcept(selectedUser.ID, request.WebSession(r).ID); err != nil {
+		if err := h.store.RemoveUserWebSessionsExcept(selectedUser.ID, ""); err != nil {
 			response.HTMLServerError(w, r, err)
 			return
 		}
