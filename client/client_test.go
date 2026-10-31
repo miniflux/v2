@@ -6,6 +6,7 @@ package client
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"reflect"
@@ -1322,6 +1323,264 @@ func TestUpdateEnclosure(t *testing.T) {
 }
 
 func boolPtr(b bool) *bool { return &b }
+
+func TestEntryIDsFilterSerialization(t *testing.T) {
+	tests := []struct {
+		name   string
+		filter *EntryIDsFilter
+		query  string
+	}{
+		{
+			name:   "empty_filter",
+			filter: &EntryIDsFilter{},
+		},
+		{
+			name:   "non_positive_pagination",
+			filter: &EntryIDsFilter{Limit: -1, Offset: -1},
+		},
+		{
+			name:   "starred_false",
+			filter: &EntryIDsFilter{Starred: boolPtr(false)},
+			query:  "?starred=false",
+		},
+		{
+			name:   "order",
+			filter: &EntryIDsFilter{Order: "published_at"},
+			query:  "?order=published_at",
+		},
+		{
+			name:   "direction",
+			filter: &EntryIDsFilter{Direction: "asc"},
+			query:  "?direction=asc",
+		},
+		{
+			name:   "feed_id",
+			filter: &EntryIDsFilter{FeedID: 4294967297},
+			query:  "?feed_id=4294967297",
+		},
+		{
+			name:   "category_id",
+			filter: &EntryIDsFilter{CategoryID: 4294967298},
+			query:  "?category_id=4294967298",
+		},
+		{
+			name:   "before",
+			filter: &EntryIDsFilter{Before: 2147483648},
+			query:  "?before=2147483648",
+		},
+		{
+			name:   "after",
+			filter: &EntryIDsFilter{After: 2147483649},
+			query:  "?after=2147483649",
+		},
+		{
+			name:   "published_before",
+			filter: &EntryIDsFilter{PublishedBefore: 2147483650},
+			query:  "?published_before=2147483650",
+		},
+		{
+			name:   "published_after",
+			filter: &EntryIDsFilter{PublishedAfter: 2147483651},
+			query:  "?published_after=2147483651",
+		},
+		{
+			name:   "changed_before",
+			filter: &EntryIDsFilter{ChangedBefore: 2147483652},
+			query:  "?changed_before=2147483652",
+		},
+		{
+			name:   "changed_after",
+			filter: &EntryIDsFilter{ChangedAfter: 2147483653},
+			query:  "?changed_after=2147483653",
+		},
+		{
+			name:   "before_entry_id",
+			filter: &EntryIDsFilter{BeforeEntryID: 4294967299},
+			query:  "?before_entry_id=4294967299",
+		},
+		{
+			name:   "after_entry_id",
+			filter: &EntryIDsFilter{AfterEntryID: 4294967300},
+			query:  "?after_entry_id=4294967300",
+		},
+		{
+			name:   "search_encoding",
+			filter: &EntryIDsFilter{Search: `go client & "feeds" + tags`},
+			query:  "?search=go+client+%26+%22feeds%22+%2B+tags",
+		},
+		{
+			name:   "repeated_statuses",
+			filter: &EntryIDsFilter{Statuses: []string{EntryStatusRead, EntryStatusUnread, EntryStatusRead}},
+			query:  "?status=read&status=unread&status=read",
+		},
+		{
+			name:   "statuses_override_status",
+			filter: &EntryIDsFilter{Status: "removed", Statuses: []string{EntryStatusRead, EntryStatusUnread}},
+			query:  "?status=read&status=unread",
+		},
+		{
+			name:   "empty_statuses_preserve_status",
+			filter: &EntryIDsFilter{Status: EntryStatusUnread, Statuses: []string{}},
+			query:  "?status=unread",
+		},
+		{
+			name:   "repeated_tags",
+			filter: &EntryIDsFilter{Tags: []string{"go", "release notes", "go"}},
+			query:  "?tags=go&tags=release+notes&tags=go",
+		},
+		{
+			name:   "globally_visible_true",
+			filter: &EntryIDsFilter{GloballyVisible: boolPtr(true)},
+			query:  "?globally_visible=true",
+		},
+		{
+			name:   "globally_visible_false",
+			filter: &EntryIDsFilter{GloballyVisible: boolPtr(false)},
+			query:  "?globally_visible=false",
+		},
+		{
+			name:   "zero_boundaries",
+			filter: &EntryIDsFilter{Status: EntryStatusUnread},
+			query:  "?status=unread",
+		},
+		{
+			name:   "negative_feed_id",
+			filter: &EntryIDsFilter{FeedID: -1},
+			query:  "?feed_id=-1",
+		},
+		{
+			name:   "negative_category_id",
+			filter: &EntryIDsFilter{CategoryID: -2},
+			query:  "?category_id=-2",
+		},
+		{
+			name:   "negative_before",
+			filter: &EntryIDsFilter{Before: -3},
+			query:  "?before=-3",
+		},
+		{
+			name:   "negative_after",
+			filter: &EntryIDsFilter{After: -4},
+			query:  "?after=-4",
+		},
+		{
+			name:   "negative_published_before",
+			filter: &EntryIDsFilter{PublishedBefore: -5},
+			query:  "?published_before=-5",
+		},
+		{
+			name:   "negative_published_after",
+			filter: &EntryIDsFilter{PublishedAfter: -6},
+			query:  "?published_after=-6",
+		},
+		{
+			name:   "negative_changed_before",
+			filter: &EntryIDsFilter{ChangedBefore: -7},
+			query:  "?changed_before=-7",
+		},
+		{
+			name:   "negative_changed_after",
+			filter: &EntryIDsFilter{ChangedAfter: -8},
+			query:  "?changed_after=-8",
+		},
+		{
+			name:   "negative_before_entry_id",
+			filter: &EntryIDsFilter{BeforeEntryID: -9},
+			query:  "?before_entry_id=-9",
+		},
+		{
+			name:   "negative_after_entry_id",
+			filter: &EntryIDsFilter{AfterEntryID: -10},
+			query:  "?after_entry_id=-10",
+		},
+	}
+
+	expected := &EntryIDsResultSet{Total: 1, EntryIDs: []int64{42}}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			client := NewClientWithOptions(
+				"http://mf",
+				WithHTTPClient(
+					newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
+						expectRequest(t, http.MethodGet, "http://mf/v1/entries/ids"+tt.query, nil, req)
+						return jsonResponseFrom(t, http.StatusOK, http.Header{}, expected)
+					})))
+			res, err := client.EntryIDsContext(t.Context(), tt.filter)
+			if err != nil {
+				t.Fatalf("Expected no error, got %v", err)
+			}
+			if !reflect.DeepEqual(res, expected) {
+				t.Fatalf("Expected %s, got %s", asJSON(expected), asJSON(res))
+			}
+		})
+	}
+}
+
+func TestEntryIDsContextBadRequest(t *testing.T) {
+	client := NewClientWithOptions(
+		"http://mf",
+		WithHTTPClient(
+			newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
+				expectRequest(t, http.MethodGet, "http://mf/v1/entries/ids?feed_id=-1&status=unread", nil, req)
+				return jsonResponseFrom(t, http.StatusBadRequest, http.Header{}, errorResponse{
+					ErrorMessage: "Invalid feed_id query parameter",
+				})
+			})))
+	res, err := client.EntryIDsContext(t.Context(), &EntryIDsFilter{Status: EntryStatusUnread, FeedID: -1})
+	if !errors.Is(err, ErrBadRequest) {
+		t.Fatalf("Expected ErrBadRequest, got %v", err)
+	}
+	if res != nil {
+		t.Fatalf("Expected no result on error, got %s", asJSON(res))
+	}
+}
+
+func TestEntryIDsWithAllFilters(t *testing.T) {
+	filter := &EntryIDsFilter{
+		Limit:           2,
+		Offset:          5,
+		Starred:         boolPtr(false),
+		Status:          "removed",
+		Order:           "published_at",
+		Direction:       "asc",
+		FeedID:          42,
+		CategoryID:      7,
+		Before:          1800000000,
+		After:           1700000000,
+		PublishedBefore: 1790000000,
+		PublishedAfter:  1710000000,
+		ChangedBefore:   1780000000,
+		ChangedAfter:    1720000000,
+		BeforeEntryID:   100,
+		AfterEntryID:    10,
+		Search:          `go & "rss"`,
+		Statuses:        []string{EntryStatusUnread, EntryStatusRead},
+		Tags:            []string{"go", "release notes"},
+		GloballyVisible: boolPtr(false),
+	}
+	expected := &EntryIDsResultSet{Total: 1, EntryIDs: []int64{42}}
+	const expectedURL = "http://mf/v1/entries/ids?after=1700000000&after_entry_id=10" +
+		"&before=1800000000&before_entry_id=100&category_id=7" +
+		"&changed_after=1720000000&changed_before=1780000000&direction=asc" +
+		"&feed_id=42&globally_visible=false&limit=2&offset=5&order=published_at" +
+		"&published_after=1710000000&published_before=1790000000" +
+		"&search=go+%26+%22rss%22&starred=false&status=unread&status=read" +
+		"&tags=go&tags=release+notes"
+	client := NewClientWithOptions(
+		"http://mf",
+		WithHTTPClient(
+			newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
+				expectRequest(t, http.MethodGet, expectedURL, nil, req)
+				return jsonResponseFrom(t, http.StatusOK, http.Header{}, expected)
+			})))
+	res, err := client.EntryIDs(filter)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	if !reflect.DeepEqual(res, expected) {
+		t.Fatalf("Expected %s, got %s", asJSON(expected), asJSON(res))
+	}
+}
 
 func TestEntryIDsNoFilter(t *testing.T) {
 	expected := &EntryIDsResultSet{
