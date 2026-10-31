@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"slices"
 
 	"miniflux.app/v2/internal/config"
@@ -109,30 +110,42 @@ func (o *oidcProvider) Profile(ctx context.Context, code, codeVerifier string) (
 		}
 	}
 
+	if profile.Username == "" {
+		return nil, ErrEmptyUsername
+	}
+
 	if groupClaim := config.Opts.Oauth2GroupClaim(); groupClaim != "" {
 		var rawUserClaims map[string]any
 		if err := userInfo.Claims(&rawUserClaims); err != nil {
 			return nil, fmt.Errorf(`oidc: failed to parse user claims: %w`, err)
 		}
 
-		rawValue := rawUserClaims[groupClaim]
-		switch value := rawValue.(type) {
-		case string:
-			profile.Groups = []string{value}
-		case []any:
-			profile.Groups = make([]string, len(value))
-			for i, rawEntry := range value {
-				if entry, ok := rawEntry.(string); ok {
-					profile.Groups[i] = entry
-				} else {
-					return nil, fmt.Errorf(`oidc: failed to parse user claims: %q must only contain strings`, groupClaim)
-				}
+		groups, found, err := groupsFromClaims(rawUserClaims, groupClaim)
+		if err != nil {
+			return nil, err
+		}
+
+		// Some providers only include the groups in the ID token.
+		if !found {
+			var rawIDTokenClaims map[string]any
+			if err := idToken.Claims(&rawIDTokenClaims); err != nil {
+				return nil, fmt.Errorf(`oidc: failed to parse id token claims: %w`, err)
+			}
+
+			groups, found, err = groupsFromClaims(rawIDTokenClaims, groupClaim)
+			if err != nil {
+				return nil, err
 			}
 		}
-	}
 
-	if profile.Username == "" {
-		return nil, ErrEmptyUsername
+		if !found {
+			slog.Warn("[OIDC] Group claim not found in the ID token or user info",
+				slog.String("claim", groupClaim),
+				slog.String("username", profile.Username),
+			)
+		}
+
+		profile.Groups = groups
 	}
 
 	return profile, nil
@@ -152,4 +165,29 @@ func (o *oidcProvider) UserProfileID(user *model.User) string {
 
 func (o *oidcProvider) UnsetUserProfileID(user *model.User) {
 	user.OpenIDConnectID = ""
+}
+
+// groupsFromClaims returns the groups stored in the given claim, and whether the claim is present.
+func groupsFromClaims(claims map[string]any, claimName string) ([]string, bool, error) {
+	rawValue, found := claims[claimName]
+	if !found {
+		return nil, false, nil
+	}
+
+	switch value := rawValue.(type) {
+	case string:
+		return []string{value}, true, nil
+	case []any:
+		groups := make([]string, 0, len(value))
+		for _, rawEntry := range value {
+			entry, ok := rawEntry.(string)
+			if !ok {
+				return nil, true, fmt.Errorf(`oidc: failed to parse user claims: %q must only contain strings`, claimName)
+			}
+			groups = append(groups, entry)
+		}
+		return groups, true, nil
+	default:
+		return nil, true, fmt.Errorf(`oidc: failed to parse user claims: %q must be a string or a list of strings`, claimName)
+	}
 }
