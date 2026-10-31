@@ -1,5 +1,10 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "April 18, 2026" "\ \&" "\ \&"
+.\" Write one sentence per line and use \: to add break points in long URLs.
+.TH "MINIFLUX" "1" "October 31, 2026" "\ \&" "\ \&"
+.\" Left-align text, disable hyphenation, and use a single space between sentences.
+.ds AD l
+.ss 12 0
+.nr HY 0
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -9,702 +14,748 @@ miniflux \- Minimalist and opinionated feed reader
 
 .SH DESCRIPTION
 \fBminiflux\fR is a minimalist and opinionated feed reader.
+.PP
+When started without any command option, \fBminiflux\fR runs as a daemon:
+it starts the HTTP server, the background scheduler that refreshes feeds,
+and the cleanup jobs.
+.PP
+Miniflux requires a PostgreSQL database.
+The database schema must be up to date before the daemon starts:
+use \fB\-migrate\fR or set \fBRUN_MIGRATIONS\fR.
+.PP
+Options can be prefixed with one or two dashes.
 
 .SH OPTIONS
-.B \-h, \-help
-.RS 4
-Show usage information and exit\&.
-.RE
-.PP
-.B \-config-dump
-.RS 4
-Print parsed configuration values.
-.br
-This will include sensitive information like passwords\&.
-.RE
-.PP
-.B \-c /path/to/miniflux.conf
-.RS 4
-Load configuration file\&.
-.RE
-.PP
-.B \-config-file /path/to/miniflux.conf
-.RS 4
-Load configuration file\&.
-.RE
-.PP
-.B \-create-admin
-.RS 4
-Create an admin user from an interactive terminal\&.
-.RE
-.PP
+.TP
+\fB\-c\fR, \fB\-config\-file\fR \fI/path/to/miniflux.conf\fR
+Load configuration file.
+Environment variables override the values defined in the file.
+.TP
+.B \-config\-dump
+Print parsed configuration values and exit.
+The output includes sensitive information like passwords.
+.TP
+.B \-create\-admin
+Create an admin user from an interactive terminal and exit.
+The username and password are prompted for.
+.TP
 .B \-debug
-.RS 4
-Set log level to debug\&.
-.RE
-.PP
-.B \-export-user-feeds <username>
-.RS 4
-Export user feeds (provide the username as argument)\&.
-.br
-Example:
-.EX
-miniflux -export-user-feeds someone > feeds.xml
-.EE
-.RE
-.PP
-.B \-flush-sessions
-.RS 4
-Flush all sessions (disconnect users)\&.
-.RE
-.PP
-.B \-healthcheck <endpoint>
-.RS 4
-Perform a health check on the given endpoint\&.
-.br
-The value "auto" tries to guess the health check endpoint\&.
-.RE
-.PP
-.B \-i
-.RS 4
-Show build information\&.
-.RE
-.PP
-.B \-info
-.RS 4
-Show build information\&.
-.RE
-.PP
+Set log level to debug.
+.TP
+\fB\-export\-user\-feeds\fR \fIusername\fR
+Export the feeds of the given user as OPML to the standard output and exit.
+.TP
+.B \-flush\-sessions
+Flush all sessions (disconnect users) and exit.
+.TP
+\fB\-h\fR, \fB\-help\fR
+Show usage information and exit.
+.TP
+\fB\-healthcheck\fR \fIendpoint\fR
+Perform a health check on the given endpoint and exit.
+The check fails if the endpoint cannot be reached within 3 seconds
+or does not return HTTP status 200.
+.IP
+The value "auto" builds the endpoint from the first \fBLISTEN_ADDR\fR address
+and the base path of \fBBASE_URL\fR,
+for example http://127.0.0.1:8080/healthcheck.
+.TP
+\fB\-i\fR, \fB\-info\fR
+Show build information and exit.
+.TP
 .B \-migrate
-.RS 4
-Run SQL migrations\&.
-.RE
-.PP
-.B \-refresh-feeds
-.RS 4
-Refresh a batch of feeds and exit\&.
-.RE
-.PP
-.B \-reset-feed-errors
-.RS 4
-Clear all feed errors for all users\&.
-.RE
-.PP
-.B \-reset-feed-next-check-at
-.RS 4
-Reset the next check time for all feeds\&.
-.RE
-.PP
-.B \-reset-password
-.RS 4
-Reset user password\&.
-.RE
-.PP
-.B \-run-cleanup-tasks
-.RS 4
-Run cleanup tasks (delete old sessions and archive old entries)\&.
-.RE
-.PP
-.B \-v
-.RS 4
-Show application version\&.
-.RE
-.PP
-.B \-version
-.RS 4
-Show application version\&.
-.RE
+Run SQL migrations and exit.
+.TP
+.B \-refresh\-feeds
+Refresh a batch of feeds and exit.
+.TP
+.B \-reset\-feed\-errors
+Clear all feed errors for all users and exit.
+.TP
+.B \-reset\-feed\-next\-check\-at
+Reset the next check time for all feeds and exit.
+.TP
+.B \-reset\-password
+Reset a user password from an interactive terminal and exit.
+The username and new password are prompted for.
+.TP
+.B \-run\-cleanup\-tasks
+Run cleanup tasks (delete old sessions and archive old entries) and exit.
+.TP
+\fB\-v\fR, \fB\-version\fR
+Show application version and exit.
 
 .SH CONFIGURATION FILE
 The configuration file is a text file that follows these rules:
-.LP
-- Miniflux expects each line to be in KEY=VALUE format.
-.br
-- Lines beginning with # are processed as comments and ignored.
-.br
-- Blank lines are ignored.
-.br
-- There is no variable interpolation.
+.PD 0
+.IP \(bu 2
+Each line is in KEY=VALUE format.
+.IP \(bu 2
+Lines beginning with # are comments and are ignored.
+.IP \(bu 2
+Blank lines and lines without "=" are ignored.
+.IP \(bu 2
+Whitespace around keys and values is removed.
+.IP \(bu 2
+Quotes are not removed: values are used as written.
+.IP \(bu 2
+An empty value keeps the default value.
+.IP \(bu 2
+Unknown keys are ignored.
+.IP \(bu 2
+There is no variable interpolation.
+.PD
 .PP
-Keys are the same as the environment variables described below\&.
-.br
-Environment variables override the values defined in the config file\&.
+Keys are the same as the environment variables described below.
+Environment variables override the values defined in the config file.
 
 .SH ENVIRONMENT
 Boolean options accept the following values (case-insensitive):
-1/0, yes/no, true/false, on/off\&.
-.br
-For variables ending in \fB_FILE\fR, the value is a path to a file
-that contains the corresponding secret value\&.
+1/0, yes/no, true/false, on/off.
+.PP
+For variables ending in \fB_FILE\fR,
+the value is a path to a file that contains the corresponding secret value.
 .TP
 .B ADMIN_PASSWORD
-Admin user password, used only if \fBCREATE_ADMIN\fR is enabled\&.
-.br
-Default is empty\&.
+Admin user password, used only if \fBCREATE_ADMIN\fR is enabled.
+.IP
+Default is empty.
 .TP
 .B ADMIN_PASSWORD_FILE
-Path to a secret key exposed as a file, it should contain the
-\fBADMIN_PASSWORD\fR value\&.
-.br
-Default is empty\&.
+Path to a secret key exposed as a file,
+it should contain the \fBADMIN_PASSWORD\fR value.
+.IP
+Default is empty.
 .TP
 .B ADMIN_USERNAME
-Admin user login, used only if \fBCREATE_ADMIN\fR is enabled\&.
-.br
-Default is empty\&.
+Admin user login, used only if \fBCREATE_ADMIN\fR is enabled.
+.IP
+Default is empty.
 .TP
 .B ADMIN_USERNAME_FILE
-Path to a secret key exposed as a file, it should contain the
-\fBADMIN_USERNAME\fR value\&.
-.br
-Default is empty\&.
+Path to a secret key exposed as a file,
+it should contain the \fBADMIN_USERNAME\fR value.
+.IP
+Default is empty.
 .TP
 .B AUTH_PROXY_HEADER
-Proxy authentication HTTP header\&.
-.br
+Proxy authentication HTTP header.
 The option \fBTRUSTED_REVERSE_PROXY_NETWORKS\fR must be configured
-to allow the proxy to authenticate users\&.
-.br
+to allow the proxy to authenticate users.
+.IP
 Default is empty.
 .TP
 .B AUTH_PROXY_USER_CREATION
-Set to 1 to create users based on proxy authentication information\&.
-.br
-When disabled, users must already exist in Miniflux to sign in
-through the proxy\&.
-.br
-Disabled by default\&.
+Set to 1 to create users based on proxy authentication information.
+When disabled, users must already exist in Miniflux
+to sign in through the proxy.
+.IP
+Disabled by default.
 .TP
 .B BASE_URL
-Base URL to generate HTML links and base path for cookies\&.
-.br
-Default is http://localhost\&.
+Base URL to generate HTML links and base path for cookies.
+The scheme must be http or https.
+.IP
+A path component sets the base path when Miniflux is served from a subfolder,
+for example https://example.org/miniflux/.
+.IP
+Default is http://localhost.
 .TP
 .B BATCH_SIZE
-Number of feeds to send to the queue for each interval\&.
-.br
-Default is 100 feeds\&.
+Number of feeds to send to the queue for each interval.
+.IP
+Default is 100 feeds.
 .TP
 .B CERT_DOMAIN
-Use Let's Encrypt to get automatically a certificate for this domain\&.
-.br
-Default is empty\&.
+Use Let's Encrypt to get automatically a certificate for this domain.
+Miniflux also listens on port 80 to answer the ACME HTTP challenge.
+Certificates are cached in the database.
+.IP
+This option cannot be used with \fBCERT_FILE\fR and \fBKEY_FILE\fR.
+.IP
+Default is empty.
 .TP
 .B CERT_FILE
-Path to SSL certificate\&.
-.br
-Default is empty\&.
+Path to SSL certificate.
+Must be used with \fBKEY_FILE\fR.
+.IP
+Default is empty.
 .TP
 .B CLEANUP_ARCHIVE_BATCH_SIZE
-Number of entries to archive for each job interval\&.
-.br
-Default is 10000 entries\&.
+Number of entries to archive for each job interval.
+.IP
+Default is 10000 entries.
 .TP
 .B CLEANUP_ARCHIVE_READ_DAYS
-Number of days before the cleanup job archives read entries\&.
-.br
-Archiving deletes non-bookmarked, non-shared read entries from the
-database and records a tombstone to prevent the same entry from being
-imported again during a later feed refresh\&.
-.br
-Set to -1 to disable automatic archiving of read entries\&.
-.br
-Default is 60 days\&.
+Number of days before the cleanup job archives read entries.
+.IP
+Archiving deletes non-bookmarked, non-shared read entries from the database
+and records a tombstone to prevent the same entry
+from being imported again during a later feed refresh.
+.IP
+Set to \-1 to disable automatic archiving of read entries.
+.IP
+Default is 60 days.
 .TP
 .B CLEANUP_ARCHIVE_UNREAD_DAYS
-Number of days before the cleanup job archives unread entries\&.
-.br
-Archiving deletes non-bookmarked, non-shared unread entries from the
-database and records a tombstone to prevent the same entry from being
-imported again during a later feed refresh\&.
-.br
-Set to -1 to disable automatic archiving of unread entries\&.
-.br
-Default is 180 days\&.
+Number of days before the cleanup job archives unread entries.
+.IP
+Archiving deletes non-bookmarked, non-shared unread entries from the database
+and records a tombstone to prevent the same entry
+from being imported again during a later feed refresh.
+.IP
+Set to \-1 to disable automatic archiving of unread entries.
+.IP
+Default is 180 days.
 .TP
 .B CLEANUP_FREQUENCY_HOURS
-Cleanup job frequency. Remove old sessions and archive entries\&.
-.br
-Default is 24 hours\&.
+Interval in hours between cleanup jobs
+(remove old sessions and archive entries).
+.IP
+Default is 24 hours.
 .TP
 .B CLEANUP_REMOVE_SESSIONS_DAYS
-Number of days after removing old sessions from the database\&.
-.br
-Default is 30 days\&.
+Number of days after which sessions are removed from the database.
+.IP
+Default is 30 days.
 .TP
 .B CREATE_ADMIN
-Set to 1 to create an admin user from environment variables\&.
-.br
-Disabled by default\&.
+Set to 1 to create an admin user from environment variables.
+.IP
+Disabled by default.
 .TP
 .B DATABASE_CONNECTION_LIFETIME
-Set the maximum amount of time a connection may be reused\&.
-.br
-Default is 5 minutes\&.
+Maximum amount of time in minutes a connection may be reused.
+.IP
+Default is 5 minutes.
 .TP
 .B DATABASE_MAX_CONNS
-Maximum number of database connections\&.
-.br
-Default is 20\&.
+Maximum number of database connections.
+.IP
+Default is 20.
 .TP
 .B DATABASE_MIN_CONNS
-Minimum number of database connections\&.
-.br
-Default is 1\&.
+Minimum number of database connections.
+Must be less than or equal to \fBDATABASE_MAX_CONNS\fR.
+.IP
+Default is 1.
 .TP
 .B DATABASE_URL
-PostgreSQL connection parameters\&.
-.br
-Default is "user=postgres password=postgres dbname=miniflux2 sslmode=disable"\&.
+PostgreSQL connection parameters.
+.IP
+Default is "user=postgres password=postgres dbname=miniflux2 sslmode=disable".
 .TP
 .B DATABASE_URL_FILE
-Path to a secret key exposed as a file, it should contain the
-\fBDATABASE_URL\fR value\&.
-.br
-Default is empty\&.
+Path to a secret key exposed as a file,
+it should contain the \fBDATABASE_URL\fR value.
+.IP
+Default is empty.
 .TP
 .B DISABLE_API
-Disable miniflux's API\&.
-.br
-Default is false (The API is enabled)\&.
+Disable miniflux's API.
+.IP
+Default is false (the API is enabled).
 .TP
 .B DISABLE_HSTS
-Disable HTTP Strict Transport Security header if \fBHTTPS\fR is set\&.
-.br
-Default is false (The HSTS is enabled)\&.
+Disable HTTP Strict Transport Security header if \fBHTTPS\fR is set.
+.IP
+Default is false (HSTS is enabled).
 .TP
 .B DISABLE_HTTP_SERVICE
-Set the value to 1 to disable the HTTP service\&.
-.br
-Default is false (The HTTP service is enabled)\&.
+Set the value to 1 to disable the HTTP service.
+.IP
+Default is false (the HTTP service is enabled).
 .TP
 .B DISABLE_LOCAL_AUTH
-Disable local authentication\&.
-.br
-When set to true, the username/password form is hidden from
-the login screen, and the options to change username/password
-or unlink OAuth2 account are hidden from the settings page.
-.br
-Password authentication is also rejected by the login form and
-by the REST API HTTP Basic Authentication, and passwords can no
-longer be changed. API clients must use an API key instead.
-.br
+Disable local authentication.
+When set to true, the username/password form is hidden from the login screen,
+and the options to change username/password or unlink OAuth2 account
+are hidden from the settings page.
+.IP
+Password authentication is also rejected by the login form
+and by the REST API HTTP Basic Authentication,
+and passwords can no longer be changed.
+API clients must use an API key instead.
+.IP
 This option requires an alternative authentication source
-such as OAuth2, auth proxy, or WebAuthn/Passkeys\&.
-.br
-To use WebAuthn as the only authentication method, register at
-least one Passkey while another authentication method is available,
-before enabling DISABLE_LOCAL_AUTH\&.
-.br
-If remote user creation is disabled, only existing users can sign in\&.
-.br
-Default is false\&.
+such as OAuth2, auth proxy, or WebAuthn/Passkeys.
+If remote user creation is disabled, only existing users can sign in.
+.IP
+To use WebAuthn as the only authentication method,
+register at least one Passkey while another authentication method is available,
+before enabling \fBDISABLE_LOCAL_AUTH\fR.
+.IP
+Default is false.
 .TP
 .B DISABLE_SCHEDULER_SERVICE
-Set the value to 1 to disable the internal scheduler service\&.
-.br
-Default is false (The internal scheduler service is enabled)\&.
-.TP
-.B FETCHER_ALLOW_PRIVATE_NETWORKS
-Set to 1 to allow outgoing fetcher requests to private or loopback networks\&.
-.br
-Disabled by default, private networks are refused\&.
+Set the value to 1 to disable the internal scheduler service.
+.IP
+Default is false (the internal scheduler service is enabled).
 .TP
 .B FETCHER_ALLOW_PRIVATE_FEED_PROXY
-Set to 1 to allow feed proxy URLs to use private or loopback network addresses\&.
-.br
-Disabled by default\&. This option applies to all authenticated users and should only be enabled when the private proxy boundary is trusted\&.
+Set to 1 to allow feed proxy URLs to use private or loopback network addresses.
+.IP
+This option applies to all authenticated users
+and should only be enabled when the private proxy boundary is trusted.
+.IP
+Disabled by default.
+.TP
+.B FETCHER_ALLOW_PRIVATE_NETWORKS
+Set to 1 to allow outgoing fetcher requests to private or loopback networks.
+.IP
+Disabled by default, private networks are refused.
 .TP
 .B FETCH_BILIBILI_WATCH_TIME
-Set the value to 1 to scrape video duration from Bilibili website and
-use it as a reading time\&.
-.br
-Disabled by default\&.
+Set the value to 1 to scrape video duration from Bilibili website
+and use it as a reading time.
+.IP
+Disabled by default.
 .TP
 .B FETCH_NEBULA_WATCH_TIME
-Set the value to 1 to scrape video duration from Nebula website and
-use it as a reading time\&.
-.br
-Disabled by default\&.
+Set the value to 1 to scrape video duration from Nebula website
+and use it as a reading time.
+.IP
+Disabled by default.
 .TP
 .B FETCH_ODYSEE_WATCH_TIME
-Set the value to 1 to scrape video duration from Odysee website and
-use it as a reading time\&.
-.br
-Disabled by default\&.
+Set the value to 1 to scrape video duration from Odysee website
+and use it as a reading time.
+.IP
+Disabled by default.
 .TP
 .B FETCH_YOUTUBE_WATCH_TIME
-Set the value to 1 to scrape video duration from YouTube website and
-use it as a reading time\&.
-.br
-Disabled by default\&.
+Set the value to 1 to scrape video duration from YouTube website
+and use it as a reading time.
+.IP
+Disabled by default.
 .TP
 .B FORCE_REFRESH_INTERVAL
-The minimum interval for manual refresh\&.
-.br
-Default is 30 minutes\&.
+Minimum interval in minutes between two manual refreshes.
+.IP
+Default is 30 minutes.
 .TP
 .B HTTP_CLIENT_MAX_BODY_SIZE
-Maximum body size for HTTP requests in Mebibyte (MiB)\&.
-.br
-Default is 15 MiB\&.
+Maximum body size for HTTP requests in Mebibyte (MiB).
+.IP
+Default is 15 MiB.
 .TP
 .B HTTP_CLIENT_PROXIES
-Enable proxy rotation for outgoing requests by providing a
-comma-separated list of proxy URLs\&.
-.br
-Default is empty\&.
+Enable proxy rotation for outgoing requests
+by providing a comma-separated list of proxy URLs.
+.IP
+Default is empty.
 .TP
 .B HTTP_CLIENT_PROXY
-Proxy URL to use when the "Fetch via proxy" feed option is enabled\&.
-.br
-Default is empty\&.
+Proxy URL to use when the "Fetch via proxy" feed option is enabled.
+.IP
+Default is empty.
 .TP
 .B HTTP_CLIENT_TIMEOUT
-Time limit in seconds before the HTTP client cancels the request\&.
-.br
-Default is 20 seconds\&.
+Time limit in seconds before the HTTP client cancels the request.
+.IP
+Default is 20 seconds.
 .TP
 .B HTTP_CLIENT_USER_AGENT
 The default User-Agent header to use for the HTTP client.
-Can be overridden in per-feed settings\&.
-.br
-When empty, Miniflux uses a default User-Agent that includes
-the Miniflux version\&.
-.br
+It can be overridden in per-feed settings.
+.IP
+When empty, Miniflux uses a default User-Agent
+that includes the Miniflux version.
+.IP
 Default is empty.
 .TP
 .B HTTP_SERVER_TIMEOUT
-Read, write, and idle timeout in seconds for the HTTP server\&.
-.br
-Default is 300 seconds\&.
+Read, write, and idle timeout in seconds for the HTTP server.
+.IP
+Default is 300 seconds.
 .TP
 .B HTTPS
-Forces cookies to use secure flag and send HSTS header\&.
-.br
-Default is disabled\&.
+Forces cookies to use secure flag and send HSTS header.
+.IP
+Default is disabled.
 .TP
 .B INTEGRATION_ALLOW_PRIVATE_NETWORKS
-Set to 1 to allow outgoing integration requests to private
-or loopback networks\&.
-.br
-Disabled by default, private networks are refused\&.
+Set to 1 to allow outgoing integration requests to private or loopback networks.
+.IP
+Disabled by default, private networks are refused.
 .TP
 .B INVIDIOUS_INSTANCE
-Set a custom invidious instance to use\&.
-.br
-Default is yewtu.be\&.
+Set a custom invidious instance to use.
+.IP
+Default is yewtu.be.
 .TP
 .B KEY_FILE
-Path to SSL private key\&.
-.br
-Default is empty\&.
+Path to SSL private key.
+Must be used with \fBCERT_FILE\fR.
+.IP
+Default is empty.
 .TP
 .B LISTEN_ADDR
 Address to listen on.
-Use absolute path to listen on Unix socket
-(/var/run/miniflux.sock)\&.
-.br
-When Miniflux creates the socket itself, it uses mode \fB0660\fR\&.
-.br
-This mode is hardcoded and cannot be configured\&.
-.br
-Multiple addresses can be specified, separated by commas.
-For example: 127.0.0.1:8080, 127.0.0.1:8081\&.
-.br
-Default is 127.0.0.1:8080\&.
+Multiple addresses can be specified, separated by commas,
+for example 127.0.0.1:8080, 127.0.0.1:8081.
+.IP
+Use an absolute path to listen on a Unix socket (/var/run/miniflux.sock).
+When Miniflux creates the socket itself, it uses mode \fB0660\fR.
+This mode is hardcoded and cannot be configured.
+.IP
+With systemd socket activation, Miniflux uses the socket passed by systemd
+and only the first address is taken into account.
+.IP
+Default is 127.0.0.1:8080.
 .TP
 .B LOG_DATE_TIME
-Display the date and time in log messages\&.
-.br
-Disabled by default\&.
+Display the date and time in log messages.
+.IP
+Disabled by default.
 .TP
 .B LOG_FILE
-Supported values are "stderr", "stdout", or a file name\&.
-.br
-Default is "stderr"\&.
+Supported values are "stderr", "stdout", or a file name.
+.IP
+Default is "stderr".
 .TP
 .B LOG_FORMAT
-Supported log formats are "text" or "json"\&.
-.br
-Default is "text"\&.
+Supported log formats are "text" or "json".
+.IP
+Default is "text".
 .TP
 .B LOG_LEVEL
-Supported values are "debug", "info", "warning", or "error"\&.
-.br
-Default is "info"\&.
+Supported values are "debug", "info", "warning", or "error".
+.IP
+Default is "info".
 .TP
 .B MAINTENANCE_MESSAGE
-Define a custom maintenance message\&.
-.br
-Default is "Miniflux is currently under maintenance"\&.
+Define a custom maintenance message.
+.IP
+Default is "Miniflux is currently under maintenance".
 .TP
 .B MAINTENANCE_MODE
-Set to 1 to enable maintenance mode\&.
-.br
-Disabled by default\&.
+Set to 1 to enable maintenance mode.
+.IP
+Disabled by default.
 .TP
 .B MEDIA_PROXY_CUSTOM_URL
-Sets an external server to proxy media through\&.
-.br
-Default is empty, Miniflux does the proxying\&.
+Sets an external server to proxy media through.
+.IP
+Default is empty, Miniflux does the proxying.
 .TP
 .B MEDIA_PROXY_HTTP_CLIENT_TIMEOUT
-Time limit in seconds before the media proxy HTTP client cancels the request\&.
-.br
-Default is 120 seconds\&.
+Time limit in seconds before the media proxy HTTP client cancels the request.
+.IP
+Default is 120 seconds.
+.TP
+.B MEDIA_PROXY_MODE
+Possible values are:
+.RS
+.TP
+.B http\-only
+Proxy only media served over insecure HTTP.
+.TP
+.B all
+Proxy all media.
+.TP
+.B none
+Disable the media proxy.
+.RE
+.IP
+Default is "http-only".
+.TP
+.B MEDIA_PROXY_PRIVATE_KEY
+Set a custom private key used to sign proxified media URLs.
+.IP
+By default, a secret key is randomly generated during startup.
+Proxified URLs are therefore invalidated on restart
+and are not shared between multiple instances.
+Set this option to keep them stable.
 .TP
 .B MEDIA_PROXY_RESOURCE_TYPES
 A comma-separated list of media types to proxify.
-Supported values are: image, audio, video\&.
-.br
-Default is image\&.
-.TP
-.B MEDIA_PROXY_MODE
-Possible values: http-only, all, or none\&.
-.br
-Default is http-only\&.
-.TP
-.B MEDIA_PROXY_PRIVATE_KEY
-Set a custom private key used to sign proxified media URLs\&.
-.br
-By default, a secret key is randomly generated during startup\&.
+Supported values are: image, audio, video.
+.IP
+Default is image.
 .TP
 .B METRICS_ALLOWED_NETWORKS
 List of networks allowed to access the metrics endpoint
-(comma-separated values)\&.
-.br
-Default is 127.0.0.1/8\&.
+(comma-separated values).
+.IP
+Default is 127.0.0.1/8.
 .TP
 .B METRICS_COLLECTOR
-Set to 1 to enable metrics collector. Expose a /metrics endpoint for Prometheus.
-.br
-Disabled by default\&.
+Set to 1 to enable the metrics collector
+and expose a /metrics endpoint for Prometheus.
+.IP
+Disabled by default.
 .TP
 .B METRICS_PASSWORD
-Metrics endpoint password for basic HTTP authentication\&.
-.br
-Default is empty\&.
+Metrics endpoint password for basic HTTP authentication.
+Must be used with \fBMETRICS_USERNAME\fR.
+.IP
+Default is empty.
 .TP
 .B METRICS_PASSWORD_FILE
-Path to a file that contains the password for the metrics
-endpoint HTTP authentication\&.
-.br
-Default is empty\&.
+Path to a file that contains the password
+for the metrics endpoint HTTP authentication.
+.IP
+Default is empty.
 .TP
 .B METRICS_REFRESH_INTERVAL
-Refresh interval to collect database metrics\&.
-.br
-Default is 60 seconds\&.
+Interval in seconds between two collections of database metrics.
+.IP
+Default is 60 seconds.
 .TP
 .B METRICS_USERNAME
-Metrics endpoint username for basic HTTP authentication\&.
-.br
-Default is empty\&.
+Metrics endpoint username for basic HTTP authentication.
+Must be used with \fBMETRICS_PASSWORD\fR.
+.IP
+Default is empty.
 .TP
 .B METRICS_USERNAME_FILE
-Path to a file that contains the username for the metrics
-endpoint HTTP authentication\&.
-.br
-Default is empty\&.
+Path to a file that contains the username
+for the metrics endpoint HTTP authentication.
+.IP
+Default is empty.
 .TP
 .B OAUTH2_ADDITIONAL_SCOPES
-Additional OAuth2 scopes to request\&.
-.br
-Default is empty\&.
+Additional OAuth2 scopes to request.
+.IP
+Default is empty.
 .TP
 .B OAUTH2_ADMIN_GROUP
-Group for administrators\&.
-.br
-When set, the admin role is mapped based on the specified group\&.
-.br
-Default is empty\&.
+Group for administrators.
+When set, the admin role is mapped based on the specified group.
+.IP
+Default is empty.
 .TP
 .B OAUTH2_CLIENT_ID
-OAuth2 client ID\&.
-.br
-Default is empty\&.
+OAuth2 client ID.
+.IP
+Default is empty.
 .TP
 .B OAUTH2_CLIENT_ID_FILE
-Path to a secret key exposed as a file, it should contain the
-\fBOAUTH2_CLIENT_ID\fR value\&.
-.br
-Default is empty\&.
+Path to a secret key exposed as a file,
+it should contain the \fBOAUTH2_CLIENT_ID\fR value.
+.IP
+Default is empty.
 .TP
 .B OAUTH2_CLIENT_SECRET
-OAuth2 client secret\&.
-.br
-Default is empty\&.
+OAuth2 client secret.
+.IP
+Default is empty.
 .TP
 .B OAUTH2_CLIENT_SECRET_FILE
-Path to a secret key exposed as a file, it should contain the
-\fBOAUTH2_CLIENT_SECRET\fR value\&.
-.br
-Default is empty\&.
+Path to a secret key exposed as a file,
+it should contain the \fBOAUTH2_CLIENT_SECRET\fR value.
+.IP
+Default is empty.
 .TP
 .B OAUTH2_GROUP_CLAIM
-Claim that contains user groups\&.
-.br
-Used for obtaining user groups, which can be used for mapping the admin role\&.
-.br
-The claim is read from the user info response, then from the ID token\&.
-.br
-Users without this claim are not administrators\&.
-.br
-Default is empty\&.
+Claim that contains user groups,
+which can be used for mapping the admin role.
+.IP
+The claim is read from the user info response, then from the ID token.
+Users without this claim are not administrators.
+.IP
+Default is empty.
 .TP
 .B OAUTH2_OIDC_DISCOVERY_ENDPOINT
-OpenID Connect discovery endpoint\&.
-.br
-Default is empty\&.
+OpenID Connect discovery endpoint.
+Required when \fBOAUTH2_PROVIDER\fR is set to "oidc".
+.IP
+Default is empty.
 .TP
 .B OAUTH2_OIDC_PROVIDER_NAME
-Name to display for the OIDC provider\&.
-.br
-Default is "OpenID Connect"\&.
+Name to display for the OIDC provider.
+.IP
+Default is "OpenID Connect".
 .TP
 .B OAUTH2_PROVIDER
-Possible values are "google" or "oidc"\&.
-.br
-Default is empty\&.
+Possible values are "google" or "oidc".
+.IP
+Default is empty.
 .TP
 .B OAUTH2_REDIRECT_URL
-OAuth2 redirect URL\&.
-.br
-This URL must be registered with the provider and is
-something like
-https://miniflux.example.org/oauth2/oidc/callback\&.
-.br
-Default is empty\&.
+OAuth2 redirect URL.
+This URL must be registered with the provider
+and is something like https://\:miniflux.example.org/\:oauth2/\:oidc/\:callback.
+.IP
+Default is empty.
 .TP
 .B OAUTH2_USER_CREATION
-Set to 1 to authorize OAuth2 user creation\&.
-.br
-When disabled, users must already exist in Miniflux or have
-a linked OAuth2 account to sign in\&.
-.br
-Disabled by default\&.
+Set to 1 to authorize OAuth2 user creation.
+When disabled, users must already exist in Miniflux
+or have a linked OAuth2 account to sign in.
+.IP
+Disabled by default.
 .TP
 .B POLLING_FREQUENCY
 Interval in minutes for the background job scheduler.
-.br
-Determines how often a batch of feeds is selected for refresh,
-based on their last refresh time\&.
-.br
-Default is 60 minutes\&.
+It determines how often a batch of feeds is selected for refresh,
+based on their last refresh time.
+.IP
+Default is 60 minutes.
 .TP
 .B POLLING_LIMIT_PER_HOST
 Limits the number of concurrent requests to the same hostname
 when polling feeds.
-.br
-This helps prevent overwhelming a single server during batch
-processing by the worker pool.
-.br
-Default is 0 (disabled)\&.
+This helps prevent overwhelming a single server
+during batch processing by the worker pool.
+.IP
+Default is 0 (disabled).
 .TP
 .B POLLING_PARSING_ERROR_LIMIT
-The maximum number of parsing errors that the program will
-try before stopping polling a feed.
-.br
-Once the limit is reached, the user must refresh the feed
-manually. Set to 0 for unlimited.
-.br
-Default is 3\&.
+The maximum number of parsing errors that the program will try
+before stopping polling a feed.
+Once the limit is reached, the user must refresh the feed manually.
+Set to 0 for unlimited.
+.IP
+Default is 3.
 .TP
 .B POLLING_SCHEDULER
 Determines the strategy used to schedule feed polling.
-.br
-Supported values are "round_robin" and "entry_frequency".
-.br
-- "round_robin": Feeds are polled in a fixed, rotating order.
-.br
-- "entry_frequency": The polling interval for each feed is
-based on the average update frequency over the past week.
-.br
+Supported values are:
+.RS
+.TP
+.B round_robin
+Feeds are polled in a fixed, rotating order.
+.TP
+.B entry_frequency
+The polling interval for each feed is based on
+the average update frequency over the past week.
+.RE
+.IP
 The number of feeds polled in a given period is limited by
-the POLLING_FREQUENCY and BATCH_SIZE settings.
-.br
-Regardless of the scheduler used, the total number of polled
-feeds will not exceed the maximum allowed per polling cycle.
-.br
-Default is "round_robin"\&.
+the \fBPOLLING_FREQUENCY\fR and \fBBATCH_SIZE\fR settings.
+Regardless of the scheduler used,
+the total number of polled feeds will not exceed
+the maximum allowed per polling cycle.
+.IP
+Default is "round_robin".
 .TP
 .B PORT
-Override \fBLISTEN_ADDR\fR to \fB0.0.0.0:$PORT\fR\&.
-.br
-Default is empty\&.
+Override \fBLISTEN_ADDR\fR with \fB:$PORT\fR,
+which listens on all network interfaces.
+The value must be between 1 and 65535.
+.IP
+Default is empty.
 .TP
 .B RUN_MIGRATIONS
-Set to 1 to run database migrations\&.
-.br
-Disabled by default\&.
+Set to 1 to run database migrations.
+.IP
+Disabled by default.
 .TP
 .B SCHEDULER_ENTRY_FREQUENCY_FACTOR
-Factor to increase refresh frequency for the entry frequency scheduler\&.
-.br
-Default is 1\&.
+Factor to increase refresh frequency for the entry frequency scheduler.
+.IP
+Default is 1.
 .TP
 .B SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL
-Maximum interval in minutes for the entry frequency scheduler\&.
-.br
-Default is 1440 minutes (24 hours)\&.
+Maximum interval in minutes for the entry frequency scheduler.
+.IP
+Default is 1440 minutes (24 hours).
 .TP
 .B SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL
-Minimum interval in minutes for the entry frequency scheduler\&.
-.br
-Default is 5 minutes\&.
+Minimum interval in minutes for the entry frequency scheduler.
+Must be less than or equal to
+\fBSCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL\fR.
+.IP
+Default is 5 minutes.
 .TP
 .B SCHEDULER_ROUND_ROBIN_MAX_INTERVAL
-Maximum interval in minutes for the round robin scheduler\&.
-.br
-Default is 1440 minutes (24 hours)\&.
+Maximum interval in minutes for the round robin scheduler.
+.IP
+Default is 1440 minutes (24 hours).
 .TP
 .B SCHEDULER_ROUND_ROBIN_MIN_INTERVAL
-Minimum interval in minutes for the round robin scheduler\&.
-.br
-Default is 60 minutes\&.
+Minimum interval in minutes for the round robin scheduler.
+Must be less than or equal to
+\fBSCHEDULER_ROUND_ROBIN_MAX_INTERVAL\fR.
+.IP
+Default is 60 minutes.
 .TP
 .B TRUSTED_REVERSE_PROXY_NETWORKS
-A comma-separated list of networks (CIDR notation) allowed to use the proxy
-authentication header, \fBX-Forwarded-For\fR,
-\fBX-Forwarded-Proto\fR, and \fBX-Real-Ip\fR headers\&.
-.br
-Default is empty\&.
+A comma-separated list of networks (CIDR notation) allowed to use
+the proxy authentication header,
+\fBX-Forwarded-For\fR, \fBX-Forwarded-Proto\fR, and \fBX-Real-Ip\fR headers.
+.IP
+Default is empty.
 .TP
 .B WATCHDOG
-Enable or disable Systemd watchdog\&.
-.br
-Enabled by default\&.
+Enable or disable Systemd watchdog.
+.IP
+Enabled by default.
 .TP
 .B WEBAUTHN
-Enable or disable WebAuthn/Passkey authentication\&.
-.br
-You must provide a username on the login page if you are
-using non-residential keys.
-However, this is not required for discoverable credentials\&.
-.br
-Default is disabled\&.
+Enable or disable WebAuthn/Passkey authentication.
+.IP
+You must provide a username on the login page
+if you are using non-discoverable (non-resident) credentials,
+such as some hardware security keys.
+This is not required for discoverable credentials (Passkeys).
+.IP
+Default is disabled.
 .TP
 .B WORKER_POOL_SIZE
-Number of background workers\&.
-.br
-Default is 16 workers\&.
+Number of background workers.
+.IP
+Default is 16 workers.
 .TP
 .B YOUTUBE_API_KEY
-YouTube API key for use with FETCH_YOUTUBE_WATCH_TIME.
+YouTube API key for use with \fBFETCH_YOUTUBE_WATCH_TIME\fR.
 If nonempty, the duration will be fetched from the YouTube API.
-Otherwise, the duration will be fetched from the YouTube
-website\&.
-.br
-Default is empty\&.
+Otherwise, the duration will be fetched from the YouTube website.
+.IP
+Default is empty.
 .TP
 .B YOUTUBE_EMBED_URL_OVERRIDE
-YouTube URL which will be used for embeds\&.
-.br
-Default is https://www.youtube-nocookie.com/embed/\&.
+YouTube URL which will be used for embeds.
+.IP
+Default is https://www.youtube-nocookie.com/embed/.
+
+.SH FILES
+.TP
+.I /etc/miniflux.conf
+Configuration file installed by the Debian and RPM packages.
+The systemd service loads it as environment variables.
+
+.SH EXIT STATUS
+\fBminiflux\fR exits with status 0 on success and 1 on error.
+With \fB\-healthcheck\fR, a non-zero status means the health check failed.
+
+.SH EXAMPLES
+Run the database migrations and create an admin user
+from environment variables:
+.PP
+.EX
+export DATABASE_URL="postgres://miniflux:secret@localhost/miniflux?sslmode=disable"
+RUN_MIGRATIONS=1 CREATE_ADMIN=1 ADMIN_USERNAME=admin \e
+    ADMIN_PASSWORD=changeme miniflux
+.EE
+.PP
+Start Miniflux with a configuration file:
+.PP
+.EX
+miniflux \-c /etc/miniflux.conf
+.EE
+.PP
+Check that a running instance is healthy,
+for example in a container health check:
+.PP
+.EX
+miniflux \-healthcheck auto
+.EE
+.PP
+Export the feeds of a user:
+.PP
+.EX
+miniflux \-export\-user\-feeds someone > feeds.xml
+.EE
+
+.SH SEE ALSO
+Online documentation: https://miniflux.app/docs/
+
 .SH AUTHORS
 Miniflux is developed and maintained by Fr\['e]d\['e]ric Guillot
-with contributions from the Miniflux community\&.
+with contributions from the Miniflux community.
 
 .SH "COPYRIGHT"
-Miniflux is released under the Apache 2.0 license\&.
+Miniflux is released under the Apache 2.0 license.
