@@ -1,5 +1,6 @@
 name: Debian Packages
-permissions: read-all
+permissions:
+  contents: read
 on:
   workflow_dispatch:
   push:
@@ -21,6 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
+          persist-credentials: false
           fetch-depth: 0
     - name: Set up QEMU
       uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
@@ -30,7 +32,9 @@ jobs:
       with:
           install: true
     - name: Available Docker Platforms
-      run: echo ${{ steps.buildx.outputs.platforms }}
+      env:
+        PLATFORMS: ${{ steps.buildx.outputs.platforms }}
+      run: echo "$PLATFORMS"
     - name: Build Debian Packages
       run: make debian-packages
     - name: List generated files
@@ -42,6 +46,7 @@ jobs:
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
+          persist-credentials: false
           fetch-depth: 0
     - name: Set up QEMU
       uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
@@ -51,7 +56,9 @@ jobs:
       with:
           install: true
     - name: Available Docker Platforms
-      run: echo ${{ steps.buildx.outputs.platforms }}
+      env:
+        PLATFORMS: ${{ steps.buildx.outputs.platforms }}
+      run: echo "$PLATFORMS"
     - name: Build Debian Packages
       run: make debian-packages
     - name: Upload package
@@ -65,9 +72,11 @@ jobs:
     if: github.event_name == 'push' && github.repository_owner == 'miniflux'
     name: Publish Packages
     runs-on: ubuntu-latest
+    environment: release
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
+          persist-credentials: false
           fetch-depth: 0
     - name: Set up QEMU
       uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
@@ -77,7 +86,9 @@ jobs:
       with:
           install: true
     - name: Available Docker Platforms
-      run: echo ${{ steps.buildx.outputs.platforms }}
+      env:
+        PLATFORMS: ${{ steps.buildx.outputs.platforms }}
+      run: echo "$PLATFORMS"
     - name: Build Debian Packages
       run: make debian-packages
     - name: List generated files
@@ -85,4 +96,4 @@ jobs:
     - name: Upload packages to repository
       env:
         FURY_TOKEN: ${{ secrets.FURY_TOKEN }}
-      run: for f in *.deb; do curl -F package=@$f https://$FURY_TOKEN@push.fury.io/miniflux/; done
+      run: for f in *.deb; do curl -F package=@"$f" https://$FURY_TOKEN@push.fury.io/miniflux/; done

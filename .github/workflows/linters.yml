@@ -1,5 +1,6 @@
 name: Linters
-permissions: read-all
+permissions:
+  contents: read
 
 on:
   pull_request:
@@ -13,9 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
     - name: Install linters
       run: |
-        sudo npm install -g jshint@2.13.6 eslint@8.57.0
+        sudo npm install -g --ignore-scripts jshint@2.13.6 eslint@8.57.0
     - name: Run jshint
       run: jshint internal/ui/static/js/*.js
     - name: Run ESLint
@@ -26,6 +29,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version: stable
@@ -40,10 +45,14 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.13'
       - name: Validate PR commits
-        run: python3 .github/workflows/scripts/commit-checker.py --base ${{ github.event.pull_request.base.sha }} --head ${{ github.event.pull_request.head.sha }}
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python3 .github/workflows/scripts/commit-checker.py --base "$BASE_SHA" --head "$HEAD_SHA"

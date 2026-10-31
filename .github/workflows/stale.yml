@@ -1,5 +1,6 @@
 name: Close Stale Pull Requests
-permissions: read-all
+permissions:
+  contents: read
 
 on:
   schedule:
