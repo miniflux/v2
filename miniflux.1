@@ -547,6 +547,10 @@ Claim that contains user groups\&.
 .br
 Used for obtaining user groups, which can be used for mapping the admin role\&.
 .br
+The claim is read from the user info response, then from the ID token\&.
+.br
+Users without this claim are not administrators\&.
+.br
 Default is empty\&.
 .TP
 .B OAUTH2_OIDC_DISCOVERY_ENDPOINT
