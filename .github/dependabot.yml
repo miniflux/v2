@@ -4,6 +4,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
     groups:
       gomod:
         patterns:
@@ -17,6 +19,8 @@ updates:
       - "/packaging/rpm"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
     groups:
       docker:
         patterns:
@@ -26,6 +30,8 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
     groups:
       github-actions:
         patterns:

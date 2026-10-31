@@ -1,5 +1,8 @@
 name: Mirror to Codeberg
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ main ]
@@ -10,17 +13,19 @@ jobs:
   mirror:
     if: github.repository_owner == 'miniflux'
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
       - name: Mirror to Codeberg
         env:
           CODEBERG_USERNAME: ${{ secrets.CODEBERG_USERNAME }}
           CODEBERG_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
         run: |
-          git remote add codeberg https://${{ secrets.CODEBERG_USERNAME }}:${{ secrets.CODEBERG_TOKEN }}@codeberg.org/miniflux/v2.git
+          git remote add codeberg "https://${CODEBERG_USERNAME}:${CODEBERG_TOKEN}@codeberg.org/miniflux/v2.git"
           git push --force --prune codeberg \
             "refs/heads/*:refs/heads/*" \
             "refs/tags/*:refs/tags/*"

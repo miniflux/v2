@@ -1,4 +1,6 @@
 name: Docker
+permissions:
+  contents: read
 on:
   schedule:
     - cron: '0 1 * * *'
@@ -17,10 +19,12 @@ jobs:
     permissions:
       packages: write
     runs-on: ubuntu-latest
+    environment: ${{ github.event_name != 'pull_request' && 'release' || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       - name: Generate Alpine Docker tags
@@ -87,6 +91,8 @@ jobs:
           file: ./packaging/docker/alpine/Dockerfile
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/riscv64
           push: ${{ github.event_name != 'pull_request' }}
+          provenance: mode=max
+          sbom: true
           tags: ${{ steps.docker_alpine_tags.outputs.tags }}
 
       - name: Build and Push Distroless images
@@ -96,4 +102,6 @@ jobs:
           file: ./packaging/docker/distroless/Dockerfile
           platforms: linux/amd64,linux/arm64,linux/riscv64
           push: ${{ github.event_name != 'pull_request' }}
+          provenance: mode=max
+          sbom: true
           tags: ${{ steps.docker_distroless_tags.outputs.tags }}
