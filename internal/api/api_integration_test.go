@@ -9,6 +9,9 @@ import (
 	"fmt"
 	"io"
 	"math/rand/v2"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"os"
 	"strings"
 	"testing"
@@ -1653,6 +1656,95 @@ func TestCreateDisabledFeed(t *testing.T) {
 
 	if !feed.Disabled {
 		t.Fatalf(`The feed should be disabled`)
+	}
+}
+
+func TestCreateFeedWithDuplicateEntries(t *testing.T) {
+	t.Parallel()
+
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	// The feed is served by this test process, so the Miniflux server must run on the same host.
+	if baseURL, err := url.Parse(testConfig.testBaseURL); err != nil || (baseURL.Hostname() != "127.0.0.1" && baseURL.Hostname() != "localhost") {
+		t.Skip(`This test requires a Miniflux server listening on localhost`)
+	}
+
+	// The first and third items have no GUID and share a link, and therefore the same entry hash.
+	// Items are processed from the bottom of the document up, so the third item is kept.
+	const feedContent = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+	<channel>
+		<title>Duplicate Entries</title>
+		<link>https://example.org/</link>
+		<item>
+			<title>Episode 2</title>
+			<link>https://example.org/episode-2</link>
+			<enclosure url="https://example.org/episode-2.mp3" length="1234" type="audio/mpeg"/>
+		</item>
+		<item>
+			<title>Episode 1</title>
+			<guid>episode-1</guid>
+			<link>https://example.org/episode-1</link>
+			<enclosure url="https://example.org/episode-1.mp3" length="5678" type="audio/mpeg"/>
+		</item>
+		<item>
+			<title>Episode 2 (again)</title>
+			<link>https://example.org/episode-2</link>
+			<category>news</category>
+			<enclosure url="https://example.org/episode-2-again.mp3" length="1234" type="audio/mpeg"/>
+		</item>
+	</channel>
+</rss>`
+
+	feedServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/rss+xml")
+		io.WriteString(w, feedContent)
+	}))
+	defer feedServer.Close()
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{FeedURL: feedServer.URL + "/feed.xml"})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := regularUserClient.FeedEntries(feedID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if result.Total != 2 {
+		t.Fatalf(`Expected 2 entries, got %d`, result.Total)
+	}
+
+	for _, entry := range result.Entries {
+		if len(entry.Enclosures) != 1 {
+			t.Fatalf(`Expected 1 enclosure for entry %q, got %d`, entry.Title, len(entry.Enclosures))
+		}
+
+		if entry.URL == "https://example.org/episode-2" {
+			if entry.Title != "Episode 2 (again)" {
+				t.Errorf(`Unexpected title for the duplicated entry: %q`, entry.Title)
+			}
+			if entry.Enclosures[0].URL != "https://example.org/episode-2-again.mp3" {
+				t.Errorf(`Unexpected enclosure URL for the duplicated entry: %q`, entry.Enclosures[0].URL)
+			}
+			if len(entry.Tags) != 1 || entry.Tags[0] != "news" {
+				t.Errorf(`Unexpected tags for the duplicated entry: %v`, entry.Tags)
+			}
+		}
 	}
 }
 

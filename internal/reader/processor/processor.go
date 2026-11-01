@@ -92,7 +92,9 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 
 		webpageBaseURL := ""
 		entry.URL = rewrite.RewriteEntryURL(feed, entry)
-		entryIsNew := store.IsNewEntry(feed.ID, entry.Hash)
+		// A feed without an ID is being created and has no stored entries yet,
+		// so skip the per-entry database lookup.
+		entryIsNew := feed.ID == 0 || store.IsNewEntry(feed.ID, entry.Hash)
 		contentExtractedSuccessfully := false
 		if feed.Crawler && (entryIsNew || forceRefresh) {
 			slog.Debug("Scraping entry",
