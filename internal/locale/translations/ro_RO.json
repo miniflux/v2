@@ -170,6 +170,7 @@
     "error.unable_to_create_user": "Nu se poate crea utilizatorul.",
     "error.unable_to_detect_rssbridge": "Nu pot detecta fluxul când utilizez RSS-Bridge: %v.",
     "error.unable_to_parse_feed": "Nu pot procesa acest flux: %v.",
+    "error.unable_to_parse_html_document": "Nu pot procesa documentul HTML: %v.",
     "error.unable_to_update_category": "Nu se poate actualiza această categorie.",
     "error.unable_to_update_feed": "Nu se poate actualiza acest flux.",
     "error.unable_to_update_user": "Nu se poate actualiza utilizatorul.",

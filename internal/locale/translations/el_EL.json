@@ -167,6 +167,7 @@
     "error.unable_to_create_user": "Δεν είναι δυνατή η δημιουργία αυτού του χρήστη.",
     "error.unable_to_detect_rssbridge": "Δεν είναι δυνατή η ανίχνευση ροής με χρήση RSS-Bridge: %v.",
     "error.unable_to_parse_feed": "Δεν είναι δυνατή η ανάλυση αυτής της ροής: %v.",
+    "error.unable_to_parse_html_document": "Δεν είναι δυνατή η ανάλυση του εγγράφου HTML: %v.",
     "error.unable_to_update_category": "Δεν είναι δυνατή η ενημέρωση αυτής της κατηγορίας.",
     "error.unable_to_update_feed": "Δεν είναι δυνατή η ενημέρωση αυτής της ροής.",
     "error.unable_to_update_user": "Δεν είναι δυνατή η ενημέρωση αυτού του χρήστη.",

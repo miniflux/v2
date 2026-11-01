@@ -167,6 +167,7 @@
     "error.unable_to_create_user": "Non sono riuscito ad aggiungere questo user.",
     "error.unable_to_detect_rssbridge": "Impossibile rilevare il feed usando RSS-Bridge: %v.",
     "error.unable_to_parse_feed": "Impossibile analizzare questo feed: %v.",
+    "error.unable_to_parse_html_document": "Impossibile analizzare il documento HTML: %v.",
     "error.unable_to_update_category": "Non sono riuscito ad aggiornare questa categoria.",
     "error.unable_to_update_feed": "Non sono riuscito ad aggiornare questo feed.",
     "error.unable_to_update_user": "Non sono riuscito ad aggiornare questo utente.",

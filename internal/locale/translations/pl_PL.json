@@ -170,6 +170,7 @@
     "error.unable_to_create_user": "Nie można utworzyć tego użytkownika.",
     "error.unable_to_detect_rssbridge": "Nie można wykryć kanału za pomocą RSS-Bridge: %v.",
     "error.unable_to_parse_feed": "Nie można przeanalizować tego kanału: %v.",
+    "error.unable_to_parse_html_document": "Nie można przeanalizować dokumentu HTML: %v.",
     "error.unable_to_update_category": "Ta kategoria nie mogła zostać zaktualizowana.",
     "error.unable_to_update_feed": "Nie można zaktualizować tego kanału.",
     "error.unable_to_update_user": "Nie można zaktualizować tego użytkownika.",

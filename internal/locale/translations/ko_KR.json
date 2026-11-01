@@ -164,6 +164,7 @@
     "error.unable_to_create_user": "이 사용자를 만들 수 없습니다.",
     "error.unable_to_detect_rssbridge": "RSS-Bridge를 사용해 피드를 감지할 수 없습니다: %v.",
     "error.unable_to_parse_feed": "이 피드를 파싱할 수 없습니다: %v.",
+    "error.unable_to_parse_html_document": "HTML 문서를 파싱할 수 없습니다: %v.",
     "error.unable_to_update_category": "이 카테고리를 업데이트할 수 없습니다.",
     "error.unable_to_update_feed": "이 피드를 업데이트할 수 없습니다.",
     "error.unable_to_update_user": "이 사용자를 업데이트할 수 없습니다.",

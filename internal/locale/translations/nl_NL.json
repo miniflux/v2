@@ -167,6 +167,7 @@
     "error.unable_to_create_user": "Kan deze gebruiker niet aanmaken.",
     "error.unable_to_detect_rssbridge": "Kan feed niet detecteren met RSS-Bridge: %v.",
     "error.unable_to_parse_feed": "Kan deze feed niet verwerken: %v.",
+    "error.unable_to_parse_html_document": "Kan het HTML-document niet verwerken: %v.",
     "error.unable_to_update_category": "Kan categorie niet bijwerken.",
     "error.unable_to_update_feed": "Kan deze feed niet bijwerken.",
     "error.unable_to_update_user": "Kan deze gebruiker niet bijwerken.",

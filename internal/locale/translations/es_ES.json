@@ -167,6 +167,7 @@
     "error.unable_to_create_user": "Incapaz de crear este usuario.",
     "error.unable_to_detect_rssbridge": "No se puede detectar la fuente usando RSS-Bridge: %v.",
     "error.unable_to_parse_feed": "No se puede analizar este feed: %v.",
+    "error.unable_to_parse_html_document": "No se puede analizar el documento HTML: %v.",
     "error.unable_to_update_category": "Incapaz de actualizar esta categoría.",
     "error.unable_to_update_feed": "Incapaz de actualizar esta fuente.",
     "error.unable_to_update_user": "Incapaz de actualizar este usuario.",

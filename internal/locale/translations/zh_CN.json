@@ -164,6 +164,7 @@
     "error.unable_to_create_user": "无法创建此用户。",
     "error.unable_to_detect_rssbridge": "无法使用 RSS-Bridge 检测订阅源：%v。",
     "error.unable_to_parse_feed": "无法解析此订阅源：%v。",
+    "error.unable_to_parse_html_document": "无法解析 HTML 文档：%v。",
     "error.unable_to_update_category": "无法更新此分类。",
     "error.unable_to_update_feed": "无法更新此订阅源。",
     "error.unable_to_update_user": "无法更新此用户。",

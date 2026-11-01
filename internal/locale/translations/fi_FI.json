@@ -167,6 +167,7 @@
     "error.unable_to_create_user": "Käyttäjää ei voi luoda.",
     "error.unable_to_detect_rssbridge": "Syötettä ei voitu havaita RSS-Bridgea käyttäen: %v.",
     "error.unable_to_parse_feed": "Tätä syötettä ei voitu jäsentää: %v.",
+    "error.unable_to_parse_html_document": "HTML-dokumenttia ei voitu jäsentää: %v.",
     "error.unable_to_update_category": "Kategoriaa  ei voi päivittää.",
     "error.unable_to_update_feed": "Syötettä ei voi päivittää.",
     "error.unable_to_update_user": "Käyttäjää ei voi päivittää.",

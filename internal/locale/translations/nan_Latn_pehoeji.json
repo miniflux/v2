@@ -164,6 +164,7 @@
     "error.unable_to_create_user": "Bô-hoat-tō͘ sin cheng-ka chit ê sú-iōng-lâng",
     "error.unable_to_detect_rssbridge": "Sú-iōng RSS-Bridge sî chhē bô līm-hô siau-sit lâi-goân: %v.",
     "error.unable_to_parse_feed": "Bô-hoat-tō͘ kái-sek chit ê siau-sit lâi-goân: %v.",
+    "error.unable_to_parse_html_document": "Bô-hoat-tō͘ kái-sek HTML bûn-kiāⁿ: %v.",
     "error.unable_to_update_category": "Bô-hoat-tō͘ ōaⁿ-sin chit ê lūi-pia̍t",
     "error.unable_to_update_feed": "Bô-hoat-tō͘ ōaⁿ-sin chit ê siau-sit lâi-goân",
     "error.unable_to_update_user": "Bô-hoat-tō͘ ōaⁿ-sin chit ê sú-iōng-lâng",

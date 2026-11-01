@@ -169,6 +169,7 @@
     "error.unable_to_create_user": "Non se puido crear a conta.",
     "error.unable_to_detect_rssbridge": "Non se detectou a canle a usar RSS-Bridge: %v.",
     "error.unable_to_parse_feed": "Non se puido procesar a canle: %v.",
+    "error.unable_to_parse_html_document": "Non se puido procesar o documento HTML: %v.",
     "error.unable_to_update_category": "Non se puido actualizar a categoría.",
     "error.unable_to_update_feed": "Non se puido actualizar a canle.",
     "error.unable_to_update_user": "Non se puido actualizar a usuaria.",
