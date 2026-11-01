@@ -314,22 +314,9 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
 	}
 
-	// A feed document can list the same entry more than once, which would
-	// violate the unique (feed_id, hash) constraint. Keep the first occurrence.
 	// The feed was just created, so no entry can exist in the database yet.
-	seenHashes := make(map[string]struct{}, len(feed.Entries))
-	for _, entry := range feed.Entries {
-		if _, seen := seenHashes[entry.Hash]; seen {
-			continue
-		}
-		seenHashes[entry.Hash] = struct{}{}
-
-		entry.FeedID = feed.ID
-		entry.UserID = feed.UserID
-
-		if err := s.createEntry(tx, entry); err != nil && !errors.Is(err, ErrEntryTombstoned) {
-			return err
-		}
+	if _, err := s.createEntries(tx, feed.UserID, feed.ID, uniqueEntriesByHash(feed.Entries)); err != nil {
+		return err
 	}
 
 	if err := tx.Commit(); err != nil {
