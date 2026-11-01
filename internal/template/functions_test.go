@@ -5,6 +5,7 @@ package template // import "miniflux.app/v2/internal/template"
 
 import (
 	"html/template"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -269,6 +270,34 @@ func TestQueryString(t *testing.T) {
 	got = (&funcMap{}).Map()["queryString"].(func(map[string]any) string)(empty)
 	if got != "" {
 		t.Fatalf(`Expected empty query string, got %q`, got)
+	}
+}
+
+func TestConfirmationModalDefaultsToCancelAction(t *testing.T) {
+	contents, err := commonTemplateFiles.ReadFile("templates/common/layout.html")
+	if err != nil {
+		t.Fatalf(`Unable to read layout template: %v`, err)
+	}
+
+	layout := string(contents)
+	if !strings.Contains(layout, `id="confirmation-modal"`) {
+		t.Fatal(`The confirmation modal should be present in the base layout`)
+	}
+
+	yesButton := regexp.MustCompile(`<button[^>]*value="yes"[^>]*>`).FindString(layout)
+	if yesButton == "" {
+		t.Fatal(`The confirmation modal should have a confirm action`)
+	}
+	if strings.Contains(yesButton, "autofocus") {
+		t.Fatal(`The confirmation modal should not focus the confirm action by default`)
+	}
+
+	noButton := regexp.MustCompile(`<button[^>]*value="no"[^>]*>`).FindString(layout)
+	if noButton == "" {
+		t.Fatal(`The confirmation modal should have a cancel action`)
+	}
+	if !strings.Contains(noButton, "autofocus") {
+		t.Fatal(`The confirmation modal should focus the cancel action by default`)
 	}
 }
 
