@@ -79,11 +79,11 @@ func (s *Storage) FirstCategory(userID int64) (*model.Category, error) {
 	}
 }
 
-// CategoryByTitle finds a category by the title.
+// CategoryByTitle finds a category by its case-insensitive title, preferring an exact match.
 func (s *Storage) CategoryByTitle(userID int64, title string) (*model.Category, error) {
 	var category model.Category
 
-	query := `SELECT id, user_id, title, hide_globally FROM categories WHERE user_id=$1 AND title=$2`
+	query := `SELECT id, user_id, title, hide_globally FROM categories WHERE user_id=$1 AND lower(title)=lower($2) ORDER BY title=$2 DESC, id ASC LIMIT 1`
 	err := s.db.QueryRow(query, userID, title).Scan(&category.ID, &category.UserID, &category.Title, &category.HideGlobally)
 
 	switch {
