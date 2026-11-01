@@ -5,7 +5,6 @@ package ui // import "miniflux.app/v2/internal/ui"
 
 import (
 	"net/http"
-	"time"
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
@@ -41,26 +40,21 @@ func (h *handler) sharedEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	etag := shareCode
-	response.NewBuilder(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
-		entry, err := h.store.NewAnonymousQueryBuilder().
-			WithShareCode(shareCode).
-			GetEntry()
+	entry, err := h.store.NewAnonymousQueryBuilder().
+		WithShareCode(shareCode).
+		GetEntry()
+	if err != nil {
+		response.HTMLServerError(w, r, err)
+		return
+	}
+	if entry == nil {
+		response.HTMLNotFound(w, r)
+		return
+	}
 
-		if err != nil {
-			response.HTMLServerError(w, r, err)
-			return
-		}
-		if entry == nil {
-			response.HTMLNotFound(w, r)
-			return
-		}
-
-		view := view.New(h.tpl, r)
-		view.Set("entry", entry)
-
-		b.WithHeader("Content-Type", "text/html; charset=utf-8")
-		b.WithBodyAsBytes(view.Render("entry"))
-		b.Write()
-	})
+	// The page still depends on the visitor's theme and language, so it must
+	// never be stored by shared caches.
+	view := view.NewPublic(h.tpl, r)
+	view.Set("entry", entry)
+	response.HTML(w, r, view.Render("entry"))
 }

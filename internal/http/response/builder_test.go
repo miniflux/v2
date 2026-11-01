@@ -255,6 +255,39 @@ func TestBuildResponseWithCachingEnabled(t *testing.T) {
 	}
 }
 
+func TestBuildResponseWithCachingAndCookie(t *testing.T) {
+	r, err := http.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	w := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.SetCookie(w, &http.Cookie{Name: "session", Value: "secret"})
+		NewBuilder(w, r).WithCaching("etag", 1*time.Minute, func(b *Builder) {
+			b.WithBodyAsString("cached body")
+			b.Write()
+		})
+	})
+
+	handler.ServeHTTP(w, r)
+	resp := w.Result()
+
+	expectedHeader := "private, no-store"
+	if actualHeader := resp.Header.Get("Cache-Control"); actualHeader != expectedHeader {
+		t.Fatalf(`Unexpected cache control header, got %q instead of %q`, actualHeader, expectedHeader)
+	}
+
+	if expires := resp.Header.Get("Expires"); expires != "" {
+		t.Fatalf(`Expires header should be removed, got %q`, expires)
+	}
+
+	if cookie := resp.Header.Get("Set-Cookie"); cookie == "" {
+		t.Fatal(`Set-Cookie header should be kept`)
+	}
+}
+
 func TestBuildResponseWithCachingAndIfNoneMatch(t *testing.T) {
 	tests := []struct {
 		name           string
