@@ -9,8 +9,13 @@ import (
 	"fmt"
 	"io"
 	"math/rand/v2"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"os"
+	"slices"
 	"strings"
+	"sync/atomic"
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
@@ -1653,6 +1658,266 @@ func TestCreateDisabledFeed(t *testing.T) {
 
 	if !feed.Disabled {
 		t.Fatalf(`The feed should be disabled`)
+	}
+}
+
+func TestCreateFeedWithDuplicateEntries(t *testing.T) {
+	t.Parallel()
+
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	// The feed is served by this test process, so the Miniflux server must run on the same host.
+	if baseURL, err := url.Parse(testConfig.testBaseURL); err != nil || (baseURL.Hostname() != "127.0.0.1" && baseURL.Hostname() != "localhost") {
+		t.Skip(`This test requires a Miniflux server listening on localhost`)
+	}
+
+	// The first and third items have no GUID and share a link, and therefore the same entry hash.
+	// Items are processed from the bottom of the document up, so the third item is kept.
+	const feedContent = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+	<channel>
+		<title>Duplicate Entries</title>
+		<link>https://example.org/</link>
+		<item>
+			<title>Episode 2</title>
+			<link>https://example.org/episode-2</link>
+			<enclosure url="https://example.org/episode-2.mp3" length="1234" type="audio/mpeg"/>
+		</item>
+		<item>
+			<title>Episode 1</title>
+			<guid>episode-1</guid>
+			<link>https://example.org/episode-1</link>
+			<enclosure url="https://example.org/episode-1.mp3" length="5678" type="audio/mpeg"/>
+		</item>
+		<item>
+			<title>Episode 2 (again)</title>
+			<link>https://example.org/episode-2</link>
+			<category>news</category>
+			<enclosure url="https://example.org/episode-2-again.mp3" length="1234" type="audio/mpeg"/>
+		</item>
+	</channel>
+</rss>`
+
+	feedServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/rss+xml")
+		io.WriteString(w, feedContent)
+	}))
+	defer feedServer.Close()
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{FeedURL: feedServer.URL + "/feed.xml"})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := regularUserClient.FeedEntries(feedID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if result.Total != 2 {
+		t.Fatalf(`Expected 2 entries, got %d`, result.Total)
+	}
+
+	for _, entry := range result.Entries {
+		if len(entry.Enclosures) != 1 {
+			t.Fatalf(`Expected 1 enclosure for entry %q, got %d`, entry.Title, len(entry.Enclosures))
+		}
+
+		if entry.URL == "https://example.org/episode-2" {
+			if entry.Title != "Episode 2 (again)" {
+				t.Errorf(`Unexpected title for the duplicated entry: %q`, entry.Title)
+			}
+			if entry.Enclosures[0].URL != "https://example.org/episode-2-again.mp3" {
+				t.Errorf(`Unexpected enclosure URL for the duplicated entry: %q`, entry.Enclosures[0].URL)
+			}
+			if len(entry.Tags) != 1 || entry.Tags[0] != "news" {
+				t.Errorf(`Unexpected tags for the duplicated entry: %v`, entry.Tags)
+			}
+		}
+	}
+}
+
+func TestRefreshFeedUpdatesEntriesAndEnclosures(t *testing.T) {
+	t.Parallel()
+
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	// The feed is served by this test process, so the Miniflux server must run on the same host.
+	if baseURL, err := url.Parse(testConfig.testBaseURL); err != nil || (baseURL.Hostname() != "127.0.0.1" && baseURL.Hostname() != "localhost") {
+		t.Skip(`This test requires a Miniflux server listening on localhost`)
+	}
+
+	const initialFeedContent = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+	<channel>
+		<title>Refreshed Feed</title>
+		<link>https://example.org/</link>
+		<item>
+			<title>Episode B</title>
+			<guid>episode-b</guid>
+			<link>https://example.org/episode-b</link>
+			<enclosure url="https://example.org/episode-b.mp3" length="2" type="audio/mpeg"/>
+		</item>
+		<item>
+			<title>Episode A</title>
+			<guid>episode-a</guid>
+			<link>https://example.org/episode-a</link>
+			<enclosure url="https://example.org/episode-a-1.mp3" length="1" type="audio/mpeg"/>
+			<enclosure url="https://example.org/episode-a-2.mp3" length="1" type="audio/mpeg"/>
+		</item>
+	</channel>
+</rss>`
+
+	// Episode A changes its title, tags and enclosures, Episode B loses its
+	// enclosure, Episode C is new, and Episode D is new and listed twice.
+	const refreshedFeedContent = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+	<channel>
+		<title>Refreshed Feed</title>
+		<link>https://example.org/</link>
+		<item>
+			<title>Episode D</title>
+			<link>https://example.org/episode-d</link>
+		</item>
+		<item>
+			<title>Episode C</title>
+			<guid>episode-c</guid>
+			<link>https://example.org/episode-c</link>
+			<enclosure url="https://example.org/episode-c.mp3" length="3" type="audio/mpeg"/>
+		</item>
+		<item>
+			<title>Episode B</title>
+			<guid>episode-b</guid>
+			<link>https://example.org/episode-b</link>
+		</item>
+		<item>
+			<title>Episode A (updated)</title>
+			<guid>episode-a</guid>
+			<link>https://example.org/episode-a</link>
+			<category>news</category>
+			<enclosure url="https://example.org/episode-a-1.mp3" length="1" type="audio/mpeg"/>
+			<enclosure url="https://example.org/episode-a-3.mp3" length="1" type="audio/mpeg"/>
+		</item>
+		<item>
+			<title>Episode D (again)</title>
+			<link>https://example.org/episode-d</link>
+		</item>
+	</channel>
+</rss>`
+
+	var feedContent atomic.Value
+	feedContent.Store(initialFeedContent)
+
+	feedServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/rss+xml")
+		io.WriteString(w, feedContent.Load().(string))
+	}))
+	defer feedServer.Close()
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{FeedURL: feedServer.URL + "/feed.xml"})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	entriesByURL := func() map[string]*miniflux.Entry {
+		t.Helper()
+		result, err := regularUserClient.FeedEntries(feedID, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		entries := make(map[string]*miniflux.Entry, len(result.Entries))
+		for _, entry := range result.Entries {
+			entries[entry.URL] = entry
+		}
+		return entries
+	}
+
+	enclosureURLs := func(entry *miniflux.Entry) []string {
+		var urls []string
+		for _, enclosure := range entry.Enclosures {
+			urls = append(urls, enclosure.URL)
+		}
+		slices.Sort(urls)
+		return urls
+	}
+
+	before := entriesByURL()
+	if len(before) != 2 {
+		t.Fatalf(`Expected 2 entries before the refresh, got %d`, len(before))
+	}
+	entryA := before["https://example.org/episode-a"]
+	var enclosureA1ID int64
+	for _, enclosure := range entryA.Enclosures {
+		if enclosure.URL == "https://example.org/episode-a-1.mp3" {
+			enclosureA1ID = enclosure.ID
+		}
+	}
+
+	feedContent.Store(refreshedFeedContent)
+	if err := regularUserClient.RefreshFeed(feedID); err != nil {
+		t.Fatal(err)
+	}
+
+	after := entriesByURL()
+	if len(after) != 4 {
+		t.Fatalf(`Expected 4 entries after the refresh, got %d`, len(after))
+	}
+
+	updatedA := after["https://example.org/episode-a"]
+	if updatedA.ID != entryA.ID {
+		t.Errorf(`Expected Episode A to keep ID %d, got %d`, entryA.ID, updatedA.ID)
+	}
+	if updatedA.Title != "Episode A (updated)" {
+		t.Errorf(`Unexpected title for Episode A: %q`, updatedA.Title)
+	}
+	if len(updatedA.Tags) != 1 || updatedA.Tags[0] != "news" {
+		t.Errorf(`Unexpected tags for Episode A: %v`, updatedA.Tags)
+	}
+	if urls := enclosureURLs(updatedA); !slices.Equal(urls, []string{"https://example.org/episode-a-1.mp3", "https://example.org/episode-a-3.mp3"}) {
+		t.Errorf(`Unexpected enclosures for Episode A: %v`, urls)
+	}
+	for _, enclosure := range updatedA.Enclosures {
+		if enclosure.URL == "https://example.org/episode-a-1.mp3" && enclosure.ID != enclosureA1ID {
+			t.Errorf(`Expected the kept enclosure to keep ID %d, got %d`, enclosureA1ID, enclosure.ID)
+		}
+	}
+
+	if urls := enclosureURLs(after["https://example.org/episode-b"]); len(urls) != 0 {
+		t.Errorf(`Expected Episode B to have no enclosures, got %v`, urls)
+	}
+
+	if urls := enclosureURLs(after["https://example.org/episode-c"]); !slices.Equal(urls, []string{"https://example.org/episode-c.mp3"}) {
+		t.Errorf(`Unexpected enclosures for Episode C: %v`, urls)
+	}
+
+	if after["https://example.org/episode-d"] == nil {
+		t.Error(`Expected Episode D to be created`)
 	}
 }
 
