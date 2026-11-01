@@ -525,14 +525,22 @@ func (h *feverHandler) handleWriteGroups(w http.ResponseWriter, r *http.Request)
 	}
 
 	var err error
+	beforeTimestamp := request.FormInt64Value(r, "before")
+	before := time.Unix(beforeTimestamp, 0)
 
-	if groupID == 0 {
+	switch {
+	case groupID == 0 && beforeTimestamp <= 0:
 		err = h.store.MarkAllAsRead(userID)
 		slog.Debug("[Fever] Mark all items as read",
 			slog.Int64("user_id", userID),
 		)
-	} else {
-		before := time.Unix(request.FormInt64Value(r, "before"), 0)
+	case groupID == 0:
+		err = h.store.MarkAllAsReadBeforeDate(userID, before)
+		slog.Debug("[Fever] Mark all items as read before a given date",
+			slog.Int64("user_id", userID),
+			slog.Time("before_ts", before),
+		)
+	default:
 		err = h.store.MarkCategoryAsRead(userID, groupID, before)
 		slog.Debug("[Fever] Mark group as read before a given date",
 			slog.Int64("user_id", userID),
