@@ -9,9 +9,10 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/locale"
+	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/view"
+	"miniflux.app/v2/internal/validator"
 )
 
 func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
@@ -62,8 +63,12 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if h.store.AnotherUserExists(selectedUser.ID, userForm.Username) {
-		view.Set("errorMessage", locale.NewLocalizedError("error.user_already_exists").Translate(loggedUser.Language))
+	userModificationRequest := &model.UserModificationRequest{
+		Username: model.OptionalString(userForm.Username),
+	}
+
+	if validationErr := validator.ValidateUserModification(h.store, selectedUser.ID, userModificationRequest); validationErr != nil {
+		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
 		response.HTML(w, r, view.Render("edit_user"))
 		return
 	}

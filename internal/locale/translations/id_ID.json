@@ -137,6 +137,7 @@
     "error.invalid_site_url": "URL situs tidak valid.",
     "error.invalid_theme": "Tema tidak valid.",
     "error.invalid_timezone": "Zona waktu tidak valid.",
+    "error.invalid_username": "Nama pengguna tidak valid. Hanya huruf, angka, dan karakter _ - @ . yang diizinkan.",
     "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux tidak dapat menjangkau situs ini dikarenakan galat jaringan: %v.",
     "error.network_timeout": "Situs ini terlalu lambat dan permintaan ke situs terlalu lama: %v",

@@ -137,6 +137,7 @@
     "error.invalid_site_url": "Feed 網站的網址無效。",
     "error.invalid_theme": "無效的主題。",
     "error.invalid_timezone": "無效的時區。",
+    "error.invalid_username": "無效的使用者名稱。僅允許使用字母、數字及 _ - @ . 字元。",
     "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux 無法連線到該網站，可能是網路問題：%v。",
     "error.network_timeout": "該網站回應過慢，請求逾時：%v。",
