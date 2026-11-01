@@ -167,6 +167,7 @@
     "error.unable_to_create_user": "इस उपयोगकर्ता को बनाने में असमर्थ।",
     "error.unable_to_detect_rssbridge": "RSS-Bridge का उपयोग करके फ़ीड का पता लगाने में असमर्थ: %v.",
     "error.unable_to_parse_feed": "इस फ़ीड को पार्स करने में असमर्थ: %v.",
+    "error.unable_to_parse_html_document": "HTML दस्तावेज़ को पार्स करने में असमर्थ: %v.",
     "error.unable_to_update_category": "इस श्रेणी को अपडेट करने में असमर्थ।",
     "error.unable_to_update_feed": "इस फ़ीड को अपडेट करने में असमर्थ.",
     "error.unable_to_update_user": "इस उपयोगकर्ता को अपडेट करने में असमर्थ.",

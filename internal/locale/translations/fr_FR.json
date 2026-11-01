@@ -167,6 +167,7 @@
     "error.unable_to_create_user": "Impossible de créer cet utilisateur.",
     "error.unable_to_detect_rssbridge": "Impossible de détecter un flux RSS en utilisant RSS-Bridge: %v.",
     "error.unable_to_parse_feed": "Impossible d'analyser ce flux : %v.",
+    "error.unable_to_parse_html_document": "Impossible d'analyser le document HTML : %v.",
     "error.unable_to_update_category": "Impossible de mettre à jour cette catégorie.",
     "error.unable_to_update_feed": "Impossible de mettre à jour cet abonnement.",
     "error.unable_to_update_user": "Impossible de mettre à jour cet utilisateur.",

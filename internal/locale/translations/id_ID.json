@@ -164,6 +164,7 @@
     "error.unable_to_create_user": "Tidak bisa membuat pengguna tersebut.",
     "error.unable_to_detect_rssbridge": "Tidak dapat mendeteksi umpan menggunakan RSS-Bridge: %v.",
     "error.unable_to_parse_feed": "Tidak dapat membaca umpan: %v.",
+    "error.unable_to_parse_html_document": "Tidak dapat membaca dokumen HTML: %v.",
     "error.unable_to_update_category": "Tidak bisa memperbarui kategori ini.",
     "error.unable_to_update_feed": "Tidak bisa memperbarui umpan ini.",
     "error.unable_to_update_user": "Tidak bisa memperbarui pengguna tersebut.",

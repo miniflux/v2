@@ -164,6 +164,7 @@
     "error.unable_to_create_user": "このユーザーは作成できません。",
     "error.unable_to_detect_rssbridge": "RSS-Bridge を使ってフィードを検出できません: %v.",
     "error.unable_to_parse_feed": "このフィードを解析できません: %v.",
+    "error.unable_to_parse_html_document": "HTML ドキュメントを解析できません: %v.",
     "error.unable_to_update_category": "このカテゴリは更新できません。",
     "error.unable_to_update_feed": "このフィードは更新できません。",
     "error.unable_to_update_user": "このユーザーは更新できません。",

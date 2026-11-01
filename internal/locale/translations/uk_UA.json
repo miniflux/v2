@@ -170,6 +170,7 @@
     "error.unable_to_create_user": "Не вдається створити користувача.",
     "error.unable_to_detect_rssbridge": "Не вдалося виявити стрічку за допомогою RSS-Bridge: %v.",
     "error.unable_to_parse_feed": "Не вдалося розібрати цю стрічку: %v.",
+    "error.unable_to_parse_html_document": "Не вдалося розібрати HTML-документ: %v.",
     "error.unable_to_update_category": "Не вдається відредагувати категорію.",
     "error.unable_to_update_feed": "Не вдається оновити стрічку.",
     "error.unable_to_update_user": "Не вдається оновити користувача.",

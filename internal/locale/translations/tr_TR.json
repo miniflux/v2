@@ -167,6 +167,7 @@
     "error.unable_to_create_user": "Bu kullanıcı oluşturulamıyor.",
     "error.unable_to_detect_rssbridge": "RSS-Bridge kullanılarak besleme algılanamıyor: %v.",
     "error.unable_to_parse_feed": "Bu besleme ayrıştırılamıyor: %v.",
+    "error.unable_to_parse_html_document": "HTML belgesi ayrıştırılamıyor: %v.",
     "error.unable_to_update_category": "Bu kategori güncellenemiyor.",
     "error.unable_to_update_feed": "Bu besleme güncellenemiyor.",
     "error.unable_to_update_user": "Bu kullanıcı güncellenemiyor.",

@@ -170,6 +170,7 @@
     "error.unable_to_create_user": "Не удалось создать этого пользователя.",
     "error.unable_to_detect_rssbridge": "Не удалось обнаружить подписку с помощью RSS-Bridge: %v.",
     "error.unable_to_parse_feed": "Не удалось обработать эту подписку: %v.",
+    "error.unable_to_parse_html_document": "Не удалось обработать HTML-документ: %v.",
     "error.unable_to_update_category": "Не удалось обновить эту категорию.",
     "error.unable_to_update_feed": "Не удалось обновить эту подписку.",
     "error.unable_to_update_user": "Не удалось обновить этого пользователя.",

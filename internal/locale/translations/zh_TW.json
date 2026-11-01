@@ -164,6 +164,7 @@
     "error.unable_to_create_user": "無法建立此使用者",
     "error.unable_to_detect_rssbridge": "使用 RSS-Bridge 無法找到任何訂閱：%v。",
     "error.unable_to_parse_feed": "無法解析此 Feed：%v。",
+    "error.unable_to_parse_html_document": "無法解析 HTML 文件：%v。",
     "error.unable_to_update_category": "無法更新該分類",
     "error.unable_to_update_feed": "無法更新此 Feed",
     "error.unable_to_update_user": "無法更新此使用者",
