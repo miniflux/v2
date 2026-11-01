@@ -275,7 +275,17 @@ func (s *Storage) updateEntriesChunk(tx *sql.Tx, userID, feedID int64, entries m
 				reading_time, tsv_title, tsv_content, tags, language
 			)
 		WHERE
-			entries.user_id=$1 AND entries.feed_id=$2 AND entries.hash=e.hash
+			entries.user_id=$1 AND entries.feed_id=$2 AND entries.hash=e.hash AND
+			-- Most entries are unchanged between refreshes. Skipping them avoids
+			-- writing a new row version and new full-text index entries for each.
+			-- document_vectors is derived from title and content.
+			(
+				entries.title, entries.url, entries.comments_url, entries.content,
+				entries.author, entries.reading_time, entries.tags, entries.language
+			) IS DISTINCT FROM (
+				e.title, e.url, e.comments_url, e.content,
+				e.author, e.reading_time, ` + entryTagsFromJSON + `, e.language
+			)
 	`
 
 	_, err = tx.Exec(
