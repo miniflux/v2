@@ -143,6 +143,7 @@
     "error.invalid_site_url": "Nieprawidłowy adres URL witryny.",
     "error.invalid_theme": "Nieprawidłowy motyw.",
     "error.invalid_timezone": "Nieprawidłowa strefa czasowa.",
+    "error.invalid_username": "Nieprawidłowa nazwa użytkownika. Dozwolone są tylko litery, cyfry oraz znaki _ - @ .",
     "error.local_auth_disabled": "Uwierzytelnianie lokalne jest wyłączone. Haseł nie można zmieniać.",
     "error.network_operation": "Miniflux nie może połączyć się z tą witryną z powodu błędu sieci: %v.",
     "error.network_timeout": "Ta witryna internetowa jest zbyt wolna i upłynął limit czasu żądania: %v",

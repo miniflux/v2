@@ -140,6 +140,7 @@
     "error.invalid_site_url": "URL del sitio no válida.",
     "error.invalid_theme": "Tema no válido.",
     "error.invalid_timezone": "Zona horaria no válida.",
+    "error.invalid_username": "Nombre de usuario no válido. Solo se permiten letras, números y los caracteres _ - @ .",
     "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux no puede acceder a este sitio web debido a un error de red: %v.",
     "error.network_timeout": "Este sitio web es demasiado lento y se agotó el tiempo de espera de la solicitud: %v",

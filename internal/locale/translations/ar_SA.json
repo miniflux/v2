@@ -154,6 +154,7 @@
     "error.invalid_site_url": "رابط الموقع غير صالح.",
     "error.invalid_theme": "السمة غير صالحة.",
     "error.invalid_timezone": "المنطقة الزمنية غير صالحة.",
+    "error.invalid_username": "اسم المستخدم غير صالح. يُسمح فقط بالأحرف والأرقام والرموز _ - @ .",
     "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux غير قادر على الوصول إلى هذا الموقع بسبب خطأ في الشبكة: %v.",
     "error.network_timeout": "هذا الموقع بطيء جداً وانتهى وقت الطلب: %v",

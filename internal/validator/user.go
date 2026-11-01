@@ -40,7 +40,13 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 	if changes.Username != nil {
 		if *changes.Username == "" {
 			return locale.NewLocalizedError("error.user_mandatory_fields")
-		} else if store.AnotherUserExists(userID, *changes.Username) {
+		}
+
+		if err := validateUsername(*changes.Username); err != nil {
+			return err
+		}
+
+		if store.AnotherUserExists(userID, *changes.Username) {
 			return locale.NewLocalizedError("error.user_already_exists")
 		}
 	}

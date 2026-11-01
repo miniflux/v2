@@ -137,6 +137,7 @@
     "error.invalid_site_url": "サイト URL が無効です。",
     "error.invalid_theme": "テーマが無効です。",
     "error.invalid_timezone": "タイムゾーンが無効です。",
+    "error.invalid_username": "ユーザー名が無効です。使用できるのは文字、数字、および _ - @ . のみです。",
     "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "Miniflux はネットワークエラーのためこのウェブサイトに到達できません: %v.",
     "error.network_timeout": "このウェブサイトは応答が遅すぎるためタイムアウトしました: %v",
