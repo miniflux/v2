@@ -15,6 +15,15 @@ body {
     text-rendering: optimizeLegibility;
     color: var(--body-color);
     background: var(--body-background);
+
+    /*
+        To keep the existing styles, --body-padding-* variables are unset.
+        You can set them in the custom CSS settings of Miniflux.
+    */
+    padding-top: calc(var(--body-padding-block) + env(safe-area-inset-top));
+    padding-bottom: env(var(--body-padding-block) + env(safe-area-inset-bottom));
+    padding-left: calc(var(--body-padding-inline) + env(safe-area-inset-left));
+    padding-right: calc(var(--body-padding-inline) + env(safe-area-inset-right));
 }
 
 hr {
