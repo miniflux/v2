@@ -445,7 +445,11 @@ func (h *feverHandler) handleWriteItems(w http.ResponseWriter, r *http.Request) 
 			slog.Int64("user_id", userID),
 			slog.Int64("entry_id", entryID),
 		)
-		if err := h.store.ToggleStarred(userID, entryID); err != nil {
+		if entry.Starred {
+			break
+		}
+
+		if err := h.store.SetEntriesStarredState(userID, []int64{entryID}, true); err != nil {
 			response.JSONServerError(w, r, err)
 			return
 		}
@@ -464,7 +468,11 @@ func (h *feverHandler) handleWriteItems(w http.ResponseWriter, r *http.Request) 
 			slog.Int64("user_id", userID),
 			slog.Int64("entry_id", entryID),
 		)
-		if err := h.store.ToggleStarred(userID, entryID); err != nil {
+		if !entry.Starred {
+			break
+		}
+
+		if err := h.store.SetEntriesStarredState(userID, []int64{entryID}, false); err != nil {
 			response.JSONServerError(w, r, err)
 			return
 		}
