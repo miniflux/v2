@@ -7,7 +7,6 @@ import (
 	json_parser "encoding/json"
 	"errors"
 	"net/http"
-	"strconv"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -119,12 +118,10 @@ func (h *handler) getEntriesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int64, categoryID int64) {
-	statuses := request.QueryStringParamList(r, "status")
-	for _, status := range statuses {
-		if err := validator.ValidateEntryStatus(status); err != nil {
-			response.JSONBadRequest(w, r, err)
-			return
-		}
+	filters, err := parseEntryFilters(r, feedID, categoryID)
+	if err != nil {
+		response.JSONBadRequest(w, r, err)
+		return
 	}
 
 	order := request.QueryStringParam(r, "order", model.DefaultSortingOrder)
@@ -146,54 +143,21 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 		return
 	}
 
-	userID := request.UserID(r)
-	categoryID = request.QueryInt64Param(r, "category_id", categoryID)
-	if categoryID > 0 {
-		exists, err := h.store.CategoryIDExists(userID, categoryID)
-		if err != nil {
-			response.JSONServerError(w, r, err)
-			return
-		}
-		if !exists {
-			response.JSONBadRequest(w, r, errors.New("invalid category ID"))
-			return
-		}
+	if !h.validateEntryFilterScope(w, r, filters) {
+		return
 	}
 
-	feedID = request.QueryInt64Param(r, "feed_id", feedID)
-	if feedID > 0 {
-		exists, err := h.store.FeedExists(userID, feedID)
-		if err != nil {
-			response.JSONServerError(w, r, err)
-			return
-		}
-		if !exists {
-			response.JSONBadRequest(w, r, errors.New("invalid feed ID"))
-			return
-		}
-	}
-
-	tags := request.QueryStringParamList(r, "tags")
-
-	builder := h.store.NewEntryQueryBuilder(userID).
-		WithFeedID(feedID).
-		WithCategoryID(categoryID).
-		WithStatuses(statuses...).
+	builder := h.store.NewEntryQueryBuilder(request.UserID(r)).
 		WithSorting(order, direction).
 		WithOffset(offset).
 		WithLimit(limit).
-		WithTags(tags...).
 		WithEnclosures()
 
-	if request.HasQueryParam(r, "globally_visible") {
-		globallyVisible := request.QueryBoolParam(r, "globally_visible", true)
-
-		if globallyVisible {
-			builder = builder.WithGloballyVisible()
-		}
+	filters.apply(builder)
+	// Keep the unique tiebreak after any search ranking expression.
+	if order != "id" {
+		builder.WithSorting("id", direction)
 	}
-
-	builder = configureFilters(builder, r)
 
 	entries, count, err := builder.GetEntriesWithCount()
 	if err != nil {
@@ -527,34 +491,31 @@ func (h *handler) fetchContentHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) getEntryIDsHandler(w http.ResponseWriter, r *http.Request) {
-	if request.HasQueryParam(r, "starred") {
-		starredValue := request.QueryStringParam(r, "starred", "")
-		if starredValue != "true" && starredValue != "false" {
-			response.JSONBadRequest(w, r, errors.New(`invalid starred parameter, must be "true" or "false"`))
-			return
-		}
+	if err := validateEntryIDsFilters(r); err != nil {
+		response.JSONBadRequest(w, r, err)
+		return
+	}
+	filters, err := parseEntryFilters(r, 0, 0)
+	if err != nil {
+		response.JSONBadRequest(w, r, err)
+		return
+	}
+	if !h.validateEntryFilterScope(w, r, filters) {
+		return
 	}
 
-	if request.HasQueryParam(r, "status") {
-		statusValue := request.QueryStringParam(r, "status", "")
-		if statusValue != model.EntryStatusRead && statusValue != model.EntryStatusUnread {
-			response.JSONBadRequest(w, r, errors.New(`invalid status parameter, must be "read" or "unread"`))
-			return
-		}
-	}
-
+	order := request.QueryStringParam(r, "order", "id")
+	direction := request.QueryStringParam(r, "direction", "desc")
 	limit, offset := parseEntryIDsParams(r)
 	builder := h.store.NewEntryQueryBuilder(request.UserID(r)).
-		WithSorting("id", "DESC").
+		WithSorting(order, direction).
 		WithLimitAndMaximum(limit, model.MaxEntryIDsLimit).
 		WithOffset(offset)
 
-	if request.HasQueryParam(r, "starred") {
-		builder.WithStarred(request.QueryBoolParam(r, "starred", false))
-	}
-
-	if request.HasQueryParam(r, "status") {
-		builder.WithStatuses(request.QueryStringParam(r, "status", ""))
+	filters.apply(builder)
+	// Keep the unique tiebreak after any search ranking expression.
+	if order != "id" {
+		builder.WithSorting("id", direction)
 	}
 
 	entryIDs, total, err := builder.GetEntryIDsWithCount()
@@ -574,53 +535,6 @@ func (h *handler) flushHistoryHandler(w http.ResponseWriter, r *http.Request) {
 	loggedUserID := request.UserID(r)
 	go h.store.FlushHistory(loggedUserID)
 	response.JSONAccepted(w, r)
-}
-
-func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) *storage.EntryQueryBuilder {
-	if beforeEntryID := request.QueryInt64Param(r, "before_entry_id", 0); beforeEntryID > 0 {
-		builder = builder.BeforeEntryID(beforeEntryID)
-	}
-
-	if afterEntryID := request.QueryInt64Param(r, "after_entry_id", 0); afterEntryID > 0 {
-		builder = builder.AfterEntryID(afterEntryID)
-	}
-
-	if beforePublishedTimestamp := request.QueryInt64Param(r, "before", 0); beforePublishedTimestamp > 0 {
-		builder = builder.BeforePublishedDate(time.Unix(beforePublishedTimestamp, 0))
-	}
-
-	if afterPublishedTimestamp := request.QueryInt64Param(r, "after", 0); afterPublishedTimestamp > 0 {
-		builder = builder.AfterPublishedDate(time.Unix(afterPublishedTimestamp, 0))
-	}
-
-	if beforePublishedTimestamp := request.QueryInt64Param(r, "published_before", 0); beforePublishedTimestamp > 0 {
-		builder = builder.BeforePublishedDate(time.Unix(beforePublishedTimestamp, 0))
-	}
-
-	if afterPublishedTimestamp := request.QueryInt64Param(r, "published_after", 0); afterPublishedTimestamp > 0 {
-		builder = builder.AfterPublishedDate(time.Unix(afterPublishedTimestamp, 0))
-	}
-
-	if beforeChangedTimestamp := request.QueryInt64Param(r, "changed_before", 0); beforeChangedTimestamp > 0 {
-		builder = builder.BeforeChangedDate(time.Unix(beforeChangedTimestamp, 0))
-	}
-
-	if afterChangedTimestamp := request.QueryInt64Param(r, "changed_after", 0); afterChangedTimestamp > 0 {
-		builder = builder.AfterChangedDate(time.Unix(afterChangedTimestamp, 0))
-	}
-
-	if request.HasQueryParam(r, "starred") {
-		starred, err := strconv.ParseBool(r.URL.Query().Get("starred"))
-		if err == nil {
-			builder = builder.WithStarred(starred)
-		}
-	}
-
-	if searchQuery := request.QueryStringParam(r, "search", ""); searchQuery != "" {
-		builder = builder.WithSearchQuery(searchQuery)
-	}
-
-	return builder
 }
 
 func parseEntryIDsParams(r *http.Request) (limit, offset int) {
