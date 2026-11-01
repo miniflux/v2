@@ -61,6 +61,21 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 		IgnoreTLSErrors(feed.AllowSelfSignedCertificates).
 		DisableHTTP2(feed.DisableHTTP2)
 
+	// Look up which entries are already stored or tombstoned in one query.
+	// A feed without an ID is being created and has no stored entries yet.
+	knownHashes := make(map[string]struct{})
+	if feed.ID != 0 {
+		hashes := make([]string, len(feed.Entries))
+		for i, entry := range feed.Entries {
+			hashes[i] = entry.Hash
+		}
+		if known, err := store.KnownEntryHashes(feed.ID, hashes); err != nil {
+			slog.Error("Database error", slog.Int64("feed_id", feed.ID), slog.Any("error", err))
+		} else {
+			knownHashes = known
+		}
+	}
+
 	// Processing older entries first ensures that their creation timestamp is lower than newer entries.
 	for _, entry := range slices.Backward(feed.Entries) {
 		slog.Debug("Processing entry",
@@ -92,9 +107,8 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 
 		webpageBaseURL := ""
 		entry.URL = rewrite.RewriteEntryURL(feed, entry)
-		// A feed without an ID is being created and has no stored entries yet,
-		// so skip the per-entry database lookup.
-		entryIsNew := feed.ID == 0 || store.IsNewEntry(feed.ID, entry.Hash)
+		_, entryIsKnown := knownHashes[entry.Hash]
+		entryIsNew := !entryIsKnown
 		contentExtractedSuccessfully := false
 		if feed.Crawler && (entryIsNew || forceRefresh) {
 			slog.Debug("Scraping entry",

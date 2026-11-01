@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strings"
 
 	"miniflux.app/v2/internal/model"
 
@@ -144,77 +143,6 @@ func (s *Storage) EnclosureByID(userID, enclosureID int64) (*model.Enclosure, er
 	}
 
 	return &enclosure, nil
-}
-
-func (s *Storage) createEnclosure(tx *sql.Tx, enclosure *model.Enclosure) error {
-	enclosureURL := strings.TrimSpace(enclosure.URL)
-	if enclosureURL == "" {
-		return nil
-	}
-
-	query := `
-		INSERT INTO enclosures
-			(url, size, mime_type, entry_id, user_id, media_progression)
-		VALUES
-			($1, $2, $3, $4, $5, $6)
-		ON CONFLICT (user_id, entry_id, sha256(url::bytea)) DO NOTHING
-		RETURNING
-			id
-	`
-	if err := tx.QueryRow(
-		query,
-		enclosureURL,
-		enclosure.Size,
-		enclosure.MimeType,
-		enclosure.EntryID,
-		enclosure.UserID,
-		enclosure.MediaProgression,
-	).Scan(&enclosure.ID); err != nil && err != sql.ErrNoRows {
-		return fmt.Errorf(`store: unable to create enclosure: %w`, err)
-	}
-
-	return nil
-}
-
-func (s *Storage) updateEnclosures(tx *sql.Tx, entry *model.Entry) error {
-	if len(entry.Enclosures) == 0 {
-		// Do not keep any old enclosures if there is none in the updated entry.
-		query := `
-			DELETE FROM
-				enclosures
-			WHERE
-				user_id=$1 AND entry_id=$2
-		`
-
-		_, err := tx.Exec(query, entry.UserID, entry.ID)
-		if err != nil {
-			return fmt.Errorf(`store: unable to delete old enclosures: %v`, err)
-		}
-		return nil
-	}
-
-	sqlValues := make([]string, 0, len(entry.Enclosures))
-	for _, enclosure := range entry.Enclosures {
-		sqlValues = append(sqlValues, strings.TrimSpace(enclosure.URL))
-
-		if err := s.createEnclosure(tx, enclosure); err != nil {
-			return err
-		}
-	}
-
-	query := `
-		DELETE FROM
-			enclosures
-		WHERE
-			user_id=$1 AND entry_id=$2 AND url <> ALL($3)
-	`
-
-	_, err := tx.Exec(query, entry.UserID, entry.ID, pq.Array(sqlValues))
-	if err != nil {
-		return fmt.Errorf(`store: unable to delete old enclosures: %v`, err)
-	}
-
-	return nil
 }
 
 // UpdateEnclosure persists changes to the given enclosure.
