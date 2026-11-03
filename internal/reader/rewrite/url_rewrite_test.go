@@ -375,15 +375,21 @@ func TestIsValidURLRewriteRules(t *testing.T) {
 		{name: "WhitespaceOnly", rules: `   `, valid: true},
 		{name: "WellFormed", rules: `rewrite("^https://example.com/(.+)"|"https://rewritten.com/$1")`, valid: true},
 		{name: "WellFormedEmptyReplacement", rules: `rewrite("^https://example.com/(.+)"|"x")`, valid: true},
+		{name: "MultipleRules", rules: "rewrite(\"^https://example.com/(.+)\"|\"https://rewritten.com/$1\")\n" +
+			"rewrite(\"^https://other.com/(.+)\"|\"https://other.com/$1\")", valid: true},
+		{name: "MultipleRulesWithBlankLines", rules: "rewrite(\"a\"|\"b\")\n\n  \nrewrite(\"c\"|\"d\")\n", valid: true},
 		// The reported bug: a valid regex that is not a URL rewrite rule.
 		{name: "ValidRegexButNotARule", rules: `not_a_function("find"|"replace")`, valid: false},
 		{name: "BareRegex", rules: `^https://example.com/(.+)$`, valid: false},
 		{name: "PlainText", rules: `not-a-rewrite-rule`, valid: false},
 		{name: "MissingReplacement", rules: `rewrite("invalid format")`, valid: false},
-		{name: "LeadingWhitespaceBreaksRule", rules: ` rewrite("a"|"b")`, valid: false},
-		{name: "TrailingWhitespaceBreaksRule", rules: `rewrite("a"|"b") `, valid: false},
+		{name: "LeadingWhitespaceTolerated", rules: ` rewrite("a"|"b")`, valid: true},
+		{name: "TrailingWhitespaceTolerated", rules: `rewrite("a"|"b") `, valid: true},
 		// Matches the rewrite() form but the search term is not a compilable regex.
 		{name: "InvalidSearchRegex", rules: `rewrite("^https://example.com/[invalid"|"https://rewritten.com/$1")`, valid: false},
+		{name: "MultipleRulesOneMalformed", rules: "rewrite(\"a\"|\"b\")\nnot-a-rewrite-rule", valid: false},
+		{name: "MultipleRulesOneInvalidRegex", rules: "rewrite(\"a\"|\"b\")\n" +
+			`rewrite("^https://example.com/[invalid"|"https://rewritten.com/$1")`, valid: false},
 	}
 
 	for _, scenario := range scenarios {
