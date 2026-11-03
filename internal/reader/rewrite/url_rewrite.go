@@ -18,23 +18,30 @@ var customReplaceRuleRegex = regexp.MustCompile(`^rewrite\("([^"]+)"\|"([^"]+)"\
 // string is valid and means "no rewriting".
 //
 // The only supported form is rewrite("search-regex"|"replacement"), and the
-// search term must be a compilable regular expression. Anything else — a bare
+// search term must be a compilable regular expression. Rules are newline-separated,
+// and each non-empty line is validated independently. Anything else — a bare
 // regex, an unknown function name, or a malformed rewrite() call — is rejected
 // so it is caught at save time instead of being silently ignored during feed
 // refresh (RewriteEntryURL just logs a debug line and returns the URL
 // unchanged for rules it cannot parse).
 func IsValidURLRewriteRules(rules string) bool {
-	if strings.TrimSpace(rules) == "" {
-		return true
+	for line := range strings.SplitSeq(strings.TrimSpace(rules), "\n") {
+		rule := strings.TrimSpace(line)
+		if rule == "" {
+			continue
+		}
+
+		parts := customReplaceRuleRegex.FindStringSubmatch(rule)
+		if len(parts) != 3 {
+			return false
+		}
+
+		if _, err := regexp.Compile(parts[1]); err != nil {
+			return false
+		}
 	}
 
-	parts := customReplaceRuleRegex.FindStringSubmatch(rules)
-	if len(parts) != 3 {
-		return false
-	}
-
-	_, err := regexp.Compile(parts[1])
-	return err == nil
+	return true
 }
 
 func RewriteEntryURL(feed *model.Feed, entry *model.Entry) string {
