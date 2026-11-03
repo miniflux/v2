@@ -141,6 +141,14 @@ func TestPluralRules(t *testing.T) {
 			11: 2, // n%10 == 1 but n%100 == 11, so default case
 			21: 0, // n%10 == 1 && n%100 != 11
 		},
+		// Vietnamese (vi_VN) - always form 0
+		"vi_VN": {
+			0:   0,
+			1:   0,
+			2:   0,
+			5:   0,
+			100: 0,
+		},
 		// Chinese Simplified (zh_CN) - always form 0
 		"zh_CN": {
 			0:   0,
