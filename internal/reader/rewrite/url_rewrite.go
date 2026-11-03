@@ -50,7 +50,7 @@ func RewriteEntryURL(feed *model.Feed, entry *model.Entry) string {
 			continue
 		}
 
-		newURL, valid := rewriteEntryURLRule(rule, feed, entry)
+		newURL, valid := rewriteEntryURLRule(rule, rewrittenURL, feed, entry)
 		if !valid {
 			return entry.URL
 		}
@@ -63,8 +63,8 @@ func RewriteEntryURL(feed *model.Feed, entry *model.Entry) string {
 
 // rewriteEntryURLRule applies a single rewrite rule to the given URL.
 // It returns the rewritten URL, and a boolean indicating if the rule is valid.
-func rewriteEntryURLRule(rule string, feed *model.Feed, entry *model.Entry) (string, bool) {
-	var rewrittenURL = entry.URL
+func rewriteEntryURLRule(rule string, currentURL string, feed *model.Feed, entry *model.Entry) (string, bool) {
+	var rewrittenURL = currentURL
 	parts := customReplaceRuleRegex.FindStringSubmatch(rule)
 
 	if len(parts) == 3 {
@@ -76,7 +76,7 @@ func rewriteEntryURLRule(rule string, feed *model.Feed, entry *model.Entry) (str
 			)
 			return rewrittenURL, false
 		}
-		rewrittenURL = re.ReplaceAllString(entry.URL, parts[2])
+		rewrittenURL = re.ReplaceAllString(currentURL, parts[2])
 		slog.Debug("Rewriting entry URL",
 			slog.String("original_entry_url", entry.URL),
 			slog.String("rewritten_entry_url", rewrittenURL),
