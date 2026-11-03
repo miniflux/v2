@@ -84,6 +84,20 @@ func TestRewriteEntryURL(t *testing.T) {
 			description: "Should evaluate each newline-delimited rewrite rule",
 		},
 		{
+			name: "ChainsRewriteRules",
+			feed: &model.Feed{
+				ID:      1,
+				FeedURL: "https://example.com/feed.xml",
+				UrlRewriteRules: "rewrite(\"^https://example.com/a$\"|\"https://example.com/b\")\n" +
+					"rewrite(\"^https://example.com/does-not-match/(.+)\"|\"https://example.com/c/$1\")",
+			},
+			entry: &model.Entry{
+				URL: "https://example.com/a",
+			},
+			expectedURL: "https://example.com/b",
+			description: "Should apply each rule to the previous rule's output, not the original URL",
+		},
+		{
 			name: "AbortsOnMalformedRuleInMultiline",
 			feed: &model.Feed{
 				ID:      1,
