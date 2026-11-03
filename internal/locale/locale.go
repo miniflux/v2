@@ -26,6 +26,7 @@ var AvailableLanguages = map[string]string{
 	"ru_RU":            "Русский",
 	"tr_TR":            "Türkçe",
 	"uk_UA":            "Українська",
+	"vi_VN":            "Tiếng Việt",
 	"zh_CN":            "简体中文",
 	"zh_TW":            "繁體中文",
 }
