@@ -61,6 +61,11 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 		IgnoreTLSErrors(feed.AllowSelfSignedCertificates).
 		DisableHTTP2(feed.DisableHTTP2)
 
+	var tweetExpander *tweetEmbedExpander
+	if config.Opts.FetchTweetEmbeds() {
+		tweetExpander = newTweetEmbedExpander()
+	}
+
 	// Processing older entries first ensures that their creation timestamp is lower than newer entries.
 	for _, entry := range slices.Backward(feed.Entries) {
 		slog.Debug("Processing entry",
@@ -143,6 +148,23 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 
 		rewrite.ApplyContentRewriteRules(entry, feed.RewriteRules)
 
+		if tweetExpander != nil {
+			if entryIsNew || forceRefresh {
+				entry.Content = tweetExpander.expand(entry.Content)
+			} else if hasEmbeddedTweet(entry.Content) {
+				// Like crawled content, tweet media is only fetched for new entries,
+				// so the stored entry is kept rather than replaced by a copy without it.
+				slog.Debug("Skipping update of entry with embedded tweets",
+					slog.Int64("user_id", user.ID),
+					slog.String("entry_url", entry.URL),
+					slog.String("entry_hash", entry.Hash),
+					slog.Int64("feed_id", feed.ID),
+					slog.String("feed_url", feed.FeedURL),
+				)
+				continue
+			}
+		}
+
 		// Re-run filters only when extracted content replaced entry.Content.
 		if contentExtractedSuccessfully && filter.IsBlockedEntry(blockRules, allowRules, feed, entry) {
 			slog.Debug("Entry is blocked by filter rules",
@@ -218,6 +240,9 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	}
 
 	rewrite.ApplyContentRewriteRules(entry, entry.Feed.RewriteRules)
+	if config.Opts.FetchTweetEmbeds() {
+		entry.Content = newTweetEmbedExpander().expand(entry.Content)
+	}
 	entry.Content = sanitizer.SanitizeHTML(webpageBaseURL, entry.Content, &sanitizer.SanitizerOptions{OpenLinksInNewTab: user.OpenExternalLinksInNewTab})
 
 	return nil

@@ -504,6 +504,22 @@ func TestDisableSchedulerServiceOptionParsing(t *testing.T) {
 	}
 }
 
+func TestFetchTweetEmbedsOptionParsing(t *testing.T) {
+	configParser := NewConfigParser()
+
+	if configParser.options.FetchTweetEmbeds() {
+		t.Fatalf("Expected FETCH_TWEET_EMBEDS to be disabled by default")
+	}
+
+	if err := configParser.parseLines([]string{"FETCH_TWEET_EMBEDS=1"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if !configParser.options.FetchTweetEmbeds() {
+		t.Fatalf("Expected FETCH_TWEET_EMBEDS to be enabled")
+	}
+}
+
 func TestFetchBilibiliWatchTimeOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
 
