@@ -150,4 +150,22 @@ func TestValidateEntryModification(t *testing.T) {
 	if err := ValidateEntryModification(&model.EntryUpdateRequest{Title: &title, Content: &content}); err != nil {
 		t.Errorf(`A valid title and content should not generate any error: %v`, err)
 	}
+
+	tags := []string{" tag1 ", "tag2"}
+	if err := ValidateEntryModification(&model.EntryUpdateRequest{Tags: &tags}); err != nil {
+		t.Errorf(`A valid tag list should not generate any error: %v`, err)
+	}
+	if tags[0] != "tag1" || tags[1] != "tag2" {
+		t.Errorf(`Tags should be trimmed, got %v`, tags)
+	}
+
+	tags = []string{}
+	if err := ValidateEntryModification(&model.EntryUpdateRequest{Tags: &tags}); err != nil {
+		t.Errorf(`An empty tag list should not generate any error: %v`, err)
+	}
+
+	tags = []string{" "}
+	if err := ValidateEntryModification(&model.EntryUpdateRequest{Tags: &tags}); err == nil {
+		t.Error(`An empty tag should generate an error`)
+	}
 }
