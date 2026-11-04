@@ -130,6 +130,8 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 		WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL()).
 		UseCustomApplicationProxyURL(feedCreationRequest.FetchViaProxy).
 		IgnoreTLSErrors(feedCreationRequest.AllowSelfSignedCertificates).
+		WithClientCertificate(feedCreationRequest.ClientCertificate, feedCreationRequest.ClientKey).
+		WithCACertificate(feedCreationRequest.CACertificate).
 		DisableHTTP2(feedCreationRequest.DisableHTTP2)
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(feedCreationRequest.FeedURL))
@@ -239,6 +241,8 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL()).
 		UseCustomApplicationProxyURL(originalFeed.FetchViaProxy).
 		IgnoreTLSErrors(originalFeed.AllowSelfSignedCertificates).
+		WithClientCertificate(originalFeed.ClientCertificate, originalFeed.ClientKey).
+		WithCACertificate(originalFeed.CACertificate).
 		DisableHTTP2(originalFeed.DisableHTTP2)
 
 	ignoreHTTPCache := originalFeed.IgnoreHTTPCache || forceRefresh
