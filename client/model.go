@@ -345,11 +345,34 @@ type EntryResultSet struct {
 }
 
 // EntryIDsFilter holds optional filter and pagination parameters for the entry IDs endpoint.
+// Before using fields other than Limit, Offset, Starred, and Status, callers must
+// confirm that the server supports them. The client does not detect server versions
+// or automatically fall back to older API behavior.
+// The zero value of each int64 field means unspecified. Non-zero values are sent
+// unchanged for server-side validation.
 type EntryIDsFilter struct {
-	Limit   int
-	Offset  int
-	Starred *bool
-	Status  string
+	Limit           int
+	Offset          int
+	Starred         *bool
+	Status          string
+	Order           string
+	Direction       string
+	FeedID          int64
+	CategoryID      int64
+	Before          int64
+	After           int64
+	PublishedBefore int64
+	PublishedAfter  int64
+	ChangedBefore   int64
+	ChangedAfter    int64
+	BeforeEntryID   int64
+	AfterEntryID    int64
+	Search          string
+	// Statuses takes precedence over Status when non-empty.
+	Statuses []string
+	Tags     []string
+	// GloballyVisible is omitted when nil; otherwise its value is sent explicitly.
+	GloballyVisible *bool
 }
 
 // EntryIDsResultSet represents the response when fetching entry ID lists.

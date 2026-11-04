@@ -21,11 +21,17 @@ type EntryQueryBuilder struct {
 	store           *Storage
 	args            []any
 	conditions      []string
-	sortExpressions []string
+	sortExpressions []entrySortExpression
 	limit           int
 	offset          int
 	fetchEnclosures bool
 	excludeContent  bool
+}
+
+type entrySortExpression struct {
+	column     string
+	direction  string
+	expression string
 }
 
 // WithEnclosures fetches enclosures for each entry.
@@ -51,9 +57,9 @@ func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 
 		// 0.0000001 = 0.1 / (seconds_in_a_day)
 
-		e.sortExpressions = append(e.sortExpressions,
-			fmt.Sprintf("ts_rank(document_vectors, websearch_to_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001 DESC", nArgs),
-		)
+		e.sortExpressions = append(e.sortExpressions, entrySortExpression{
+			expression: fmt.Sprintf("ts_rank(document_vectors, websearch_to_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001 DESC", nArgs),
+		})
 	}
 	return e
 }
@@ -191,11 +197,14 @@ func (e *EntryQueryBuilder) WithShareCodeNotEmpty() *EntryQueryBuilder {
 func (e *EntryQueryBuilder) WithSorting(column, direction string) *EntryQueryBuilder {
 	switch {
 	case strings.EqualFold(direction, "ASC"):
-		e.sortExpressions = append(e.sortExpressions, pq.QuoteIdentifier(column)+" ASC")
+		direction = "ASC"
 	case strings.EqualFold(direction, "DESC"):
-		e.sortExpressions = append(e.sortExpressions, pq.QuoteIdentifier(column)+" DESC")
+		direction = "DESC"
+	default:
+		return e
 	}
 
+	e.sortExpressions = append(e.sortExpressions, entrySortExpression{column: column, direction: direction})
 	return e
 }
 
@@ -295,6 +304,11 @@ func (e *EntryQueryBuilder) GetEntriesWithCount() (model.Entries, int, error) {
 // When withCount is true, count(*) OVER() is included in the SELECT and the total
 // count of matching rows is returned; otherwise the returned count is 0.
 func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, error) {
+	sorting, err := e.buildSorting(false)
+	if err != nil {
+		return nil, 0, err
+	}
+
 	countColumn := ""
 	if withCount {
 		countColumn = "count(*) OVER(),"
@@ -353,7 +367,7 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 			icons i ON i.id=fi.icon_id
 		INNER JOIN
 			users u ON u.id=e.user_id
-		WHERE ` + e.buildCondition() + " " + e.buildSorting()
+		WHERE ` + e.buildCondition() + " " + sorting
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
@@ -466,6 +480,11 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 
 // GetEntryIDs returns a list of entry IDs that match the condition.
 func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
+	sorting, err := e.buildSorting(true)
+	if err != nil {
+		return nil, err
+	}
+
 	query := `
 		SELECT
 			e.id
@@ -475,7 +494,9 @@ func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
 			feeds f
 		ON
 			f.id=e.feed_id
-		WHERE ` + e.buildCondition() + " " + e.buildSorting()
+		LEFT JOIN
+			categories c ON c.id=f.category_id
+		WHERE ` + e.buildCondition() + " " + sorting
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
@@ -523,11 +544,34 @@ func (e *EntryQueryBuilder) buildCondition() string {
 	return strings.Join(e.conditions, " AND ")
 }
 
-func (e *EntryQueryBuilder) buildSorting() string {
-	var parts string
+func (e *EntryQueryBuilder) buildSorting(entryIDsOnly bool) (string, error) {
+	sortExpressions := make([]string, 0, len(e.sortExpressions))
+	for _, sorting := range e.sortExpressions {
+		if sorting.expression != "" {
+			sortExpressions = append(sortExpressions, sorting.expression)
+			continue
+		}
 
-	if len(e.sortExpressions) > 0 {
-		parts += " ORDER BY " + strings.Join(e.sortExpressions, ", ")
+		column := pq.QuoteIdentifier(sorting.column)
+		if entryIDsOnly {
+			// ID-only queries cannot rely on the SELECT aliases used by GetEntries.
+			switch sorting.column {
+			case "id", "status", "changed_at", "published_at", "created_at", "title", "author":
+				column = `"e".` + column
+			case "category_title":
+				column = `"c"."title"`
+			case "category_id":
+				column = `"f".` + column
+			default:
+				return "", fmt.Errorf("store: invalid entry ID sorting column: %q", sorting.column)
+			}
+		}
+		sortExpressions = append(sortExpressions, column+" "+sorting.direction)
+	}
+
+	var parts string
+	if len(sortExpressions) > 0 {
+		parts += " ORDER BY " + strings.Join(sortExpressions, ", ")
 	}
 
 	if e.limit > 0 {
@@ -538,7 +582,7 @@ func (e *EntryQueryBuilder) buildSorting() string {
 		parts += " OFFSET " + strconv.Itoa(e.offset)
 	}
 
-	return parts
+	return parts, nil
 }
 
 // NewEntryQueryBuilder returns a new EntryQueryBuilder.
