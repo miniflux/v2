@@ -17,10 +17,12 @@ var (
 	nat64WellKnownPrefix            = netip.MustParsePrefix("64:ff9b::/96")
 	sixToFourPrefix                 = netip.MustParsePrefix("2002::/16")
 	nonPublicIPPrefixes             = []netip.Prefix{
+		netip.MustParsePrefix("0.0.0.0/8"), // "This network" (RFC 6890).
 		netip.MustParsePrefix("168.63.129.16/32"),
 		netip.MustParsePrefix("192.0.0.192/32"),
 		netip.MustParsePrefix("198.18.0.0/15"),
-		netip.MustParsePrefix("::/96"), // Deprecated IPv4-compatible IPv6 addresses (RFC 4291).
+		netip.MustParsePrefix("240.0.0.0/4"), // Reserved and limited broadcast (RFC 6890).
+		netip.MustParsePrefix("::/96"),       // Deprecated IPv4-compatible IPv6 addresses (RFC 4291).
 		netip.MustParsePrefix("fec0::/10"),
 	}
 )
