@@ -38,7 +38,8 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 		LEFT JOIN
 			integrations ON integrations.user_id=users.id
 		WHERE
-			integrations.fever_enabled='t' AND lower(integrations.fever_token)=lower($1)
+			integrations.fever_enabled='t' AND
+			sha256(convert_to(lower(integrations.fever_token), 'UTF8')) = sha256(convert_to(lower($1), 'UTF8'))
 	`
 
 	var user model.User
