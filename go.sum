@@ -1,7 +1,7 @@
 github.com/PuerkitoBio/goquery v1.13.0 h1:mqHbjD7Jmnul4DTR24LKTjo1uUmHUh072kteGV+xpFM=
 github.com/PuerkitoBio/goquery v1.13.0/go.mod h1:Hip5mdBL8K2wEGKJdr27sRaNwIdDajmCwB/ExUPwW+g=
-github.com/andybalholm/brotli v1.2.7 h1:UgafRPGMam5ySHfRkhthMqOFA6IFoeF3D7mWIDLjG5A=
-github.com/andybalholm/brotli v1.2.7/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
+github.com/andybalholm/brotli v1.2.8 h1:H9F6r7RNwzSRsx/lytpIYkbjNFMt2yNBwsJ2+0gpx78=
+github.com/andybalholm/brotli v1.2.8/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
 github.com/andybalholm/cascadia v1.3.5 h1:RLjq12WJy58dN6eCIQrz0bAGZkztHWsEPFxP53Y7Ms8=
 github.com/andybalholm/cascadia v1.3.5/go.mod h1:BLRmbRjpEtNKieZOCCvYj4RqN+KRA41GBe/5O+G93kM=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
@@ -52,8 +52,8 @@ github.com/prometheus/procfs v0.23.0 h1:ad+S6FTkzwaMgacKLM5h6bNKExS+DMH0YiUwXItH
 github.com/prometheus/procfs v0.23.0/go.mod h1:3AVXO0FqLafyYFU/V/IQRZlC8Rgqz8Dm/x6pKLK+RIk=
 github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
 github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
-github.com/tdewolff/minify/v2 v2.24.24 h1:8Cvt+W6vG3EHgRzl+1r/k5DeVSmaRWgLVFdHSSGF9Bk=
-github.com/tdewolff/minify/v2 v2.24.24/go.mod h1:BYEE+vQMcMc8XacA2rmMUgw+WeN4K0XYZqYFECz4seg=
+github.com/tdewolff/minify/v2 v2.24.25 h1:KY1wnYYqW3xzeV8gWXgofpNGrdhivhZW3Pg7HNp/5PY=
+github.com/tdewolff/minify/v2 v2.24.25/go.mod h1:BYEE+vQMcMc8XacA2rmMUgw+WeN4K0XYZqYFECz4seg=
 github.com/tdewolff/parse/v2 v2.8.20 h1:eU+UStwuoeHnXdaSBIoEfNnj33URx24gJDdNViHHYwM=
 github.com/tdewolff/parse/v2 v2.8.20/go.mod h1:OemXEPll2+Sn7pQ6xFxC9cEm1wDnNt1hC2q3jIh+OoI=
 github.com/tdewolff/test v1.0.12 h1:7F21DqIajswxuche0geHdrUZRCWE4oko4b7bcmkkrxk=
