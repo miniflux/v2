@@ -1028,7 +1028,9 @@ func (h *greaderHandler) handleReadingListStreamHandler(w http.ResponseWriter, r
 	builder := h.store.NewEntryQueryBuilder(rm.UserID).
 		WithLimitAndMaximum(rm.Count, model.MaxEntryIDsLimit).
 		WithOffset(rm.Offset).
-		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
+		WithSorting(model.DefaultSortingOrder, rm.SortDirection).
+		// Unique tiebreak: keeps LIMIT/OFFSET pagination deterministic.
+		WithSorting("id", rm.SortDirection)
 
 	for _, s := range rm.ExcludeTargets {
 		switch s.Type {
@@ -1065,7 +1067,9 @@ func (h *greaderHandler) handleStarredStreamHandler(w http.ResponseWriter, r *ht
 		WithStarred(true).
 		WithLimitAndMaximum(rm.Count, model.MaxEntryIDsLimit).
 		WithOffset(rm.Offset).
-		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
+		WithSorting(model.DefaultSortingOrder, rm.SortDirection).
+		// Unique tiebreak: keeps LIMIT/OFFSET pagination deterministic.
+		WithSorting("id", rm.SortDirection)
 
 	if rm.StartTime > 0 {
 		builder = builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
@@ -1089,7 +1093,9 @@ func (h *greaderHandler) handleReadStreamHandler(w http.ResponseWriter, r *http.
 		WithStatuses(model.EntryStatusRead).
 		WithLimitAndMaximum(rm.Count, model.MaxEntryIDsLimit).
 		WithOffset(rm.Offset).
-		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
+		WithSorting(model.DefaultSortingOrder, rm.SortDirection).
+		// Unique tiebreak: keeps LIMIT/OFFSET pagination deterministic.
+		WithSorting("id", rm.SortDirection)
 
 	if rm.StartTime > 0 {
 		builder = builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
@@ -1141,7 +1147,9 @@ func (h *greaderHandler) handleFeedStreamHandler(w http.ResponseWriter, r *http.
 		WithFeedID(feedID).
 		WithLimitAndMaximum(rm.Count, model.MaxEntryIDsLimit).
 		WithOffset(rm.Offset).
-		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
+		WithSorting(model.DefaultSortingOrder, rm.SortDirection).
+		// Unique tiebreak: keeps LIMIT/OFFSET pagination deterministic.
+		WithSorting("id", rm.SortDirection)
 
 	if rm.StartTime > 0 {
 		builder = builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
