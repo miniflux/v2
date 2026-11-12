@@ -84,13 +84,26 @@ func findContentUsingCustomRules(page io.Reader, rules string) (baseURL string, 
 	}
 
 	var buf strings.Builder
-	document.Find(rules).Each(func(i int, s *goquery.Selection) {
+	for rule := range strings.SplitSeq(strings.TrimSpace(rules), "\n") {
+		rule = strings.TrimSpace(rule)
+		if rule == "" {
+			continue
+		}
+		buf.WriteString(findContentForRule(document, rule))
+	}
+
+	return baseURL, buf.String(), nil
+}
+
+// findContentForRule extracts the HTML content matching a single CSS selector rule.
+func findContentForRule(document *goquery.Document, rule string) string {
+	var buf strings.Builder
+	document.Find(rule).Each(func(i int, s *goquery.Selection) {
 		if content, err := goquery.OuterHtml(s); err == nil {
 			buf.WriteString(content)
 		}
 	})
-
-	return baseURL, buf.String(), nil
+	return buf.String()
 }
 
 func getPredefinedScraperRules(websiteURL string) string {

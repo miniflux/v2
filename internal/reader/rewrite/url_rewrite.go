@@ -18,23 +18,30 @@ var customReplaceRuleRegex = regexp.MustCompile(`^rewrite\("([^"]+)"\|"([^"]+)"\
 // string is valid and means "no rewriting".
 //
 // The only supported form is rewrite("search-regex"|"replacement"), and the
-// search term must be a compilable regular expression. Anything else — a bare
+// search term must be a compilable regular expression. Rules are newline-separated,
+// and each non-empty line is validated independently. Anything else — a bare
 // regex, an unknown function name, or a malformed rewrite() call — is rejected
 // so it is caught at save time instead of being silently ignored during feed
 // refresh (RewriteEntryURL just logs a debug line and returns the URL
 // unchanged for rules it cannot parse).
 func IsValidURLRewriteRules(rules string) bool {
-	if strings.TrimSpace(rules) == "" {
-		return true
+	for line := range strings.SplitSeq(strings.TrimSpace(rules), "\n") {
+		rule := strings.TrimSpace(line)
+		if rule == "" {
+			continue
+		}
+
+		parts := customReplaceRuleRegex.FindStringSubmatch(rule)
+		if len(parts) != 3 {
+			return false
+		}
+
+		if _, err := regexp.Compile(parts[1]); err != nil {
+			return false
+		}
 	}
 
-	parts := customReplaceRuleRegex.FindStringSubmatch(rules)
-	if len(parts) != 3 {
-		return false
-	}
-
-	_, err := regexp.Compile(parts[1])
-	return err == nil
+	return true
 }
 
 func RewriteEntryURL(feed *model.Feed, entry *model.Entry) string {
@@ -42,19 +49,41 @@ func RewriteEntryURL(feed *model.Feed, entry *model.Entry) string {
 		return entry.URL
 	}
 
-	var rewrittenURL = entry.URL
-	parts := customReplaceRuleRegex.FindStringSubmatch(feed.UrlRewriteRules)
+	rewrittenURL := entry.URL
+
+	for line := range strings.SplitSeq(strings.TrimSpace(feed.UrlRewriteRules), "\n") {
+		rule := strings.TrimSpace(line)
+		if rule == "" {
+			continue
+		}
+
+		newURL, valid := rewriteEntryURLRule(rule, rewrittenURL, feed, entry)
+		if !valid {
+			return entry.URL
+		}
+
+		rewrittenURL = newURL
+	}
+
+	return rewrittenURL
+}
+
+// rewriteEntryURLRule applies a single rewrite rule to the given URL.
+// It returns the rewritten URL, and a boolean indicating if the rule is valid.
+func rewriteEntryURLRule(rule string, currentURL string, feed *model.Feed, entry *model.Entry) (string, bool) {
+	var rewrittenURL = currentURL
+	parts := customReplaceRuleRegex.FindStringSubmatch(rule)
 
 	if len(parts) == 3 {
 		re, err := regexp.Compile(parts[1])
 		if err != nil {
 			slog.Error("Failed on regexp compilation",
-				slog.String("url_rewrite_rules", feed.UrlRewriteRules),
+				slog.String("url_rewrite_rules", rule),
 				slog.Any("error", err),
 			)
-			return rewrittenURL
+			return rewrittenURL, false
 		}
-		rewrittenURL = re.ReplaceAllString(entry.URL, parts[2])
+		rewrittenURL = re.ReplaceAllString(currentURL, parts[2])
 		slog.Debug("Rewriting entry URL",
 			slog.String("original_entry_url", entry.URL),
 			slog.String("rewritten_entry_url", rewrittenURL),
@@ -67,9 +96,10 @@ func RewriteEntryURL(feed *model.Feed, entry *model.Entry) string {
 			slog.String("rewritten_entry_url", rewrittenURL),
 			slog.Int64("feed_id", feed.ID),
 			slog.String("feed_url", feed.FeedURL),
-			slog.String("url_rewrite_rules", feed.UrlRewriteRules),
+			slog.String("url_rewrite_rules", rule),
 		)
+		return rewrittenURL, false
 	}
 
-	return rewrittenURL
+	return rewrittenURL, true
 }

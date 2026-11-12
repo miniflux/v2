@@ -57,6 +57,75 @@ func TestRewriteEntryURL(t *testing.T) {
 			description: "Should rewrite URL according to the regex pattern",
 		},
 		{
+			name: "ValidRewriteRuleWithTrailingNewline",
+			feed: &model.Feed{
+				ID:              1,
+				FeedURL:         "https://example.com/feed.xml",
+				UrlRewriteRules: "rewrite(\"^https://example.com/article/(.+)\"|\"https://example.com/full-article/$1\")\n",
+			},
+			entry: &model.Entry{
+				URL: "https://example.com/article/123",
+			},
+			expectedURL: "https://example.com/full-article/123",
+			description: "Should tolerate trailing newlines from textarea input",
+		},
+		{
+			name: "MultipleRewriteRules",
+			feed: &model.Feed{
+				ID:      1,
+				FeedURL: "https://example.com/feed.xml",
+				UrlRewriteRules: "rewrite(\"^https://example.com/article/(.+)\"|\"https://example.com/full-article/$1\")\n" +
+					"rewrite(\"^https://example.com/story/(.+)\"|\"https://example.com/full-story/$1\")",
+			},
+			entry: &model.Entry{
+				URL: "https://example.com/story/456",
+			},
+			expectedURL: "https://example.com/full-story/456",
+			description: "Should evaluate each newline-delimited rewrite rule",
+		},
+		{
+			name: "ChainsRewriteRules",
+			feed: &model.Feed{
+				ID:      1,
+				FeedURL: "https://example.com/feed.xml",
+				UrlRewriteRules: "rewrite(\"^https://example.com/a$\"|\"https://example.com/b\")\n" +
+					"rewrite(\"^https://example.com/does-not-match/(.+)\"|\"https://example.com/c/$1\")",
+			},
+			entry: &model.Entry{
+				URL: "https://example.com/a",
+			},
+			expectedURL: "https://example.com/b",
+			description: "Should apply each rule to the previous rule's output, not the original URL",
+		},
+		{
+			name: "AbortsOnMalformedRuleInMultiline",
+			feed: &model.Feed{
+				ID:      1,
+				FeedURL: "https://example.com/feed.xml",
+				UrlRewriteRules: "rewrite(\"^https://example.com/article/(.+)\"|\"https://example.com/full-article/$1\")\n" +
+					"not-a-rewrite-rule",
+			},
+			entry: &model.Entry{
+				URL: "https://example.com/article/123",
+			},
+			expectedURL: "https://example.com/article/123",
+			description: "Should return the original URL when any rule is malformed",
+		},
+		{
+			name: "AbortsOnInvalidRegexInMultiline",
+			feed: &model.Feed{
+				ID:      1,
+				FeedURL: "https://example.com/feed.xml",
+				UrlRewriteRules: "rewrite(\"^https://example.com/article/(.+)\"|\"https://example.com/full-article/$1\")\n" +
+					`rewrite("^https://example.com/[invalid"|"https://rewritten.com/$1")`,
+			},
+			entry: &model.Entry{
+				URL: "https://example.com/article/123",
+			},
+			expectedURL: "https://example.com/article/123",
+			description: "Should return the original URL when any rule contains an invalid regex",
+		},
+		{
 			name: "ComplexRegexRewrite",
 			feed: &model.Feed{
 				ID:              1,
@@ -306,15 +375,21 @@ func TestIsValidURLRewriteRules(t *testing.T) {
 		{name: "WhitespaceOnly", rules: `   `, valid: true},
 		{name: "WellFormed", rules: `rewrite("^https://example.com/(.+)"|"https://rewritten.com/$1")`, valid: true},
 		{name: "WellFormedEmptyReplacement", rules: `rewrite("^https://example.com/(.+)"|"x")`, valid: true},
+		{name: "MultipleRules", rules: "rewrite(\"^https://example.com/(.+)\"|\"https://rewritten.com/$1\")\n" +
+			"rewrite(\"^https://other.com/(.+)\"|\"https://other.com/$1\")", valid: true},
+		{name: "MultipleRulesWithBlankLines", rules: "rewrite(\"a\"|\"b\")\n\n  \nrewrite(\"c\"|\"d\")\n", valid: true},
 		// The reported bug: a valid regex that is not a URL rewrite rule.
 		{name: "ValidRegexButNotARule", rules: `not_a_function("find"|"replace")`, valid: false},
 		{name: "BareRegex", rules: `^https://example.com/(.+)$`, valid: false},
 		{name: "PlainText", rules: `not-a-rewrite-rule`, valid: false},
 		{name: "MissingReplacement", rules: `rewrite("invalid format")`, valid: false},
-		{name: "LeadingWhitespaceBreaksRule", rules: ` rewrite("a"|"b")`, valid: false},
-		{name: "TrailingWhitespaceBreaksRule", rules: `rewrite("a"|"b") `, valid: false},
+		{name: "LeadingWhitespaceTolerated", rules: ` rewrite("a"|"b")`, valid: true},
+		{name: "TrailingWhitespaceTolerated", rules: `rewrite("a"|"b") `, valid: true},
 		// Matches the rewrite() form but the search term is not a compilable regex.
 		{name: "InvalidSearchRegex", rules: `rewrite("^https://example.com/[invalid"|"https://rewritten.com/$1")`, valid: false},
+		{name: "MultipleRulesOneMalformed", rules: "rewrite(\"a\"|\"b\")\nnot-a-rewrite-rule", valid: false},
+		{name: "MultipleRulesOneInvalidRegex", rules: "rewrite(\"a\"|\"b\")\n" +
+			`rewrite("^https://example.com/[invalid"|"https://rewritten.com/$1")`, valid: false},
 	}
 
 	for _, scenario := range scenarios {
