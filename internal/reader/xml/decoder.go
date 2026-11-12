@@ -10,6 +10,7 @@ import (
 	"io"
 	"unicode/utf8"
 
+	"golang.org/x/text/encoding/unicode"
 	"miniflux.app/v2/internal/reader/encoding"
 )
 
@@ -20,6 +21,11 @@ func NewXMLDecoder(data io.ReadSeeker) *xml.Decoder {
 	// This is way fasted than io.ReadAll(data) as the buffer can be allocated in one go instead of dynamically grown.
 	buffer := &bytes.Buffer{}
 	io.Copy(buffer, data)
+
+	if decoded, ok := decodeUTF16(buffer.Bytes()); ok {
+		buffer = bytes.NewBuffer(decoded)
+		data = bytes.NewReader(decoded)
+	}
 
 	if hasUTF8XMLDeclaration(buffer.Bytes()) {
 		// TODO: detect actual encoding from bytes if not UTF-8 and convert to UTF-8 if needed.
@@ -42,6 +48,31 @@ func NewXMLDecoder(data io.ReadSeeker) *xml.Decoder {
 	decoder.Strict = false
 
 	return decoder
+}
+
+// decodeUTF16 converts a UTF-16 document to UTF-8, since encoding/xml reads the
+// XML declaration as ASCII. Without a BOM, the leading "<" gives the byte order.
+func decodeUTF16(data []byte) ([]byte, bool) {
+	var endianness unicode.Endianness
+	switch {
+	case bytes.HasPrefix(data, []byte{0xFF, 0xFE}), bytes.HasPrefix(data, []byte{'<', 0}):
+		endianness = unicode.LittleEndian
+	case bytes.HasPrefix(data, []byte{0xFE, 0xFF}), bytes.HasPrefix(data, []byte{0, '<'}):
+		endianness = unicode.BigEndian
+	default:
+		return nil, false
+	}
+
+	decoded, err := unicode.UTF16(endianness, unicode.UseBOM).NewDecoder().Bytes(data)
+	if err != nil {
+		return nil, false
+	}
+
+	// Stray bytes before a UTF-8 document would decode to CJK instead of markup.
+	if trimmed := bytes.TrimSpace(decoded); len(trimmed) < 2 || trimmed[0] != '<' || trimmed[1] >= utf8.RuneSelf {
+		return nil, false
+	}
+	return decoded, true
 }
 
 func charsetReaderFilterInvalidUtf8(charset string, input io.Reader) (io.Reader, error) {
