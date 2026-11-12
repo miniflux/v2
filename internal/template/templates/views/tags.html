@@ -1,0 +1,15 @@
+{{ define "title"}}{{ t "page.tags.title" }} ({{ .total }}){{ end }}
+
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title page-header-title-count">
+    <h1 id="page-header-title" dir="auto">
+        {{ t "page.tags.title" }}
+        <span aria-hidden="true"> ({{ .total }})</span>
+    </h1>
+    <span id="page-header-title-count" class="sr-only">{{ t "page.tags.title" }} ({{ .total }})</span>
+</section>
+{{ end }}
+
+{{ define "content"}}
+{{ template "item_list" dict "items" .items "emptyMessageKey" "alert.no_tag" "emptyAlertClass" "alert-info" }}
+{{ end }}
