@@ -61,6 +61,7 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 	// Feed listing pages.
 	mux.HandleFunc("GET /feeds", handler.showFeedsPage)
 	mux.HandleFunc("POST /feeds/refresh", handler.refreshAllFeeds)
+	mux.HandleFunc("POST /feeds/bulk", handler.bulkUpdateFeeds)
 
 	// Individual feed pages.
 	mux.HandleFunc("POST /feed/{feedID}/refresh", handler.refreshFeed)
@@ -85,6 +86,7 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 	mux.HandleFunc("POST /category/{categoryID}/feed/{feedID}/remove", handler.removeCategoryFeed)
 	mux.HandleFunc("POST /category/{categoryID}/feed/{feedID}/mark-all-as-read", handler.markCategoryFeedAsRead)
 	mux.HandleFunc("POST /category/{categoryID}/feeds/refresh", handler.refreshCategoryFeedsPage)
+	mux.HandleFunc("POST /category/{categoryID}/feeds/bulk", handler.bulkUpdateCategoryFeeds)
 	mux.HandleFunc("GET /category/{categoryID}/entries", handler.showCategoryEntriesPage)
 	mux.HandleFunc("POST /category/{categoryID}/entries/refresh", handler.refreshCategoryEntriesPage)
 	mux.HandleFunc("GET /category/{categoryID}/entries/all", handler.showCategoryEntriesAllPage)

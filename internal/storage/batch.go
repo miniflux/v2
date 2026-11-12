@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/lib/pq"
+
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/urllib"
 )
@@ -42,6 +44,12 @@ func (b *batchBuilder) WithUserID(userID int64) *batchBuilder {
 func (b *batchBuilder) WithCategoryID(categoryID int64) *batchBuilder {
 	b.conditions = append(b.conditions, "category_id = $"+strconv.Itoa(len(b.args)+1))
 	b.args = append(b.args, categoryID)
+	return b
+}
+
+func (b *batchBuilder) WithFeedIDs(feedIDs []int64) *batchBuilder {
+	b.conditions = append(b.conditions, "id = ANY($"+strconv.Itoa(len(b.args)+1)+")")
+	b.args = append(b.args, pq.Array(feedIDs))
 	return b
 }
 

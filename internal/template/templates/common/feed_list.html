@@ -1,4 +1,77 @@
 {{ define "feed_list" }}
+    <form
+        class="feeds-bulk-form"
+        method="post"
+        {{ if .categoryID }}
+        action="{{ routePath "/category/%d/feeds/bulk" .categoryID }}"
+        {{ else }}
+        action="{{ routePath "/feeds/bulk" }}"
+        {{ end }}
+        data-bulk-form="true"
+    >
+    <input type="hidden" name="csrf" value="{{ .csrf }}">
+    <input type="hidden" name="action" value="" data-bulk-action-input="true">
+    <div class="feeds-bulk-toolbar" role="toolbar" aria-label="{{ t "page.feeds.bulk.actions" }}">
+        <label class="feeds-bulk-select-all">
+            <input type="checkbox" data-bulk-select-all="true" aria-label="{{ t "page.feeds.bulk.select_all" }}">
+            {{ t "page.feeds.bulk.select_all" }}
+        </label>
+        <span class="feeds-bulk-selected-count" aria-live="polite">
+            {{ t "page.feeds.bulk.selected" }} <span data-bulk-selected-count="true">0</span>
+        </span>
+        <ul class="feeds-bulk-actions">
+            <li>
+                <button type="button" class="page-button" data-bulk-action="refresh" disabled>
+                    {{ icon "refresh" }}{{ t "menu.refresh_feed" }}
+                </button>
+            </li>
+            <li>
+                <button type="button" class="page-button" data-bulk-action="mark_as_read" disabled>
+                    {{ icon "read" }}{{ t "menu.mark_all_as_read" }}
+                </button>
+            </li>
+            <li>
+                <button type="button" class="page-button" data-bulk-action="enable" disabled>
+                    {{ t "page.feeds.bulk.enable" }}
+                </button>
+            </li>
+            <li>
+                <button type="button" class="page-button" data-bulk-action="disable" disabled>
+                    {{ t "page.feeds.bulk.disable" }}
+                </button>
+            </li>
+            {{ if .categories }}
+            <li class="feeds-bulk-move">
+                <label>
+                    <span class="sr-only">{{ t "form.feed.label.category" }}</span>
+                    <select name="category_id" data-bulk-category="true" disabled>
+                        {{ range .categories }}
+                        <option value="{{ .ID }}" {{ if and $.categoryID (eq .ID $.categoryID) }}disabled{{ end }}>{{ .Title }}</option>
+                        {{ end }}
+                    </select>
+                </label>
+                <button type="button" class="page-button" data-bulk-action="move" disabled>
+                    {{ t "page.feeds.bulk.move" }}
+                </button>
+            </li>
+            {{ end }}
+            <li>
+                <button
+                    type="button"
+                    class="page-button"
+                    data-bulk-action="remove"
+                    data-bulk-confirm="true"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}"
+                    disabled
+                >
+                    {{ icon "delete" }}{{ t "action.remove" }}
+                </button>
+            </li>
+        </ul>
+    </div>
     <div class="items">
         {{ range .feeds }}
         <article
@@ -7,6 +80,14 @@
             tabindex="-1"
         >
             <header class="item-header" dir="auto">
+                <input
+                    type="checkbox"
+                    class="feed-bulk-checkbox"
+                    name="feed_ids"
+                    value="{{ .ID }}"
+                    data-bulk-checkbox="true"
+                    aria-labelledby="feed-title-{{ .ID }}"
+                >
                 <h2 id="feed-title-{{ .ID }}" class="item-title">
                     <a href="{{ routePath "/feed/%d/entries" .ID }}">
                         {{ if and (.Icon) (gt .Icon.IconID 0) }}
@@ -106,4 +187,5 @@
         </article>
         {{ end }}
     </div>
+    </form>
 {{ end }}

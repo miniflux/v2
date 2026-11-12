@@ -11,7 +11,7 @@
 {{ if not .feeds }}
     <p role="alert" class="alert">{{ t "alert.no_feed" }}</p>
 {{ else }}
-    {{ template "feed_list" dict "user" .user "feeds" .feeds "ParsingErrorCount" .ParsingErrorCount "csrf" .csrf }}
+    {{ template "feed_list" dict "user" .user "feeds" .feeds "categories" .categories "ParsingErrorCount" .ParsingErrorCount "csrf" .csrf }}
 {{ end }}
 
 {{ end }}
