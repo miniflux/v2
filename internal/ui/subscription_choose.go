@@ -42,7 +42,7 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 	if validationErr := subscriptionForm.Validate(); validationErr != nil {
 		view.Set("form", subscriptionForm)
 		view.Set("errorMessage", validationErr.Translate(user.Language))
-		response.HTML(w, r, view.Render("add_subscription"))
+		view.HTML(w, r, "add_subscription")
 		return
 	}
 
@@ -70,7 +70,7 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 	if localizedError != nil {
 		view.Set("form", subscriptionForm)
 		view.Set("errorMessage", localizedError.Translate(user.Language))
-		response.HTML(w, r, view.Render("add_subscription"))
+		view.HTML(w, r, "add_subscription")
 		return
 	}
 

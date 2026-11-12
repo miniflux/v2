@@ -302,7 +302,7 @@ func (h *handler) renameCredential(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", navMetadata.CountUnread)
 	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 
-	response.HTML(w, r, view.Render("webauthn_rename"))
+	view.HTML(w, r, "webauthn_rename")
 }
 
 func (h *handler) saveCredential(w http.ResponseWriter, r *http.Request) {
@@ -340,7 +340,7 @@ func (h *handler) saveCredential(w http.ResponseWriter, r *http.Request) {
 		navMetadata, _ := h.store.GetNavMetadata(user.ID)
 		v.Set("countUnread", navMetadata.CountUnread)
 		v.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
-		response.HTML(w, r, v.Render("webauthn_rename"))
+		v.HTML(w, r, "webauthn_rename")
 		return
 	}
 
