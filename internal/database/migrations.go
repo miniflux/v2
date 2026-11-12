@@ -1590,4 +1590,12 @@ var migrations = [...]func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE feeds ADD COLUMN client_certificate text not null default '';
+			ALTER TABLE feeds ADD COLUMN client_key text not null default '';
+			ALTER TABLE feeds ADD COLUMN ca_certificate text not null default '';
+		`)
+		return err
+	},
 }

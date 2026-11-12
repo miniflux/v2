@@ -256,10 +256,13 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			description,
 			proxy_url,
 			ignore_entry_updates,
-			language
+			language,
+			client_certificate,
+			client_key,
+			ca_certificate
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35)
 		RETURNING
 			id
 	`
@@ -297,6 +300,9 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.ProxyURL,
 		feed.IgnoreEntryUpdates,
 		feed.Language,
+		feed.ClientCertificate,
+		feed.ClientKey,
+		feed.CACertificate,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
@@ -381,9 +387,12 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			pushover_priority=$37,
 			proxy_url=$38,
 			ignore_entry_updates=$39,
-			language=$40
+			language=$40,
+			client_certificate=$41,
+			client_key=$42,
+			ca_certificate=$43
 		WHERE
-			id=$41 AND user_id=$42
+			id=$44 AND user_id=$45
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -426,6 +435,9 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.ProxyURL,
 		feed.IgnoreEntryUpdates,
 		feed.Language,
+		feed.ClientCertificate,
+		feed.ClientKey,
+		feed.CACertificate,
 		feed.ID,
 		feed.UserID,
 	)

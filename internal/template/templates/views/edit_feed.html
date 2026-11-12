@@ -112,6 +112,15 @@
             <label><input type="checkbox" name="fetch_via_proxy" value="1" {{ if .form.FetchViaProxy }}checked{{ end }}> {{ t "form.feed.label.fetch_via_proxy" }}</label>
             {{ end }}
 
+            <label for="form-client-certificate">{{ t "form.feed.label.client_certificate" }}</label>
+            <textarea name="client_certificate" id="form-client-certificate" cols="40" rows="5" spellcheck="false">{{ .form.ClientCertificate }}</textarea>
+
+            <label for="form-client-key">{{ t "form.feed.label.client_key" }}</label>
+            <textarea name="client_key" id="form-client-key" cols="40" rows="5" spellcheck="false">{{ .form.ClientKey }}</textarea>
+
+            <label for="form-ca-certificate">{{ t "form.feed.label.ca_certificate" }}</label>
+            <textarea name="ca_certificate" id="form-ca-certificate" cols="40" rows="5" spellcheck="false">{{ .form.CACertificate }}</textarea>
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>
