@@ -323,6 +323,16 @@ and use it as a reading time.
 .IP
 Disabled by default.
 .TP
+.B FETCH_TWEET_EMBEDS
+Set the value to 1 to fetch the photos and videos of tweets embedded in new
+entries from X's embed service, and to replace the tweets' t.co links
+with the URLs they point to.
+.IP
+Existing entries containing an embedded tweet are not updated on refresh,
+unless the refresh is forced, so that they keep the fetched media.
+.IP
+Disabled by default.
+.TP
 .B FETCH_YOUTUBE_WATCH_TIME
 Set the value to 1 to scrape video duration from YouTube website
 and use it as a reading time.
