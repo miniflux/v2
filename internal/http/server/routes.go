@@ -10,6 +10,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/fever"
 	"miniflux.app/v2/internal/googlereader"
+	"miniflux.app/v2/internal/rssfeed"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui"
 	"miniflux.app/v2/internal/worker"
@@ -31,6 +32,11 @@ func newRouter(store *storage.Storage, pool *worker.Pool) http.Handler {
 	googleReaderHandler := googlereader.NewHandler(store)
 	appMux.HandleFunc("POST /accounts/ClientLogin", googleReaderHandler.ServeHTTP)
 	appMux.Handle("/reader/api/0/", googleReaderHandler)
+
+	// RSS and Atom feeds (authenticated with Miniflux API keys).
+	rssFeedHandler := rssfeed.NewHandler(store)
+	appMux.Handle("/rss/", rssFeedHandler)
+	appMux.Handle("/atom/", rssFeedHandler)
 
 	// REST API routing.
 	if config.Opts.HasAPI() {
