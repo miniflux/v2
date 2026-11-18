@@ -26,5 +26,5 @@ func (h *handler) showLoginPage(w http.ResponseWriter, r *http.Request) {
 	view := view.New(h.tpl, r)
 	redirectURL := request.QueryStringParam(r, "redirect_url", "")
 	view.Set("redirectURL", redirectURL)
-	response.HTML(w, r, view.Render("login"))
+	view.HTML(w, r, "login")
 }
