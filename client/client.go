@@ -1097,6 +1097,31 @@ func (c *Client) ToggleStarredContext(ctx context.Context, entryID int64) error 
 	return err
 }
 
+// ShareEntry creates a share link
+func (c *Client) ShareEntry(entryID int64) error {
+	ctx, cancel := withDefaultTimeout()
+	defer cancel()
+	return c.ShareEntryContext(ctx, entryID)
+}
+
+// ShareEntryContext creates a share link
+func (c *Client) ShareEntryContext(ctx context.Context, entryID int64) error {
+	_, err := c.request.Post(ctx, fmt.Sprintf("/v1/entries/%d/share", entryID), nil)
+	return err
+}
+
+// UnshareEntry deletes a share link
+func (c *Client) UnshareEntry(entryID int64) error {
+	ctx, cancel := withDefaultTimeout()
+	defer cancel()
+	return c.UnshareEntryContext(ctx, entryID)
+}
+
+// UnshareEntryContext deletes a share link
+func (c *Client) UnshareEntryContext(ctx context.Context, entryID int64) error {
+	return c.request.Delete(ctx, fmt.Sprintf("/v1/entries/%d/share", entryID))
+}
+
 // SaveEntry sends an entry to a third-party service.
 func (c *Client) SaveEntry(entryID int64) error {
 	ctx, cancel := withDefaultTimeout()

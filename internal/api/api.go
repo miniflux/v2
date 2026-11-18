@@ -61,6 +61,8 @@ func NewHandler(store *storage.Storage, pool *worker.Pool) http.Handler {
 	mux.HandleFunc("PUT /v1/entries/{entryID}", handler.updateEntryHandler)
 	mux.HandleFunc("PUT /v1/entries/{entryID}/bookmark", handler.toggleStarredHandler)
 	mux.HandleFunc("PUT /v1/entries/{entryID}/star", handler.toggleStarredHandler)
+	mux.HandleFunc("POST /v1/entries/{entryID}/share", handler.createSharedEntryHandler)
+	mux.HandleFunc("DELETE /v1/entries/{entryID}/share", handler.unshareEntryHandler)
 	mux.HandleFunc("POST /v1/entries/{entryID}/save", handler.saveEntryHandler)
 	mux.HandleFunc("GET /v1/entries/{entryID}/fetch-content", handler.fetchContentHandler)
 	mux.HandleFunc("PUT /v1/flush-history", handler.flushHistoryHandler)
