@@ -3556,6 +3556,63 @@ func TestToggleStarredEndpoint(t *testing.T) {
 	}
 }
 
+func TestShareEntryEndpoint(t *testing.T) {
+	t.Parallel()
+
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := regularUserClient.FeedEntries(feedID, &miniflux.Filter{Limit: 1})
+	if err != nil {
+		t.Fatalf(`Failed to get entries: %v`, err)
+	}
+
+	if err := regularUserClient.ShareEntry(result.Entries[0].ID); err != nil {
+		t.Fatal(err)
+	}
+
+	entry, err := regularUserClient.Entry(result.Entries[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.ShareCode == "" {
+		t.Fatalf(`The entry should have a share code`)
+	}
+
+	if err := regularUserClient.UnshareEntry(result.Entries[0].ID); err != nil {
+		t.Fatal(err)
+	}
+
+	entry, err = regularUserClient.Entry(result.Entries[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.ShareCode != "" {
+		t.Fatalf(`The share code should be deleted`)
+	}
+}
+
 func TestSaveEntryEndpoint(t *testing.T) {
 	t.Parallel()
 
