@@ -294,6 +294,13 @@ func TestIsNonPublicIP(t *testing.T) {
 		{"site-local IPv6", "fec0::1", true},
 		{"NAT64 loopback IPv4", "64:ff9b::7f00:1", true},
 		{"NAT64 link-local IPv4", "64:ff9b::a9fe:a9fe", true},
+		{"NAT64 local-use private IPv4", "64:ff9b:1::a00:1", true},
+		{"NAT64 local-use loopback IPv4", "64:ff9b:1::7f00:1", true},
+		{"NAT64 local-use link-local IPv4", "64:ff9b:1::a9fe:a9fe", true},
+		{"NAT64 local-use /48 layout private IPv4", "64:ff9b:1:a63:63:6300::", true},
+		{"NAT64 local-use /64 layout public IPv4", "64:ff9b:1:0:5d:b8d8:2200:0", true},
+		{"IPv4-translated private", "::ffff:0:a00:1", true},
+		{"IPv4-translated public", "::ffff:0:5db8:d822", true},
 		{"6to4 loopback IPv4", "2002:7f00:1::", true},
 		{"6to4 private IPv4", "2002:a00:1::", true},
 		{"6to4 link-local IPv4", "2002:a9fe:a9fe::", true},
@@ -306,6 +313,7 @@ func TestIsNonPublicIP(t *testing.T) {
 		{"public IPv4 before reserved", "223.255.255.254", false},
 		{"public IPv6", "2001:4860:4860::8888", false},
 		{"NAT64 public IPv4", "64:ff9b::5db8:d822", false},
+		{"NAT64 local-use public IPv4", "64:ff9b:1::5db8:d822", false},
 		{"6to4 public IPv4", "2002:5db8:d822::1", false},
 	}
 
