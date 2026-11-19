@@ -77,155 +77,16 @@ func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 	return nil
 }
 
-// createEntry add a new entry.
+// createEntry adds a new entry and its enclosures.
 func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
-	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
-	// The WHERE NOT EXISTS guard makes the tombstone check atomic with the insert, so a
-	// concurrent archive committing between an earlier existence check and this statement
-	// cannot bring a deleted entry back as unread.
-	query := `
-		INSERT INTO entries
-			(
-				title,
-				hash,
-				url,
-				comments_url,
-				published_at,
-				content,
-				author,
-				user_id,
-				feed_id,
-				reading_time,
-				changed_at,
-				document_vectors,
-				tags,
-				language
-			)
-		SELECT
-			$1,
-			$2,
-			$3,
-			$4,
-			$5,
-			$6,
-			$7,
-			$8,
-			$9,
-			$10,
-			now(),
-			setweight(to_tsvector($11), 'A') || setweight(to_tsvector($12), 'B'),
-			$13,
-			$14
-		WHERE NOT EXISTS (
-			SELECT 1 FROM entry_tombstones WHERE feed_id=$9 AND hash=$2
-		)
-		RETURNING
-			id, status, created_at, changed_at
-	`
-	err := tx.QueryRow(
-		query,
-		entry.Title,
-		entry.Hash,
-		entry.URL,
-		entry.CommentsURL,
-		entry.Date,
-		entry.Content,
-		entry.Author,
-		entry.UserID,
-		entry.FeedID,
-		entry.ReadingTime,
-		truncatedTitle,
-		truncatedContent,
-		pq.Array(entry.Tags),
-		entry.Language,
-	).Scan(
-		&entry.ID,
-		&entry.Status,
-		&entry.CreatedAt,
-		&entry.ChangedAt,
-	)
-	if errors.Is(err, sql.ErrNoRows) {
+	created, err := s.createEntries(tx, entry.UserID, entry.FeedID, model.Entries{entry})
+	if err != nil {
+		return err
+	}
+	if len(created) == 0 {
 		return ErrEntryTombstoned
 	}
-	if err != nil {
-		return fmt.Errorf(`store: unable to create entry %q (feed #%d): %v`, entry.URL, entry.FeedID, err)
-	}
-
-	for _, enclosure := range entry.Enclosures {
-		enclosure.EntryID = entry.ID
-		enclosure.UserID = entry.UserID
-		err := s.createEnclosure(tx, enclosure)
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
-}
-
-// updateEntry updates an entry when a feed is refreshed.
-// Note: we do not update the published date because some feeds do not contains any date,
-// it default to time.Now() which could change the order of items on the history page.
-func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
-	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
-	query := `
-		UPDATE
-			entries
-		SET
-			title=$1,
-			url=$2,
-			comments_url=$3,
-			content=$4,
-			author=$5,
-			reading_time=$6,
-			document_vectors = setweight(to_tsvector($7), 'A') || setweight(to_tsvector($8), 'B'),
-			tags=$12,
-			language=$13
-		WHERE
-			user_id=$9 AND feed_id=$10 AND hash=$11
-		RETURNING
-			id
-	`
-	err := tx.QueryRow(
-		query,
-		entry.Title,
-		entry.URL,
-		entry.CommentsURL,
-		entry.Content,
-		entry.Author,
-		entry.ReadingTime,
-		truncatedTitle,
-		truncatedContent,
-		entry.UserID,
-		entry.FeedID,
-		entry.Hash,
-		pq.Array(entry.Tags),
-		entry.Language,
-	).Scan(&entry.ID)
-	if err != nil {
-		return fmt.Errorf(`store: unable to update entry %q: %v`, entry.URL, err)
-	}
-
-	for _, enclosure := range entry.Enclosures {
-		enclosure.UserID = entry.UserID
-		enclosure.EntryID = entry.ID
-	}
-
-	return s.updateEnclosures(tx, entry)
-}
-
-// entryExists checks if an entry already exists based on its hash when refreshing a feed.
-func (s *Storage) entryExists(tx *sql.Tx, entry *model.Entry) (bool, error) {
-	var result bool
-
-	// Note: This query uses entries_feed_id_hash_key index (filtering on user_id is not necessary).
-	err := tx.QueryRow(`SELECT true FROM entries WHERE feed_id=$1 AND hash=$2 LIMIT 1`, entry.FeedID, entry.Hash).Scan(&result)
-
-	if err != nil && err != sql.ErrNoRows {
-		return result, fmt.Errorf(`store: unable to check if entry exists: %v`, err)
-	}
-
-	return result, nil
 }
 
 func (s *Storage) getEntryIDByHash(tx *sql.Tx, feedID int64, entryHash string) (int64, error) {
@@ -280,23 +141,6 @@ func (s *Storage) InsertEntryForFeed(userID, feedID int64, entry *model.Entry) (
 	return !alreadyExistingEntry, nil
 }
 
-func (s *Storage) IsNewEntry(feedID int64, entryHash string) bool {
-	// An entry is new only if it is neither stored nor tombstoned; otherwise
-	// callers (such as the crawler) would do expensive work on every refresh
-	// for items that will be discarded.
-	query := `
-		SELECT
-			EXISTS (
-				SELECT 1 FROM entries WHERE feed_id=$1 AND hash=$2
-			) OR EXISTS (
-				SELECT 1 FROM entry_tombstones WHERE feed_id=$1 AND hash=$2
-			)
-	`
-	var known bool
-	s.db.QueryRow(query, feedID, entryHash).Scan(&known)
-	return !known
-}
-
 func (s *Storage) GetReadTime(feedID int64, entryHash string) int {
 	var result int
 
@@ -316,49 +160,56 @@ func (s *Storage) GetReadTime(feedID int64, entryHash string) int {
 	return result
 }
 
-// RefreshFeedEntries updates feed entries while refreshing a feed.
+// RefreshFeedEntries stores the entries of a refreshed feed in one
+// transaction: it creates the new ones, updates the existing ones if asked
+// to, and returns the created entries.
 func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (newEntries model.Entries, err error) {
-	for _, entry := range entries {
+	entries = uniqueEntriesByHash(entries)
+	if len(entries) == 0 {
+		return nil, nil
+	}
+
+	hashes := make([]string, len(entries))
+	for i, entry := range entries {
 		entry.UserID = userID
 		entry.FeedID = feedID
+		hashes[i] = entry.Hash
+	}
 
-		tx, err := s.db.Begin()
-		if err != nil {
-			return nil, fmt.Errorf(`store: unable to start transaction: %v`, err)
-		}
+	tx, err := s.db.Begin()
+	if err != nil {
+		return nil, fmt.Errorf(`store: unable to start transaction: %v`, err)
+	}
+	defer tx.Rollback()
 
-		entryExists, err := s.entryExists(tx, entry)
-		if err != nil {
-			if rollbackErr := tx.Rollback(); rollbackErr != nil {
-				return nil, fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
-			}
-			return nil, err
-		}
+	existingIDs, err := s.entryIDsByHash(tx, feedID, hashes)
+	if err != nil {
+		return nil, err
+	}
 
-		if entryExists {
-			if updateExistingEntries {
-				err = s.updateEntry(tx, entry)
-			}
+	var existingEntries, candidateEntries model.Entries
+	for _, entry := range entries {
+		if id, ok := existingIDs[entry.Hash]; ok {
+			entry.ID = id
+			existingEntries = append(existingEntries, entry)
 		} else {
-			err = s.createEntry(tx, entry)
-			switch {
-			case errors.Is(err, ErrEntryTombstoned):
-				err = nil
-			case err == nil:
-				newEntries = append(newEntries, entry)
-			}
+			candidateEntries = append(candidateEntries, entry)
 		}
+	}
 
-		if err != nil {
-			if rollbackErr := tx.Rollback(); rollbackErr != nil {
-				return nil, fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
-			}
+	if updateExistingEntries && len(existingEntries) > 0 {
+		if err := s.updateEntries(tx, userID, feedID, existingEntries); err != nil {
 			return nil, err
 		}
+	}
 
-		if err := tx.Commit(); err != nil {
-			return nil, fmt.Errorf(`store: unable to commit transaction: %v`, err)
-		}
+	newEntries, err = s.createEntries(tx, userID, feedID, candidateEntries)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, fmt.Errorf(`store: unable to commit transaction: %v`, err)
 	}
 
 	return newEntries, nil
