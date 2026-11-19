@@ -1093,6 +1093,89 @@ function initializeMediaPlayerHandlers() {
 }
 
 /**
+ * Apply the per-feed playback rate to YouTube iframes.
+ *
+ * The set_youtube_playback_rate rewrite rule adds enablejsapi=1 to the player
+ * URL and stores the requested rate in data-youtube-playback-rate.
+ */
+function initializeYouTubePlaybackRateHandlers() {
+    const isYouTubeHost = (hostname) => {
+        const host = hostname.replace(/^www\./, "").toLowerCase();
+        return host === "youtube.com" || host.endsWith(".youtube.com")
+            || host === "youtube-nocookie.com" || host.endsWith(".youtube-nocookie.com");
+    };
+
+    document.querySelectorAll("iframe[data-youtube-playback-rate]").forEach((iframe) => {
+        const rate = parseFloat(iframe.dataset.youtubePlaybackRate);
+        if (!Number.isFinite(rate) || rate < 0.25 || rate > 2) {
+            return;
+        }
+
+        let playerOrigin;
+        try {
+            const playerURL = new URL(iframe.src, window.location.href);
+            if (!isYouTubeHost(playerURL.hostname)) {
+                return;
+            }
+            playerOrigin = playerURL.origin;
+        } catch {
+            return;
+        }
+
+        // The player only posts events (such as onReady) after the parent
+        // announces that it is listening, like the official IFrame API does.
+        const startListening = () => {
+            if (!iframe.contentWindow) {
+                return;
+            }
+            iframe.contentWindow.postMessage(JSON.stringify({
+                event: "listening",
+                id: 1,
+                channel: "widget",
+            }), playerOrigin);
+        };
+
+        const setPlaybackRate = () => {
+            if (!iframe.contentWindow) {
+                return;
+            }
+            iframe.contentWindow.postMessage(JSON.stringify({
+                event: "command",
+                func: "setPlaybackRate",
+                args: [rate],
+            }), playerOrigin);
+        };
+
+        // The player sends onReady once enablejsapi=1 is enabled.
+        window.addEventListener("message", (event) => {
+            if (event.source !== iframe.contentWindow) {
+                return;
+            }
+
+            let data = event.data;
+            if (typeof data === "string") {
+                try {
+                    data = JSON.parse(data);
+                } catch {
+                    return;
+                }
+            }
+
+            if (data && data.event === "onReady") {
+                setPlaybackRate();
+            }
+        });
+
+        const onLoad = () => {
+            startListening();
+            setPlaybackRate();
+        };
+
+        iframe.addEventListener("load", onLoad);
+    });
+}
+
+/**
  * Initialize the service worker and PWA installation prompt.
  */
 function initializeServiceWorker() {
@@ -1288,6 +1371,7 @@ function initializeClickHandlers() {
 initializeMainMenuHandlers();
 initializeFormHandlers();
 initializeMediaPlayerHandlers();
+initializeYouTubePlaybackRateHandlers();
 initializeWebAuthn();
 initializeKeyboardShortcuts();
 initializeTouchHandler();

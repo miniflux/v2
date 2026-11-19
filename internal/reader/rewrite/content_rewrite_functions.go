@@ -325,6 +325,72 @@ func addYoutubeVideoFromId(entryContent string) string {
 	return videoPlayerHTML.String() + entryContent
 }
 
+func setYouTubePlaybackRate(entryContent string, rate float64) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	rateAttribute := strconv.FormatFloat(rate, 'f', -1, 64)
+	doc.Find("iframe").Each(func(_ int, iframe *goquery.Selection) {
+		updated := false
+		for _, attribute := range []string{"src", "data-src", "data-original", "data-orig", "data-url", "data-lazy-src"} {
+			value, ok := iframe.Attr(attribute)
+			if !ok {
+				continue
+			}
+
+			updatedURL, ok := addYouTubeJSAPI(value)
+			if !ok {
+				continue
+			}
+
+			iframe.SetAttr(attribute, updatedURL)
+			updated = true
+		}
+
+		if updated {
+			iframe.SetAttr("data-youtube-playback-rate", rateAttribute)
+		}
+	})
+
+	output, err := doc.FindMatcher(goquery.Single("body")).Html()
+	if err != nil {
+		return entryContent
+	}
+	return output
+}
+
+func addYouTubeJSAPI(rawURL string) (string, bool) {
+	parsedURL, err := url.Parse(rawURL)
+	if err != nil {
+		return "", false
+	}
+
+	if !isYouTubeEmbedHost(parsedURL.Hostname()) {
+		return "", false
+	}
+
+	query := parsedURL.Query()
+	query.Set("enablejsapi", "1")
+	parsedURL.RawQuery = query.Encode()
+	return parsedURL.String(), true
+}
+
+func isYouTubeEmbedHost(hostname string) bool {
+	hostname = strings.TrimPrefix(strings.ToLower(hostname), "www.")
+	if hostname == "youtube.com" || strings.HasSuffix(hostname, ".youtube.com") ||
+		hostname == "youtube-nocookie.com" || strings.HasSuffix(hostname, ".youtube-nocookie.com") {
+		return true
+	}
+
+	if config.Opts != nil {
+		embedDomain := strings.TrimPrefix(strings.ToLower(config.Opts.YouTubeEmbedDomain()), "www.")
+		return embedDomain != "" && hostname == embedDomain
+	}
+	return false
+}
+
 func addInvidiousVideo(entryURL, entryContent string) string {
 	u, err := url.Parse(entryURL)
 	if err != nil {
