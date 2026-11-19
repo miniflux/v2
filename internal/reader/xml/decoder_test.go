@@ -4,12 +4,16 @@
 package xml // import "miniflux.app/v2/internal/reader/xml"
 
 import (
+	"bytes"
 	"encoding/xml"
 	"fmt"
 	"os"
 	"strings"
 	"testing"
 	"unicode/utf8"
+
+	"golang.org/x/text/encoding"
+	"golang.org/x/text/encoding/unicode"
 )
 
 func TestXMLDocumentWithISO88591Encoding(t *testing.T) {
@@ -204,6 +208,84 @@ func TestXMLDocumentWithIncorrectEncodingField(t *testing.T) {
 	if x.Title != expected {
 		t.Errorf("Incorrect entry title, expected: %s, got: %s", expected, x.Title)
 	}
+}
+
+func TestXMLDocumentWithUTF16Encoding(t *testing.T) {
+	type myXMLDocument struct {
+		XMLName xml.Name `xml:"note"`
+		To      string   `xml:"to"`
+		From    string   `xml:"from"`
+	}
+
+	encodings := map[string]encoding.Encoding{
+		"little endian with BOM":    unicode.UTF16(unicode.LittleEndian, unicode.UseBOM),
+		"big endian with BOM":       unicode.UTF16(unicode.BigEndian, unicode.UseBOM),
+		"little endian without BOM": unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM),
+		"big endian without BOM":    unicode.UTF16(unicode.BigEndian, unicode.IgnoreBOM),
+	}
+	documents := map[string]string{
+		"with prolog":    `<?xml version="1.0" encoding="utf-16"?><note><to>Anaïs</to><from>Jürgen 😀</from></note>`,
+		"without prolog": `<note><to>Anaïs</to><from>Jürgen 😀</from></note>`,
+	}
+
+	for encodingName, enc := range encodings {
+		for documentName, document := range documents {
+			t.Run(encodingName+" "+documentName, func(t *testing.T) {
+				data, err := enc.NewEncoder().Bytes([]byte(document))
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				var doc myXMLDocument
+				if err := NewXMLDecoder(bytes.NewReader(data)).Decode(&doc); err != nil {
+					t.Fatal(err)
+				}
+
+				if doc.To != "Anaïs" {
+					t.Errorf(`Incorrect "to" field, got: %q`, doc.To)
+				}
+				if doc.From != "Jürgen 😀" {
+					t.Errorf(`Incorrect "from" field, got: %q`, doc.From)
+				}
+			})
+		}
+	}
+}
+
+func TestXMLDocumentWithStrayBytesBeforeUTF8Document(t *testing.T) {
+	type myXMLDocument struct {
+		XMLName xml.Name `xml:"note"`
+		To      string   `xml:"to"`
+	}
+
+	document := `<note><to>Anaïs</to></note>`
+	prefixes := map[string]string{
+		"little endian BOM": "\xFF\xFE",
+		"big endian BOM":    "\xFE\xFF",
+		"NUL":               "\x00",
+	}
+
+	for name, prefix := range prefixes {
+		t.Run(name, func(t *testing.T) {
+			var doc myXMLDocument
+			if err := NewXMLDecoder(strings.NewReader(prefix + document)).Decode(&doc); err != nil {
+				t.Fatal(err)
+			}
+			if doc.To != "Anaïs" {
+				t.Errorf(`Incorrect "to" field, got: %q`, doc.To)
+			}
+		})
+	}
+
+	t.Run("NUL after the first character", func(t *testing.T) {
+		var doc myXMLDocument
+		if err := NewXMLDecoder(strings.NewReader("<\x00" + document[1:])).Decode(&doc); err != nil {
+			t.Fatal(err)
+		}
+		if doc.To != "Anaïs" {
+			t.Errorf(`Incorrect "to" field, got: %q`, doc.To)
+		}
+	})
 }
 
 func TestFilterValidXMLCharsWithInvalidUTF8Sequence(t *testing.T) {

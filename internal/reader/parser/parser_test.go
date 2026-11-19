@@ -4,10 +4,33 @@
 package parser // import "miniflux.app/v2/internal/reader/parser"
 
 import (
+	"bytes"
 	"os"
 	"strings"
 	"testing"
+
+	"golang.org/x/text/encoding/unicode"
 )
+
+func TestParseFeedWithUTF16Encoding(t *testing.T) {
+	document := `<?xml version="1.0" encoding="utf-16"?><rss version="2.0"><channel><title>Título</title><item><title>i</title></item></channel></rss>`
+	data, err := unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM).NewEncoder().Bytes([]byte(document))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feed, err := ParseFeed("https://example.org/", bytes.NewReader(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != "Título" {
+		t.Errorf(`Incorrect feed title, got: %q`, feed.Title)
+	}
+	if len(feed.Entries) != 1 {
+		t.Errorf(`Incorrect number of entries, got: %d`, len(feed.Entries))
+	}
+}
 
 func BenchmarkParse(b *testing.B) {
 	var testCases = map[string][]string{
