@@ -180,6 +180,8 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 		WithCategoryID(categoryID).
 		WithStatuses(statuses...).
 		WithSorting(order, direction).
+		// Unique tiebreak: keeps LIMIT/OFFSET pagination deterministic.
+		WithSorting("id", direction).
 		WithOffset(offset).
 		WithLimit(limit).
 		WithTags(tags...).
