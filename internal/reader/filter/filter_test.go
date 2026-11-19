@@ -443,6 +443,27 @@ func TestMatchesEntryRegexRules(t *testing.T) {
 			description:   "Valid regex matching title should return true for both",
 		},
 		{
+			name:          "matches title with regex whitespace",
+			regexPattern:  "Test Entry",
+			expectedMatch: true,
+			expectedValid: true,
+			description:   "Whitespace inside an existing single-line regex should remain part of that regex",
+		},
+		{
+			name:          "matches title with trailing newline",
+			regexPattern:  "Test.*Title\n",
+			expectedMatch: true,
+			expectedValid: true,
+			description:   "Trailing newlines from textarea input should be ignored",
+		},
+		{
+			name:          "matches second multiline regex",
+			regexPattern:  "NoMatch\nTest.*Title",
+			expectedMatch: true,
+			expectedValid: true,
+			description:   "Newline-delimited regex patterns should be evaluated independently",
+		},
+		{
 			name:          "matches URL",
 			regexPattern:  "example\\.com",
 			expectedMatch: true,
@@ -496,6 +517,27 @@ func TestMatchesEntryRegexRules(t *testing.T) {
 				t.Errorf("matchesEntryRegexRules() valid = %v, expected %v (%s)", valid, tt.expectedValid, tt.description)
 			}
 		})
+	}
+}
+
+func TestIsBlockedEntryWithMultilineRegexRules(t *testing.T) {
+	entry := createTestEntry()
+	feed := createTestFeed()
+
+	feed.BlocklistRules = "NoMatch\nTest.*Title\n"
+	if !IsBlockedEntry(filterRules{}, filterRules{}, feed, entry) {
+		t.Errorf("IsBlockedEntry() should block entry matching a multiline blocklist regex")
+	}
+
+	feed.BlocklistRules = ""
+	feed.KeeplistRules = "NoMatch\nTest.*Title\n"
+	if IsBlockedEntry(filterRules{}, filterRules{}, feed, entry) {
+		t.Errorf("IsBlockedEntry() should keep entry matching a multiline keeplist regex")
+	}
+
+	feed.KeeplistRules = "NoMatch\nOtherNoMatch\n"
+	if !IsBlockedEntry(filterRules{}, filterRules{}, feed, entry) {
+		t.Errorf("IsBlockedEntry() should block entry when no multiline keeplist regex matches")
 	}
 }
 
