@@ -1074,3 +1074,27 @@ func TestDeeplyNestedpage(t *testing.T) {
 		t.Errorf(`Wrong output: "%s" != "%s"`, "", output)
 	}
 }
+
+func TestYouTubePlaybackRateAttributeIsPreserved(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	input := `<iframe src="https://www.youtube.com/embed/test123" data-youtube-playback-rate="1.5" data-other="x"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123" data-youtube-playback-rate="1.5" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
+	output := sanitizeHTMLWithDefaultOptions("http://example.com/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: %q != %q`, expected, output)
+	}
+}
+
+func TestYouTubeEnableJSAPIParameterIsPreserved(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	input := `<iframe src="https://www.youtube.com/embed/test123?enablejsapi=1&amp;start=30"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123?enablejsapi=1&amp;start=30" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
+	output := sanitizeHTMLWithDefaultOptions("http://example.com/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: %q != %q`, expected, output)
+	}
+}

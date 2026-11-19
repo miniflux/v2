@@ -4,10 +4,14 @@
 package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 
 import (
+	"fmt"
+	"net/url"
 	"os"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/PuerkitoBio/goquery"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
@@ -1500,5 +1504,221 @@ func TestStripImageQueryParamsSimple(t *testing.T) {
 
 	if !reflect.DeepEqual(testEntry, controlEntry) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func applyYouTubePlaybackRateRule(t *testing.T, content, rate string) string {
+	t.Helper()
+
+	entry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   "A title",
+		Content: content,
+	}
+	ApplyContentRewriteRules(entry, fmt.Sprintf(`set_youtube_playback_rate(%q)`, rate))
+	return entry.Content
+}
+
+func findIframes(t *testing.T, content string) []*goquery.Selection {
+	t.Helper()
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(content))
+	if err != nil {
+		t.Fatalf("Unable to parse rewritten content: %v", err)
+	}
+
+	var iframes []*goquery.Selection
+	doc.Find("iframe").Each(func(_ int, iframe *goquery.Selection) {
+		iframes = append(iframes, iframe)
+	})
+	return iframes
+}
+
+func parseIframeURL(t *testing.T, iframe *goquery.Selection, attribute string) *url.URL {
+	t.Helper()
+
+	rawURL, ok := iframe.Attr(attribute)
+	if !ok {
+		t.Fatalf("Iframe is missing the %q attribute", attribute)
+	}
+
+	parsedURL, err := url.Parse(rawURL)
+	if err != nil {
+		t.Fatalf("Invalid %q URL %q: %v", attribute, rawURL, err)
+	}
+	return parsedURL
+}
+
+func TestSetYouTubePlaybackRateAddsJSAPIAndRate(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	output := applyYouTubePlaybackRateRule(t, `<iframe src="https://www.youtube.com/embed/abc123" allowfullscreen></iframe>`, "1.5")
+	iframes := findIframes(t, output)
+	if len(iframes) != 1 {
+		t.Fatalf("Expected one iframe, got %d", len(iframes))
+	}
+
+	iframe := iframes[0]
+	src := parseIframeURL(t, iframe, "src")
+	if src.Host != "www.youtube.com" {
+		t.Errorf("Expected host www.youtube.com, got %q", src.Host)
+	}
+	if src.Path != "/embed/abc123" {
+		t.Errorf("Expected path /embed/abc123, got %q", src.Path)
+	}
+	if got := src.Query().Get("enablejsapi"); got != "1" {
+		t.Errorf("Expected enablejsapi=1, got %q", got)
+	}
+	if got, ok := iframe.Attr("data-youtube-playback-rate"); !ok || got != "1.5" {
+		t.Errorf("Expected data-youtube-playback-rate=1.5, got %q (present=%v)", got, ok)
+	}
+	if _, ok := iframe.Attr("allowfullscreen"); !ok {
+		t.Error("Expected allowfullscreen to be preserved")
+	}
+}
+
+func TestSetYouTubePlaybackRatePreservesExistingQueryParameters(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	output := applyYouTubePlaybackRateRule(t, `<iframe src="https://www.youtube.com/embed/abc123?start=30&amp;autoplay=1"></iframe>`, "0.5")
+	iframes := findIframes(t, output)
+	if len(iframes) != 1 {
+		t.Fatalf("Expected one iframe, got %d", len(iframes))
+	}
+
+	query := parseIframeURL(t, iframes[0], "src").Query()
+	if got := query.Get("start"); got != "30" {
+		t.Errorf("Expected start=30, got %q", got)
+	}
+	if got := query.Get("autoplay"); got != "1" {
+		t.Errorf("Expected autoplay=1, got %q", got)
+	}
+	if got := query.Get("enablejsapi"); got != "1" {
+		t.Errorf("Expected enablejsapi=1, got %q", got)
+	}
+}
+
+func TestSetYouTubePlaybackRateOverridesExistingJSAPIValue(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	output := applyYouTubePlaybackRateRule(t, `<iframe src="https://www.youtube.com/embed/abc123?enablejsapi=0"></iframe>`, "2")
+	iframes := findIframes(t, output)
+	if len(iframes) != 1 {
+		t.Fatalf("Expected one iframe, got %d", len(iframes))
+	}
+
+	values := parseIframeURL(t, iframes[0], "src").Query()["enablejsapi"]
+	if len(values) != 1 || values[0] != "1" {
+		t.Errorf("Expected exactly one enablejsapi=1 value, got %v", values)
+	}
+}
+
+func TestSetYouTubePlaybackRateIgnoresNonYouTubeIframes(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	output := applyYouTubePlaybackRateRule(t, `<iframe src="https://example.org/embed/abc123"></iframe>`, "2")
+	iframes := findIframes(t, output)
+	if len(iframes) != 1 {
+		t.Fatalf("Expected one iframe, got %d", len(iframes))
+	}
+
+	iframe := iframes[0]
+	if got, _ := iframe.Attr("src"); got != "https://example.org/embed/abc123" {
+		t.Errorf("Expected src to be unchanged, got %q", got)
+	}
+	if _, ok := iframe.Attr("data-youtube-playback-rate"); ok {
+		t.Error("Expected no playback rate attribute on a non-YouTube iframe")
+	}
+}
+
+func TestSetYouTubePlaybackRateMatchesYouTubeHosts(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	scenarios := []struct {
+		name      string
+		src       string
+		wantMatch bool
+	}{
+		{"youtube.com", "https://www.youtube.com/embed/abc123", true},
+		{"youtube-nocookie.com", "https://www.youtube-nocookie.com/embed/abc123", true},
+		{"youtube subdomain", "https://m.youtube.com/embed/abc123", true},
+		{"notyoutube.com", "https://notyoutube.com/embed/abc123", false},
+		{"youtube.com lookalike", "https://youtube.com.example.org/embed/abc123", false},
+	}
+
+	for _, scenario := range scenarios {
+		t.Run(scenario.name, func(t *testing.T) {
+			output := applyYouTubePlaybackRateRule(t, fmt.Sprintf(`<iframe src=%q></iframe>`, scenario.src), "2")
+			iframes := findIframes(t, output)
+			if len(iframes) != 1 {
+				t.Fatalf("Expected one iframe, got %d", len(iframes))
+			}
+
+			_, hasRateAttribute := iframes[0].Attr("data-youtube-playback-rate")
+			if hasRateAttribute != scenario.wantMatch {
+				t.Errorf("Expected match=%v, got %v", scenario.wantMatch, hasRateAttribute)
+			}
+		})
+	}
+}
+
+func TestSetYouTubePlaybackRateUpdatesLazySource(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	output := applyYouTubePlaybackRateRule(t, `<iframe data-src="https://www.youtube.com/embed/abc123"></iframe>`, "1.25")
+	iframes := findIframes(t, output)
+	if len(iframes) != 1 {
+		t.Fatalf("Expected one iframe, got %d", len(iframes))
+	}
+
+	iframe := iframes[0]
+	if got := parseIframeURL(t, iframe, "data-src").Query().Get("enablejsapi"); got != "1" {
+		t.Errorf("Expected data-src to contain enablejsapi=1, got %q", got)
+	}
+	if got, ok := iframe.Attr("data-youtube-playback-rate"); !ok || got != "1.25" {
+		t.Errorf("Expected data-youtube-playback-rate=1.25, got %q (present=%v)", got, ok)
+	}
+}
+
+func TestSetYouTubePlaybackRateUpdatesAllIframes(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	output := applyYouTubePlaybackRateRule(t, `<iframe src="https://www.youtube.com/embed/abc123"></iframe><iframe src="https://www.youtube-nocookie.com/embed/def456"></iframe>`, "2")
+	iframes := findIframes(t, output)
+	if len(iframes) != 2 {
+		t.Fatalf("Expected two iframes, got %d", len(iframes))
+	}
+
+	for i, iframe := range iframes {
+		if got := parseIframeURL(t, iframe, "src").Query().Get("enablejsapi"); got != "1" {
+			t.Errorf("Iframe %d: expected enablejsapi=1, got %q", i, got)
+		}
+		if got, ok := iframe.Attr("data-youtube-playback-rate"); !ok || got != "2" {
+			t.Errorf("Iframe %d: expected data-youtube-playback-rate=2, got %q (present=%v)", i, got, ok)
+		}
+	}
+}
+
+func TestSetYouTubePlaybackRateIsIdempotent(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	firstOutput := applyYouTubePlaybackRateRule(t, `<iframe src="https://www.youtube.com/embed/abc123"></iframe>`, "1.5")
+	secondOutput := applyYouTubePlaybackRateRule(t, firstOutput, "1.5")
+
+	if firstOutput != secondOutput {
+		t.Errorf("Expected the rewrite rule to be idempotent:\nfirst:  %q\nsecond: %q", firstOutput, secondOutput)
+	}
+}
+
+func TestSetYouTubePlaybackRateSkipsInvalidValues(t *testing.T) {
+	config.Opts = config.NewConfigOptions()
+
+	content := `<iframe src="https://www.youtube.com/embed/abc123"></iframe>`
+	for _, rate := range []string{"0", "0.24", "2.01", "3", "-1", "fast", "NaN"} {
+		t.Run(rate, func(t *testing.T) {
+			if output := applyYouTubePlaybackRateRule(t, content, rate); output != content {
+				t.Errorf("Expected content to be unchanged for invalid rate %q, got %q", rate, output)
+			}
+		})
 	}
 }

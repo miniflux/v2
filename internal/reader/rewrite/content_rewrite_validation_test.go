@@ -4,6 +4,7 @@
 package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -117,5 +118,41 @@ func TestParseRulesWellFormed(t *testing.T) {
 
 	if rules[1].name != "nl2br" || len(rules[1].args) != 0 {
 		t.Errorf(`Unexpected second rule: %v`, rules[1])
+	}
+}
+
+func TestValidateYouTubePlaybackRateAcceptsValidValues(t *testing.T) {
+	for _, rate := range []string{"0.25", "0.5", "1", "1.5", "2"} {
+		rulesText := fmt.Sprintf(`set_youtube_playback_rate(%q)`, rate)
+		if errs := ValidateRules(rulesText); len(errs) != 0 {
+			t.Errorf(`Expected no errors for rate %q, got %v`, rate, errs)
+		}
+	}
+}
+
+func TestValidateYouTubePlaybackRateRejectsInvalidValues(t *testing.T) {
+	for _, rate := range []string{"0", "0.24", "2.01", "3", "-1", "fast", "", "NaN"} {
+		rulesText := fmt.Sprintf(`set_youtube_playback_rate(%q)`, rate)
+		errs := ValidateRules(rulesText)
+		if len(errs) != 1 {
+			t.Errorf(`Expected one error for rate %q, got %v`, rate, errs)
+			continue
+		}
+		if errs[0].Kind != RuleErrInvalidPlaybackRate {
+			t.Errorf(`Expected RuleErrInvalidPlaybackRate for rate %q, got %v`, rate, errs[0].Kind)
+		}
+		if errs[0].Rule != "set_youtube_playback_rate" {
+			t.Errorf(`Expected rule name set_youtube_playback_rate, got %q`, errs[0].Rule)
+		}
+	}
+}
+
+func TestValidateYouTubePlaybackRateRequiresArgument(t *testing.T) {
+	errs := ValidateRules(`set_youtube_playback_rate`)
+	if len(errs) != 1 {
+		t.Fatalf(`Expected one error, got %v`, errs)
+	}
+	if errs[0].Kind != RuleErrMissingArgs {
+		t.Errorf(`Expected RuleErrMissingArgs, got %v`, errs[0].Kind)
 	}
 }

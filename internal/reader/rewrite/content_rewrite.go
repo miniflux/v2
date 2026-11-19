@@ -23,10 +23,11 @@ type rule struct {
 // expression or a CSS selector (so it can be compile-checked at save time), and
 // the handler that applies it.
 type ruleSpec struct {
-	minArgs     int
-	regexArg    bool
-	selectorArg bool
-	apply       func(entryURL string, entry *model.Entry, args []string)
+	minArgs         int
+	regexArg        bool
+	selectorArg     bool
+	playbackRateArg bool
+	apply           func(entryURL string, entry *model.Entry, args []string)
 }
 
 // convertTextLinksRule is shared by the "convert_text_link" and
@@ -62,6 +63,17 @@ var knownRules = map[string]ruleSpec{
 	}},
 	"add_youtube_video_from_id": {apply: func(_ string, entry *model.Entry, _ []string) {
 		entry.Content = addYoutubeVideoFromId(entry.Content)
+	}},
+	"set_youtube_playback_rate": {minArgs: 1, playbackRateArg: true, apply: func(_ string, entry *model.Entry, args []string) {
+		rate, err := parseYouTubePlaybackRate(args[0])
+		if err != nil {
+			slog.Warn("Invalid YouTube playback rate",
+				slog.String("rate", args[0]),
+				slog.Any("error", err),
+			)
+			return
+		}
+		entry.Content = setYouTubePlaybackRate(entry.Content, rate)
 	}},
 	"add_pdf_download_link": {apply: func(entryURL string, entry *model.Entry, _ []string) {
 		entry.Content = addPDFLink(entryURL, entry.Content)

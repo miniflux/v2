@@ -4,10 +4,18 @@
 package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 
 import (
+	"fmt"
+	"math"
 	"regexp"
+	"strconv"
 	"text/scanner"
 
 	"github.com/andybalholm/cascadia"
+)
+
+const (
+	minYouTubePlaybackRate = 0.25
+	maxYouTubePlaybackRate = 2
 )
 
 type RuleErrorKind int
@@ -20,7 +28,22 @@ const (
 	RuleErrMissingArgs
 	RuleErrInvalidRegexp
 	RuleErrInvalidSelector
+	RuleErrInvalidPlaybackRate
 )
+
+func parseYouTubePlaybackRate(value string) (float64, error) {
+	rate, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		return 0, fmt.Errorf("invalid playback rate: %w", err)
+	}
+	if math.IsNaN(rate) || math.IsInf(rate, 0) {
+		return 0, fmt.Errorf("invalid playback rate: %q", value)
+	}
+	if rate < minYouTubePlaybackRate || rate > maxYouTubePlaybackRate {
+		return 0, fmt.Errorf("playback rate must be between %v and %v", minYouTubePlaybackRate, maxYouTubePlaybackRate)
+	}
+	return rate, nil
+}
 
 // RuleError describes one problem found while parsing rewrite rules.
 type RuleError struct {
@@ -57,6 +80,12 @@ func validateParsedRules(rules []rule) (errs []RuleError) {
 		if spec.selectorArg && len(r.args) > 0 {
 			if _, err := cascadia.Compile(r.args[0]); err != nil {
 				errs = append(errs, RuleError{Kind: RuleErrInvalidSelector, Rule: r.name,
+					Token: r.args[0], Message: err.Error()})
+			}
+		}
+		if spec.playbackRateArg && len(r.args) > 0 {
+			if _, err := parseYouTubePlaybackRate(r.args[0]); err != nil {
+				errs = append(errs, RuleError{Kind: RuleErrInvalidPlaybackRate, Rule: r.name,
 					Token: r.args[0], Message: err.Error()})
 			}
 		}
