@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/crypto"
@@ -168,6 +169,16 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 // it default to time.Now() which could change the order of items on the history page.
 func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 	truncatedTitle, truncatedContent := truncateTitleAndContentForTSVectorField(entry.Title, entry.Content)
+	// Match updateEnclosures: blank URLs are ignored and existing URLs retain
+	// their metadata and playback progress. Only additions/removals change them.
+	enclosureURLs := make([]string, 0, len(entry.Enclosures))
+	for _, enclosure := range entry.Enclosures {
+		if url := strings.TrimSpace(enclosure.URL); url != "" {
+			enclosureURLs = append(enclosureURLs, url)
+		}
+	}
+	// Expose actual feed changes to changed_after clients without marking every
+	// poll as an update. Compare enclosures before replacing them in this transaction.
 	query := `
 		UPDATE
 			entries
@@ -180,11 +191,26 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 			reading_time=$6,
 			document_vectors = setweight(to_tsvector($7), 'A') || setweight(to_tsvector($8), 'B'),
 			tags=$12,
-			language=$13
+			language=$13,
+			changed_at = CASE WHEN
+				ROW(title, url, comments_url, content, author, reading_time, COALESCE(tags, '{}'::text[]), language)
+				IS DISTINCT FROM ROW($1, $2, $3, $4, $5, $6, COALESCE($12::text[], '{}'::text[]), $13)
+				OR EXISTS (
+					SELECT 1 FROM enclosures
+					WHERE entry_id=entries.id AND user_id=$9 AND url <> ALL($14::text[])
+				)
+				OR EXISTS (
+					SELECT 1 FROM unnest($14::text[]) AS incoming(url)
+					WHERE NOT EXISTS (
+						SELECT 1 FROM enclosures
+						WHERE entry_id=entries.id AND user_id=$9 AND url=incoming.url
+					)
+				)
+				THEN now() ELSE changed_at END
 		WHERE
 			user_id=$9 AND feed_id=$10 AND hash=$11
 		RETURNING
-			id
+			id, changed_at
 	`
 	err := tx.QueryRow(
 		query,
@@ -201,7 +227,8 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.Hash,
 		pq.Array(entry.Tags),
 		entry.Language,
-	).Scan(&entry.ID)
+		pq.Array(enclosureURLs),
+	).Scan(&entry.ID, &entry.ChangedAt)
 	if err != nil {
 		return fmt.Errorf(`store: unable to update entry %q: %v`, entry.URL, err)
 	}
