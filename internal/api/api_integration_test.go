@@ -1835,6 +1835,46 @@ func TestUpdateFeedRefreshInterval(t *testing.T) {
 	}
 }
 
+func TestCreateFeedWithRefreshInterval(t *testing.T) {
+	t.Parallel()
+
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	// Create a feed with a custom refresh interval.
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:                testConfig.testFeedURL,
+		RefreshIntervalMinutes: new(45),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feed, err := regularUserClient.Feed(feedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if feed.RefreshIntervalMinutes == nil || *feed.RefreshIntervalMinutes != 45 {
+		got := "<nil>"
+		if feed.RefreshIntervalMinutes != nil {
+			got = fmt.Sprintf("%d", *feed.RefreshIntervalMinutes)
+		}
+		t.Fatalf(`Expected refresh_interval_minutes=45 on creation, got %s`, got)
+	}
+}
+
 func TestCannotHaveDuplicateFeedWhenUpdatingFeed(t *testing.T) {
 	t.Parallel()
 

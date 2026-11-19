@@ -87,6 +87,11 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 	subscription.ProxyURL = feedCreationRequest.ProxyURL
 	subscription.CheckedNow()
 
+	if feedCreationRequest.RefreshIntervalMinutes != nil && *feedCreationRequest.RefreshIntervalMinutes > 0 {
+		value := *feedCreationRequest.RefreshIntervalMinutes
+		subscription.RefreshIntervalMinutes = &value
+	}
+
 	processor.ProcessFeedEntries(store, subscription, userID, true)
 
 	if storeErr := store.CreateFeed(subscription); storeErr != nil {
@@ -182,6 +187,11 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.ProxyURL = feedCreationRequest.ProxyURL
 	subscription.WithCategoryID(feedCreationRequest.CategoryID)
 	subscription.CheckedNow()
+
+	if feedCreationRequest.RefreshIntervalMinutes != nil && *feedCreationRequest.RefreshIntervalMinutes > 0 {
+		value := *feedCreationRequest.RefreshIntervalMinutes
+		subscription.RefreshIntervalMinutes = &value
+	}
 
 	processor.ProcessFeedEntries(store, subscription, userID, true)
 
