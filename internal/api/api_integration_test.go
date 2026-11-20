@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"math/rand/v2"
 	"os"
 	"strings"
@@ -3610,6 +3611,42 @@ func TestShareEntryEndpoint(t *testing.T) {
 
 	if entry.ShareCode != "" {
 		t.Fatalf(`The share code should be deleted`)
+	}
+
+	nonExistingEntryId := int64(math.MaxInt64)
+	if err := regularUserClient.ShareEntry(nonExistingEntryId); err != miniflux.ErrNotFound {
+		t.Fatalf(`Expected Not Found when sharing non existent entry: %v`, err)
+	}
+	if err := regularUserClient.UnshareEntry(nonExistingEntryId); err != miniflux.ErrNotFound {
+		t.Fatalf(`Expected Not Found when unsharing non existent entry: %v`, err)
+	}
+
+	otherTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(otherTestUser.ID)
+
+	otherUserClient := miniflux.NewClient(testConfig.testBaseURL, otherTestUser.Username, testConfig.testRegularPassword)
+
+	otherFeedID, err := otherUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result, err = otherUserClient.FeedEntries(otherFeedID, &miniflux.Filter{Limit: 1})
+	if err != nil {
+		t.Fatalf(`Failed to get entries: %v`, err)
+	}
+
+	otherUserEntryId := result.Entries[0].ID
+	if err := regularUserClient.ShareEntry(otherUserEntryId); err != miniflux.ErrNotFound {
+		t.Fatalf(`Expected Not Found when sharing other user's entry: %v`, err)
+	}
+	if err := regularUserClient.UnshareEntry(otherUserEntryId); err != miniflux.ErrNotFound {
+		t.Fatalf(`Expected Not Found when unsharing other user's entry: %v`, err)
 	}
 }
 

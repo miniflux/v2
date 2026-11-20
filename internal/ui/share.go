@@ -8,6 +8,7 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
+	"miniflux.app/v2/internal/storage"
 
 	"miniflux.app/v2/internal/ui/view"
 )
@@ -15,7 +16,10 @@ import (
 func (h *handler) createSharedEntry(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
 	shareCode, err := h.store.EntryShareCode(request.UserID(r), entryID)
-	if err != nil {
+	if err == storage.ErrEntryNotFound {
+		response.HTMLNotFound(w, r)
+		return
+	} else if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
 	}
@@ -25,7 +29,11 @@ func (h *handler) createSharedEntry(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) unshareEntry(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
-	if err := h.store.UnshareEntry(request.UserID(r), entryID); err != nil {
+	err := h.store.UnshareEntry(request.UserID(r), entryID)
+	if err == storage.ErrEntryNotFound {
+		response.HTMLNotFound(w, r)
+		return
+	} else if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
 	}
