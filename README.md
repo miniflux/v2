@@ -76,6 +76,7 @@ Features
 - Bookmarklet for subscribing to websites directly from any web browser.
 - Webhooks for real-time notifications or custom integrations.
 - Compatibility with existing mobile applications using the Fever or Google Reader API.
+- Built-in RSS 2.0 and Atom feeds for unread, starred, read, per-feed, per-category, and search streams, usable directly in any feed reader.
 - REST API with client libraries available in [Go](https://github.com/miniflux/v2/tree/main/client) and [Python](https://github.com/miniflux/python-client).
 
 ### Authentication

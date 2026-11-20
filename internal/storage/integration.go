@@ -54,6 +54,36 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	}
 }
 
+// UserByRSSFeedToken returns the user owning the given RSS/Atom feed token.
+// The token is only accepted when the user enabled the feeds integration.
+func (s *Storage) UserByRSSFeedToken(token string) (*model.User, error) {
+	// Compare SHA-256 digests so that the database string comparison cannot
+	// leak the stored token through timing differences.
+	query := `
+		SELECT
+			users.id, users.username, users.is_admin, users.timezone
+		FROM
+			users
+		LEFT JOIN
+			integrations ON integrations.user_id=users.id
+		WHERE
+			integrations.rssfeed_enabled='t' AND
+			integrations.rssfeed_token <> '' AND
+			sha256(convert_to(integrations.rssfeed_token, 'UTF8')) = sha256(convert_to($1, 'UTF8'))
+	`
+
+	var user model.User
+	err := s.db.QueryRow(query, token).Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Timezone)
+	switch {
+	case errors.Is(err, sql.ErrNoRows):
+		return nil, nil
+	case err != nil:
+		return nil, fmt.Errorf("store: unable to fetch user: %v", err)
+	default:
+		return &user, nil
+	}
+}
+
 // GoogleReaderUserCheckPassword validates the Google Reader hashed password.
 func (s *Storage) GoogleReaderUserCheckPassword(username, password string) error {
 	var hash string
@@ -236,7 +266,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			gotify_enabled,
 			gotify_url,
 			gotify_token,
-			gotify_priority
+			gotify_priority,
+			rssfeed_enabled,
+			rssfeed_token
 		FROM
 			integrations
 		WHERE
@@ -370,6 +402,8 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.GotifyURL,
 		&integration.GotifyToken,
 		&integration.GotifyPriority,
+		&integration.RSSFeedEnabled,
+		&integration.RSSFeedToken,
 	)
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
@@ -511,9 +545,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			gotify_enabled=$122,
 			gotify_url=$123,
 			gotify_token=$124,
-			gotify_priority=$125
+			gotify_priority=$125,
+			rssfeed_enabled=$126,
+			rssfeed_token=$127
 		WHERE
-			user_id=$126
+			user_id=$128
 	`
 	_, err := s.db.Exec(
 		query,
@@ -642,6 +678,8 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.GotifyURL,
 		integration.GotifyToken,
 		integration.GotifyPriority,
+		integration.RSSFeedEnabled,
+		integration.RSSFeedToken,
 		integration.UserID,
 	)
 

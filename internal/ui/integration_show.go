@@ -149,6 +149,8 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		GotifyURL:                        integration.GotifyURL,
 		GotifyToken:                      integration.GotifyToken,
 		GotifyPriority:                   integration.GotifyPriority,
+		RSSFeedEnabled:                   integration.RSSFeedEnabled,
+		RSSFeedToken:                     integration.RSSFeedToken,
 	}
 
 	view := view.New(h.tpl, r)
