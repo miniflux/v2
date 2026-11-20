@@ -165,6 +165,32 @@
         </div>
     </details>
 
+    <details {{ if .form.RSSFeedEnabled }}open{{ end }}>
+        <summary>RSS / Atom</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="rssfeed_enabled" value="1" {{ if .form.RSSFeedEnabled }}checked{{ end }}> {{ t "form.integration.rssfeed_activate" }}
+            </label>
+
+            {{ if .form.RSSFeedToken }}
+            <label for="form-rssfeed-token">{{ t "form.integration.rssfeed_token" }}</label>
+            <input type="text" id="form-rssfeed-token" value="{{ .form.RSSFeedToken }}" spellcheck="false" readonly>
+
+            <label>
+                <input type="checkbox" name="rssfeed_regenerate_token" value="1"> {{ t "form.integration.rssfeed_regenerate_token" }}
+            </label>
+
+            <p>{{ t "form.integration.rssfeed_rss_endpoint" }} <strong>{{ rootURL }}{{ routePath "/rss/unread" }}?token={{ .form.RSSFeedToken }}</strong></p>
+            <p>{{ t "form.integration.rssfeed_atom_endpoint" }} <strong>{{ rootURL }}{{ routePath "/atom/unread" }}?token={{ .form.RSSFeedToken }}</strong></p>
+            <p><a href="{{ routePath "/rss/" }}?token={{ .form.RSSFeedToken }}" target="_blank" rel="noopener noreferrer">{{ t "form.integration.rssfeed_all_feeds" }}</a></p>
+            {{ end }}
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.GotifyEnabled }}open{{ end }}>
         <summary>Gotify</summary>
         <div class="form-section">

@@ -67,6 +67,16 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 		integration.GoogleReaderPassword = ""
 	}
 
+	// Disabling the RSS/Atom feeds revokes the token: enabling them again
+	// always issues a new one.
+	if integration.RSSFeedEnabled {
+		if integration.RSSFeedToken == "" || integrationForm.RSSFeedRegenerateToken {
+			integration.RSSFeedToken = crypto.GenerateRandomStringHex(32)
+		}
+	} else {
+		integration.RSSFeedToken = ""
+	}
+
 	if integrationForm.WebhookEnabled {
 		if integrationForm.WebhookURL == "" {
 			integration.WebhookEnabled = false
