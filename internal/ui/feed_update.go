@@ -75,6 +75,12 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if validationErr := validator.ValidateTLSCertificates(feedForm.ClientCertificate, feedForm.ClientKey, feedForm.CACertificate); validationErr != nil {
+		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
+		response.HTML(w, r, view.Render("edit_feed"))
+		return
+	}
+
 	err = h.store.UpdateFeed(feedForm.Merge(feed))
 	if err != nil {
 		response.HTMLServerError(w, r, err)

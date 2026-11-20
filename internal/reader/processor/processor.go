@@ -59,6 +59,8 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 		WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL()).
 		UseCustomApplicationProxyURL(feed.FetchViaProxy).
 		IgnoreTLSErrors(feed.AllowSelfSignedCertificates).
+		WithClientCertificate(feed.ClientCertificate, feed.ClientKey).
+		WithCACertificate(feed.CACertificate).
 		DisableHTTP2(feed.DisableHTTP2)
 
 	// Processing older entries first ensures that their creation timestamp is lower than newer entries.
@@ -190,6 +192,8 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 		WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL()).
 		UseCustomApplicationProxyURL(feed.FetchViaProxy).
 		IgnoreTLSErrors(feed.AllowSelfSignedCertificates).
+		WithClientCertificate(feed.ClientCertificate, feed.ClientKey).
+		WithCACertificate(feed.CACertificate).
 		DisableHTTP2(feed.DisableHTTP2)
 
 	webpageBaseURL, extractedContent, scraperErr := scraper.ScrapeWebsite(

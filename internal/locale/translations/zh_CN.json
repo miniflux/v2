@@ -136,6 +136,7 @@
     "error.invalid_site_url": "无效的网站 URL。",
     "error.invalid_theme": "无效的主题。",
     "error.invalid_timezone": "无效的时区。",
+    "error.invalid_tls_certificates": "TLS 证书设置无效：%v。",
     "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "由于网络错误，Miniflux 无法访问此网站：%v。",
     "error.network_timeout": "该网站响应过慢，请求已超时：%v",

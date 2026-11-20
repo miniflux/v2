@@ -139,6 +139,7 @@
     "error.invalid_site_url": "URL de site inválido.",
     "error.invalid_theme": "Tema inválido.",
     "error.invalid_timezone": "Fuso horário inválido.",
+    "error.invalid_tls_certificates": "Configurações de certificados TLS inválidas: %v.",
     "error.local_auth_disabled": "Local authentication is disabled. Passwords cannot be changed.",
     "error.network_operation": "O Miniflux não conseguiu acessar este site devido a um erro de rede: %v.",
     "error.network_timeout": "Este site está muito lento e a solicitação expirou: %v",

@@ -887,3 +887,79 @@ func TestRequestBuilder_WithCACertificate(t *testing.T) {
 		t.Fatalf("expected status 200, got %d", resp.StatusCode)
 	}
 }
+
+func TestRequestBuilder_RejectsIncompleteClientCertificate(t *testing.T) {
+	certPEM, keyPEM := generateSelfSignedCert(t)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	for _, tt := range []struct {
+		name string
+		cert string
+		key  string
+	}{
+		{name: "certificate only", cert: string(certPEM)},
+		{name: "key only", key: string(keyPEM)},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			resp, err := NewRequestBuilder().WithClientCertificate(tt.cert, tt.key).ExecuteRequest(server.URL)
+			if err == nil {
+				resp.Body.Close()
+				t.Fatal("expected request to reject an incomplete client key pair")
+			}
+		})
+	}
+}
+
+func TestSystemRootsWithCustomCAs(t *testing.T) {
+	certPEM, _ := generateSelfSignedCert(t)
+	expectedRoots, err := x509.SystemCertPool()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !expectedRoots.AppendCertsFromPEM(certPEM) {
+		t.Fatal("unable to append the test root")
+	}
+
+	_, customCAs, err := parseTLSCertificates("", "", string(certPEM))
+	if err != nil {
+		t.Fatal(err)
+	}
+	roots, err := systemRootsWithCustomCAs(customCAs)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !roots.Equal(expectedRoots) {
+		t.Fatal("expected the system roots and the custom CA")
+	}
+}
+
+func TestValidateTLSCertificates(t *testing.T) {
+	cert, key := generateSelfSignedCert(t)
+	otherCert, otherKey := generateSelfSignedCert(t)
+	for _, tt := range []struct {
+		name    string
+		cert    string
+		key     string
+		ca      string
+		wantErr bool
+	}{
+		{name: "optional"},
+		{name: "valid credentials and CA bundle", cert: string(cert), key: string(key), ca: string(cert) + string(otherCert)},
+		{name: "certificate only", cert: string(cert), wantErr: true},
+		{name: "key only", key: string(key), wantErr: true},
+		{name: "mismatched key", cert: string(cert), key: string(otherKey), wantErr: true},
+		{name: "invalid client certificate PEM", cert: "invalid PEM", key: string(key), wantErr: true},
+		{name: "invalid private key PEM", cert: string(cert), key: "invalid PEM", wantErr: true},
+		{name: "invalid CA PEM", ca: "invalid PEM", wantErr: true},
+		{name: "invalid trailing CA PEM", ca: string(cert) + "invalid PEM", wantErr: true},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := ValidateTLSCertificates(tt.cert, tt.key, tt.ca); (err != nil) != tt.wantErr {
+				t.Fatalf("unexpected TLS certificate validation result: %v", err)
+			}
+		})
+	}
+}

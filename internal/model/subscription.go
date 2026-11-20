@@ -13,5 +13,8 @@ type SubscriptionDiscoveryRequest struct {
 	ProxyURL                    string `json:"proxy_url"`
 	FetchViaProxy               bool   `json:"fetch_via_proxy"`
 	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
+	ClientCertificate           string `json:"client_certificate"`
+	ClientKey                   string `json:"client_key"`
+	CACertificate               string `json:"ca_certificate"`
 	DisableHTTP2                bool   `json:"disable_http2"`
 }

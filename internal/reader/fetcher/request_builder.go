@@ -6,7 +6,6 @@ package fetcher // import "miniflux.app/v2/internal/reader/fetcher"
 import (
 	"context"
 	"crypto/tls"
-	"crypto/x509"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -283,26 +282,25 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		}
 	}
 
-	if r.clientCertificate != "" && r.clientKey != "" {
-		certificate, err := tls.X509KeyPair([]byte(r.clientCertificate), []byte(r.clientKey))
-		if err != nil {
-			return nil, fmt.Errorf("fetcher: unable to load client certificate: %w", err)
-		}
-		if transport.TLSClientConfig == nil {
-			transport.TLSClientConfig = &tls.Config{}
-		}
-		transport.TLSClientConfig.Certificates = append(transport.TLSClientConfig.Certificates, certificate)
+	clientCertificate, caCertificates, err := parseTLSCertificates(r.clientCertificate, r.clientKey, r.caCertificate)
+	if err != nil {
+		return nil, fmt.Errorf("fetcher: %w", err)
 	}
 
-	if r.caCertificate != "" {
-		caCertPool := x509.NewCertPool()
-		if !caCertPool.AppendCertsFromPEM([]byte(r.caCertificate)) {
-			return nil, errors.New("fetcher: unable to parse CA certificate")
-		}
+	if clientCertificate != nil || len(caCertificates) > 0 {
 		if transport.TLSClientConfig == nil {
 			transport.TLSClientConfig = &tls.Config{}
 		}
-		transport.TLSClientConfig.RootCAs = caCertPool
+		if clientCertificate != nil {
+			transport.TLSClientConfig.Certificates = []tls.Certificate{*clientCertificate}
+		}
+		if len(caCertificates) > 0 {
+			roots, err := systemRootsWithCustomCAs(caCertificates)
+			if err != nil {
+				return nil, fmt.Errorf("fetcher: %w", err)
+			}
+			transport.TLSClientConfig.RootCAs = roots
+		}
 	}
 
 	if r.disableHTTP2 {

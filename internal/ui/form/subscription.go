@@ -84,7 +84,7 @@ func (s *SubscriptionForm) Validate() *locale.LocalizedError {
 		}
 	}
 
-	return nil
+	return validator.ValidateTLSCertificates(s.ClientCertificate, s.ClientKey, s.CACertificate)
 }
 
 // NewSubscriptionForm returns a new SubscriptionForm.
