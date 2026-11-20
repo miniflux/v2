@@ -271,6 +271,35 @@ func TestParseWeirdDateFormat(t *testing.T) {
 	}
 }
 
+func TestParseFrenchMonthNames(t *testing.T) {
+	testCases := map[string]int64{
+		"jeu., 02 janvier 2020 10:00:00 +0000":   1577959200,
+		"jeu., 02 février 2020 10:00:00 +0000":   1580637600,
+		"jeu., 02 mars 2020 10:00:00 +0000":      1583143200,
+		"jeu., 02 avril 2020 10:00:00 +0000":     1585821600,
+		"jeu., 02 mai 2020 10:00:00 +0000":       1588413600,
+		"jeu., 02 juin 2020 10:00:00 +0000":      1591092000,
+		"jeu., 02 juillet 2020 10:00:00 +0000":   1593684000,
+		"jeu., 02 août 2020 10:00:00 +0000":      1596362400,
+		"jeu., 02 septembre 2020 10:00:00 +0000": 1599040800,
+		"jeu., 02 octobre 2020 10:00:00 +0000":   1601632800,
+		"jeu., 02 novembre 2020 10:00:00 +0000":  1604311200,
+		"jeu., 02 décembre 2020 10:00:00 +0000":  1606903200,
+	}
+
+	for input, expectedTS := range testCases {
+		date, err := Parse(input)
+		if err != nil {
+			t.Errorf(`Unable to parse date %q: %v`, input, err)
+			continue
+		}
+
+		if date.Unix() != expectedTS {
+			t.Errorf(`The Unix timestamp of %q should be %v instead of %v`, input, expectedTS, date.Unix())
+		}
+	}
+}
+
 func TestParseDateWithTimezoneOutOfRange(t *testing.T) {
 	inputs := []string{
 		"2023-05-29 00:00:00-13:00",
