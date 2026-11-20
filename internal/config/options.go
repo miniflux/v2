@@ -245,6 +245,11 @@ func NewConfigOptions() *configOptions {
 				rawValue:        "0",
 				valueType:       boolType,
 			},
+			"FETCH_TWEET_EMBEDS": {
+				parsedBoolValue: false,
+				rawValue:        "0",
+				valueType:       boolType,
+			},
 			"FETCH_YOUTUBE_WATCH_TIME": {
 				parsedBoolValue: false,
 				rawValue:        "0",
@@ -738,6 +743,10 @@ func (c *configOptions) DisableSchedulerService() bool {
 
 func (c *configOptions) FetchBilibiliWatchTime() bool {
 	return c.options["FETCH_BILIBILI_WATCH_TIME"].parsedBoolValue
+}
+
+func (c *configOptions) FetchTweetEmbeds() bool {
+	return c.options["FETCH_TWEET_EMBEDS"].parsedBoolValue
 }
 
 func (c *configOptions) FetchNebulaWatchTime() bool {
