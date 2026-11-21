@@ -33,18 +33,29 @@ func (v *view) Render(template string) []byte {
 // New returns a new view with default parameters.
 func New(tpl *template.Engine, r *http.Request) *view {
 	webSession := request.WebSession(r)
-	theme := webSession.Theme()
 	flashSuccessMessage, flashErrorMessage := webSession.ConsumeMessages()
+	v := newView(tpl, r)
+	v.params["csrf"] = webSession.CSRF()
+	v.params["flashSuccessMessage"] = flashSuccessMessage
+	v.params["flashErrorMessage"] = flashErrorMessage
+	return v
+}
+
+// NewPublic returns a view for public pages, without the CSRF token or flash messages.
+func NewPublic(tpl *template.Engine, r *http.Request) *view {
+	return newView(tpl, r)
+}
+
+func newView(tpl *template.Engine, r *http.Request) *view {
+	webSession := request.WebSession(r)
+	theme := webSession.Theme()
 	return &view{tpl, r, map[string]any{
-		"menu":                "",
-		"csrf":                webSession.CSRF(),
-		"flashSuccessMessage": flashSuccessMessage,
-		"flashErrorMessage":   flashErrorMessage,
-		"theme":               theme,
-		"language":            webSession.Language(),
-		"theme_checksum":      static.StylesheetBundles[theme+".css"].Checksum,
-		"app_js_checksum":     static.JavascriptBundles["app.js"].Checksum,
-		"sw_js_checksum":      static.JavascriptBundles["service-worker.js"].Checksum,
-		"webAuthnEnabled":     config.Opts.WebAuthn(),
+		"menu":            "",
+		"theme":           theme,
+		"language":        webSession.Language(),
+		"theme_checksum":  static.StylesheetBundles[theme+".css"].Checksum,
+		"app_js_checksum": static.JavascriptBundles["app.js"].Checksum,
+		"sw_js_checksum":  static.JavascriptBundles["service-worker.js"].Checksum,
+		"webAuthnEnabled": config.Opts.WebAuthn(),
 	}}
 }

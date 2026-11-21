@@ -117,7 +117,6 @@ func (m *authMiddleware) serveValidated(w http.ResponseWriter, r *http.Request, 
 			slog.Bool("authentication_failed", true),
 			slog.String("client_ip", clientIP),
 			slog.String("user_agent", r.UserAgent()),
-			slog.String("token", token),
 		)
 		sendUnauthorizedResponse(w, r)
 		return

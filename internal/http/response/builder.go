@@ -126,7 +126,7 @@ func (b *Builder) WithoutCompression() *Builder {
 	return b
 }
 
-// WithCaching adds caching headers to the response.
+// WithCaching marks the response as publicly cacheable; use it only when the body never depends on the session.
 func (b *Builder) WithCaching(etag string, duration time.Duration, callback func(*Builder)) {
 	etag = normalizeETag(etag)
 	b.headers.Set("ETag", etag)
@@ -225,6 +225,13 @@ func (b *Builder) writeHeaders() {
 	b.headers.Set("Referrer-Policy", "no-referrer")
 
 	maps.Copy(b.w.Header(), b.headers)
+
+	// Shared caches must never replay a cookie to other visitors.
+	headers := b.w.Header()
+	if len(headers.Values("Set-Cookie")) > 0 && strings.Contains(headers.Get("Cache-Control"), "public") {
+		headers.Set("Cache-Control", "private, no-store")
+		headers.Del("Expires")
+	}
 
 	b.w.WriteHeader(b.statusCode)
 }

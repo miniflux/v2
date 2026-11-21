@@ -150,6 +150,7 @@ func TestTranslationFilePluralForms(t *testing.T) {
 		"ru_RU":            3,
 		"tr_TR":            2,
 		"uk_UA":            3,
+		"vi_VN":            1,
 		"zh_CN":            1,
 		"zh_TW":            1,
 	}

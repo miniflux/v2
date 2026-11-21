@@ -23,7 +23,6 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	settingsForm := form.SettingsForm{
-		Username:                  user.Username,
 		Theme:                     user.Theme,
 		Language:                  user.Language,
 		Timezone:                  user.Timezone,
@@ -50,12 +49,6 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		OpenExternalLinksInNewTab: user.OpenExternalLinksInNewTab,
 	}
 
-	creds, err := h.store.WebAuthnCredentialsByUserID(user.ID)
-	if err != nil {
-		response.HTMLServerError(w, r, err)
-		return
-	}
-
 	view := view.New(h.tpl, r)
 	view.Set("form", settingsForm)
 	view.Set("readBehaviors", map[string]any{
@@ -75,8 +68,6 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("default_home_pages", model.HomePages())
 	view.Set("categories_sorting_options", model.CategoriesSortingOptions())
 	view.Set("maxEntriesPerPage", model.MaxEntryLimit)
-	view.Set("countWebAuthnCerts", h.store.CountWebAuthnCredentialsByUserID(user.ID))
-	view.Set("webAuthnCerts", creds)
 
 	response.HTML(w, r, view.Render("settings"))
 }

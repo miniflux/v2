@@ -259,3 +259,15 @@ func TestValidateUserModificationRejectsPasswordWhenLocalAuthDisabled(t *testing
 		t.Fatalf("expected non-password modification to be accepted, got %v", err)
 	}
 }
+
+func TestValidateUserModificationRejectsInvalidUsername(t *testing.T) {
+	for _, username := range []string{"invalid username", "user/name", "<script>"} {
+		req := &model.UserModificationRequest{
+			Username: new(username),
+		}
+
+		if err := ValidateUserModification(nil, 0, req); err == nil {
+			t.Errorf("expected username %q to be rejected", username)
+		}
+	}
+}

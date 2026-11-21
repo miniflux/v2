@@ -6,7 +6,6 @@ package api // import "miniflux.app/v2/internal/api"
 import (
 	json_parser "encoding/json"
 	"errors"
-	"log/slog"
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
@@ -101,6 +100,13 @@ func (h *handler) updateUserHandler(w http.ResponseWriter, r *http.Request) {
 	if err = h.store.UpdateUser(originalUser); err != nil {
 		response.JSONServerError(w, r, err)
 		return
+	}
+
+	if userModificationRequest.Password != nil {
+		if err := h.store.RemoveUserWebSessionsExcept(originalUser.ID, ""); err != nil {
+			response.JSONServerError(w, r, err)
+			return
+		}
 	}
 
 	response.JSONCreated(w, r, originalUser)
@@ -260,13 +266,10 @@ func (h *handler) removeUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go func() {
-		if err := h.store.RemoveUser(user.ID); err != nil {
-			slog.Error("Unable to delete user",
-				slog.Int64("user_id", user.ID),
-				slog.Any("error", err),
-			)
-		}
-	}()
+	if err := h.store.RemoveUser(user.ID); err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
+
 	response.NoContent(w, r)
 }

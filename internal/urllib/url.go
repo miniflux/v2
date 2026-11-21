@@ -15,10 +15,16 @@ import (
 var (
 	rfc6598SharedAddressSpacePrefix = netip.MustParsePrefix("100.64.0.0/10")
 	nat64WellKnownPrefix            = netip.MustParsePrefix("64:ff9b::/96")
+	nat64LocalUsePrefix             = netip.MustParsePrefix("64:ff9b:1::/48")
+	sixToFourPrefix                 = netip.MustParsePrefix("2002::/16")
 	nonPublicIPPrefixes             = []netip.Prefix{
+		netip.MustParsePrefix("0.0.0.0/8"), // "This network" (RFC 6890).
 		netip.MustParsePrefix("168.63.129.16/32"),
 		netip.MustParsePrefix("192.0.0.192/32"),
 		netip.MustParsePrefix("198.18.0.0/15"),
+		netip.MustParsePrefix("240.0.0.0/4"),     // Reserved and limited broadcast (RFC 6890).
+		netip.MustParsePrefix("::/96"),           // Deprecated IPv4-compatible IPv6 addresses (RFC 4291).
+		netip.MustParsePrefix("::ffff:0:0:0/96"), // Deprecated IPv4-translated IPv6 addresses (RFC 2765).
 		netip.MustParsePrefix("fec0::/10"),
 	}
 )
@@ -215,6 +221,21 @@ func isNonPublicAddr(addr netip.Addr) bool {
 	if nat64WellKnownPrefix.Contains(addr) {
 		addrBytes := addr.As16()
 		return isNonPublicAddr(netip.AddrFrom4([4]byte(addrBytes[12:])))
+	}
+
+	// The translator picks the prefix length, so only the /96 layout is accepted:
+	// with bits 48 to 95 set to zero, every other layout decodes to 0.0.0.0/8.
+	if nat64LocalUsePrefix.Contains(addr) {
+		addrBytes := addr.As16()
+		if [6]byte(addrBytes[6:12]) != [6]byte{} {
+			return true
+		}
+		return isNonPublicAddr(netip.AddrFrom4([4]byte(addrBytes[12:])))
+	}
+
+	if sixToFourPrefix.Contains(addr) {
+		addrBytes := addr.As16()
+		return isNonPublicAddr(netip.AddrFrom4([4]byte(addrBytes[2:6])))
 	}
 
 	if rfc6598SharedAddressSpacePrefix.Contains(addr) {

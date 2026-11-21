@@ -1,5 +1,6 @@
 name: RPM Packages
-permissions: read-all
+permissions:
+  contents: read
 on:
   workflow_dispatch:
   push:
@@ -21,6 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
+          persist-credentials: false
           fetch-depth: 0
     - name: Build RPM Package
       run: make rpm VERSION=2.2.x_dev
@@ -33,11 +35,12 @@ jobs:
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
+          persist-credentials: false
           fetch-depth: 0
     - name: Build RPM Package
       run: make rpm
     - name: Upload package
-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       with:
         name: packages
         path: "*.rpm"
@@ -47,9 +50,11 @@ jobs:
     if: github.event_name == 'push' && github.repository_owner == 'miniflux'
     name: Publish Packages
     runs-on: ubuntu-latest
+    environment: release
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
+          persist-credentials: false
           fetch-depth: 0
     - name: Build RPM Package
       run: make rpm
@@ -58,4 +63,4 @@ jobs:
     - name: Upload package to repository
       env:
         FURY_TOKEN: ${{ secrets.FURY_TOKEN }}
-      run: for f in *.rpm; do curl -F package=@$f https://$FURY_TOKEN@push.fury.io/miniflux/; done
+      run: for f in *.rpm; do curl -F package=@"$f" https://$FURY_TOKEN@push.fury.io/miniflux/; done

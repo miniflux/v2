@@ -66,7 +66,7 @@ func (st StreamType) String() string {
 	case LikeStream:
 		return "LikeStream"
 	default:
-		return st.String()
+		return fmt.Sprintf("StreamType(%d)", int(st))
 	}
 }
 

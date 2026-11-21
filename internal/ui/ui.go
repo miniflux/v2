@@ -125,6 +125,8 @@ func Serve(store *storage.Storage, pool *worker.Pool) http.Handler {
 	// Settings pages.
 	mux.HandleFunc("GET /settings", handler.showSettingsPage)
 	mux.HandleFunc("POST /settings", handler.updateSettings)
+	mux.HandleFunc("GET /authentication", handler.showAuthenticationPage)
+	mux.HandleFunc("POST /authentication", handler.updateAuthentication)
 	mux.HandleFunc("GET /integrations", handler.showIntegrationPage)
 	mux.HandleFunc("POST /integration", handler.updateIntegration)
 	mux.HandleFunc("GET /about", handler.showAboutPage)

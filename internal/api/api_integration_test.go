@@ -380,6 +380,10 @@ func TestRemoveUserEndpointAsAdmin(t *testing.T) {
 	if err := client.DeleteUser(user.ID); err != nil {
 		t.Fatal(err)
 	}
+
+	if _, err := client.UserByID(user.ID); !errors.Is(err, miniflux.ErrNotFound) {
+		t.Fatalf(`The user should be removed once the delete request returns, got error: %v`, err)
+	}
 }
 
 func TestRemoveUserEndpointAsRegularUser(t *testing.T) {

@@ -4,6 +4,7 @@
 package ui // import "miniflux.app/v2/internal/ui"
 
 import (
+	"errors"
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
@@ -34,6 +35,12 @@ func (h *handler) showEditUserPage(w http.ResponseWriter, r *http.Request) {
 
 	if selectedUser == nil {
 		response.HTMLNotFound(w, r)
+		return
+	}
+
+	// Users change their own username and password on the authentication page.
+	if selectedUser.ID == user.ID {
+		response.HTMLBadRequest(w, r, errors.New("you cannot edit yourself"))
 		return
 	}
 

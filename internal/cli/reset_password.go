@@ -35,5 +35,9 @@ func resetPassword(store *storage.Storage) {
 		printErrorAndExit(err)
 	}
 
+	if err := store.RemoveUserWebSessionsExcept(user.ID, ""); err != nil {
+		printErrorAndExit(err)
+	}
+
 	fmt.Println("Password changed!")
 }

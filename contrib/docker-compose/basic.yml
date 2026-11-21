@@ -19,7 +19,7 @@ services:
     # healthcheck:
     #  test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
   db:
-    image: postgres:latest
+    image: postgres:18
     container_name: postgres
     restart: always
     environment:
