@@ -22,6 +22,10 @@ func ValidateFeedCreation(store *storage.Storage, userID int64, request *model.F
 		return locale.NewLocalizedError("error.invalid_feed_url")
 	}
 
+	if err := ValidateTLSCertificates(request.ClientCertificate, request.ClientKey, request.CACertificate); err != nil {
+		return err
+	}
+
 	if store.FeedURLExists(userID, request.FeedURL) {
 		return locale.NewLocalizedError("error.feed_already_exists")
 	}

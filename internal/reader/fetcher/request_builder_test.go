@@ -4,6 +4,15 @@
 package fetcher // import "miniflux.app/v2/internal/reader/fetcher"
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
+	"crypto/tls"
+	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/pem"
+	"math/big"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -909,4 +918,187 @@ func configureFetcherPrivateNetworkOptions(t *testing.T, privateNetworks, privat
 	t.Cleanup(func() {
 		config.Opts = previousOptions
 	})
+}
+
+// generateSelfSignedCert returns a PEM-encoded ECDSA certificate and key that
+// is its own issuer, usable as a client certificate, a server certificate for
+// 127.0.0.1, and the CA that verifies both.
+func generateSelfSignedCert(t *testing.T) (certPEM, keyPEM []byte) {
+	t.Helper()
+
+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	if err != nil {
+		t.Fatalf("unable to generate key: %v", err)
+	}
+
+	template := &x509.Certificate{
+		SerialNumber:          big.NewInt(1),
+		Subject:               pkix.Name{CommonName: "miniflux-test"},
+		NotBefore:             time.Now().Add(-time.Hour),
+		NotAfter:              time.Now().Add(time.Hour),
+		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
+		IPAddresses:           []net.IP{net.IPv4(127, 0, 0, 1), net.IPv6loopback},
+		IsCA:                  true,
+		BasicConstraintsValid: true,
+	}
+
+	der, err := x509.CreateCertificate(rand.Reader, template, template, &key.PublicKey, key)
+	if err != nil {
+		t.Fatalf("unable to create certificate: %v", err)
+	}
+	keyDER, err := x509.MarshalPKCS8PrivateKey(key)
+	if err != nil {
+		t.Fatalf("unable to marshal key: %v", err)
+	}
+
+	certPEM = pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: der})
+	keyPEM = pem.EncodeToMemory(&pem.Block{Type: "PRIVATE KEY", Bytes: keyDER})
+	return certPEM, keyPEM
+}
+
+func TestRequestBuilder_WithClientCertificate(t *testing.T) {
+	certPEM, keyPEM := generateSelfSignedCert(t)
+
+	caPool := x509.NewCertPool()
+	if !caPool.AppendCertsFromPEM(certPEM) {
+		t.Fatal("unable to build client CA pool")
+	}
+
+	server := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	server.TLS = &tls.Config{
+		ClientAuth: tls.RequireAndVerifyClientCert,
+		ClientCAs:  caPool,
+	}
+	server.StartTLS()
+	defer server.Close()
+
+	// Without a client certificate the mutual-TLS handshake must fail.
+	if _, err := NewRequestBuilder().IgnoreTLSErrors(true).ExecuteRequest(server.URL); err == nil {
+		t.Fatal("expected request without client certificate to fail")
+	}
+
+	// With the matching client certificate the request must succeed.
+	resp, err := NewRequestBuilder().
+		IgnoreTLSErrors(true).
+		WithClientCertificate(string(certPEM), string(keyPEM)).
+		ExecuteRequest(server.URL)
+	if err != nil {
+		t.Fatalf("expected request with client certificate to succeed, got: %v", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("expected status 200, got %d", resp.StatusCode)
+	}
+}
+
+func TestRequestBuilder_WithCACertificate(t *testing.T) {
+	certPEM, keyPEM := generateSelfSignedCert(t)
+
+	serverCert, err := tls.X509KeyPair(certPEM, keyPEM)
+	if err != nil {
+		t.Fatalf("unable to load server certificate: %v", err)
+	}
+
+	server := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	server.TLS = &tls.Config{Certificates: []tls.Certificate{serverCert}}
+	server.StartTLS()
+	defer server.Close()
+
+	// Without trusting the CA the server certificate is rejected.
+	if _, err := NewRequestBuilder().ExecuteRequest(server.URL); err == nil {
+		t.Fatal("expected request without trusted CA to fail")
+	}
+
+	// Trusting the CA that signed the server certificate must succeed.
+	resp, err := NewRequestBuilder().
+		WithCACertificate(string(certPEM)).
+		ExecuteRequest(server.URL)
+	if err != nil {
+		t.Fatalf("expected request with trusted CA to succeed, got: %v", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("expected status 200, got %d", resp.StatusCode)
+	}
+}
+
+func TestRequestBuilder_RejectsIncompleteClientCertificate(t *testing.T) {
+	certPEM, keyPEM := generateSelfSignedCert(t)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	for _, tt := range []struct {
+		name string
+		cert string
+		key  string
+	}{
+		{name: "certificate only", cert: string(certPEM)},
+		{name: "key only", key: string(keyPEM)},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			resp, err := NewRequestBuilder().WithClientCertificate(tt.cert, tt.key).ExecuteRequest(server.URL)
+			if err == nil {
+				resp.Body.Close()
+				t.Fatal("expected request to reject an incomplete client key pair")
+			}
+		})
+	}
+}
+
+func TestSystemRootsWithCustomCAs(t *testing.T) {
+	certPEM, _ := generateSelfSignedCert(t)
+	expectedRoots, err := x509.SystemCertPool()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !expectedRoots.AppendCertsFromPEM(certPEM) {
+		t.Fatal("unable to append the test root")
+	}
+
+	_, customCAs, err := parseTLSCertificates("", "", string(certPEM))
+	if err != nil {
+		t.Fatal(err)
+	}
+	roots, err := systemRootsWithCustomCAs(customCAs)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !roots.Equal(expectedRoots) {
+		t.Fatal("expected the system roots and the custom CA")
+	}
+}
+
+func TestValidateTLSCertificates(t *testing.T) {
+	cert, key := generateSelfSignedCert(t)
+	otherCert, otherKey := generateSelfSignedCert(t)
+	for _, tt := range []struct {
+		name    string
+		cert    string
+		key     string
+		ca      string
+		wantErr bool
+	}{
+		{name: "optional"},
+		{name: "valid credentials and CA bundle", cert: string(cert), key: string(key), ca: string(cert) + string(otherCert)},
+		{name: "certificate only", cert: string(cert), wantErr: true},
+		{name: "key only", key: string(key), wantErr: true},
+		{name: "mismatched key", cert: string(cert), key: string(otherKey), wantErr: true},
+		{name: "invalid client certificate PEM", cert: "invalid PEM", key: string(key), wantErr: true},
+		{name: "invalid private key PEM", cert: string(cert), key: "invalid PEM", wantErr: true},
+		{name: "invalid CA PEM", ca: "invalid PEM", wantErr: true},
+		{name: "invalid trailing CA PEM", ca: string(cert) + "invalid PEM", wantErr: true},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := ValidateTLSCertificates(tt.cert, tt.key, tt.ca); (err != nil) != tt.wantErr {
+				t.Fatalf("unexpected TLS certificate validation result: %v", err)
+			}
+		})
+	}
 }

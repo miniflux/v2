@@ -60,6 +60,9 @@ type RequestBuilder struct {
 	disableCompression bool
 	proxyRotator       *proxyrotator.ProxyRotator
 	feedProxyURL       string
+	clientCertificate  string
+	clientKey          string
+	caCertificate      string
 }
 
 func NewRequestBuilder() *RequestBuilder {
@@ -124,6 +127,21 @@ func (r *RequestBuilder) WithUsernameAndPassword(username, password string) *Req
 	if username != "" && password != "" {
 		r.headers.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(username+":"+password)))
 	}
+	return r
+}
+
+// WithClientCertificate configures a PEM-encoded client certificate and its
+// PEM-encoded private key for mutual TLS authentication with the feed server.
+func (r *RequestBuilder) WithClientCertificate(certificate, key string) *RequestBuilder {
+	r.clientCertificate = certificate
+	r.clientKey = key
+	return r
+}
+
+// WithCACertificate configures a PEM-encoded CA certificate used to verify the
+// feed server, for feeds served behind a private certificate authority.
+func (r *RequestBuilder) WithCACertificate(certificate string) *RequestBuilder {
+	r.caCertificate = certificate
 	return r
 }
 
@@ -272,6 +290,27 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		transport.TLSClientConfig = &tls.Config{
 			CipherSuites:       cipherSuites,
 			InsecureSkipVerify: true,
+		}
+	}
+
+	clientCertificate, caCertificates, err := parseTLSCertificates(r.clientCertificate, r.clientKey, r.caCertificate)
+	if err != nil {
+		return nil, fmt.Errorf("fetcher: %w", err)
+	}
+
+	if clientCertificate != nil || len(caCertificates) > 0 {
+		if transport.TLSClientConfig == nil {
+			transport.TLSClientConfig = &tls.Config{}
+		}
+		if clientCertificate != nil {
+			transport.TLSClientConfig.Certificates = []tls.Certificate{*clientCertificate}
+		}
+		if len(caCertificates) > 0 {
+			roots, err := systemRootsWithCustomCAs(caCertificates)
+			if err != nil {
+				return nil, fmt.Errorf("fetcher: %w", err)
+			}
+			transport.TLSClientConfig.RootCAs = roots
 		}
 	}
 
