@@ -2864,6 +2864,87 @@ func TestGetAllEntriesEndpointWithFilter(t *testing.T) {
 	}
 }
 
+func TestGetEntriesTotalIgnoresLimitAndOffset(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	allEntries, err := regularUserClient.Entries(&miniflux.Filter{FeedID: feedID, Order: "id", Direction: "asc", Limit: 1000})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	total := allEntries.Total
+	if total < 3 {
+		t.Fatalf(`Expected at least 3 entries in the test feed, got %d`, total)
+	}
+
+	if len(allEntries.Entries) != total {
+		t.Fatalf(`Expected %d entries when the limit is above the total, got %d`, total, len(allEntries.Entries))
+	}
+
+	testCases := []struct {
+		name        string
+		limit       int
+		offset      int
+		wantEntries int
+	}{
+		{"first page with more pages after it", 2, 0, 2},
+		{"middle page", 1, 1, 1},
+		{"full last page", 2, total - 2, 2},
+		{"short last page", 2, total - 1, 1},
+		{"offset at the end of the list", 2, total, 0},
+		{"offset beyond the end of the list", 2, total + 5, 0},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			page, err := regularUserClient.Entries(&miniflux.Filter{
+				FeedID:    feedID,
+				Order:     "id",
+				Direction: "asc",
+				Limit:     tc.limit,
+				Offset:    tc.offset,
+			})
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if page.Total != total {
+				t.Fatalf(`Expected total %d, got %d`, total, page.Total)
+			}
+
+			if len(page.Entries) != tc.wantEntries {
+				t.Fatalf(`Expected %d entries, got %d`, tc.wantEntries, len(page.Entries))
+			}
+
+			for i, entry := range page.Entries {
+				if want := allEntries.Entries[tc.offset+i].ID; entry.ID != want {
+					t.Fatalf(`Expected entry #%d to be %d, got %d`, tc.offset+i, want, entry.ID)
+				}
+			}
+		})
+	}
+}
+
 func TestGetGlobalEntriesEndpoint(t *testing.T) {
 	t.Parallel()
 

@@ -266,43 +266,39 @@ func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 	return entries[0], nil
 }
 
-// GetEntries returns a list of entries that match the condition.
-func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
-	entries, _, err := e.fetchEntries(false)
-	return entries, err
-}
-
 // GetEntriesWithCount returns a list of entries and the total count of matching
-// rows, ignoring limit and offset. It uses a window function for non-empty pages
-// and falls back to a separate count when the requested offset returns no rows.
+// rows, ignoring limit and offset.
+//
+// The total comes from a separate CountEntries query, as in GetEntryIDsWithCount.
+// Computing it with count(*) OVER() in the page query instead forces PostgreSQL
+// to join and sort every matching row before applying the limit, which takes
+// seconds on lists with millions of entries, such as the history of read entries.
+//
+// The count query is skipped when the page itself shows where the list ends:
+// a page shorter than the limit that is either not empty or the first page.
 func (e *EntryQueryBuilder) GetEntriesWithCount() (model.Entries, int, error) {
-	entries, total, err := e.fetchEntries(true)
+	entries, err := e.GetEntries()
 	if err != nil {
 		return nil, 0, err
 	}
 
-	if len(entries) == 0 && e.offset > 0 {
-		total, err = e.CountEntries()
-		if err != nil {
-			return nil, 0, err
-		}
+	isLastPage := e.limit <= 0 || len(entries) < e.limit
+	if isLastPage && (len(entries) > 0 || e.offset == 0) {
+		return entries, e.offset + len(entries), nil
+	}
+
+	total, err := e.CountEntries()
+	if err != nil {
+		return nil, 0, err
 	}
 
 	return entries, total, nil
 }
 
-// fetchEntries is the shared implementation for GetEntries and GetEntriesWithCount.
-// When withCount is true, count(*) OVER() is included in the SELECT and the total
-// count of matching rows is returned; otherwise the returned count is 0.
-func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, error) {
-	countColumn := ""
-	if withCount {
-		countColumn = "count(*) OVER(),"
-	}
-
+// GetEntries returns a list of entries that match the condition.
+func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 	query := `
 		SELECT
-			` + countColumn + `
 			e.id,
 			e.user_id,
 			e.feed_id,
@@ -357,7 +353,7 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
-		return nil, 0, fmt.Errorf("store: unable to get entries: %v", err)
+		return nil, fmt.Errorf("store: unable to get entries: %v", err)
 	}
 	defer rows.Close()
 
@@ -365,7 +361,6 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 	entries := make(model.Entries, 0, size)
 	entryMap := make(map[int64]*model.Entry, size)
 	entryIDs := make([]int64, 0, size)
-	var totalCount int
 
 	for rows.Next() {
 		var iconID sql.NullInt64
@@ -415,13 +410,9 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 			&tz,
 		}
 
-		if withCount {
-			dest = append([]any{&totalCount}, dest...)
-		}
-
 		err := rows.Scan(dest...)
 		if err != nil {
-			return nil, 0, fmt.Errorf("store: unable to fetch entry row: %v", err)
+			return nil, fmt.Errorf("store: unable to fetch entry row: %v", err)
 		}
 
 		if iconID.Valid && externalIconID.Valid && externalIconID.String != "" {
@@ -451,7 +442,7 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 	if e.fetchEnclosures && len(entryIDs) > 0 {
 		enclosures, err := e.store.EnclosuresByEntryIDs(entryIDs)
 		if err != nil {
-			return nil, 0, fmt.Errorf("store: unable to fetch enclosures: %w", err)
+			return nil, fmt.Errorf("store: unable to fetch enclosures: %w", err)
 		}
 
 		for entryID, entryEnclosures := range enclosures {
@@ -461,7 +452,7 @@ func (e *EntryQueryBuilder) fetchEntries(withCount bool) (model.Entries, int, er
 		}
 	}
 
-	return entries, totalCount, nil
+	return entries, nil
 }
 
 // GetEntryIDs returns a list of entry IDs that match the condition.
