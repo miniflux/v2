@@ -85,9 +85,6 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 			response.HTMLRedirect(w, r, h.routePath("/integrations"))
 			return
 		}
-		if integration.LinktacoVisibility == "" {
-			integration.LinktacoVisibility = "PUBLIC"
-		}
 	}
 
 	err = h.store.UpdateIntegration(integration)

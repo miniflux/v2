@@ -337,7 +337,7 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		LinktacoAPIToken:                 r.FormValue("linktaco_api_token"),
 		LinktacoOrgSlug:                  r.FormValue("linktaco_org_slug"),
 		LinktacoTags:                     r.FormValue("linktaco_tags"),
-		LinktacoVisibility:               r.FormValue("linktaco_visibility"),
+		LinktacoVisibility:               linktacoVisibilityField(r.FormValue("linktaco_visibility")),
 		LinkwardenEnabled:                r.FormValue("linkwarden_enabled") == "1",
 		LinkwardenURL:                    r.FormValue("linkwarden_url"),
 		LinkwardenAPIKey:                 r.FormValue("linkwarden_api_key"),
@@ -407,6 +407,14 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		GotifyToken:                      r.FormValue("gotify_token"),
 		GotifyPriority:                   gotifyPriority,
 	}
+}
+
+// linktacoVisibilityField maps the form value to a valid linktaco_link_visibility enum value.
+func linktacoVisibilityField(formValue string) string {
+	if formValue == "PRIVATE" {
+		return "PRIVATE"
+	}
+	return "PUBLIC"
 }
 
 func optionalInt64Field(formValue string) *int64 {
