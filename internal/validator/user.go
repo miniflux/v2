@@ -103,6 +103,12 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 		}
 	}
 
+	if changes.FeedsSortingOrder != nil {
+		if err := validateFeedsSortingOrder(*changes.FeedsSortingOrder); err != nil {
+			return err
+		}
+	}
+
 	if changes.DisplayMode != nil {
 		if err := validateDisplayMode(*changes.DisplayMode); err != nil {
 			return err
@@ -241,6 +247,13 @@ func validateEntrySortingOrder(order string) *locale.LocalizedError {
 func validateCategoriesSortingOrder(order string) *locale.LocalizedError {
 	if order != "alphabetical" && order != "unread_count" {
 		return locale.NewLocalizedError("error.invalid_categories_sorting_order")
+	}
+	return nil
+}
+
+func validateFeedsSortingOrder(order string) *locale.LocalizedError {
+	if order != "alphabetical" && order != "unread_count" {
+		return locale.NewLocalizedError("error.invalid_feeds_sorting_order")
 	}
 	return nil
 }

@@ -43,6 +43,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 	view.Set("default_home_pages", model.HomePages())
 	view.Set("categories_sorting_options", model.CategoriesSortingOptions())
+	view.Set("feeds_sorting_options", model.FeedsSortingOptions())
 
 	if validationErr := settingsForm.Validate(); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(user.Language))
@@ -58,6 +59,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 		EntryOrder:             model.OptionalString(settingsForm.EntryOrder),
 		EntriesPerPage:         model.OptionalNumber(settingsForm.EntriesPerPage),
 		CategoriesSortingOrder: model.OptionalString(settingsForm.CategoriesSortingOrder),
+		FeedsSortingOrder:      model.OptionalString(settingsForm.FeedsSortingOrder),
 		DisplayMode:            model.OptionalString(settingsForm.DisplayMode),
 		GestureNav:             model.OptionalString(settingsForm.GestureNav),
 		DefaultReadingSpeed:    model.OptionalNumber(settingsForm.DefaultReadingSpeed),

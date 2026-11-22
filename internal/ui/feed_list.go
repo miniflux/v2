@@ -18,7 +18,7 @@ func (h *handler) showFeedsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feeds, err := h.store.FeedsWithCounters(user.ID)
+	feeds, err := h.store.FeedsWithCounters(user.ID, user.FeedsSortingOrder)
 	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return

@@ -41,6 +41,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		CJKReadingSpeed:           user.CJKReadingSpeed,
 		DefaultHomePage:           user.DefaultHomePage,
 		CategoriesSortingOrder:    user.CategoriesSortingOrder,
+		FeedsSortingOrder:         user.FeedsSortingOrder,
 		MarkReadBehavior:          form.MarkAsReadBehavior(user.MarkReadOnView, user.MarkReadOnMediaPlayerCompletion),
 		MediaPlaybackRate:         user.MediaPlaybackRate,
 		BlockFilterEntryRules:     user.BlockFilterEntryRules,
@@ -67,6 +68,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 	view.Set("default_home_pages", model.HomePages())
 	view.Set("categories_sorting_options", model.CategoriesSortingOptions())
+	view.Set("feeds_sorting_options", model.FeedsSortingOptions())
 	view.Set("maxEntriesPerPage", model.MaxEntryLimit)
 
 	response.HTML(w, r, view.Render("settings"))

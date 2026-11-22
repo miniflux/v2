@@ -107,6 +107,13 @@
         {{ end }}
         </select>
 
+        <label for="form-feeds-sorting-order">{{ t "form.prefs.label.feeds_sorting_order" }}</label>
+        <select id="form-feeds-sorting-order" name="feeds_sorting_order">
+        {{ range $key, $value := .feeds_sorting_options }}
+            <option value="{{ $key }}" {{ if eq $key $.form.FeedsSortingOrder }}selected="selected"{{ end }}>{{ t $value }}</option>
+        {{ end }}
+        </select>
+
         <label for="form-gesture-nav">{{ t "form.prefs.label.gesture_nav" }}</label>
         <select id="form-gesture-nav" name="gesture_nav">
             <option value="none" {{ if eq "none" $.form.GestureNav }}selected="selected"{{ end }}>{{ t "form.prefs.select.none" }}</option>

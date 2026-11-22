@@ -32,6 +32,7 @@ type User struct {
 	CJKReadingSpeed                 int        `json:"cjk_reading_speed"`
 	DefaultHomePage                 string     `json:"default_home_page"`
 	CategoriesSortingOrder          string     `json:"categories_sorting_order"`
+	FeedsSortingOrder               string     `json:"feeds_sorting_order"`
 	MediaPlaybackRate               float64    `json:"media_playback_rate"`
 	BlockFilterEntryRules           string     `json:"block_filter_entry_rules"`
 	KeepFilterEntryRules            string     `json:"keep_filter_entry_rules"`
@@ -77,6 +78,7 @@ type UserModificationRequest struct {
 	CJKReadingSpeed                 *int     `json:"cjk_reading_speed"`
 	DefaultHomePage                 *string  `json:"default_home_page"`
 	CategoriesSortingOrder          *string  `json:"categories_sorting_order"`
+	FeedsSortingOrder               *string  `json:"feeds_sorting_order"`
 	MarkReadOnView                  *bool    `json:"mark_read_on_view"`
 	MarkReadOnMediaPlayerCompletion *bool    `json:"mark_read_on_media_player_completion"`
 	MediaPlaybackRate               *float64 `json:"media_playback_rate"`
@@ -170,6 +172,10 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.CategoriesSortingOrder != nil {
 		user.CategoriesSortingOrder = *u.CategoriesSortingOrder
+	}
+
+	if u.FeedsSortingOrder != nil {
+		user.FeedsSortingOrder = *u.FeedsSortingOrder
 	}
 
 	if u.MarkReadOnView != nil {

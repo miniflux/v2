@@ -39,6 +39,7 @@ type SettingsForm struct {
 	CJKReadingSpeed        int
 	DefaultHomePage        string
 	CategoriesSortingOrder string
+	FeedsSortingOrder      string
 	// MarkReadBehavior is a string representation of the MarkReadOnView and MarkReadOnMediaPlayerCompletion fields together
 	MarkReadBehavior          markReadBehavior
 	MediaPlaybackRate         float64
@@ -106,6 +107,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.DefaultReadingSpeed = s.DefaultReadingSpeed
 	user.DefaultHomePage = s.DefaultHomePage
 	user.CategoriesSortingOrder = s.CategoriesSortingOrder
+	user.FeedsSortingOrder = s.FeedsSortingOrder
 	user.MediaPlaybackRate = s.MediaPlaybackRate
 	user.BlockFilterEntryRules = s.BlockFilterEntryRules
 	user.KeepFilterEntryRules = s.KeepFilterEntryRules
@@ -179,6 +181,7 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		CJKReadingSpeed:           int(cjkReadingSpeed),
 		DefaultHomePage:           r.FormValue("default_home_page"),
 		CategoriesSortingOrder:    r.FormValue("categories_sorting_order"),
+		FeedsSortingOrder:         r.FormValue("feeds_sorting_order"),
 		MarkReadOnView:            r.FormValue("mark_read_on_view") == "1",
 		MarkReadBehavior:          markReadBehavior(r.FormValue("mark_read_behavior")),
 		MediaPlaybackRate:         mediaPlaybackRate,
