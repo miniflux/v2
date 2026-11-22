@@ -6,6 +6,7 @@ package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 import (
 	"os"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -1091,9 +1092,9 @@ func TestAddImageTitle(t *testing.T) {
 		URL:   "https://example.org/article",
 		Title: `A title`,
 		Content: `<figure><img src="pif" alt=""/><figcaption><p>pouf</p></figcaption></figure>
-		<figure><img src="pif" alt="" onerror="alert(1)" a=""/><figcaption><p>pouf</p></figcaption></figure>
-		<figure><img src="pif" alt="" onerror="alert(1)" a=""/><figcaption><p>pouf</p></figcaption></figure>
-		<figure><img src="pif" alt=";&#34;onerror=alert(1) a=;&#34;"/><figcaption><p>pouf</p></figcaption></figure>
+		<figure><img src="pif" alt="&#34;onerror=alert(1) a=&#34;"/><figcaption><p>pouf</p></figcaption></figure>
+		<figure><img src="pif" alt="&#34;onerror=alert(1) a=&#34;"/><figcaption><p>pouf</p></figcaption></figure>
+		<figure><img src="pif" alt=";&amp;quot;onerror=alert(1) a=;&amp;quot;"/><figcaption><p>pouf</p></figcaption></figure>
 		<figure><img src="pif" alt="pouf"/><figcaption><p>&#34;onerror=alert(1) a=&#34;</p></figcaption></figure>
 		<figure><img src="pif" alt="pouf"/><figcaption><p>&#34;onerror=alert(1) a=&#34;</p></figcaption></figure>
 		<figure><img src="pif" alt="pouf"/><figcaption><p>;&amp;quot;onerror=alert(1) a=;&amp;quot;</p></figcaption></figure>
@@ -1501,4 +1502,136 @@ func TestStripImageQueryParamsSimple(t *testing.T) {
 	if !reflect.DeepEqual(testEntry, controlEntry) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
+}
+
+func TestRewriteRemoveTablesUnwrapsAllTableElements(t *testing.T) {
+	controlEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `Caption<p>Head</p><p>Body</p><p>Foot</p>`,
+	}
+	testEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `<table><caption>Caption</caption><colgroup><col span="2"></colgroup><thead><tr><th><p>Head</p></th></tr></thead><tbody><tr><td><p>Body</p></td></tr></tbody><tfoot><tr><td><p>Foot</p></td></tr></tfoot></table>`,
+	}
+	ApplyContentRewriteRules(testEntry, `remove_tables`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestRewriteBase64DecodeSkipsRawTextElements(t *testing.T) {
+	controlEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `<p>This is some base64 encoded content</p><script>PC9zY3JpcHQ+PC9zdHlsZT48Yj5pbmplY3RlZDwvYj4=</script><style>PC9zY3JpcHQ+PC9zdHlsZT48Yj5pbmplY3RlZDwvYj4=</style>`,
+	}
+	testEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `<p>VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=</p><script>PC9zY3JpcHQ+PC9zdHlsZT48Yj5pbmplY3RlZDwvYj4=</script><style>PC9zY3JpcHQ+PC9zdHlsZT48Yj5pbmplY3RlZDwvYj4=</style>`,
+	}
+	ApplyContentRewriteRules(testEntry, `base64_decode`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestMediumImageKeepsOtherNoScriptContentEscaped(t *testing.T) {
+	controlEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `<img src="https://example.org/image.jpg"/><noscript>&lt;/noscript&gt;&lt;b&gt;injected&lt;/b&gt;</noscript>`,
+	}
+	testEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `<figure class="paragraph-image"><noscript><img src="https://example.org/image.jpg"></noscript></figure><noscript>&lt;/noscript&gt;&lt;b&gt;injected&lt;/b&gt;</noscript>`,
+	}
+	ApplyContentRewriteRules(testEntry, "fix_medium_images")
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestRewriteNoScriptImageKeepsOtherNoScriptContentEscaped(t *testing.T) {
+	controlEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `<figure><img src="https://example.org/image.jpg"/></figure><noscript>&lt;/noscript&gt;&lt;b&gt;injected&lt;/b&gt;</noscript>`,
+	}
+	testEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `<figure><img src="https://example.org/placeholder.jpg"><noscript><img src="https://example.org/image.jpg"></noscript></figure><noscript>&lt;/noscript&gt;&lt;b&gt;injected&lt;/b&gt;</noscript>`,
+	}
+	ApplyContentRewriteRules(testEntry, "use_noscript_figure_images")
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestAddImageTitleNormalizesLineEndings(t *testing.T) {
+	controlEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: "<figure><img src=\"https://example.org/image.png\" alt=\"line1\nline2\"/><figcaption><p>line1\nline2\nline3</p></figcaption></figure>",
+	}
+	testEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `<img src="https://example.org/image.png" title="line1&#13;&#10;line2&#13;line3" alt="line1&#13;line2">`,
+	}
+	ApplyContentRewriteRules(testEntry, `add_image_title`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestRewriteBase64DecodeNormalizesLineEndings(t *testing.T) {
+	controlEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: "<pre>line1\nline2\nline3</pre>",
+	}
+	testEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `<pre>bGluZTENCmxpbmUyDWxpbmUz</pre>`,
+	}
+	ApplyContentRewriteRules(testEntry, `base64_decode`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func FuzzContentRewriteRules(f *testing.F) {
+	config.Opts = config.NewConfigOptions()
+
+	nestedElements := strings.Repeat("<div>", 1000)
+	escapedNestedElements := strings.Repeat("&lt;div&gt;", 1000)
+
+	f.Add(`<p>Some <strong>content</strong> with <a href="https://example.org/">a link</a> and <img src="https://example.org/image.jpg" title="Title" alt="Alt">.</p>`)
+	f.Add(`<img src="a" title="t" alt="&quot;&gt;` + escapedNestedElements + `">`)
+	f.Add(`<div data-src="&quot;&gt;` + escapedNestedElements + `"></div><div data-srcset="&quot;&gt;` + escapedNestedElements + `"></div>`)
+	f.Add(`<figure class="paragraph-image"><noscript>` + nestedElements + `</noscript></figure>`)
+	f.Add(`<figure><img src="a"><noscript>` + nestedElements + `</noscript></figure>`)
+	f.Add(`<p>` + escapedNestedElements + `</p>`)
+	f.Add(`<p><a href="https://news.ycombinator.com/?&quot;&gt;` + escapedNestedElements + `">Comments</a></p>`)
+	f.Add(`<figure class="kg-card"><a class="kg-bookmark-container" href="a"><div class="kg-bookmark-title">` + escapedNestedElements + `</div></a></figure>`)
+
+	f.Fuzz(func(t *testing.T, content string) {
+		for _, spec := range knownRules {
+			entry := &model.Entry{URL: "https://example.org/article", Title: "A title", Content: content}
+
+			spec.apply(entry.URL, entry, slices.Repeat([]string{"div"}, spec.minArgs))
+		}
+	})
 }
