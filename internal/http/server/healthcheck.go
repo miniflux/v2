@@ -4,7 +4,7 @@
 package server // import "miniflux.app/v2/internal/http/server"
 
 import (
-	"fmt"
+	"log/slog"
 	"net/http"
 
 	"miniflux.app/v2/internal/storage"
@@ -18,7 +18,8 @@ func livenessProbe(w http.ResponseWriter, r *http.Request) {
 func newReadinessProbe(store *storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := store.Ping(); err != nil {
-			http.Error(w, fmt.Sprintf("Database Connection Error: %q", err), http.StatusServiceUnavailable)
+			slog.Error("Readiness probe failed: unable to reach the database", slog.Any("error", err))
+			http.Error(w, "Database Connection Error", http.StatusServiceUnavailable)
 			return
 		}
 		w.WriteHeader(http.StatusOK)
