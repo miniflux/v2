@@ -138,6 +138,9 @@ type IntegrationForm struct {
 	GotifyURL                        string
 	GotifyToken                      string
 	GotifyPriority                   int
+	RSSFeedEnabled                   bool
+	RSSFeedToken                     string
+	RSSFeedRegenerateToken           bool
 }
 
 // Merge copy form values to the model.
@@ -264,6 +267,7 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.GotifyURL = i.GotifyURL
 	integration.GotifyToken = i.GotifyToken
 	integration.GotifyPriority = i.GotifyPriority
+	integration.RSSFeedEnabled = i.RSSFeedEnabled
 }
 
 // ValidateGoogleReader ensures the Google Reader integration is not enabled without credentials.
@@ -406,6 +410,8 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		GotifyURL:                        r.FormValue("gotify_url"),
 		GotifyToken:                      r.FormValue("gotify_token"),
 		GotifyPriority:                   gotifyPriority,
+		RSSFeedEnabled:                   r.FormValue("rssfeed_enabled") == "1",
+		RSSFeedRegenerateToken:           r.FormValue("rssfeed_regenerate_token") == "1",
 	}
 }
 

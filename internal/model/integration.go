@@ -131,4 +131,6 @@ type Integration struct {
 	GotifyURL                        string
 	GotifyToken                      string
 	GotifyPriority                   int
+	RSSFeedEnabled                   bool
+	RSSFeedToken                     string
 }
