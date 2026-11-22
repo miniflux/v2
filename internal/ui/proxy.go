@@ -9,10 +9,12 @@ import (
 	"encoding/base64"
 	"errors"
 	"log/slog"
+	"mime"
 	"net/http"
 	"net/url"
 	"path"
 	"strconv"
+	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -142,16 +144,34 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 
 	etag := crypto.HashFromBytes(decodedURL)
 
+	contentType := resp.Header.Get("Content-Type")
+	isInline := isInlineMediaType(contentType)
+	if !isInline {
+		slog.Debug("MediaProxy: Forcing download for non-media content type",
+			slog.String("media_url", mediaURL),
+			slog.String("content_type", contentType),
+		)
+		contentType = "application/octet-stream"
+	}
+
+	filename := path.Base(parsedMediaURL.Path)
+	if filename == "." || filename == "/" {
+		filename = ""
+	}
+
 	response.NewBuilder(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
 		b.WithStatus(resp.StatusCode)
 		b.WithHeader("Content-Security-Policy", response.ContentSecurityPolicyForUntrustedContent)
-		b.WithHeader("Content-Type", resp.Header.Get("Content-Type"))
+		b.WithHeader("Content-Type", contentType)
 
-		if filename := path.Base(parsedMediaURL.Path); filename != "" && filename != "." && filename != "/" {
+		switch {
+		case !isInline:
+			b.WithAttachment(filename)
+		case filename != "":
 			b.WithInline(filename)
 		}
 
-		forwardedResponseHeader := [...]string{"Content-Encoding", "Content-Type", "Content-Length", "Accept-Ranges", "Content-Range"}
+		forwardedResponseHeader := [...]string{"Content-Encoding", "Content-Length", "Accept-Ranges", "Content-Range"}
 		for _, responseHeaderName := range forwardedResponseHeader {
 			if resp.Header.Get(responseHeaderName) != "" {
 				b.WithHeader(responseHeaderName, resp.Header.Get(responseHeaderName))
@@ -161,4 +181,16 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 		b.WithoutCompression()
 		b.Write()
 	})
+}
+
+// isInlineMediaType reports whether the Content-Type is an image, audio or video type safe to render inline.
+func isInlineMediaType(contentType string) bool {
+	mediaType, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		return false
+	}
+
+	return strings.HasPrefix(mediaType, "image/") ||
+		strings.HasPrefix(mediaType, "audio/") ||
+		strings.HasPrefix(mediaType, "video/")
 }
