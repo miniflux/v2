@@ -618,6 +618,28 @@ func TestHTTPClientMaxBodySizeOptionParsing(t *testing.T) {
 	}
 }
 
+func TestHTTPServerMaxBodySizeOptionParsing(t *testing.T) {
+	configParser := NewConfigParser()
+
+	if configParser.options.HTTPServerMaxBodySize() != 15*1024*1024 {
+		t.Fatalf("Expected HTTP_SERVER_MAX_BODY_SIZE to be 15 by default, got %d", configParser.options.HTTPServerMaxBodySize())
+	}
+
+	if err := configParser.parseLines([]string{"HTTP_SERVER_MAX_BODY_SIZE=25"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	expectedValue := 25 * 1024 * 1024
+	currentValue := configParser.options.HTTPServerMaxBodySize()
+	if currentValue != int64(expectedValue) {
+		t.Fatalf("Expected HTTP_SERVER_MAX_BODY_SIZE to be %d, got %d", expectedValue, currentValue)
+	}
+
+	if err := configParser.parseLines([]string{"HTTP_SERVER_MAX_BODY_SIZE=0"}); err == nil {
+		t.Fatal("Expected an error for HTTP_SERVER_MAX_BODY_SIZE=0")
+	}
+}
+
 func TestHTTPClientUserAgentOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
 

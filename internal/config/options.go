@@ -291,6 +291,14 @@ func NewConfigOptions() *configOptions {
 				rawValue:          "",
 				valueType:         stringType,
 			},
+			"HTTP_SERVER_MAX_BODY_SIZE": {
+				parsedInt64Value: 15,
+				rawValue:         "15",
+				valueType:        int64Type,
+				validator: func(rawValue string) error {
+					return validateGreaterOrEqualThan(rawValue, 1)
+				},
+			},
 			"HTTP_SERVER_TIMEOUT": {
 				parsedDuration: 300 * time.Second,
 				rawValue:       "300",
@@ -813,6 +821,10 @@ func (c *configOptions) HTTPClientUserAgent() string {
 		return c.options["HTTP_CLIENT_USER_AGENT"].parsedStringValue
 	}
 	return defaultHTTPClientUserAgent
+}
+
+func (c *configOptions) HTTPServerMaxBodySize() int64 {
+	return c.options["HTTP_SERVER_MAX_BODY_SIZE"].parsedInt64Value * 1024 * 1024
 }
 
 func (c *configOptions) HTTPServerTimeout() time.Duration {

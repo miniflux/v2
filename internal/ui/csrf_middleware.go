@@ -26,6 +26,14 @@ func newCSRFMiddleware(basePath string) *csrfMiddleware {
 // in the request context.
 func (m *csrfMiddleware) handle(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// The request passed down is a copy made by WithContext, so net/http
+		// won't remove the multipart temporary files on its own.
+		defer func() {
+			if r.MultipartForm != nil {
+				r.MultipartForm.RemoveAll()
+			}
+		}()
+
 		switch r.Method {
 		case http.MethodGet, http.MethodHead, http.MethodOptions:
 			// Safe methods don't require CSRF validation.
@@ -46,10 +54,7 @@ func (m *csrfMiddleware) validate(w http.ResponseWriter, r *http.Request) bool {
 	}
 
 	csrfToken := session.CSRF()
-	formValue := r.FormValue("csrf")
-	headerValue := r.Header.Get("X-Csrf-Token")
-
-	if crypto.ConstantTimeCmp(csrfToken, formValue) || crypto.ConstantTimeCmp(csrfToken, headerValue) {
+	if crypto.ConstantTimeCmp(csrfToken, r.Header.Get("X-Csrf-Token")) || crypto.ConstantTimeCmp(csrfToken, csrfFormValue(r)) {
 		return true
 	}
 
@@ -64,4 +69,16 @@ func (m *csrfMiddleware) validate(w http.ResponseWriter, r *http.Request) bool {
 	}
 
 	return false
+}
+
+// csrfFormValue returns the CSRF token from the request body, parsing multipart forms only for authenticated users.
+func csrfFormValue(r *http.Request) string {
+	if request.IsAuthenticated(r) {
+		return r.PostFormValue("csrf")
+	}
+
+	if err := r.ParseForm(); err != nil {
+		return ""
+	}
+	return r.PostForm.Get("csrf")
 }
