@@ -10,6 +10,7 @@ import (
 	"log/slog"
 	"net/url"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"unicode"
@@ -18,6 +19,7 @@ import (
 	"miniflux.app/v2/internal/model"
 
 	nethtml "golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -26,6 +28,40 @@ var (
 	youtubeIdRegex = regexp.MustCompile(`youtube_id"?\s*[:=]\s*"([a-zA-Z0-9_-]{11})"`)
 	textLinkRegex  = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 )
+
+// Rewrite rules insert content as nodes rather than HTML strings: goquery
+// panics when an HTML string fails to parse, and feed content controls it.
+
+// newlineNormalizer converts CRLF and CR line endings to LF, as the HTML parser does when it reads markup.
+var newlineNormalizer = strings.NewReplacer("\r\n", "\n", "\r", "\n")
+
+// newElementNode returns a detached element node with the given attributes and children.
+func newElementNode(tagName string, attributes []nethtml.Attribute, children ...*nethtml.Node) *nethtml.Node {
+	for index := range attributes {
+		attributes[index].Val = newlineNormalizer.Replace(attributes[index].Val)
+	}
+
+	element := &nethtml.Node{
+		Type:     nethtml.ElementNode,
+		Data:     tagName,
+		DataAtom: atom.Lookup([]byte(tagName)),
+		Attr:     attributes,
+	}
+
+	for _, child := range children {
+		element.AppendChild(child)
+	}
+
+	return element
+}
+
+// newTextNode returns a detached text node, escaped when the document is rendered.
+func newTextNode(text string) *nethtml.Node {
+	return &nethtml.Node{Type: nethtml.TextNode, Data: newlineNormalizer.Replace(text)}
+}
+
+// rawTextElements are the elements whose text the renderer writes without escaping.
+var rawTextElements = []string{"iframe", "noembed", "noframes", "noscript", "plaintext", "script", "style", "xmp"}
 
 // titlelize returns a copy of the string s with all Unicode letters that begin words
 // mapped to their Unicode title case.
@@ -59,7 +95,12 @@ func addImageTitle(entryContent string) string {
 			srcAttr, _ := img.Attr("src")
 			titleAttr, _ := img.Attr("title")
 
-			img.ReplaceWithHtml(`<figure><img src="` + srcAttr + `" alt="` + altAttr + `"/><figcaption><p>` + html.EscapeString(titleAttr) + `</p></figcaption></figure>`)
+			img.ReplaceWithNodes(newElementNode("figure", nil,
+				newElementNode("img", []nethtml.Attribute{{Key: "src", Val: srcAttr}, {Key: "alt", Val: altAttr}}),
+				newElementNode("figcaption", nil,
+					newElementNode("p", nil, newTextNode(titleAttr)),
+				),
+			))
 		})
 
 		output, _ := doc.FindMatcher(goquery.Single("body")).Html()
@@ -91,7 +132,7 @@ func addMailtoSubject(entryContent string) string {
 				return
 			}
 
-			a.AppendHtml(" [" + html.EscapeString(subject) + "]")
+			a.AppendNodes(newTextNode(" [" + subject + "]"))
 		})
 
 		output, _ := doc.FindMatcher(goquery.Single("body")).Html()
@@ -142,7 +183,7 @@ func addDynamicImage(entryContent string) string {
 					img.SetAttr("src", srcAttr)
 				} else {
 					altAttr := img.AttrOr("alt", "")
-					img.ReplaceWithHtml(`<img src="` + srcAttr + `" alt="` + altAttr + `"/>`)
+					img.ReplaceWithNodes(newElementNode("img", []nethtml.Attribute{{Key: "src", Val: srcAttr}, {Key: "alt", Val: altAttr}}))
 				}
 
 				break
@@ -158,7 +199,7 @@ func addDynamicImage(entryContent string) string {
 					img.SetAttr("srcset", srcAttr)
 				} else {
 					altAttr := img.AttrOr("alt", "")
-					img.ReplaceWithHtml(`<img srcset="` + srcAttr + `" alt="` + altAttr + `"/>`)
+					img.ReplaceWithNodes(newElementNode("img", []nethtml.Attribute{{Key: "srcset", Val: srcAttr}, {Key: "alt", Val: altAttr}}))
 				}
 
 				break
@@ -220,6 +261,9 @@ func addDynamicIframe(entryContent string) string {
 	return entryContent
 }
 
+// The noscript rules parse the raw text of the noscript elements they replace
+// with nethtml.ParseFragment, which returns the error that goquery panics on.
+
 func fixMediumImages(entryContent string) string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
 	if err != nil {
@@ -229,7 +273,12 @@ func fixMediumImages(entryContent string) string {
 	doc.Find("figure.paragraph-image").Each(func(i int, paragraphImage *goquery.Selection) {
 		noscriptElement := paragraphImage.Find("noscript")
 		if noscriptElement.Length() > 0 {
-			paragraphImage.ReplaceWithHtml(noscriptElement.Text())
+			imageNodes, parseErr := nethtml.ParseFragment(strings.NewReader(noscriptElement.Text()), paragraphImage.Get(0).Parent)
+			if parseErr != nil {
+				return
+			}
+
+			paragraphImage.ReplaceWithNodes(imageNodes...)
 		}
 	})
 
@@ -248,7 +297,12 @@ func useNoScriptImages(entryContent string) string {
 		if imgElement.Length() > 0 {
 			noscriptElement := figureElement.Find("noscript")
 			if noscriptElement.Length() > 0 {
-				figureElement.PrependHtml(noscriptElement.Text())
+				imageNodes, parseErr := nethtml.ParseFragment(strings.NewReader(noscriptElement.Text()), figureElement.Get(0))
+				if parseErr != nil {
+					return
+				}
+
+				figureElement.PrependNodes(imageNodes...)
 				imgElement.Remove()
 				noscriptElement.Remove()
 			}
@@ -405,12 +459,17 @@ func addCastopodEpisode(entryURL, entryContent string) string {
 	return player + `<br>` + entryContent
 }
 
+// applyFuncOnTextContent replaces the text nodes under the selector with the plain text returned by repl.
 func applyFuncOnTextContent(entryContent string, selector string, repl func(string) string) string {
 	var treatChildren func(i int, s *goquery.Selection)
 	treatChildren = func(i int, s *goquery.Selection) {
-		if s.Nodes[0].Type == nethtml.TextNode {
-			s.ReplaceWithHtml(repl(s.Nodes[0].Data))
-		} else {
+		node := s.Nodes[0]
+		switch {
+		case node.Type == nethtml.TextNode:
+			node.Data = newlineNormalizer.Replace(repl(node.Data))
+		case node.Type == nethtml.ElementNode && slices.Contains(rawTextElements, node.Data):
+			// Skipped: replacement text rendered without escaping could close the element.
+		default:
 			s.Contents().Each(treatChildren)
 		}
 	}
@@ -430,7 +489,7 @@ func decodeBase64Content(entryContent string) string {
 	if ret, err := base64.StdEncoding.DecodeString(strings.TrimSpace(entryContent)); err != nil {
 		return entryContent
 	} else {
-		return html.EscapeString(string(ret))
+		return string(ret)
 	}
 }
 
@@ -464,13 +523,13 @@ func addHackerNewsLinksUsing(entryContent, app string) string {
 					RawQuery: params.Encode(),
 				}
 
-				open_with_opener := `<a href="` + url.String() + `">Open with Opener</a>`
-				a.Parent().AppendHtml(" " + open_with_opener)
+				openerLink := newElementNode("a", []nethtml.Attribute{{Key: "href", Val: url.String()}}, newTextNode("Open with Opener"))
+				a.Parent().AppendNodes(newTextNode(" "), openerLink)
 			case "hack":
 				url := strings.Replace(hn_uri.String(), hn_prefix, "hack://", 1)
 
-				open_with_hack := `<a href="` + url + `">Open with HACK</a>`
-				a.Parent().AppendHtml(" " + open_with_hack)
+				hackLink := newElementNode("a", []nethtml.Attribute{{Key: "href", Val: url}}, newTextNode("Open with HACK"))
+				a.Parent().AppendNodes(newTextNode(" "), hackLink)
 			default:
 				slog.Warn("Unknown app provided for openHackerNewsLinksWith rewrite rule",
 					slog.String("app", app),
@@ -492,30 +551,16 @@ func removeTables(entryContent string) string {
 		return entryContent
 	}
 
-	selectors := []string{"table", "tbody", "thead", "td", "th", "td"}
+	// Column definitions have no content to keep.
+	doc.Find("col").Remove()
 
-	var loopElement *goquery.Selection
-
-	for _, selector := range selectors {
-		for {
-			loopElement = doc.FindMatcher(goquery.Single(selector))
-
-			if loopElement.Length() == 0 {
-				break
-			}
-
-			innerHtml, err := loopElement.Html()
-			if err != nil {
-				break
-			}
-
-			// Replace the element with its own content in place, so the
-			// surrounding content keeps its original document order.
-			// Appending to the parent would move the unwrapped content to
-			// the end of the parent instead.
-			loopElement.ReplaceWithHtml(innerHtml)
-		}
-	}
+	// Replace each table element with its own content in place, so the
+	// surrounding content keeps its original document order.
+	// Appending to the parent would move the unwrapped content to
+	// the end of the parent instead.
+	doc.Find("table, caption, colgroup, thead, tbody, tfoot, tr, th, td").Each(func(_ int, tableElement *goquery.Selection) {
+		tableElement.ReplaceWithSelection(tableElement.Contents())
+	})
 
 	output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 	return output
@@ -528,7 +573,7 @@ func fixGhostCards(entryContent string) string {
 	}
 
 	const cardSelector = "figure.kg-card"
-	var currentList *goquery.Selection
+	var currentList *nethtml.Node
 
 	doc.Find(cardSelector).Each(func(i int, s *goquery.Selection) {
 		title := s.Find(".kg-bookmark-title").First().Text()
@@ -540,27 +585,27 @@ func fixGhostCards(entryContent string) string {
 			return
 		}
 
-		link := ""
-		if author == "" || strings.HasSuffix(title, author) {
-			link = fmt.Sprintf("<a href=\"%s\">%s</a>", href, title)
-		} else {
-			link = fmt.Sprintf("<a href=\"%s\">%s - %s</a>", href, title, author)
+		linkText := title
+		if author != "" && !strings.HasSuffix(title, author) {
+			linkText = title + " - " + author
 		}
+		link := newElementNode("a", []nethtml.Attribute{{Key: "href", Val: href}}, newTextNode(linkText))
 
 		next := s.Next()
 
 		// if the next element is also a card, start a list
 		if next.Is(cardSelector) && currentList == nil {
-			currentList = s.BeforeHtml("<ul></ul>").Prev()
+			currentList = newElementNode("ul", nil)
+			s.BeforeNodes(currentList)
 		}
 
 		if currentList != nil {
 			// add this card to the list, then delete it
-			currentList.AppendHtml("<li>" + link + "</li>")
+			currentList.AppendChild(newElementNode("li", nil, link))
 			s.Remove()
 		} else {
 			// replace single card
-			s.ReplaceWithHtml(link)
+			s.ReplaceWithNodes(link)
 		}
 
 		// if the next element is not a card, start a new list
