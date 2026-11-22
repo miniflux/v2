@@ -52,6 +52,7 @@ func newRouter(store *storage.Storage, pool *worker.Pool) http.Handler {
 			w.Write([]byte(config.Opts.MaintenanceMessage()))
 		})
 	}
+	appHandler = http.MaxBytesHandler(appHandler, config.Opts.HTTPServerMaxBodySize())
 	appHandler = middleware(appHandler)
 
 	// Root router: health probes at root, app routes under base path.

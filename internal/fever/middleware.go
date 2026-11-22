@@ -19,6 +19,15 @@ func Middleware(store *storage.Storage) func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			clientIP := request.ClientIP(r)
 			apiKey := r.FormValue("api_key")
+
+			// The request passed down is a copy made by WithContext, so net/http
+			// won't remove the multipart temporary files on its own.
+			defer func() {
+				if r.MultipartForm != nil {
+					r.MultipartForm.RemoveAll()
+				}
+			}()
+
 			if apiKey == "" {
 				slog.Warn("[Fever] No API key provided",
 					slog.Bool("authentication_failed", true),
