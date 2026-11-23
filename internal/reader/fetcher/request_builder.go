@@ -15,7 +15,6 @@ import (
 	"net/url"
 	"slices"
 	"strings"
-	"sync"
 	"syscall"
 	"time"
 
@@ -202,15 +201,17 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		KeepAlive: 15 * time.Second, // Default is 30s.
 	}
 
-	// The proxy is resolved with httpproxy rather than http.ProxyFromEnvironment,
-	// which caches the environment on first use. Routing and the trusted hop below
-	// are then decided by the same call.
-	envProxyFunc := httpproxy.FromEnvironment().ProxyFunc()
+	// The environment proxy is resolved with httpproxy rather than
+	// http.ProxyFromEnvironment, which caches the environment on first use.
+	routingTransport := &proxyRoutingTransport{
+		selectProxy: httpproxy.FromEnvironment().ProxyFunc(),
+		trustProxy:  true,
+	}
 
-	trustedProxies := &trustedProxyAddresses{}
-	allowPrivateFeedProxy := config.Opts != nil && config.Opts.FetcherAllowPrivateFeedProxy()
-	if proxySource != proxySourceFeed || allowPrivateFeedProxy {
-		trustedProxies.add(clientProxyURL)
+	if clientProxyURL != nil {
+		allowPrivateFeedProxy := config.Opts != nil && config.Opts.FetcherAllowPrivateFeedProxy()
+		routingTransport.selectProxy = func(*url.URL) (*url.URL, error) { return clientProxyURL, nil }
+		routingTransport.trustProxy = proxySource != proxySourceFeed || allowPrivateFeedProxy
 	}
 
 	// Perform the private-network check inside the dialer's Control callback,
@@ -235,13 +236,10 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	}
 
 	transport := &http.Transport{
+		// A request without a route is sent directly, through the guarded dialer.
 		Proxy: func(req *http.Request) (*url.URL, error) {
-			proxyURL, err := envProxyFunc(req.URL)
-			if err == nil {
-				trustedProxies.add(proxyURL)
-			}
-
-			return proxyURL, err
+			route, _ := req.Context().Value(proxyRouteContextKey{}).(proxyRoute)
+			return route.proxyURL, route.err
 		},
 		// Setting `DialContext` disables HTTP/2, this option forces the transport to try HTTP/2 regardless.
 		ForceAttemptHTTP2: true,
@@ -251,10 +249,12 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 
 	transport.DialContext = directDialer.DialContext
 	if !allowPrivateNetworks {
-		// Explicitly configured proxies are a trusted hop. Keep the private-network
-		// check for direct requests and redirects, but allow the connection to the proxy itself.
+		// The proxy selected for a request is a trusted hop for that request only.
+		// A direct request, including a redirect to the proxy's own address, is
+		// always checked.
 		transport.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
-			if trustedProxies.contains(normalizeDialAddress(addr)) {
+			route, _ := ctx.Value(proxyRouteContextKey{}).(proxyRoute)
+			if route.trustedDialAddress != "" && route.trustedDialAddress == normalizeDialAddress(addr) {
 				return proxyDialer.DialContext(ctx, network, addr)
 			}
 
@@ -285,7 +285,6 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 
 	var clientProxyURLRedacted string
 	if clientProxyURL != nil {
-		transport.Proxy = http.ProxyURL(clientProxyURL)
 		clientProxyURLRedacted = clientProxyURL.Redacted()
 	}
 
@@ -299,7 +298,8 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		}
 	}
 
-	client.Transport = transport
+	routingTransport.transport = transport
+	client.Transport = routingTransport
 
 	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
@@ -408,31 +408,28 @@ func normalizeProxyDialAddress(proxyURL *url.URL) string {
 	return net.JoinHostPort(strings.ToLower(proxyURL.Hostname()), port)
 }
 
-// trustedProxyAddresses holds the dial addresses of the proxies used for a
-// request. The proxy taken from the environment is resolved per request URL, so
-// a redirect can select a different proxy than the initial request did.
-type trustedProxyAddresses struct {
-	mu        sync.Mutex
-	addresses []string
+type proxyRouteContextKey struct{}
+
+// proxyRoute is the proxy selected for a single request of a redirect chain.
+type proxyRoute struct {
+	proxyURL           *url.URL
+	trustedDialAddress string
+	err                error
 }
 
-func (p *trustedProxyAddresses) add(proxyURL *url.URL) {
-	address := normalizeProxyDialAddress(proxyURL)
-	if address == "" {
-		return
-	}
-
-	p.mu.Lock()
-	defer p.mu.Unlock()
-
-	if !slices.Contains(p.addresses, address) {
-		p.addresses = append(p.addresses, address)
-	}
+// proxyRoutingTransport selects the proxy of each request and records it in the request context.
+type proxyRoutingTransport struct {
+	transport   *http.Transport
+	selectProxy func(*url.URL) (*url.URL, error)
+	trustProxy  bool
 }
 
-func (p *trustedProxyAddresses) contains(address string) bool {
-	p.mu.Lock()
-	defer p.mu.Unlock()
+func (t *proxyRoutingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	proxyURL, err := t.selectProxy(req.URL)
+	route := proxyRoute{proxyURL: proxyURL, err: err}
+	if err == nil && t.trustProxy {
+		route.trustedDialAddress = normalizeProxyDialAddress(proxyURL)
+	}
 
-	return slices.Contains(p.addresses, address)
+	return t.transport.RoundTrip(req.WithContext(context.WithValue(req.Context(), proxyRouteContextKey{}, route)))
 }
