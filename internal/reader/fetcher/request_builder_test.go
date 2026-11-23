@@ -837,6 +837,114 @@ func TestRequestBuilder_AllowPrivateEnvironmentProxyOnRedirect(t *testing.T) {
 	}
 }
 
+func TestRequestBuilder_RefuseDirectRedirectToEnvironmentProxyAddress(t *testing.T) {
+	configureFetcherAllowPrivateNetworksOption(t, "0")
+
+	directRequests := make(chan string, 1)
+	var proxyServer *httptest.Server
+	proxyServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// A proxied request carries an absolute URL, a direct request does not.
+		if r.URL.IsAbs() {
+			http.Redirect(w, r, proxyServer.URL+"/private", http.StatusFound)
+			return
+		}
+
+		select {
+		case directRequests <- r.URL.Path:
+		default:
+		}
+
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer proxyServer.Close()
+
+	t.Setenv("HTTP_PROXY", proxyServer.URL)
+
+	_, err := NewRequestBuilder().ExecuteRequest("http://feed.invalid/rss.xml")
+	if err == nil {
+		t.Fatal("Expected direct redirect to the environment proxy address to be rejected")
+	}
+
+	if !strings.Contains(err.Error(), "refusing to access private network host") {
+		t.Fatalf("Unexpected error for direct redirect to the environment proxy address: %v", err)
+	}
+
+	select {
+	case gotPath := <-directRequests:
+		t.Fatalf("Expected the environment proxy to receive no direct request, got %q", gotPath)
+	default:
+	}
+}
+
+func TestRequestBuilder_RefuseDirectRequestToEnvironmentProxyAddress(t *testing.T) {
+	configureFetcherAllowPrivateNetworksOption(t, "0")
+
+	proxyRequests := make(chan string, 1)
+	proxyServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case proxyRequests <- r.URL.String():
+		default:
+		}
+
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer proxyServer.Close()
+
+	t.Setenv("HTTP_PROXY", proxyServer.URL)
+
+	_, err := NewRequestBuilder().ExecuteRequest(proxyServer.URL + "/private")
+	if err == nil {
+		t.Fatal("Expected direct request to the environment proxy address to be rejected")
+	}
+
+	if !strings.Contains(err.Error(), "refusing to access private network host") {
+		t.Fatalf("Unexpected error for direct request to the environment proxy address: %v", err)
+	}
+
+	select {
+	case gotURL := <-proxyRequests:
+		t.Fatalf("Expected the environment proxy to receive no request, got %q", gotURL)
+	default:
+	}
+}
+
+func TestRequestBuilder_RefuseDirectRedirectFromEnvironmentProxyToPrivateNetwork(t *testing.T) {
+	configureFetcherAllowPrivateNetworksOption(t, "0")
+
+	privateRequests := make(chan string, 1)
+	privateServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case privateRequests <- r.URL.Path:
+		default:
+		}
+
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer privateServer.Close()
+
+	proxyServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, privateServer.URL+"/private", http.StatusFound)
+	}))
+	defer proxyServer.Close()
+
+	t.Setenv("HTTP_PROXY", proxyServer.URL)
+
+	_, err := NewRequestBuilder().ExecuteRequest("http://feed.invalid/rss.xml")
+	if err == nil {
+		t.Fatal("Expected direct redirect to a private network host to be rejected")
+	}
+
+	if !strings.Contains(err.Error(), "refusing to access private network host") {
+		t.Fatalf("Unexpected error for direct redirect to a private network host: %v", err)
+	}
+
+	select {
+	case gotPath := <-privateRequests:
+		t.Fatalf("Expected the private server to receive no request, got %q", gotPath)
+	default:
+	}
+}
+
 func TestRequestBuilder_RefusePrivateNetworkOnRedirect(t *testing.T) {
 	configureFetcherAllowPrivateNetworksOption(t, "0")
 
