@@ -132,8 +132,8 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelay time.Duration) ti
 		return interval
 	}
 
-	// Default to the global config Polling Frequency.
-	interval := config.Opts.SchedulerRoundRobinMinInterval()
+	// Default to the configured DEFAULT_REFRESH_INTERVAL.
+	interval := config.Opts.DefaultRefreshInterval()
 
 	if config.Opts.PollingScheduler() == SchedulerEntryFrequency {
 		if weeklyCount <= 0 {

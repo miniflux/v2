@@ -1913,6 +1913,40 @@ func TestCannotHaveDuplicateFeedWhenUpdatingFeed(t *testing.T) {
 	}
 }
 
+func TestFeedRefreshIntervalBelowPollingFrequencyIsRejected(t *testing.T) {
+	t.Parallel()
+
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// The default POLLING_FREQUENCY is 60 minutes. A refresh interval
+	// below this must be rejected.
+	if _, err := regularUserClient.UpdateFeed(feedID, &miniflux.FeedModificationRequest{
+		RefreshIntervalMinutes: new(30),
+	}); err == nil {
+		t.Fatal(`Expected an error when refresh_interval_minutes (30) is below POLLING_FREQUENCY (60)`)
+	}
+}
+
 func TestUpdateFeedWithInvalidCategory(t *testing.T) {
 	t.Parallel()
 

@@ -94,7 +94,7 @@ func TestFeedScheduleNextCheckRoundRobinDefault(t *testing.T) {
 		t.Error(`The next_check_at must be set`)
 	}
 
-	targetInterval := config.Opts.SchedulerRoundRobinMinInterval()
+	targetInterval := config.Opts.DefaultRefreshInterval()
 	checkTargetInterval(t, feed, targetInterval, timeBefore, "TestFeedScheduleNextCheckRoundRobinDefault")
 }
 
@@ -111,13 +111,13 @@ func TestFeedScheduleNextCheckRoundRobinWithRefreshDelayAboveMinInterval(t *test
 	timeBefore := time.Now()
 	feed := &Feed{}
 
-	feed.ScheduleNextCheck(0, config.Opts.SchedulerRoundRobinMinInterval()+30)
+	feed.ScheduleNextCheck(0, config.Opts.DefaultRefreshInterval()+30)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
 	}
 
-	expectedInterval := config.Opts.SchedulerRoundRobinMinInterval() + 30
+	expectedInterval := config.Opts.DefaultRefreshInterval() + 30
 	checkTargetInterval(t, feed, expectedInterval, timeBefore, "TestFeedScheduleNextCheckRoundRobinWithRefreshDelayAboveMinInterval")
 }
 
@@ -134,14 +134,39 @@ func TestFeedScheduleNextCheckRoundRobinWithRefreshDelayBelowMinInterval(t *test
 	timeBefore := time.Now()
 	feed := &Feed{}
 
-	feed.ScheduleNextCheck(0, config.Opts.SchedulerRoundRobinMinInterval()-30)
+	feed.ScheduleNextCheck(0, config.Opts.DefaultRefreshInterval()-30)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
 	}
 
-	expectedInterval := config.Opts.SchedulerRoundRobinMinInterval()
+	expectedInterval := config.Opts.DefaultRefreshInterval()
 	checkTargetInterval(t, feed, expectedInterval, timeBefore, "TestFeedScheduleNextCheckRoundRobinWithRefreshDelayBelowMinInterval")
+}
+
+func TestFeedScheduleNextCheckRoundRobinWithCustomDefaultRefreshInterval(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("POLLING_FREQUENCY", "10")
+	os.Setenv("DEFAULT_REFRESH_INTERVAL", "120")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	timeBefore := time.Now()
+	feed := &Feed{}
+	feed.ScheduleNextCheck(0, noRefreshDelay)
+
+	if feed.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at must be set`)
+	}
+
+	// Should use DEFAULT_REFRESH_INTERVAL (120), not POLLING_FREQUENCY (10).
+	targetInterval := config.Opts.DefaultRefreshInterval()
+	checkTargetInterval(t, feed, targetInterval, timeBefore, "TestFeedScheduleNextCheckRoundRobinWithCustomDefaultRefreshInterval")
 }
 
 func TestFeedScheduleNextCheckRoundRobinWithRefreshDelayAboveMaxInterval(t *testing.T) {
@@ -171,7 +196,7 @@ func TestFeedScheduleNextCheckRoundRobinMinInterval(t *testing.T) {
 	minInterval := 1
 	os.Clearenv()
 	os.Setenv("POLLING_SCHEDULER", "round_robin")
-	os.Setenv("SCHEDULER_ROUND_ROBIN_MIN_INTERVAL", strconv.Itoa(minInterval))
+	os.Setenv("DEFAULT_REFRESH_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
 	parser := config.NewConfigParser()
@@ -464,8 +489,8 @@ func TestFeedScheduleNextCheckRefreshIntervalNilFallsBackToGlobal(t *testing.T) 
 	timeBefore := time.Now()
 	interval := feed.ScheduleNextCheck(0, noRefreshDelay)
 
-	if interval != config.Opts.SchedulerRoundRobinMinInterval() {
-		t.Errorf(`Expected global round-robin interval %s, got %s`, config.Opts.SchedulerRoundRobinMinInterval(), interval)
+	if interval != config.Opts.DefaultRefreshInterval() {
+		t.Errorf(`Expected global default refresh interval %s, got %s`, config.Opts.DefaultRefreshInterval(), interval)
 	}
 
 	checkTargetInterval(t, feed, interval, timeBefore, "TestFeedScheduleNextCheckRefreshIntervalNilFallsBackToGlobal")
@@ -485,8 +510,8 @@ func TestFeedScheduleNextCheckRefreshIntervalZeroFallsBackToGlobal(t *testing.T)
 	feed := &Feed{RefreshIntervalMinutes: &zero}
 	interval := feed.ScheduleNextCheck(0, noRefreshDelay)
 
-	if interval != config.Opts.SchedulerRoundRobinMinInterval() {
-		t.Errorf(`Expected global round-robin interval %s when override is zero, got %s`, config.Opts.SchedulerRoundRobinMinInterval(), interval)
+	if interval != config.Opts.DefaultRefreshInterval() {
+		t.Errorf(`Expected global default refresh interval %s when override is zero, got %s`, config.Opts.DefaultRefreshInterval(), interval)
 	}
 }
 

@@ -92,6 +92,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 	view.Set("defaultUserAgent", config.Opts.HTTPClientUserAgent())
 	view.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyURLConfigured())
+	view.Set("pollingFrequencyMinutes", config.Opts.PollingFrequency().Minutes())
 
 	response.HTML(w, r, view.Render("edit_feed"))
 }

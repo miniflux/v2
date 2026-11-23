@@ -6,6 +6,7 @@ package validator // import "miniflux.app/v2/internal/validator"
 import (
 	"testing"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -43,13 +44,24 @@ func TestValidateFeedModificationProxyURL(t *testing.T) {
 }
 
 func TestIsValidRefreshInterval(t *testing.T) {
+	// Ensure config is initialized with default POLLING_FREQUENCY=60.
+	if config.Opts == nil {
+		parser := config.NewConfigParser()
+		opts, err := parser.ParseEnvironmentVariables()
+		if err != nil {
+			t.Fatalf("failed to parse config: %v", err)
+		}
+		config.Opts = opts
+	}
+
+	minInterval := config.Opts.PollingFrequency().Minutes()
 	cases := []struct {
 		name  string
 		value int
 		want  bool
 	}{
-		{"below minimum", MinFeedRefreshIntervalMinutes - 1, false},
-		{"at minimum", MinFeedRefreshIntervalMinutes, true},
+		{"below minimum", int(minInterval) - 1, false},
+		{"at minimum", int(minInterval), true},
 		{"normal", 60, true},
 		{"at maximum", MaxFeedRefreshIntervalMinutes, true},
 		{"above maximum", MaxFeedRefreshIntervalMinutes + 1, false},

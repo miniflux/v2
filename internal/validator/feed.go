@@ -6,6 +6,7 @@ package validator // import "miniflux.app/v2/internal/validator"
 import (
 	"log/slog"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
@@ -24,7 +25,8 @@ const MinFeedRefreshIntervalMinutes = 5
 const MaxFeedRefreshIntervalMinutes = 7 * 24 * 60
 
 func isValidRefreshInterval(value int) bool {
-	return value >= MinFeedRefreshIntervalMinutes && value <= MaxFeedRefreshIntervalMinutes
+	minInterval := config.Opts.PollingFrequency().Minutes()
+	return value >= int(minInterval) && value <= MaxFeedRefreshIntervalMinutes
 }
 
 // ValidateFeedCreation validates feed creation.
@@ -98,7 +100,7 @@ func ValidateFeedCreation(store *storage.Storage, userID int64, request *model.F
 	}
 
 	if request.RefreshIntervalMinutes != nil && *request.RefreshIntervalMinutes != 0 && !isValidRefreshInterval(*request.RefreshIntervalMinutes) {
-		return locale.NewLocalizedError("error.feed_invalid_refresh_interval", MinFeedRefreshIntervalMinutes, MaxFeedRefreshIntervalMinutes)
+		return locale.NewLocalizedError("error.feed_invalid_refresh_interval", config.Opts.PollingFrequency().Minutes(), MaxFeedRefreshIntervalMinutes)
 	}
 
 	return nil
@@ -201,7 +203,7 @@ func ValidateFeedModification(store *storage.Storage, userID, feedID int64, requ
 	}
 
 	if request.RefreshIntervalMinutes != nil && *request.RefreshIntervalMinutes > 0 && !isValidRefreshInterval(*request.RefreshIntervalMinutes) {
-		return locale.NewLocalizedError("error.feed_invalid_refresh_interval", MinFeedRefreshIntervalMinutes, MaxFeedRefreshIntervalMinutes)
+		return locale.NewLocalizedError("error.feed_invalid_refresh_interval", config.Opts.PollingFrequency().Minutes(), MaxFeedRefreshIntervalMinutes)
 	}
 
 	return nil

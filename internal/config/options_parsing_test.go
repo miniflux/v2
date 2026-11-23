@@ -1604,6 +1604,47 @@ func TestPollingFrequencyOptionParsing(t *testing.T) {
 	}
 }
 
+func TestDefaultRefreshIntervalOptionParsing(t *testing.T) {
+	configParser := NewConfigParser()
+
+	// Default: DEFAULT_REFRESH_INTERVAL should equal POLLING_FREQUENCY (60 minutes).
+	if configParser.options.DefaultRefreshInterval().Minutes() != 60 {
+		t.Fatalf("Expected DEFAULT_REFRESH_INTERVAL to be 60 minutes by default (matching POLLING_FREQUENCY)")
+	}
+
+	// Explicitly set DEFAULT_REFRESH_INTERVAL to a different value.
+	if err := configParser.parseLines([]string{"DEFAULT_REFRESH_INTERVAL=120"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if configParser.options.DefaultRefreshInterval().Minutes() != 120 {
+		t.Fatalf("Expected DEFAULT_REFRESH_INTERVAL to be 120 minutes")
+	}
+
+	// Reset and set POLLING_FREQUENCY first, then DEFAULT_REFRESH_INTERVAL should still inherit.
+	configParser2 := NewConfigParser()
+	if err := configParser2.parseLines([]string{"POLLING_FREQUENCY=15"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if configParser2.options.DefaultRefreshInterval().Minutes() != 15 {
+		t.Fatalf("Expected DEFAULT_REFRESH_INTERVAL to inherit POLLING_FREQUENCY=15 minutes")
+	}
+
+	// Set both independently.
+	configParser3 := NewConfigParser()
+	if err := configParser3.parseLines([]string{"POLLING_FREQUENCY=10", "DEFAULT_REFRESH_INTERVAL=45"}); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if configParser3.options.PollingFrequency().Minutes() != 10 {
+		t.Fatalf("Expected POLLING_FREQUENCY to be 10 minutes")
+	}
+	if configParser3.options.DefaultRefreshInterval().Minutes() != 45 {
+		t.Fatalf("Expected DEFAULT_REFRESH_INTERVAL to be 45 minutes")
+	}
+}
+
 func TestSchedulerEntryFrequencyMaxIntervalOptionParsing(t *testing.T) {
 	configParser := NewConfigParser()
 

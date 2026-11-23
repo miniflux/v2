@@ -504,6 +504,14 @@ func NewConfigOptions() *configOptions {
 				rawValue:        "0",
 				valueType:       boolType,
 			},
+			"DEFAULT_REFRESH_INTERVAL": {
+				parsedDuration: 0,
+				rawValue:       "0",
+				valueType:      minuteType,
+				validator: func(rawValue string) error {
+					return validateGreaterOrEqualThan(rawValue, 1)
+				},
+			},
 			"POLLING_FREQUENCY": {
 				parsedDuration: 60 * time.Minute,
 				rawValue:       "60",
@@ -964,6 +972,15 @@ func (c *configOptions) OAuth2RedirectURL() string {
 
 func (c *configOptions) OAuth2UserCreation() bool {
 	return c.options["OAUTH2_USER_CREATION"].parsedBoolValue
+}
+
+func (c *configOptions) DefaultRefreshInterval() time.Duration {
+	// Use "0" as sentinel: if the user didn't explicitly set
+	// DEFAULT_REFRESH_INTERVAL, fall back to POLLING_FREQUENCY.
+	if c.options["DEFAULT_REFRESH_INTERVAL"].rawValue == "0" {
+		return c.options["POLLING_FREQUENCY"].parsedDuration
+	}
+	return c.options["DEFAULT_REFRESH_INTERVAL"].parsedDuration
 }
 
 func (c *configOptions) PollingFrequency() time.Duration {
