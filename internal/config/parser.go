@@ -131,6 +131,12 @@ func (cp *configParser) postParsing() error {
 		cp.options.options["MEDIA_PROXY_PRIVATE_KEY"].parsedBytesValue = randomKey
 	}
 
+	// Resolve DEFAULT_REFRESH_INTERVAL sentinel: if the user didn't
+	// explicitly set it, inherit from POLLING_FREQUENCY.
+	if cp.options.options["DEFAULT_REFRESH_INTERVAL"].rawValue == "0" {
+		cp.options.options["DEFAULT_REFRESH_INTERVAL"].parsedDuration = cp.options.options["POLLING_FREQUENCY"].parsedDuration
+	}
+
 	// Override LISTEN_ADDR with PORT if set (for compatibility reasons)
 	if cp.options.Port() != "" {
 		cp.options.options["LISTEN_ADDR"].parsedStringList = []string{":" + cp.options.Port()}

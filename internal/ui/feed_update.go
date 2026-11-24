@@ -53,20 +53,22 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", navMetadata.CountErrorFeeds)
 	view.Set("defaultUserAgent", config.Opts.HTTPClientUserAgent())
 	view.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyURLConfigured())
+	view.Set("pollingFrequencyMinutes", config.Opts.PollingFrequency().Minutes())
 
 	feedModificationRequest := &model.FeedModificationRequest{
-		FeedURL:               model.OptionalString(feedForm.FeedURL),
-		SiteURL:               model.OptionalString(feedForm.SiteURL),
-		Title:                 model.OptionalString(feedForm.Title),
-		Description:           model.OptionalString(feedForm.Description),
-		CategoryID:            model.OptionalNumber(feedForm.CategoryID),
-		BlocklistRules:        model.OptionalString(feedForm.BlocklistRules),
-		KeeplistRules:         model.OptionalString(feedForm.KeeplistRules),
-		RewriteRules:          model.OptionalString(feedForm.RewriteRules),
-		UrlRewriteRules:       model.OptionalString(feedForm.UrlRewriteRules),
-		ProxyURL:              model.OptionalString(feedForm.ProxyURL),
-		BlockFilterEntryRules: model.OptionalString(feedForm.BlockFilterEntryRules),
-		KeepFilterEntryRules:  model.OptionalString(feedForm.KeepFilterEntryRules),
+		FeedURL:                model.OptionalString(feedForm.FeedURL),
+		SiteURL:                model.OptionalString(feedForm.SiteURL),
+		Title:                  model.OptionalString(feedForm.Title),
+		Description:            model.OptionalString(feedForm.Description),
+		CategoryID:             model.OptionalNumber(feedForm.CategoryID),
+		BlocklistRules:         model.OptionalString(feedForm.BlocklistRules),
+		KeeplistRules:          model.OptionalString(feedForm.KeeplistRules),
+		RewriteRules:           model.OptionalString(feedForm.RewriteRules),
+		UrlRewriteRules:        model.OptionalString(feedForm.UrlRewriteRules),
+		ProxyURL:               model.OptionalString(feedForm.ProxyURL),
+		BlockFilterEntryRules:  model.OptionalString(feedForm.BlockFilterEntryRules),
+		KeepFilterEntryRules:   model.OptionalString(feedForm.KeepFilterEntryRules),
+		RefreshIntervalMinutes: model.OptionalNumber(feedForm.RefreshIntervalMinutes),
 	}
 
 	if validationErr := validator.ValidateFeedModification(h.store, loggedUser.ID, feed.ID, feedModificationRequest); validationErr != nil {

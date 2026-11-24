@@ -1771,6 +1771,110 @@ func TestUpdateFeedEndpoint(t *testing.T) {
 	}
 }
 
+func TestUpdateFeedRefreshInterval(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feed, err := regularUserClient.Feed(feedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if feed.RefreshIntervalMinutes != nil {
+		t.Fatalf(`A new feed must inherit the global polling frequency, got refresh_interval_minutes=%d`, *feed.RefreshIntervalMinutes)
+	}
+
+	updated, err := regularUserClient.UpdateFeed(feedID, &miniflux.FeedModificationRequest{
+		RefreshIntervalMinutes: new(120),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if updated.RefreshIntervalMinutes == nil || *updated.RefreshIntervalMinutes != 120 {
+		got := "<nil>"
+		if updated.RefreshIntervalMinutes != nil {
+			got = fmt.Sprintf("%d", *updated.RefreshIntervalMinutes)
+		}
+		t.Fatalf(`Expected refresh_interval_minutes=120 after update, got %s`, got)
+	}
+
+	// Setting it back to zero must clear the override.
+	cleared, err := regularUserClient.UpdateFeed(feedID, &miniflux.FeedModificationRequest{
+		RefreshIntervalMinutes: new(0),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cleared.RefreshIntervalMinutes != nil {
+		t.Fatalf(`Expected refresh_interval_minutes to be cleared, got %d`, *cleared.RefreshIntervalMinutes)
+	}
+
+	// Below the minimum should be rejected.
+	if _, err := regularUserClient.UpdateFeed(feedID, &miniflux.FeedModificationRequest{
+		RefreshIntervalMinutes: new(1),
+	}); err == nil {
+		t.Fatal(`Expected an error when refresh_interval_minutes is below the minimum`)
+	}
+}
+
+func TestCreateFeedWithRefreshInterval(t *testing.T) {
+	t.Parallel()
+
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	// Create a feed with a custom refresh interval.
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:                testConfig.testFeedURL,
+		RefreshIntervalMinutes: new(45),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feed, err := regularUserClient.Feed(feedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if feed.RefreshIntervalMinutes == nil || *feed.RefreshIntervalMinutes != 45 {
+		got := "<nil>"
+		if feed.RefreshIntervalMinutes != nil {
+			got = fmt.Sprintf("%d", *feed.RefreshIntervalMinutes)
+		}
+		t.Fatalf(`Expected refresh_interval_minutes=45 on creation, got %s`, got)
+	}
+}
+
 func TestCannotHaveDuplicateFeedWhenUpdatingFeed(t *testing.T) {
 	t.Parallel()
 
@@ -1806,6 +1910,40 @@ func TestCannotHaveDuplicateFeedWhenUpdatingFeed(t *testing.T) {
 
 	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); err == nil {
 		t.Fatalf(`Duplicated feeds should not be allowed`)
+	}
+}
+
+func TestFeedRefreshIntervalBelowPollingFrequencyIsRejected(t *testing.T) {
+	t.Parallel()
+
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// The default POLLING_FREQUENCY is 60 minutes. A refresh interval
+	// below this must be rejected.
+	if _, err := regularUserClient.UpdateFeed(feedID, &miniflux.FeedModificationRequest{
+		RefreshIntervalMinutes: new(30),
+	}); err == nil {
+		t.Fatal(`Expected an error when refresh_interval_minutes (30) is below POLLING_FREQUENCY (60)`)
 	}
 }
 

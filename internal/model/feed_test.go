@@ -94,7 +94,7 @@ func TestFeedScheduleNextCheckRoundRobinDefault(t *testing.T) {
 		t.Error(`The next_check_at must be set`)
 	}
 
-	targetInterval := config.Opts.SchedulerRoundRobinMinInterval()
+	targetInterval := config.Opts.DefaultRefreshInterval()
 	checkTargetInterval(t, feed, targetInterval, timeBefore, "TestFeedScheduleNextCheckRoundRobinDefault")
 }
 
@@ -111,13 +111,13 @@ func TestFeedScheduleNextCheckRoundRobinWithRefreshDelayAboveMinInterval(t *test
 	timeBefore := time.Now()
 	feed := &Feed{}
 
-	feed.ScheduleNextCheck(0, config.Opts.SchedulerRoundRobinMinInterval()+30)
+	feed.ScheduleNextCheck(0, config.Opts.DefaultRefreshInterval()+30)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
 	}
 
-	expectedInterval := config.Opts.SchedulerRoundRobinMinInterval() + 30
+	expectedInterval := config.Opts.DefaultRefreshInterval() + 30
 	checkTargetInterval(t, feed, expectedInterval, timeBefore, "TestFeedScheduleNextCheckRoundRobinWithRefreshDelayAboveMinInterval")
 }
 
@@ -134,14 +134,39 @@ func TestFeedScheduleNextCheckRoundRobinWithRefreshDelayBelowMinInterval(t *test
 	timeBefore := time.Now()
 	feed := &Feed{}
 
-	feed.ScheduleNextCheck(0, config.Opts.SchedulerRoundRobinMinInterval()-30)
+	feed.ScheduleNextCheck(0, config.Opts.DefaultRefreshInterval()-30)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
 	}
 
-	expectedInterval := config.Opts.SchedulerRoundRobinMinInterval()
+	expectedInterval := config.Opts.DefaultRefreshInterval()
 	checkTargetInterval(t, feed, expectedInterval, timeBefore, "TestFeedScheduleNextCheckRoundRobinWithRefreshDelayBelowMinInterval")
+}
+
+func TestFeedScheduleNextCheckRoundRobinWithCustomDefaultRefreshInterval(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("POLLING_FREQUENCY", "10")
+	os.Setenv("DEFAULT_REFRESH_INTERVAL", "120")
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	timeBefore := time.Now()
+	feed := &Feed{}
+	feed.ScheduleNextCheck(0, noRefreshDelay)
+
+	if feed.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at must be set`)
+	}
+
+	// Should use DEFAULT_REFRESH_INTERVAL (120), not POLLING_FREQUENCY (10).
+	targetInterval := config.Opts.DefaultRefreshInterval()
+	checkTargetInterval(t, feed, targetInterval, timeBefore, "TestFeedScheduleNextCheckRoundRobinWithCustomDefaultRefreshInterval")
 }
 
 func TestFeedScheduleNextCheckRoundRobinWithRefreshDelayAboveMaxInterval(t *testing.T) {
@@ -171,7 +196,7 @@ func TestFeedScheduleNextCheckRoundRobinMinInterval(t *testing.T) {
 	minInterval := 1
 	os.Clearenv()
 	os.Setenv("POLLING_SCHEDULER", "round_robin")
-	os.Setenv("SCHEDULER_ROUND_ROBIN_MIN_INTERVAL", strconv.Itoa(minInterval))
+	os.Setenv("DEFAULT_REFRESH_INTERVAL", strconv.Itoa(minInterval))
 
 	var err error
 	parser := config.NewConfigParser()
@@ -374,5 +399,158 @@ func TestFeedScheduleNextCheckEntryFrequencyLargeNewTTL(t *testing.T) {
 
 	if feed.NextCheckAt.Before(timeBefore.Add(time.Minute * time.Duration(minInterval))) {
 		t.Error(`The next_check_at should be after timeBefore + entry frequency min interval`)
+	}
+}
+
+func TestFeedScheduleNextCheckRefreshIntervalOverride(t *testing.T) {
+	os.Clearenv()
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	override := 90
+	feed := &Feed{RefreshIntervalMinutes: &override}
+
+	timeBefore := time.Now()
+	interval := feed.ScheduleNextCheck(0, noRefreshDelay)
+
+	expected := time.Duration(override) * time.Minute
+	if interval != expected {
+		t.Errorf(`Expected interval %s, got %s`, expected, interval)
+	}
+
+	checkTargetInterval(t, feed, expected, timeBefore, "TestFeedScheduleNextCheckRefreshIntervalOverride")
+}
+
+func TestFeedScheduleNextCheckRefreshIntervalOverrideRespectsRefreshDelay(t *testing.T) {
+	os.Clearenv()
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	// Override is 10 minutes, but the server returns Retry-After 30 minutes:
+	// the larger value must win to avoid hammering the publisher.
+	override := 10
+	feed := &Feed{RefreshIntervalMinutes: &override}
+	refreshDelay := 30 * time.Minute
+
+	timeBefore := time.Now()
+	interval := feed.ScheduleNextCheck(0, refreshDelay)
+
+	if interval != refreshDelay {
+		t.Errorf(`Expected interval %s, got %s`, refreshDelay, interval)
+	}
+
+	checkTargetInterval(t, feed, refreshDelay, timeBefore, "TestFeedScheduleNextCheckRefreshIntervalOverrideRespectsRefreshDelay")
+}
+
+func TestFeedScheduleNextCheckRefreshIntervalOverrideIgnoresGlobalCap(t *testing.T) {
+	os.Clearenv()
+
+	// Round-robin global cap is 1 day by default. Confirm an override above
+	// that cap (e.g. 5 days) is honoured rather than clamped, since users
+	// who set a per-feed value should get exactly what they asked for.
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	override := 5 * 24 * 60
+	feed := &Feed{RefreshIntervalMinutes: &override}
+
+	interval := feed.ScheduleNextCheck(0, noRefreshDelay)
+	expected := time.Duration(override) * time.Minute
+	if interval != expected {
+		t.Errorf(`Expected interval %s, got %s`, expected, interval)
+	}
+}
+
+func TestFeedScheduleNextCheckRefreshIntervalNilFallsBackToGlobal(t *testing.T) {
+	os.Clearenv()
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	feed := &Feed{}
+	timeBefore := time.Now()
+	interval := feed.ScheduleNextCheck(0, noRefreshDelay)
+
+	if interval != config.Opts.DefaultRefreshInterval() {
+		t.Errorf(`Expected global default refresh interval %s, got %s`, config.Opts.DefaultRefreshInterval(), interval)
+	}
+
+	checkTargetInterval(t, feed, interval, timeBefore, "TestFeedScheduleNextCheckRefreshIntervalNilFallsBackToGlobal")
+}
+
+func TestFeedScheduleNextCheckRefreshIntervalZeroFallsBackToGlobal(t *testing.T) {
+	os.Clearenv()
+
+	var err error
+	parser := config.NewConfigParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	zero := 0
+	feed := &Feed{RefreshIntervalMinutes: &zero}
+	interval := feed.ScheduleNextCheck(0, noRefreshDelay)
+
+	if interval != config.Opts.DefaultRefreshInterval() {
+		t.Errorf(`Expected global default refresh interval %s when override is zero, got %s`, config.Opts.DefaultRefreshInterval(), interval)
+	}
+}
+
+func intPtr(value int) *int { return &value }
+
+func TestFeedModificationRequestPatchSetsRefreshInterval(t *testing.T) {
+	feed := &Feed{Category: &Category{ID: 1}}
+	req := &FeedModificationRequest{RefreshIntervalMinutes: intPtr(60)}
+	req.Patch(feed)
+
+	if feed.RefreshIntervalMinutes == nil {
+		t.Fatal(`RefreshIntervalMinutes should be set on the feed`)
+	}
+	if *feed.RefreshIntervalMinutes != 60 {
+		t.Errorf(`Expected RefreshIntervalMinutes=60, got %d`, *feed.RefreshIntervalMinutes)
+	}
+}
+
+func TestFeedModificationRequestPatchClearsRefreshInterval(t *testing.T) {
+	existing := 90
+	feed := &Feed{Category: &Category{ID: 1}, RefreshIntervalMinutes: &existing}
+	req := &FeedModificationRequest{RefreshIntervalMinutes: intPtr(0)}
+	req.Patch(feed)
+
+	if feed.RefreshIntervalMinutes != nil {
+		t.Errorf(`Expected RefreshIntervalMinutes to be cleared, got %d`, *feed.RefreshIntervalMinutes)
+	}
+}
+
+func TestFeedModificationRequestPatchLeavesRefreshIntervalAloneWhenNil(t *testing.T) {
+	existing := 45
+	feed := &Feed{Category: &Category{ID: 1}, RefreshIntervalMinutes: &existing}
+	req := &FeedModificationRequest{}
+	req.Patch(feed)
+
+	if feed.RefreshIntervalMinutes == nil {
+		t.Fatal(`RefreshIntervalMinutes should not be cleared when omitted from the request`)
+	}
+	if *feed.RefreshIntervalMinutes != 45 {
+		t.Errorf(`Expected RefreshIntervalMinutes=45, got %d`, *feed.RefreshIntervalMinutes)
 	}
 }

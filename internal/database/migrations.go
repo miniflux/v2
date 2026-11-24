@@ -1590,4 +1590,12 @@ var migrations = [...]func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE feeds ADD COLUMN refresh_interval_minutes integer;
+			ALTER TABLE feeds ADD CONSTRAINT feeds_refresh_interval_minutes_check
+				CHECK (refresh_interval_minutes IS NULL OR refresh_interval_minutes >= 1);
+		`)
+		return err
+	},
 }
