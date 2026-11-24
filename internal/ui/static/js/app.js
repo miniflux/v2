@@ -762,6 +762,8 @@ function handleStarAction(element) {
     });
 }
 
+let articleHTMLPolicy;
+
 /**
  * Handle fetching the original content of an entry.
  *
@@ -780,8 +782,10 @@ function handleFetchOriginalContentAction() {
 
         response.json().then((data) => {
             if (data.content && data.reading_time) {
-                const ttpolicy = trustedTypes.createPolicy('html', {createHTML: html => html});
-                document.querySelector(".entry-content").innerHTML = ttpolicy.createHTML(data.content);
+                if (!articleHTMLPolicy) {
+                    articleHTMLPolicy = trustedTypes.createPolicy('html', {createHTML: html => html});
+                }
+                document.querySelector(".entry-content").innerHTML = articleHTMLPolicy.createHTML(data.content);
                 const entryReadingtimeElement = document.querySelector(".entry-reading-time");
                 if (entryReadingtimeElement) {
                     entryReadingtimeElement.textContent = data.reading_time;
