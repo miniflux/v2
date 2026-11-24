@@ -4,6 +4,7 @@
 package ui // import "miniflux.app/v2/internal/ui"
 
 import (
+	"errors"
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
@@ -16,7 +17,7 @@ import (
 func (h *handler) createSharedEntry(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
 	shareCode, err := h.store.EntryShareCode(request.UserID(r), entryID)
-	if err == storage.ErrEntryNotFound {
+	if errors.Is(err, storage.ErrEntryNotFound) {
 		response.HTMLNotFound(w, r)
 		return
 	} else if err != nil {
@@ -30,7 +31,7 @@ func (h *handler) createSharedEntry(w http.ResponseWriter, r *http.Request) {
 func (h *handler) unshareEntry(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
 	err := h.store.UnshareEntry(request.UserID(r), entryID)
-	if err == storage.ErrEntryNotFound {
+	if errors.Is(err, storage.ErrEntryNotFound) {
 		response.HTMLNotFound(w, r)
 		return
 	} else if err != nil {

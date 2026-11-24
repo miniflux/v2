@@ -3587,8 +3587,12 @@ func TestShareEntryEndpoint(t *testing.T) {
 		t.Fatalf(`Failed to get entries: %v`, err)
 	}
 
-	if err := regularUserClient.ShareEntry(result.Entries[0].ID); err != nil {
+	shareCode, err := regularUserClient.ShareEntry(result.Entries[0].ID)
+	if err != nil {
 		t.Fatal(err)
+	}
+	if len(shareCode) < 8 {
+		t.Fatal(`The entry should have a share code`)
 	}
 
 	entry, err := regularUserClient.Entry(result.Entries[0].ID)
@@ -3596,8 +3600,8 @@ func TestShareEntryEndpoint(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if entry.ShareCode == "" {
-		t.Fatalf(`The entry should have a share code`)
+	if entry.ShareCode != shareCode {
+		t.Fatal(`The entry share code should match`)
 	}
 
 	if err := regularUserClient.UnshareEntry(result.Entries[0].ID); err != nil {
@@ -3614,10 +3618,10 @@ func TestShareEntryEndpoint(t *testing.T) {
 	}
 
 	nonExistingEntryId := int64(math.MaxInt64)
-	if err := regularUserClient.ShareEntry(nonExistingEntryId); err != miniflux.ErrNotFound {
+	if _, err = regularUserClient.ShareEntry(nonExistingEntryId); !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Expected Not Found when sharing non existent entry: %v`, err)
 	}
-	if err := regularUserClient.UnshareEntry(nonExistingEntryId); err != miniflux.ErrNotFound {
+	if err = regularUserClient.UnshareEntry(nonExistingEntryId); !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Expected Not Found when unsharing non existent entry: %v`, err)
 	}
 
@@ -3642,10 +3646,10 @@ func TestShareEntryEndpoint(t *testing.T) {
 	}
 
 	otherUserEntryId := result.Entries[0].ID
-	if err := regularUserClient.ShareEntry(otherUserEntryId); err != miniflux.ErrNotFound {
+	if _, err = regularUserClient.ShareEntry(otherUserEntryId); !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Expected Not Found when sharing other user's entry: %v`, err)
 	}
-	if err := regularUserClient.UnshareEntry(otherUserEntryId); err != miniflux.ErrNotFound {
+	if err = regularUserClient.UnshareEntry(otherUserEntryId); !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Expected Not Found when unsharing other user's entry: %v`, err)
 	}
 }

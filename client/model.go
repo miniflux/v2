@@ -291,6 +291,11 @@ type EntryModificationRequest struct {
 // Entries represents a list of entries.
 type Entries []*Entry
 
+// ShareCodeResponse represents a
+type ShareCodeResponse struct {
+	ShareCode string `json:"share_code"`
+}
+
 // Enclosure represents an attachment.
 type Enclosure struct {
 	ID               int64  `json:"id"`

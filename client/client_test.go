@@ -1182,15 +1182,22 @@ func TestToggleStarred(t *testing.T) {
 }
 
 func TestShareEntry(t *testing.T) {
+	expected := &ShareCodeResponse{
+		ShareCode: "ExampleShareCode",
+	}
 	client := NewClientWithOptions(
 		"http://mf",
 		WithHTTPClient(
 			newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
 				expectRequest(t, http.MethodPost, "http://mf/v1/entries/1/share", nil, req)
-				return jsonResponseFrom(t, http.StatusOK, http.Header{}, nil)
+				return jsonResponseFrom(t, http.StatusOK, http.Header{}, expected)
 			})))
-	if err := client.ShareEntryContext(t.Context(), 1); err != nil {
+	shareCode, err := client.ShareEntryContext(t.Context(), 1)
+	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
+	}
+	if shareCode != expected.ShareCode {
+		t.Fatalf("Expected '%s', got '%s'", expected.ShareCode, shareCode)
 	}
 }
 
