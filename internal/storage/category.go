@@ -256,19 +256,18 @@ func (s *Storage) RemoveCategory(userID, categoryID int64) error {
 func (s *Storage) RemoveAndReplaceCategoriesByName(userid int64, titles []string) error {
 	tx, err := s.db.Begin()
 	if err != nil {
-		return errors.New("store: unable to begin transaction")
+		return fmt.Errorf("store: unable to begin transaction: %v", err)
 	}
+	defer tx.Rollback()
 
 	titleParam := pq.Array(titles)
 	var count int
 	query := "SELECT count(*) FROM categories WHERE user_id = $1 AND title <> ALL($2)"
 	err = tx.QueryRow(query, userid, titleParam).Scan(&count)
 	if err != nil {
-		tx.Rollback()
-		return errors.New("store: unable to retrieve category count")
+		return fmt.Errorf("store: unable to retrieve category count: %v", err)
 	}
 	if count < 1 {
-		tx.Rollback()
 		return errors.New("store: at least 1 category must remain after deletion")
 	}
 
@@ -285,16 +284,18 @@ func (s *Storage) RemoveAndReplaceCategoriesByName(userid int64, titles []string
 	`
 	_, err = tx.Exec(query, userid, titleParam)
 	if err != nil {
-		tx.Rollback()
 		return fmt.Errorf("store: unable to replace categories: %v", err)
 	}
 
 	query = "DELETE FROM categories WHERE user_id = $1 AND title = ANY($2)"
 	_, err = tx.Exec(query, userid, titleParam)
 	if err != nil {
-		tx.Rollback()
 		return fmt.Errorf("store: unable to delete categories: %v", err)
 	}
-	tx.Commit()
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("store: unable to commit transaction: %v", err)
+	}
+
 	return nil
 }
