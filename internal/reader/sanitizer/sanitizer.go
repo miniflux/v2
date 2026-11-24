@@ -46,7 +46,7 @@ var (
 		"h6":         {"id"},
 		"hr":         {},
 		"i":          {},
-		"iframe":     {"width", "height", "frameborder", "src", "allowfullscreen"},
+		"iframe":     {"width", "height", "frameborder", "src", "allowfullscreen", "data-youtube-playback-rate"},
 		"img":        {"alt", "title", "src", "srcset", "sizes", "width", "height", "fetchpriority", "decoding"},
 		"ins":        {},
 		"kbd":        {},
