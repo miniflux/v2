@@ -223,6 +223,18 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 
 // CreateFeed creates a new feed.
 func (s *Storage) CreateFeed(feed *model.Feed) error {
+	// The feed and all of its entries are inserted in a single transaction.
+	// Feeds such as podcasts can have thousands of entries, and committing each
+	// entry separately costs several database round trips per entry, which makes
+	// feed creation take minutes when the database is not on the same host.
+	// It also keeps the feed invisible to the scheduler until it is complete,
+	// and avoids leaving a partially imported feed behind if an insert fails.
+	tx, err := s.db.Begin()
+	if err != nil {
+		return fmt.Errorf(`store: unable to start transaction: %v`, err)
+	}
+	defer tx.Rollback()
+
 	sql := `
 		INSERT INTO feeds (
 			feed_url,
@@ -263,7 +275,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		RETURNING
 			id
 	`
-	err := s.db.QueryRow(
+	err = tx.QueryRow(
 		sql,
 		feed.FeedURL,
 		feed.SiteURL,
@@ -302,35 +314,13 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
 	}
 
-	for _, entry := range feed.Entries {
-		entry.FeedID = feed.ID
-		entry.UserID = feed.UserID
+	// The feed was just created, so no entry can exist in the database yet.
+	if _, err := s.createEntries(tx, feed.UserID, feed.ID, uniqueEntriesByHash(feed.Entries)); err != nil {
+		return err
+	}
 
-		tx, err := s.db.Begin()
-		if err != nil {
-			return fmt.Errorf(`store: unable to start transaction: %v`, err)
-		}
-
-		entryExists, err := s.entryExists(tx, entry)
-		if err != nil {
-			if rollbackErr := tx.Rollback(); rollbackErr != nil {
-				return fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
-			}
-			return err
-		}
-
-		if !entryExists {
-			if err := s.createEntry(tx, entry); err != nil {
-				if rollbackErr := tx.Rollback(); rollbackErr != nil {
-					return fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
-				}
-				return err
-			}
-		}
-
-		if err := tx.Commit(); err != nil {
-			return fmt.Errorf(`store: unable to commit transaction: %v`, err)
-		}
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf(`store: unable to commit transaction: %v`, err)
 	}
 
 	return nil
