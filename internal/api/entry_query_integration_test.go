@@ -425,10 +425,15 @@ func TestEntryQueryAPIRejectsForeignScopes(t *testing.T) {
 			})
 		}
 	}
-	for _, path := range []string{"/v1/feeds/16/entries", "/v1/categories/40/entries"} {
+	for _, path := range []string{
+		"/v1/feeds/16/entries", "/v1/categories/40/entries",
+		// The query string cannot replace or clear a foreign route scope.
+		"/v1/feeds/16/entries?feed_id=11", "/v1/feeds/16/entries?feed_id=0",
+		"/v1/categories/40/entries?category_id=10", "/v1/categories/40/entries?category_id=0",
+	} {
 		w := entryQueryAPIRequest(api, http.MethodGet, path, "")
 		if w.Code != http.StatusBadRequest {
-			t.Fatalf("Got status %d, want 400: %s", w.Code, w.Body.String())
+			t.Fatalf("%s: got status %d, want 400: %s", path, w.Code, w.Body.String())
 		}
 	}
 }
@@ -469,8 +474,12 @@ func TestEntryQueryAPICompatibility(t *testing.T) {
 		{"/v1/entries", []int64{2, 4, 5, 6, 3, 8, 1}},
 		{"/v1/feeds/11/entries", []int64{3, 8, 1}},
 		{"/v1/categories/10/entries", []int64{4, 3, 8, 1}},
-		{"/v1/feeds/12/entries?feed_id=11", []int64{3, 8, 1}},
-		{"/v1/categories/20/entries?category_id=10", []int64{4, 3, 8, 1}},
+		{"/v1/feeds/12/entries?feed_id=11", []int64{2}},
+		{"/v1/feeds/11/entries?feed_id=0", []int64{3, 8, 1}},
+		{"/v1/feeds/11/entries?category_id=10", []int64{3, 8, 1}},
+		{"/v1/categories/20/entries?category_id=10", []int64{2}},
+		{"/v1/categories/10/entries?category_id=0", []int64{4, 3, 8, 1}},
+		{"/v1/categories/10/entries?feed_id=13", []int64{4}},
 		{"/v1/entries?starred=1", []int64{2, 4}},
 		{"/v1/entries?starred=invalid", []int64{2, 4, 5, 6, 3, 8, 1}},
 		{"/v1/entries?feed_id=invalid&before_entry_id=-1", []int64{2, 4, 5, 6, 3, 8, 1}},
