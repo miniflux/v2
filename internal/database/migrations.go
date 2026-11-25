@@ -1590,4 +1590,10 @@ var migrations = [...]func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		// Existing entries have no known publisher version: the empty default
+		// makes the next refresh that is allowed to update them store one.
+		_, err = tx.Exec(`ALTER TABLE entries ADD COLUMN source_fingerprint text not null default ''`)
+		return err
+	},
 }
