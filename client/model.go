@@ -291,7 +291,7 @@ type EntryModificationRequest struct {
 // Entries represents a list of entries.
 type Entries []*Entry
 
-// ShareCodeResponse represents a
+// ShareCodeResponse represents the response of the share entry endpoint.
 type ShareCodeResponse struct {
 	ShareCode string `json:"share_code"`
 }

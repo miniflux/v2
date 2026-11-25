@@ -1185,19 +1185,23 @@ func TestShareEntry(t *testing.T) {
 	expected := &ShareCodeResponse{
 		ShareCode: "ExampleShareCode",
 	}
-	client := NewClientWithOptions(
-		"http://mf",
-		WithHTTPClient(
-			newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
-				expectRequest(t, http.MethodPost, "http://mf/v1/entries/1/share", nil, req)
-				return jsonResponseFrom(t, http.StatusOK, http.Header{}, expected)
-			})))
-	shareCode, err := client.ShareEntryContext(t.Context(), 1)
-	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
-	}
-	if shareCode != expected.ShareCode {
-		t.Fatalf("Expected '%s', got '%s'", expected.ShareCode, shareCode)
+
+	// The server answers 201 when it creates a share code and 200 when the entry was already shared.
+	for _, status := range []int{http.StatusCreated, http.StatusOK} {
+		client := NewClientWithOptions(
+			"http://mf",
+			WithHTTPClient(
+				newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
+					expectRequest(t, http.MethodPost, "http://mf/v1/entries/1/share", nil, req)
+					return jsonResponseFrom(t, status, http.Header{}, expected)
+				})))
+		shareCode, err := client.ShareEntryContext(t.Context(), 1)
+		if err != nil {
+			t.Fatalf("Expected no error for status %d, got %v", status, err)
+		}
+		if shareCode != expected.ShareCode {
+			t.Fatalf("Expected '%s' for status %d, got '%s'", expected.ShareCode, status, shareCode)
+		}
 	}
 }
 
@@ -1207,7 +1211,7 @@ func TestUnshareEntry(t *testing.T) {
 		WithHTTPClient(
 			newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
 				expectRequest(t, http.MethodDelete, "http://mf/v1/entries/1/share", nil, req)
-				return jsonResponseFrom(t, http.StatusOK, http.Header{}, nil)
+				return jsonResponseFrom(t, http.StatusNoContent, http.Header{}, nil)
 			})))
 	if err := client.UnshareEntryContext(t.Context(), 1); err != nil {
 		t.Fatalf("Expected no error, got %v", err)

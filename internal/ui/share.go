@@ -16,7 +16,7 @@ import (
 
 func (h *handler) createSharedEntry(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
-	shareCode, err := h.store.EntryShareCode(request.UserID(r), entryID)
+	shareCode, _, err := h.store.EntryShareCode(request.UserID(r), entryID)
 	if errors.Is(err, storage.ErrEntryNotFound) {
 		response.HTMLNotFound(w, r)
 		return

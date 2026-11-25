@@ -3587,7 +3587,14 @@ func TestShareEntryEndpoint(t *testing.T) {
 		t.Fatalf(`Failed to get entries: %v`, err)
 	}
 
-	shareCode, err := regularUserClient.ShareEntry(result.Entries[0].ID)
+	entryID := result.Entries[0].ID
+
+	entryBeforeShare, err := regularUserClient.Entry(entryID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	shareCode, err := regularUserClient.ShareEntry(entryID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -3595,33 +3602,49 @@ func TestShareEntryEndpoint(t *testing.T) {
 		t.Fatal(`The entry should have a share code`)
 	}
 
-	entry, err := regularUserClient.Entry(result.Entries[0].ID)
+	existingShareCode, err := regularUserClient.ShareEntry(entryID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if existingShareCode != shareCode {
+		t.Fatalf(`Sharing an entry twice should return the same code, got %q and %q`, shareCode, existingShareCode)
+	}
+
+	entryAfterShare, err := regularUserClient.Entry(entryID)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if entry.ShareCode != shareCode {
+	if entryAfterShare.ShareCode != shareCode {
 		t.Fatal(`The entry share code should match`)
 	}
 
-	if err := regularUserClient.UnshareEntry(result.Entries[0].ID); err != nil {
+	if !entryAfterShare.ChangedAt.After(entryBeforeShare.ChangedAt) {
+		t.Fatalf(`Sharing should update the entry change date, got %v before and %v after`, entryBeforeShare.ChangedAt, entryAfterShare.ChangedAt)
+	}
+
+	if err := regularUserClient.UnshareEntry(entryID); err != nil {
 		t.Fatal(err)
 	}
 
-	entry, err = regularUserClient.Entry(result.Entries[0].ID)
+	entryAfterUnshare, err := regularUserClient.Entry(entryID)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if entry.ShareCode != "" {
-		t.Fatalf(`The share code should be deleted`)
+	if entryAfterUnshare.ShareCode != "" {
+		t.Fatal(`The share code should be deleted`)
 	}
 
-	nonExistingEntryId := int64(math.MaxInt64)
-	if _, err = regularUserClient.ShareEntry(nonExistingEntryId); !errors.Is(err, miniflux.ErrNotFound) {
+	if !entryAfterUnshare.ChangedAt.After(entryAfterShare.ChangedAt) {
+		t.Fatalf(`Unsharing should update the entry change date, got %v before and %v after`, entryAfterShare.ChangedAt, entryAfterUnshare.ChangedAt)
+	}
+
+	nonExistingEntryID := int64(math.MaxInt64)
+	if _, err = regularUserClient.ShareEntry(nonExistingEntryID); !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Expected Not Found when sharing non existent entry: %v`, err)
 	}
-	if err = regularUserClient.UnshareEntry(nonExistingEntryId); !errors.Is(err, miniflux.ErrNotFound) {
+	if err = regularUserClient.UnshareEntry(nonExistingEntryID); !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Expected Not Found when unsharing non existent entry: %v`, err)
 	}
 
@@ -3645,11 +3668,11 @@ func TestShareEntryEndpoint(t *testing.T) {
 		t.Fatalf(`Failed to get entries: %v`, err)
 	}
 
-	otherUserEntryId := result.Entries[0].ID
-	if _, err = regularUserClient.ShareEntry(otherUserEntryId); !errors.Is(err, miniflux.ErrNotFound) {
+	otherUserEntryID := result.Entries[0].ID
+	if _, err = regularUserClient.ShareEntry(otherUserEntryID); !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Expected Not Found when sharing other user's entry: %v`, err)
 	}
-	if err = regularUserClient.UnshareEntry(otherUserEntryId); !errors.Is(err, miniflux.ErrNotFound) {
+	if err = regularUserClient.UnshareEntry(otherUserEntryID); !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Expected Not Found when unsharing other user's entry: %v`, err)
 	}
 }
