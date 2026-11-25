@@ -1097,14 +1097,14 @@ func (c *Client) ToggleStarredContext(ctx context.Context, entryID int64) error 
 	return err
 }
 
-// ShareEntry creates a share link
+// ShareEntry returns the share code of an entry, creating one if needed.
 func (c *Client) ShareEntry(entryID int64) (string, error) {
 	ctx, cancel := withDefaultTimeout()
 	defer cancel()
 	return c.ShareEntryContext(ctx, entryID)
 }
 
-// ShareEntryContext creates a share link
+// ShareEntryContext returns the share code of an entry, creating one if needed.
 func (c *Client) ShareEntryContext(ctx context.Context, entryID int64) (string, error) {
 	body, err := c.request.Post(ctx, fmt.Sprintf("/v1/entries/%d/share", entryID), nil)
 	if err != nil {
@@ -1120,14 +1120,14 @@ func (c *Client) ShareEntryContext(ctx context.Context, entryID int64) (string, 
 	return response.ShareCode, nil
 }
 
-// UnshareEntry deletes a share link
+// UnshareEntry removes the share code of an entry.
 func (c *Client) UnshareEntry(entryID int64) error {
 	ctx, cancel := withDefaultTimeout()
 	defer cancel()
 	return c.UnshareEntryContext(ctx, entryID)
 }
 
-// UnshareEntryContext deletes a share link
+// UnshareEntryContext removes the share code of an entry.
 func (c *Client) UnshareEntryContext(ctx context.Context, entryID int64) error {
 	return c.request.Delete(ctx, fmt.Sprintf("/v1/entries/%d/share", entryID))
 }

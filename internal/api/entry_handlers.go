@@ -296,7 +296,7 @@ func (h *handler) createSharedEntryHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	shareCode, err := h.store.EntryShareCode(request.UserID(r), entryID)
+	shareCode, created, err := h.store.EntryShareCode(request.UserID(r), entryID)
 	if errors.Is(err, storage.ErrEntryNotFound) {
 		response.JSONNotFound(w, r)
 		return
@@ -305,7 +305,11 @@ func (h *handler) createSharedEntryHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	response.JSONCreated(w, r, &entryShareResponse{ShareCode: shareCode})
+	if created {
+		response.JSONCreated(w, r, &entryShareResponse{ShareCode: shareCode})
+	} else {
+		response.JSON(w, r, &entryShareResponse{ShareCode: shareCode})
+	}
 }
 
 func (h *handler) unshareEntryHandler(w http.ResponseWriter, r *http.Request) {
