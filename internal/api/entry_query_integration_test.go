@@ -407,6 +407,22 @@ func TestEntryQueryAPIRejectsInvalidParametersAfterAuthentication(t *testing.T) 
 			}
 		})
 	}
+
+	// PostgreSQL rejects these values, so every entry endpoint must reject them before querying.
+	queries = []string{"search=%00", "search=%ff", "tags=%00", "tags=%ff"}
+	for _, name := range []string{"before", "after", "published_before", "published_after", "changed_before", "changed_after"} {
+		queries = append(queries, name+"=9223372036854775807", name+"="+strconv.FormatInt(maxEntryFilterTimestamp, 10))
+	}
+	for _, path := range []string{"/v1/entries", "/v1/feeds/11/entries", "/v1/categories/10/entries"} {
+		for _, query := range queries {
+			t.Run(path+"?"+query, func(t *testing.T) {
+				w := entryQueryAPIRequest(api, http.MethodGet, path+"?"+query, "")
+				if w.Code != http.StatusBadRequest {
+					t.Fatalf("Got status %d, want 400: %s", w.Code, w.Body.String())
+				}
+			})
+		}
+	}
 }
 
 func TestEntryQueryAPIRejectsForeignScopes(t *testing.T) {
@@ -476,6 +492,8 @@ func TestEntryQueryAPICompatibility(t *testing.T) {
 		{"/v1/entries?feed_id=invalid&before_entry_id=-1", []int64{2, 4, 5, 6, 3, 8, 1}},
 		{"/v1/entries?feed_id=0&category_id=0&before_entry_id=0&after_entry_id=0", []int64{2, 4, 5, 6, 3, 8, 1}},
 		{"/v1/entries?globally_visible=invalid", []int64{2, 3, 8, 1}},
+		{"/v1/entries?before=" + strconv.FormatInt(maxEntryFilterTimestamp-1, 10), []int64{2, 4, 5, 6, 3, 8, 1}},
+		{"/v1/entries?search=caf%C3%A9", nil},
 	} {
 		t.Run(test.path, func(t *testing.T) {
 			w := entryQueryAPIRequest(api, http.MethodGet, test.path, "")

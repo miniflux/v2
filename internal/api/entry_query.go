@@ -61,11 +61,47 @@ func parseEntryFilters(r *http.Request, feedID, categoryID int64) (entryFilters,
 		}
 	}
 
+	for _, timestamp := range []struct {
+		name  string
+		value int64
+	}{
+		{"before", filters.before},
+		{"after", filters.after},
+		{"published_before", filters.publishedBefore},
+		{"published_after", filters.publishedAfter},
+		{"changed_before", filters.changedBefore},
+		{"changed_after", filters.changedAfter},
+	} {
+		if timestamp.value >= maxEntryFilterTimestamp {
+			return entryFilters{}, fmt.Errorf("invalid %s parameter, timestamp is out of range", timestamp.name)
+		}
+	}
+
+	if err := validateEntryFilterText("search", filters.search); err != nil {
+		return entryFilters{}, err
+	}
+	for _, tag := range filters.tags {
+		if err := validateEntryFilterText("tags", tag); err != nil {
+			return entryFilters{}, err
+		}
+	}
+
 	if starred, err := strconv.ParseBool(r.URL.Query().Get("starred")); err == nil {
 		filters.starred = &starred
 	}
 
 	return filters, nil
+}
+
+// maxEntryFilterTimestamp is the first Unix timestamp past PostgreSQL's finite timestamp range.
+var maxEntryFilterTimestamp = time.Date(294277, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()
+
+// validateEntryFilterText rejects text that PostgreSQL cannot accept as a UTF-8 query parameter.
+func validateEntryFilterText(name, value string) error {
+	if !utf8.ValidString(value) || strings.ContainsRune(value, '\x00') {
+		return fmt.Errorf("invalid %s parameter, must be valid UTF-8 without null bytes", name)
+	}
+	return nil
 }
 
 func (filters entryFilters) apply(builder *storage.EntryQueryBuilder) {
@@ -162,8 +198,7 @@ func validateEntryIDsFilters(r *http.Request) error {
 		}
 	}
 
-	// Reject timestamps outside PostgreSQL's finite timestamp range.
-	maxTimestamp := time.Date(294277, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()
+	// Timestamp range and text encoding checks shared by every entry endpoint are in parseEntryFilters.
 	for _, name := range []string{"before", "after", "published_before", "published_after", "changed_before", "changed_after"} {
 		if !values.Has(name) {
 			continue
@@ -172,22 +207,11 @@ func validateEntryIDsFilters(r *http.Request) error {
 		if err != nil || value < 0 {
 			return fmt.Errorf("invalid %s parameter, must be a non-negative integer", name)
 		}
-		if value >= maxTimestamp {
-			return fmt.Errorf("invalid %s parameter, timestamp is out of range", name)
-		}
 	}
 
 	for _, name := range []string{"starred", "globally_visible"} {
 		if value := values.Get(name); values.Has(name) && value != "true" && value != "false" {
 			return fmt.Errorf(`invalid %s parameter, must be "true" or "false"`, name)
-		}
-	}
-
-	for _, name := range []string{"search", "tags"} {
-		for _, value := range values[name] {
-			if !utf8.ValidString(value) || strings.ContainsRune(value, '\x00') {
-				return fmt.Errorf("invalid %s parameter, must be valid UTF-8 without null bytes", name)
-			}
 		}
 	}
 

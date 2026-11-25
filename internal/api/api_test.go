@@ -11,6 +11,7 @@ import (
 	"reflect"
 	"runtime"
 	"slices"
+	"strconv"
 	"testing"
 
 	"miniflux.app/v2/internal/config"
@@ -159,7 +160,7 @@ func TestValidateEntryIDsFiltersRejectsZeroIDs(t *testing.T) {
 
 func TestValidateEntryIDsFiltersRejectsMalformedQueryStrings(t *testing.T) {
 	for _, query := range []string{
-		"feed_id=%zz", "status=unread;status=read", "search=%00", "tags=%00", "search=%ff", "tags=%ff",
+		"feed_id=%zz", "status=unread;status=read",
 	} {
 		t.Run(query, func(t *testing.T) {
 			r := httptest.NewRequest(http.MethodGet, "/v1/entries/ids?"+query, nil)
@@ -167,6 +168,26 @@ func TestValidateEntryIDsFiltersRejectsMalformedQueryStrings(t *testing.T) {
 				t.Fatal("Expected malformed query parameters to be rejected")
 			}
 		})
+	}
+}
+
+func TestParseEntryFiltersRejectsValuesPostgreSQLCannotAccept(t *testing.T) {
+	queries := []string{"search=%00", "search=%ff", "tags=%00", "tags=%ff", "tags=one&tags=%ff"}
+	for _, name := range []string{"before", "after", "published_before", "published_after", "changed_before", "changed_after"} {
+		queries = append(queries, name+"=9223372036854775807", name+"="+strconv.FormatInt(maxEntryFilterTimestamp, 10))
+	}
+	for _, query := range queries {
+		t.Run(query, func(t *testing.T) {
+			r := httptest.NewRequest(http.MethodGet, "/v1/entries?"+query, nil)
+			if _, err := parseEntryFilters(r, 0, 0); err == nil {
+				t.Fatal("Expected the value to be rejected")
+			}
+		})
+	}
+
+	r := httptest.NewRequest(http.MethodGet, "/v1/entries?before="+strconv.FormatInt(maxEntryFilterTimestamp-1, 10)+"&search=caf%C3%A9", nil)
+	if _, err := parseEntryFilters(r, 0, 0); err != nil {
+		t.Fatalf("Expected the last valid timestamp and UTF-8 search text to be accepted: %v", err)
 	}
 }
 
