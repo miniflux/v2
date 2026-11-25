@@ -25,6 +25,11 @@ var (
 		netip.MustParsePrefix("240.0.0.0/4"),     // Reserved and limited broadcast (RFC 6890).
 		netip.MustParsePrefix("::/96"),           // Deprecated IPv4-compatible IPv6 addresses (RFC 4291).
 		netip.MustParsePrefix("::ffff:0:0:0/96"), // Deprecated IPv4-translated IPv6 addresses (RFC 2765).
+		netip.MustParsePrefix("100::/64"),        // Discard-only (RFC 6666).
+		netip.MustParsePrefix("2001:2::/48"),     // Benchmarking (RFC 5180).
+		netip.MustParsePrefix("2001:db8::/32"),   // Documentation (RFC 3849).
+		netip.MustParsePrefix("3fff::/20"),       // Documentation (RFC 9637).
+		netip.MustParsePrefix("5f00::/16"),       // SRv6 SIDs (RFC 9602).
 		netip.MustParsePrefix("fec0::/10"),
 	}
 )
