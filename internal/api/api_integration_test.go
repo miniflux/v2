@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"math/rand/v2"
 	"os"
 	"strings"
@@ -3553,6 +3554,103 @@ func TestToggleStarredEndpoint(t *testing.T) {
 
 	if !entry.Starred {
 		t.Fatalf(`The entry should be starred`)
+	}
+}
+
+func TestShareEntryEndpoint(t *testing.T) {
+	t.Parallel()
+
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := regularUserClient.FeedEntries(feedID, &miniflux.Filter{Limit: 1})
+	if err != nil {
+		t.Fatalf(`Failed to get entries: %v`, err)
+	}
+
+	shareCode, err := regularUserClient.ShareEntry(result.Entries[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(shareCode) < 8 {
+		t.Fatal(`The entry should have a share code`)
+	}
+
+	entry, err := regularUserClient.Entry(result.Entries[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.ShareCode != shareCode {
+		t.Fatal(`The entry share code should match`)
+	}
+
+	if err := regularUserClient.UnshareEntry(result.Entries[0].ID); err != nil {
+		t.Fatal(err)
+	}
+
+	entry, err = regularUserClient.Entry(result.Entries[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.ShareCode != "" {
+		t.Fatalf(`The share code should be deleted`)
+	}
+
+	nonExistingEntryId := int64(math.MaxInt64)
+	if _, err = regularUserClient.ShareEntry(nonExistingEntryId); !errors.Is(err, miniflux.ErrNotFound) {
+		t.Fatalf(`Expected Not Found when sharing non existent entry: %v`, err)
+	}
+	if err = regularUserClient.UnshareEntry(nonExistingEntryId); !errors.Is(err, miniflux.ErrNotFound) {
+		t.Fatalf(`Expected Not Found when unsharing non existent entry: %v`, err)
+	}
+
+	otherTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(otherTestUser.ID)
+
+	otherUserClient := miniflux.NewClient(testConfig.testBaseURL, otherTestUser.Username, testConfig.testRegularPassword)
+
+	otherFeedID, err := otherUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result, err = otherUserClient.FeedEntries(otherFeedID, &miniflux.Filter{Limit: 1})
+	if err != nil {
+		t.Fatalf(`Failed to get entries: %v`, err)
+	}
+
+	otherUserEntryId := result.Entries[0].ID
+	if _, err = regularUserClient.ShareEntry(otherUserEntryId); !errors.Is(err, miniflux.ErrNotFound) {
+		t.Fatalf(`Expected Not Found when sharing other user's entry: %v`, err)
+	}
+	if err = regularUserClient.UnshareEntry(otherUserEntryId); !errors.Is(err, miniflux.ErrNotFound) {
+		t.Fatalf(`Expected Not Found when unsharing other user's entry: %v`, err)
 	}
 }
 

@@ -20,6 +20,10 @@ import (
 // (feed_id, hash) pair has a tombstone recording a prior deletion.
 var ErrEntryTombstoned = errors.New("store: entry is tombstoned")
 
+// ErrEntryNotFound is returned when the user does not have access to the entry
+// or the entry does not exist
+var ErrEntryNotFound = errors.New(`store: entry not found`)
+
 // CountAllEntries returns the number of entries for each status in the database.
 func (s *Storage) CountAllEntries() (map[string]int64, error) {
 	rows, err := s.db.Query(`SELECT status, count(*) FROM entries GROUP BY status`)
@@ -646,7 +650,10 @@ func (s *Storage) MarkCategoryAsRead(userID, categoryID int64, before time.Time)
 func (s *Storage) EntryShareCode(userID int64, entryID int64) (shareCode string, err error) {
 	query := `SELECT share_code FROM entries WHERE user_id=$1 AND id=$2`
 	err = s.db.QueryRow(query, userID, entryID).Scan(&shareCode)
-	if err != nil {
+	if errors.Is(err, sql.ErrNoRows) {
+		err = ErrEntryNotFound
+		return
+	} else if err != nil {
 		err = fmt.Errorf(`store: unable to get share code for entry #%d: %v`, entryID, err)
 		return
 	}
@@ -668,9 +675,21 @@ func (s *Storage) EntryShareCode(userID int64, entryID int64) (shareCode string,
 // UnshareEntry removes the share code for the given entry.
 func (s *Storage) UnshareEntry(userID int64, entryID int64) (err error) {
 	query := `UPDATE entries SET share_code='' WHERE user_id=$1 AND id=$2`
-	_, err = s.db.Exec(query, userID, entryID)
+	result, err := s.db.Exec(query, userID, entryID)
 	if err != nil {
 		err = fmt.Errorf(`store: unable to remove share code for entry #%d: %v`, entryID, err)
+		return
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf(`store: unable to remove share code for entry #%d: %v`, entryID, err)
+		return
+	}
+
+	if count == 0 {
+		err = ErrEntryNotFound
+		return
 	}
 	return
 }

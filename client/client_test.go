@@ -1181,6 +1181,39 @@ func TestToggleStarred(t *testing.T) {
 	}
 }
 
+func TestShareEntry(t *testing.T) {
+	expected := &ShareCodeResponse{
+		ShareCode: "ExampleShareCode",
+	}
+	client := NewClientWithOptions(
+		"http://mf",
+		WithHTTPClient(
+			newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
+				expectRequest(t, http.MethodPost, "http://mf/v1/entries/1/share", nil, req)
+				return jsonResponseFrom(t, http.StatusOK, http.Header{}, expected)
+			})))
+	shareCode, err := client.ShareEntryContext(t.Context(), 1)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	if shareCode != expected.ShareCode {
+		t.Fatalf("Expected '%s', got '%s'", expected.ShareCode, shareCode)
+	}
+}
+
+func TestUnshareEntry(t *testing.T) {
+	client := NewClientWithOptions(
+		"http://mf",
+		WithHTTPClient(
+			newFakeHTTPClient(t, func(t *testing.T, req *http.Request) *http.Response {
+				expectRequest(t, http.MethodDelete, "http://mf/v1/entries/1/share", nil, req)
+				return jsonResponseFrom(t, http.StatusOK, http.Header{}, nil)
+			})))
+	if err := client.UnshareEntryContext(t.Context(), 1); err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+}
+
 func TestSaveEntry(t *testing.T) {
 	client := NewClientWithOptions(
 		"http://mf",

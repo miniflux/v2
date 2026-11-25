@@ -49,6 +49,10 @@ type entryImportRequest struct {
 	ExternalID  string   `json:"external_id"`
 }
 
+type entryShareResponse struct {
+	ShareCode string `json:"share_code"`
+}
+
 type feedCreationResponse struct {
 	FeedID int64 `json:"feed_id"`
 }
