@@ -37,10 +37,19 @@ type entryFilters struct {
 	search          string
 }
 
+// parseEntryFilters reads the entry filters shared by the entry endpoints.
+// A non-zero feedID or categoryID comes from the route and takes precedence over the query string.
 func parseEntryFilters(r *http.Request, feedID, categoryID int64) (entryFilters, error) {
+	if feedID == 0 {
+		feedID = request.QueryInt64Param(r, "feed_id", 0)
+	}
+	if categoryID == 0 {
+		categoryID = request.QueryInt64Param(r, "category_id", 0)
+	}
+
 	filters := entryFilters{
-		feedID:          request.QueryInt64Param(r, "feed_id", feedID),
-		categoryID:      request.QueryInt64Param(r, "category_id", categoryID),
+		feedID:          feedID,
+		categoryID:      categoryID,
 		statuses:        request.QueryStringParamList(r, "status"),
 		tags:            request.QueryStringParamList(r, "tags"),
 		globallyVisible: request.HasQueryParam(r, "globally_visible") && request.QueryBoolParam(r, "globally_visible", true),

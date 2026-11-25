@@ -5,6 +5,7 @@ package api // import "miniflux.app/v2/internal/api"
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -193,25 +194,34 @@ func TestParseEntryFiltersRejectsValuesPostgreSQLCannotAccept(t *testing.T) {
 
 func TestParseEntryFiltersPreservesEndpointCompatibility(t *testing.T) {
 	for _, test := range []struct {
+		routeFeedID     int64
+		routeCategoryID int64
 		query           string
 		feedID          int64
 		categoryID      int64
 		starred         *bool
 		globallyVisible bool
 	}{
-		{query: "", feedID: 11, categoryID: 10},
 		{query: "feed_id=12&category_id=20", feedID: 12, categoryID: 20},
-		{query: "feed_id=invalid&category_id=-1", feedID: 11, categoryID: 10},
+		{query: "feed_id=invalid&category_id=-1"},
 		{query: "feed_id=0&category_id=0"},
-		{query: "starred=1", feedID: 11, categoryID: 10, starred: new(true)},
-		{query: "starred=0", feedID: 11, categoryID: 10, starred: new(false)},
-		{query: "starred=invalid", feedID: 11, categoryID: 10},
-		{query: "globally_visible=invalid", feedID: 11, categoryID: 10, globallyVisible: true},
-		{query: "globally_visible=false", feedID: 11, categoryID: 10},
+		// Route IDs scope the endpoint: the query string cannot replace or clear them.
+		{routeFeedID: 11, query: "", feedID: 11},
+		{routeFeedID: 11, query: "feed_id=12", feedID: 11},
+		{routeFeedID: 11, query: "feed_id=0", feedID: 11},
+		{routeFeedID: 11, query: "category_id=20", feedID: 11, categoryID: 20},
+		{routeCategoryID: 10, query: "category_id=20", categoryID: 10},
+		{routeCategoryID: 10, query: "category_id=0", categoryID: 10},
+		{routeCategoryID: 10, query: "feed_id=12", feedID: 12, categoryID: 10},
+		{query: "starred=1", starred: new(true)},
+		{query: "starred=0", starred: new(false)},
+		{query: "starred=invalid"},
+		{query: "globally_visible=invalid", globallyVisible: true},
+		{query: "globally_visible=false"},
 	} {
-		t.Run(test.query, func(t *testing.T) {
+		t.Run(fmt.Sprintf("feed=%d/category=%d/%s", test.routeFeedID, test.routeCategoryID, test.query), func(t *testing.T) {
 			r := httptest.NewRequest(http.MethodGet, "/v1/entries?"+test.query, nil)
-			filters, err := parseEntryFilters(r, 11, 10)
+			filters, err := parseEntryFilters(r, test.routeFeedID, test.routeCategoryID)
 			if err != nil {
 				t.Fatal(err)
 			}
