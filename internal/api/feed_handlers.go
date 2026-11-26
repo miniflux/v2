@@ -210,7 +210,7 @@ func (h *handler) getCategoryFeedsHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	feeds, err := h.store.FeedsByCategoryWithCounters(userID, categoryID)
+	feeds, err := h.store.FeedsByCategoryWithCounters(userID, categoryID, "unread_count")
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return

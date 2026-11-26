@@ -155,6 +155,18 @@ func TestValidateCategoriesSortingOrder(t *testing.T) {
 	}
 }
 
+func TestValidateFeedsSortingOrder(t *testing.T) {
+	for _, order := range []string{"alphabetical", "unread_count"} {
+		if err := validateFeedsSortingOrder(order); err != nil {
+			t.Errorf("expected valid order %q to pass, got %v", order, err)
+		}
+	}
+
+	if err := validateFeedsSortingOrder("popularity"); err == nil {
+		t.Error("expected invalid order to fail")
+	}
+}
+
 func TestValidateDisplayMode(t *testing.T) {
 	for _, mode := range []string{"fullscreen", "standalone", "minimal-ui", "browser"} {
 		if err := validateDisplayMode(mode); err != nil {

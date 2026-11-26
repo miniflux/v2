@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -28,6 +29,22 @@ func (l byStateAndName) Less(i, j int) bool {
 	}
 	if l.f[i].UnreadCount != l.f[j].UnreadCount {
 		return l.f[i].UnreadCount > l.f[j].UnreadCount
+	}
+	return l.f[i].Title < l.f[j].Title
+}
+
+type byName struct{ f model.Feeds }
+
+func (l byName) Len() int      { return len(l.f) }
+func (l byName) Swap(i, j int) { l.f[i], l.f[j] = l.f[j], l.f[i] }
+func (l byName) Less(i, j int) bool {
+	// Keep disabled feeds at the bottom, they are greyed out in the UI.
+	if l.f[i].Disabled != l.f[j].Disabled {
+		return l.f[j].Disabled
+	}
+	left, right := strings.ToLower(l.f[i].Title), strings.ToLower(l.f[j].Title)
+	if left != right {
+		return left < right
 	}
 	return l.f[i].Title < l.f[j].Title
 }
@@ -140,20 +157,24 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 		GetFeeds()
 }
 
-func getFeedsSorted(builder *feedQueryBuilder) (model.Feeds, error) {
+func getFeedsSorted(builder *feedQueryBuilder, sortingOrder string) (model.Feeds, error) {
 	result, err := builder.GetFeeds()
 	if err == nil {
-		sort.Sort(byStateAndName{result})
+		if sortingOrder == "alphabetical" {
+			sort.Sort(byName{result})
+		} else {
+			sort.Sort(byStateAndName{result})
+		}
 		return result, nil
 	}
 	return result, err
 }
 
 // FeedsWithCounters returns all feeds of the given user with read and unread entry counters.
-func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
+func (s *Storage) FeedsWithCounters(userID int64, sortingOrder string) (model.Feeds, error) {
 	return getFeedsSorted(s.NewFeedQueryBuilder(userID).
 		WithCounters().
-		WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection))
+		WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection), sortingOrder)
 }
 
 // FetchCounters returns the per-feed read and unread entry counts for the given user.
@@ -166,11 +187,11 @@ func (s *Storage) FetchCounters(userID int64) (model.FeedCounters, error) {
 }
 
 // FeedsByCategoryWithCounters returns all feeds in the given category for the given user with read and unread entry counters.
-func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.Feeds, error) {
+func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64, sortingOrder string) (model.Feeds, error) {
 	return getFeedsSorted(s.NewFeedQueryBuilder(userID).
 		WithCategoryID(categoryID).
 		WithCounters().
-		WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection))
+		WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection), sortingOrder)
 }
 
 // WeeklyFeedEntryCount returns the weekly entry count for a feed.
