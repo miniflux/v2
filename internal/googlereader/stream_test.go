@@ -104,3 +104,31 @@ func TestGetStreams(t *testing.T) {
 		t.Errorf(`Expected no streams on error, got %v`, result)
 	}
 }
+
+func TestGetFeedID(t *testing.T) {
+	scenarios := []struct {
+		name        string
+		stream      Stream
+		expected    int64
+		expectError bool
+	}{
+		{"valid feed ID", Stream{Type: FeedStream, ID: "123"}, 123, false},
+		{"zero feed ID", Stream{Type: FeedStream, ID: "0"}, 0, true},
+		{"negative feed ID", Stream{Type: FeedStream, ID: "-1"}, 0, true},
+	}
+
+	for _, scenario := range scenarios {
+		t.Run(scenario.name, func(t *testing.T) {
+			feedID, err := getFeedID(scenario.stream)
+			if scenario.expectError && err == nil {
+				t.Fatal("Expected an error")
+			}
+			if !scenario.expectError && err != nil {
+				t.Fatalf("Unexpected error: %v", err)
+			}
+			if feedID != scenario.expected {
+				t.Errorf("Unexpected feed ID, got %d instead of %d", feedID, scenario.expected)
+			}
+		})
+	}
+}

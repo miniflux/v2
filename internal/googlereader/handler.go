@@ -402,10 +402,10 @@ func getFeed(stream Stream, store *storage.Storage, userID int64) (*model.Feed, 
 	return store.FeedByID(userID, feedID)
 }
 
-// getFeedID returns the ID of a feed stream, and rejects other stream types.
+// getFeedID returns the ID of a feed stream, and rejects invalid feed streams.
 func getFeedID(stream Stream) (int64, error) {
 	feedID, err := strconv.ParseInt(stream.ID, 10, 64)
-	if stream.Type != FeedStream || err != nil {
+	if stream.Type != FeedStream || err != nil || feedID <= 0 {
 		return 0, fmt.Errorf("%w: %s", errInvalidFeedStream, stream)
 	}
 	return feedID, nil
@@ -1136,7 +1136,7 @@ func getItemRefsAndContinuation(builder storage.EntryQueryBuilder, rm requestMod
 }
 
 func (h *greaderHandler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request, rm requestModifiers) {
-	feedID, err := strconv.ParseInt(rm.Streams[0].ID, 10, 64)
+	feedID, err := getFeedID(rm.Streams[0])
 	if err != nil {
 		response.JSONBadRequest(w, r, err)
 		return
