@@ -205,8 +205,13 @@ func TestMarkAllAsReadRejectsInvalidRequests(t *testing.T) {
 		expectedStatus int
 	}{
 		{"unknown label", url.Values{"s": {labelStream("Unknown")}}, http.StatusNotFound},
+		{"unknown feed", url.Values{"s": {feedStream(feedID + 1_000_000)}}, http.StatusNotFound},
+		{"missing stream", url.Values{}, http.StatusBadRequest},
 		{"invalid stream", url.Values{"s": {"invalid"}}, http.StatusBadRequest},
+		{"unsupported stream", url.Values{"s": {starredStream}}, http.StatusBadRequest},
 		{"invalid feed ID", url.Values{"s": {"feed/invalid"}}, http.StatusBadRequest},
+		{"zero feed ID", url.Values{"s": {"feed/0"}}, http.StatusBadRequest},
+		{"negative feed ID", url.Values{"s": {"feed/-1"}}, http.StatusBadRequest},
 		{"invalid timestamp", url.Values{"s": {feedStream(feedID)}, "ts": {"yesterday"}}, http.StatusBadRequest},
 	}
 
