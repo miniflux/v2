@@ -99,7 +99,7 @@ func TestUsersCannotChangeOtherUsersData(t *testing.T) {
 		expectedStatus int
 	}{
 		{"mark the items as read and starred", "/reader/api/0/edit-tag", url.Values{"i": decimalItemIDs(entries), "a": {readStream, starredStream}}, http.StatusOK},
-		{"mark the feed as read", "/reader/api/0/mark-all-as-read", url.Values{"s": {feedStream(feedID)}}, http.StatusOK},
+		{"mark the feed as read", "/reader/api/0/mark-all-as-read", url.Values{"s": {feedStream(feedID)}}, http.StatusNotFound},
 		{"mark the label as read", "/reader/api/0/mark-all-as-read", url.Values{"s": {labelStream("Private")}}, http.StatusNotFound},
 		{"rename the feed", "/reader/api/0/subscription/edit", url.Values{"ac": {"edit"}, "s": {feedStream(feedID)}, "t": {"Stolen"}}, http.StatusBadRequest},
 		{"move the feed", "/reader/api/0/subscription/edit", url.Values{"ac": {"edit"}, "s": {feedStream(feedID)}, "a": {labelStream("Stolen")}}, http.StatusBadRequest},

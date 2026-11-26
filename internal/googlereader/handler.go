@@ -1216,13 +1216,16 @@ func (h *greaderHandler) markAllAsReadHandler(w http.ResponseWriter, r *http.Req
 
 	switch stream.Type {
 	case FeedStream:
-		feedID, err := strconv.ParseInt(stream.ID, 10, 64)
+		feed, err := getFeed(stream, h.store, userID)
 		if err != nil {
-			response.JSONBadRequest(w, r, err)
+			sendErrorResponse(w, r, err)
 			return
 		}
-		err = h.store.MarkFeedAsRead(userID, feedID, before)
-		if err != nil {
+		if feed == nil {
+			response.JSONNotFound(w, r)
+			return
+		}
+		if err := h.store.MarkFeedAsRead(userID, feed.ID, before); err != nil {
 			response.JSONServerError(w, r, err)
 			return
 		}
@@ -1245,6 +1248,9 @@ func (h *greaderHandler) markAllAsReadHandler(w http.ResponseWriter, r *http.Req
 			response.JSONServerError(w, r, err)
 			return
 		}
+	default:
+		response.JSONBadRequest(w, r, fmt.Errorf("googlereader: unsupported stream for mark-all-as-read: %s", stream))
+		return
 	}
 
 	response.Text(w, r, "OK")
