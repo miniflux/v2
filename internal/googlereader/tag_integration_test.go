@@ -146,9 +146,7 @@ func TestDisableTagRejectsInvalidRequests(t *testing.T) {
 		{"invalid stream", []string{"invalid"}, http.StatusBadRequest},
 		{"not a label", []string{feedStream(1)}, http.StatusBadRequest},
 		{"a label and a state", []string{labelStream("All"), starredStream}, http.StatusBadRequest},
-
-		// The store refuses to remove the last category, and the handler reports it as a server error.
-		{"last category", []string{labelStream("All")}, http.StatusInternalServerError},
+		{"last category", []string{labelStream("All")}, http.StatusBadRequest},
 	}
 
 	for _, scenario := range scenarios {

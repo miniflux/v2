@@ -780,6 +780,10 @@ func (h *greaderHandler) disableTagHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	err = h.store.RemoveAndReplaceCategoriesByName(userID, titles)
+	if errors.Is(err, storage.ErrLastCategory) {
+		response.JSONBadRequest(w, r, err)
+		return
+	}
 	if err != nil {
 		response.JSONServerError(w, r, err)
 		return
