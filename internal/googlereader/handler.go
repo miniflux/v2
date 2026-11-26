@@ -1250,7 +1250,8 @@ func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType
 	for _, s := range addTags {
 		switch s.Type {
 		case ReadStream:
-			if _, ok := tags[KeptUnreadStream]; ok {
+			// kept-unread is stored as ReadStream=false.
+			if read, ok := tags[ReadStream]; ok && !read {
 				return nil, errSimultaneously
 			}
 			tags[ReadStream] = true
