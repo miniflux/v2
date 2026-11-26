@@ -15,6 +15,9 @@ import (
 // ErrNoCategory is returned when a user does not have any category.
 var ErrNoCategory = errors.New("store: no category found")
 
+// ErrLastCategory is returned when removing categories would leave a user without any category.
+var ErrLastCategory = errors.New("store: at least 1 category must remain after deletion")
+
 // AnotherCategoryExists checks if another category exists with the same title.
 func (s *Storage) AnotherCategoryExists(userID, categoryID int64, title string) bool {
 	var result bool
@@ -252,7 +255,7 @@ func (s *Storage) RemoveCategory(userID, categoryID int64) error {
 
 // RemoveAndReplaceCategoriesByName deletes categories with the given titles and
 // reassigns affected feeds to the user's first remaining category. It returns
-// an error if the deletion would leave the user without any categories.
+// ErrLastCategory if the deletion would leave the user without any categories.
 func (s *Storage) RemoveAndReplaceCategoriesByName(userid int64, titles []string) error {
 	tx, err := s.db.Begin()
 	if err != nil {
@@ -268,7 +271,7 @@ func (s *Storage) RemoveAndReplaceCategoriesByName(userid int64, titles []string
 		return fmt.Errorf("store: unable to retrieve category count: %v", err)
 	}
 	if count < 1 {
-		return errors.New("store: at least 1 category must remain after deletion")
+		return ErrLastCategory
 	}
 
 	query = `
