@@ -5,6 +5,7 @@ package googlereader_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -13,7 +14,12 @@ import (
 	"testing"
 )
 
-const starredStream = "user/-/state/com.google/starred"
+// The state stream IDs use the "user/-/" form, which clients send for the current user.
+const (
+	readingListStream = "user/-/state/com.google/reading-list"
+	readStream        = "user/-/state/com.google/read"
+	starredStream     = "user/-/state/com.google/starred"
+)
 
 func feedStream(feedID int64) string {
 	return "feed/" + strconv.FormatInt(feedID, 10)
@@ -22,6 +28,11 @@ func feedStream(feedID int64) string {
 // labelStream returns the stream ID of a label in the "user/-/" form, which clients send for the current user.
 func labelStream(title string) string {
 	return "user/-/label/" + title
+}
+
+// longItemID returns the item ID in the long form used in stream/items/contents responses.
+func longItemID(entryID int64) string {
+	return fmt.Sprintf("tag:google.com,2005:reader/item/%016x", entryID)
 }
 
 // googleReaderClient calls the Google Reader API. It sends no credentials when token is empty.
@@ -178,4 +189,58 @@ type quickAddResult struct {
 	Query      string `json:"query"`
 	StreamID   string `json:"streamId"`
 	StreamName string `json:"streamName"`
+}
+
+type itemIDsResult struct {
+	ItemRefs []struct {
+		ID string `json:"id"`
+	} `json:"itemRefs"`
+	Continuation string `json:"continuation"`
+}
+
+// ids returns the item IDs in the order of the response.
+func (result itemIDsResult) ids() []string {
+	ids := make([]string, 0, len(result.ItemRefs))
+	for _, itemRef := range result.ItemRefs {
+		ids = append(ids, itemRef.ID)
+	}
+	return ids
+}
+
+type hrefResult struct {
+	HREF string `json:"href"`
+	Type string `json:"type"`
+}
+
+type itemContentResult struct {
+	Content string `json:"content"`
+}
+
+type itemOriginResult struct {
+	StreamID string `json:"streamId"`
+	Title    string `json:"title"`
+	HTMLURL  string `json:"htmlUrl"`
+}
+
+type itemEnclosureResult struct {
+	URL  string `json:"url"`
+	Type string `json:"type"`
+}
+
+type itemResult struct {
+	ID         string                `json:"id"`
+	Title      string                `json:"title"`
+	Categories []string              `json:"categories"`
+	Published  int64                 `json:"published"`
+	Canonical  []hrefResult          `json:"canonical"`
+	Alternate  []hrefResult          `json:"alternate"`
+	Content    itemContentResult     `json:"content"`
+	Origin     itemOriginResult      `json:"origin"`
+	Enclosure  []itemEnclosureResult `json:"enclosure"`
+}
+
+type itemContentsResult struct {
+	ID     string       `json:"id"`
+	Author string       `json:"author"`
+	Items  []itemResult `json:"items"`
 }

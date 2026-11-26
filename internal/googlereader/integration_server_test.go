@@ -144,3 +144,25 @@ func clientLogin(t *testing.T, username, password string) string {
 	}
 	return result.Auth
 }
+
+// subscribeToFixture subscribes the user to a new fixture feed and returns the feed ID with its entries.
+func subscribeToFixture(t *testing.T, user *testUser) (int64, miniflux.Entries) {
+	t.Helper()
+
+	feedID := servertest.NewFeedFixture(t).Subscribe(t, user.rest)
+	return feedID, feedEntries(t, user, feedID)
+}
+
+// feedEntries returns the entries of the feed oldest first: entry 1 is published on 2025-01-01, entry 3 on 2025-01-03.
+func feedEntries(t *testing.T, user *testUser, feedID int64) miniflux.Entries {
+	t.Helper()
+
+	result, err := user.rest.FeedEntries(feedID, &miniflux.Filter{Order: "published_at", Direction: "asc"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Entries) != servertest.EntryCount {
+		t.Fatalf(`Expected %d entries, got %d`, servertest.EntryCount, len(result.Entries))
+	}
+	return result.Entries
+}
