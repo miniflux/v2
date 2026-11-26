@@ -121,6 +121,7 @@ integration-test: miniflux
 
 	TEST_DATABASE_URL=$(DB_URL) go test -v -count=1 ./internal/storage
 	TEST_DATABASE_URL=$(DB_URL) go test -v -count=1 ./internal/api
+	TEST_DATABASE_URL=$(DB_URL) go test -v -count=1 ./internal/googlereader
 
 clean-integration-test:
 	@ psql -U postgres -c 'drop database if exists miniflux_test;'
