@@ -62,13 +62,52 @@ func (c *integrationTestConfig) genRandomUsername() string {
 	return fmt.Sprintf("%s_%10d", c.testRegularUsername, rand.Int())
 }
 
-func TestIncorrectEndpoint(t *testing.T) {
-	t.Parallel()
+// requireIntegrationTestConfig returns the integration test configuration,
+// or skips the test when the TEST_MINIFLUX_* environment variables are not set.
+func requireIntegrationTestConfig(t *testing.T) *integrationTestConfig {
+	t.Helper()
 
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
 		t.Skip(skipIntegrationTestsMessage)
 	}
+	return testConfig
+}
+
+func (c *integrationTestConfig) newAdminClient() *miniflux.Client {
+	return miniflux.NewClient(c.testBaseURL, c.testAdminUsername, c.testAdminPassword)
+}
+
+// deleteUserOnCleanup removes the user when the test and its subtests finish,
+// and fails the test if the user cannot be removed.
+func (c *integrationTestConfig) deleteUserOnCleanup(t *testing.T, userID int64) {
+	t.Helper()
+
+	t.Cleanup(func() {
+		if err := c.newAdminClient().DeleteUser(userID); err != nil {
+			t.Errorf(`Unable to delete user %d: %v`, userID, err)
+		}
+	})
+}
+
+// newRegularUser creates a regular user that is removed when the test ends,
+// and returns a client authenticated as that user.
+func (c *integrationTestConfig) newRegularUser(t *testing.T) (*miniflux.Client, *miniflux.User) {
+	t.Helper()
+
+	user, err := c.newAdminClient().CreateUser(c.genRandomUsername(), c.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	c.deleteUserOnCleanup(t, user.ID)
+
+	return miniflux.NewClient(c.testBaseURL, user.Username, c.testRegularPassword), user
+}
+
+func TestIncorrectEndpoint(t *testing.T) {
+	t.Parallel()
+
+	requireIntegrationTestConfig(t)
 
 	client := miniflux.NewClient("incorrect url")
 	if _, err := client.Users(); err == nil {
@@ -84,10 +123,7 @@ func TestIncorrectEndpoint(t *testing.T) {
 func TestHealthcheckEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
 	client := miniflux.NewClient(testConfig.testBaseURL)
 	if err := client.Healthcheck(); err != nil {
@@ -98,12 +134,9 @@ func TestHealthcheckEndpoint(t *testing.T) {
 func TestVersionEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	version, err := client.Version()
 	if err != nil {
 		t.Fatal(err)
@@ -141,10 +174,7 @@ func TestVersionEndpoint(t *testing.T) {
 func TestInvalidCredentials(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
 	client := miniflux.NewClient(testConfig.testBaseURL, "invalid", "invalid")
 	_, err := client.Users()
@@ -156,12 +186,9 @@ func TestInvalidCredentials(t *testing.T) {
 func TestGetMeEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	user, err := client.Me()
 	if err != nil {
 		t.Fatal(err)
@@ -175,12 +202,9 @@ func TestGetMeEndpoint(t *testing.T) {
 func TestGetUsersEndpointAsAdmin(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	users, err := client.Users()
 	if err != nil {
 		t.Fatal(err)
@@ -242,20 +266,10 @@ func TestGetUsersEndpointAsAdmin(t *testing.T) {
 func TestGetUsersEndpointAsRegularUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
-	_, err = regularUserClient.Users()
+	regularUserClient, _ := testConfig.newRegularUser(t)
+	_, err := regularUserClient.Users()
 	if !errors.Is(err, miniflux.ErrForbidden) {
 		t.Fatalf(`Regular users should not have access to the users endpoint, got %v`, err)
 	}
@@ -264,19 +278,16 @@ func TestGetUsersEndpointAsRegularUser(t *testing.T) {
 func TestCreateUserEndpointAsAdmin(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 
 	username := testConfig.genRandomUsername()
 	regularTestUser, err := client.CreateUser(username, testConfig.testRegularPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer client.DeleteUser(regularTestUser.ID)
+	testConfig.deleteUserOnCleanup(t, regularTestUser.ID)
 
 	if regularTestUser.Username != username {
 		t.Fatalf(`Invalid username, got "%v" instead of "%v"`, regularTestUser.Username, username)
@@ -326,20 +337,10 @@ func TestCreateUserEndpointAsAdmin(t *testing.T) {
 func TestCreateUserEndpointAsRegularUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
-	_, err = regularUserClient.CreateUser(regularTestUser.Username, testConfig.testRegularPassword, false)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	_, err := regularUserClient.CreateUser(regularTestUser.Username, testConfig.testRegularPassword, false)
 	if !errors.Is(err, miniflux.ErrForbidden) {
 		t.Fatalf(`Regular users should not have access to the create user endpoint, got %v`, err)
 	}
@@ -348,12 +349,9 @@ func TestCreateUserEndpointAsRegularUser(t *testing.T) {
 func TestCannotCreateDuplicateUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	_, err := client.CreateUser(testConfig.testAdminUsername, testConfig.testAdminPassword, true)
 	if !errors.Is(err, miniflux.ErrBadRequest) {
 		t.Fatalf(`Duplicated users should not be allowed, got %v`, err)
@@ -363,12 +361,9 @@ func TestCannotCreateDuplicateUser(t *testing.T) {
 func TestRemoveUserEndpointAsAdmin(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	user, err := client.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
 	if err != nil {
 		t.Fatal(err)
@@ -386,20 +381,10 @@ func TestRemoveUserEndpointAsAdmin(t *testing.T) {
 func TestRemoveUserEndpointAsRegularUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
-	err = regularUserClient.DeleteUser(regularTestUser.ID)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	err := regularUserClient.DeleteUser(regularTestUser.ID)
 	if !errors.Is(err, miniflux.ErrForbidden) {
 		t.Fatalf(`Regular users should not have access to the remove user endpoint, got %v`, err)
 	}
@@ -408,12 +393,9 @@ func TestRemoveUserEndpointAsRegularUser(t *testing.T) {
 func TestGetUserByIDEndpointAsAdmin(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	user, err := client.Me()
 	if err != nil {
 		t.Fatal(err)
@@ -484,20 +466,10 @@ func TestGetUserByIDEndpointAsAdmin(t *testing.T) {
 func TestGetUserByIDEndpointAsRegularUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
-	_, err = regularUserClient.UserByID(regularTestUser.ID)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	_, err := regularUserClient.UserByID(regularTestUser.ID)
 	if !errors.Is(err, miniflux.ErrForbidden) {
 		t.Fatalf(`Regular users should not have access to the user by ID endpoint, got %v`, err)
 	}
@@ -506,12 +478,9 @@ func TestGetUserByIDEndpointAsRegularUser(t *testing.T) {
 func TestGetUserByUsernameEndpointAsAdmin(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	user, err := client.Me()
 	if err != nil {
 		t.Fatal(err)
@@ -578,20 +547,10 @@ func TestGetUserByUsernameEndpointAsAdmin(t *testing.T) {
 func TestGetUserByUsernameEndpointAsRegularUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
-	_, err = regularUserClient.UserByUsername(regularTestUser.Username)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	_, err := regularUserClient.UserByUsername(regularTestUser.Username)
 	if !errors.Is(err, miniflux.ErrForbidden) {
 		t.Fatalf(`Regular users should not have access to the user by username endpoint, got %v`, err)
 	}
@@ -600,19 +559,9 @@ func TestGetUserByUsernameEndpointAsRegularUser(t *testing.T) {
 func TestUpdateUserEndpointByChangingDefaultTheme(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
 
 	userUpdateRequest := &miniflux.UserModificationRequest{
 		Theme: new("dark_serif"),
@@ -631,19 +580,9 @@ func TestUpdateUserEndpointByChangingDefaultTheme(t *testing.T) {
 func TestUpdateUserEndpointByChangingExternalFonts(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
 
 	userUpdateRequest := &miniflux.UserModificationRequest{
 		ExternalFontHosts: new("  fonts.example.org  "),
@@ -662,19 +601,9 @@ func TestUpdateUserEndpointByChangingExternalFonts(t *testing.T) {
 func TestUpdateUserEndpointByChangingExternalFontsWithInvalidValue(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
 
 	userUpdateRequest := &miniflux.UserModificationRequest{
 		ExternalFontHosts: new("'self' *"),
@@ -688,19 +617,9 @@ func TestUpdateUserEndpointByChangingExternalFontsWithInvalidValue(t *testing.T)
 func TestUpdateUserEndpointByChangingCustomJS(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
 
 	userUpdateRequest := &miniflux.UserModificationRequest{
 		CustomJS: new("alert('Hello, World!');"),
@@ -719,25 +638,15 @@ func TestUpdateUserEndpointByChangingCustomJS(t *testing.T) {
 func TestUpdateUserEndpointByChangingDefaultThemeToInvalidValue(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
 
 	userUpdateRequest := &miniflux.UserModificationRequest{
 		Theme: new("invalid_theme"),
 	}
 
-	_, err = regularUserClient.UpdateUser(regularTestUser.ID, userUpdateRequest)
+	_, err := regularUserClient.UpdateUser(regularTestUser.ID, userUpdateRequest)
 	if !errors.Is(err, miniflux.ErrBadRequest) {
 		t.Fatalf(`Updating the user with an invalid theme should raise an error, got %v`, err)
 	}
@@ -746,24 +655,15 @@ func TestUpdateUserEndpointByChangingDefaultThemeToInvalidValue(t *testing.T) {
 func TestRegularUsersCannotUpdateOtherUsers(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	adminClient := testConfig.newAdminClient()
 	adminUser, err := adminClient.Me()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	userUpdateRequest := &miniflux.UserModificationRequest{
 		Theme: new("dark_serif"),
@@ -778,19 +678,9 @@ func TestRegularUsersCannotUpdateOtherUsers(t *testing.T) {
 func TestAPIKeysEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
 	apiKeys, err := regularUserClient.APIKeys()
 	if err != nil {
 		t.Fatal(err)
@@ -887,19 +777,9 @@ func TestAPIKeysEndpoint(t *testing.T) {
 func TestMarkUserAsReadEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
 	})
@@ -926,25 +806,16 @@ func TestMarkUserAsReadEndpoint(t *testing.T) {
 func TestCannotMarkUserAsReadAsOtherUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	adminClient := testConfig.newAdminClient()
 
 	adminUser, err := adminClient.Me()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 	if err := regularUserClient.MarkAllAsRead(adminUser.ID); !errors.Is(err, miniflux.ErrForbidden) {
 		t.Fatalf(`Non-admin users should not be able to mark another user as read, got %v`, err)
 	}
@@ -953,20 +824,9 @@ func TestCannotMarkUserAsReadAsOtherUser(t *testing.T) {
 func TestCreateCategoryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	categoryName := "My category"
 	category, err := regularUserClient.CreateCategory(categoryName)
@@ -994,12 +854,9 @@ func TestCreateCategoryEndpoint(t *testing.T) {
 func TestCreateCategoryWithEmptyTitle(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	_, err := client.CreateCategory("")
 	if !errors.Is(err, miniflux.ErrBadRequest) {
 		t.Fatalf(`Creating a category with an empty title should raise an error, got %v`, err)
@@ -1009,27 +866,16 @@ func TestCreateCategoryWithEmptyTitle(t *testing.T) {
 func TestCannotCreateDuplicatedCategory(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 	categoryName := "My category"
 
 	if _, err := regularUserClient.CreateCategory(categoryName); err != nil {
 		t.Fatal(err)
 	}
 
-	if _, err = regularUserClient.CreateCategory(categoryName); !errors.Is(err, miniflux.ErrBadRequest) {
+	if _, err := regularUserClient.CreateCategory(categoryName); !errors.Is(err, miniflux.ErrBadRequest) {
 		t.Fatalf(`Duplicated categories should not be allowed, got %v`, err)
 	}
 }
@@ -1037,20 +883,9 @@ func TestCannotCreateDuplicatedCategory(t *testing.T) {
 func TestCreateCategoryWithOptions(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	newCategory, err := regularUserClient.CreateCategoryWithOptions(&miniflux.CategoryCreationRequest{
 		Title:        "My category",
@@ -1081,20 +916,9 @@ func TestCreateCategoryWithOptions(t *testing.T) {
 func TestUpdateCategoryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
 
 	categoryName := "My category"
 	category, err := regularUserClient.CreateCategory(categoryName)
@@ -1127,20 +951,9 @@ func TestUpdateCategoryEndpoint(t *testing.T) {
 func TestUpdateCategoryWithOptions(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	newCategory, err := regularUserClient.CreateCategoryWithOptions(&miniflux.CategoryCreationRequest{
 		Title: "My category",
@@ -1210,12 +1023,9 @@ func TestUpdateCategoryWithOptions(t *testing.T) {
 func TestUpdateInexistingCategory(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	_, err := client.UpdateCategory(123456789, "new title")
 	if !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Updating an inexisting category should raise an error, got %v`, err)
@@ -1224,20 +1034,9 @@ func TestUpdateInexistingCategory(t *testing.T) {
 func TestDeleteCategoryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	categoryName := "My category"
 	category, err := regularUserClient.CreateCategory(categoryName)
@@ -1253,12 +1052,9 @@ func TestDeleteCategoryEndpoint(t *testing.T) {
 func TestCannotDeleteInexistingCategory(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	err := client.DeleteCategory(123456789)
 	if !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Deleting an inexisting category should raise an error, got %v`, err)
@@ -1268,19 +1064,10 @@ func TestCannotDeleteInexistingCategory(t *testing.T) {
 func TestCannotDeleteCategoryOfAnotherUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	adminClient := testConfig.newAdminClient()
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	category, err := regularUserClient.CreateCategory("My category")
 	if err != nil {
@@ -1296,20 +1083,9 @@ func TestCannotDeleteCategoryOfAnotherUser(t *testing.T) {
 func TestGetCategoriesEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
 
 	category, err := regularUserClient.CreateCategory("My category")
 	if err != nil {
@@ -1391,20 +1167,9 @@ func TestGetCategoriesEndpoint(t *testing.T) {
 func TestMarkCategoryAsReadEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 	category, err := regularUserClient.CreateCategory("My category")
 	if err != nil {
 		t.Fatal(err)
@@ -1437,20 +1202,9 @@ func TestMarkCategoryAsReadEndpoint(t *testing.T) {
 func TestCreateFeedEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 	category, err := regularUserClient.CreateCategory("My category")
 	if err != nil {
 		t.Fatal(err)
@@ -1472,20 +1226,9 @@ func TestCreateFeedEndpoint(t *testing.T) {
 func TestCannotCreateDuplicatedFeed(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -1509,20 +1252,9 @@ func TestCannotCreateDuplicatedFeed(t *testing.T) {
 func TestFeedCreationWithoutCategoryReturnsBadRequest(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 	categories, err := regularUserClient.Categories()
 	if err != nil {
 		t.Fatal(err)
@@ -1559,22 +1291,11 @@ func TestFeedCreationWithoutCategoryReturnsBadRequest(t *testing.T) {
 func TestCreateFeedWithInexistingCategory(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
-
-	_, err = regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+	_, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:    testConfig.testFeedURL,
 		CategoryID: 123456789,
 	})
@@ -1587,12 +1308,9 @@ func TestCreateFeedWithInexistingCategory(t *testing.T) {
 func TestCreateFeedWithEmptyFeedURL(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	_, err := client.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: "",
 	})
@@ -1604,12 +1322,9 @@ func TestCreateFeedWithEmptyFeedURL(t *testing.T) {
 func TestCreateFeedWithInvalidFeedURL(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	_, err := client.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: "invalid_feed_url",
 	})
@@ -1621,20 +1336,9 @@ func TestCreateFeedWithInvalidFeedURL(t *testing.T) {
 func TestCreateDisabledFeed(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:  testConfig.testFeedURL,
@@ -1657,20 +1361,9 @@ func TestCreateDisabledFeed(t *testing.T) {
 func TestCreateFeedWithDisabledHTTPCache(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:         testConfig.testFeedURL,
@@ -1693,20 +1386,9 @@ func TestCreateFeedWithDisabledHTTPCache(t *testing.T) {
 func TestCreateFeedWithScraperRule(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:      testConfig.testFeedURL,
@@ -1729,20 +1411,9 @@ func TestCreateFeedWithScraperRule(t *testing.T) {
 func TestUpdateFeedEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -1768,20 +1439,9 @@ func TestUpdateFeedEndpoint(t *testing.T) {
 func TestCannotHaveDuplicateFeedWhenUpdatingFeed(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	if _, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{FeedURL: testConfig.testFeedURL}); err != nil {
 		t.Fatal(err)
@@ -1806,20 +1466,9 @@ func TestCannotHaveDuplicateFeedWhenUpdatingFeed(t *testing.T) {
 func TestUpdateFeedWithInvalidCategory(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -1840,24 +1489,13 @@ func TestUpdateFeedWithInvalidCategory(t *testing.T) {
 func TestCreateFeedWithInvalidRewriteRules(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	// Missing the second backslash in the search term makes this an invalid Go
 	// string literal, which the rewrite rule parser must reject.
-	_, err = regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+	_, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:      testConfig.testFeedURL,
 		RewriteRules: `replace("\d+"|"x")`,
 	})
@@ -1869,20 +1507,9 @@ func TestCreateFeedWithInvalidRewriteRules(t *testing.T) {
 func TestUpdateFeedWithInvalidRewriteRules(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -1903,23 +1530,12 @@ func TestUpdateFeedWithInvalidRewriteRules(t *testing.T) {
 func TestCreateFeedWithInvalidURLRewriteRules(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	// "[" is an unterminated character class and therefore an invalid regexp.
-	_, err = regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+	_, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:         testConfig.testFeedURL,
 		UrlRewriteRules: "[",
 	})
@@ -1931,20 +1547,9 @@ func TestCreateFeedWithInvalidURLRewriteRules(t *testing.T) {
 func TestUpdateFeedWithInvalidURLRewriteRules(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -1965,23 +1570,12 @@ func TestUpdateFeedWithInvalidURLRewriteRules(t *testing.T) {
 func TestCreateFeedWithInvalidRewriteRuleSelector(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	// cascadia does not support a relative selector inside :has().
-	_, err = regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+	_, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:      testConfig.testFeedURL,
 		RewriteRules: `remove("div:has(> p)")`,
 	})
@@ -1993,20 +1587,9 @@ func TestCreateFeedWithInvalidRewriteRuleSelector(t *testing.T) {
 func TestUpdateFeedWithInvalidRewriteRuleSelector(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -2027,23 +1610,12 @@ func TestUpdateFeedWithInvalidRewriteRuleSelector(t *testing.T) {
 func TestCreateFeedWithInvalidScraperRules(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	// cascadia does not support a relative selector inside :has().
-	_, err = regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+	_, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:      testConfig.testFeedURL,
 		ScraperRules: `div:has(> p)`,
 	})
@@ -2055,20 +1627,9 @@ func TestCreateFeedWithInvalidScraperRules(t *testing.T) {
 func TestUpdateFeedWithInvalidScraperRules(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -2089,20 +1650,9 @@ func TestUpdateFeedWithInvalidScraperRules(t *testing.T) {
 func TestMarkFeedAsReadEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -2130,20 +1680,9 @@ func TestMarkFeedAsReadEndpoint(t *testing.T) {
 func TestFetchCountersEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -2169,20 +1708,9 @@ func TestFetchCountersEndpoint(t *testing.T) {
 func TestDeleteFeedEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -2199,20 +1727,9 @@ func TestDeleteFeedEndpoint(t *testing.T) {
 func TestRefreshAllFeedsEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	if err := regularUserClient.RefreshAllFeeds(); err != nil {
 		t.Fatal(err)
@@ -2222,20 +1739,9 @@ func TestRefreshAllFeedsEndpoint(t *testing.T) {
 func TestRefreshFeedEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -2256,20 +1762,9 @@ func TestRefreshFeedEndpoint(t *testing.T) {
 func TestGetFeedEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -2303,20 +1798,9 @@ func TestGetFeedEndpoint(t *testing.T) {
 func TestGetFeedIcon(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -2363,12 +1847,9 @@ func TestGetFeedIcon(t *testing.T) {
 func TestGetFeedIconWithInexistingFeedID(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	_, err := client.FeedIcon(123456789)
 	if !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Fetching the icon of an inexisting feed should raise an error, got %v`, err)
@@ -2378,12 +1859,9 @@ func TestGetFeedIconWithInexistingFeedID(t *testing.T) {
 func TestGetIconWithInexistingIconID(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	_, err := client.Icon(123456789)
 	if !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Fetching an inexisting icon should return a "not found" error, got %v`, err)
@@ -2393,21 +1871,10 @@ func TestGetIconWithInexistingIconID(t *testing.T) {
 func TestGetIconByIconIDFromAnotherUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
-
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	testConfig := requireIntegrationTestConfig(t)
 
 	// The owner subscribes to a feed, which fetches and stores its icon.
-	ownerUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(ownerUser.ID)
-
-	ownerClient := miniflux.NewClient(testConfig.testBaseURL, ownerUser.Username, testConfig.testRegularPassword)
+	ownerClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := ownerClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -2430,13 +1897,7 @@ func TestGetIconByIconIDFromAnotherUser(t *testing.T) {
 	}
 
 	// Another user without access to that feed must not be able to fetch the icon.
-	otherUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(otherUser.ID)
-
-	otherClient := miniflux.NewClient(testConfig.testBaseURL, otherUser.Username, testConfig.testRegularPassword)
+	otherClient, _ := testConfig.newRegularUser(t)
 
 	if _, err := otherClient.Icon(ownerIcon.ID); !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Fetching an icon owned by another user should return a "not found" error, got %v`, err)
@@ -2446,20 +1907,9 @@ func TestGetIconByIconIDFromAnotherUser(t *testing.T) {
 func TestGetFeedsEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -2489,20 +1939,9 @@ func TestGetFeedsEndpoint(t *testing.T) {
 func TestGetCategoryFeedsEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	category, err := regularUserClient.CreateCategory("My category")
 	if err != nil {
@@ -2538,20 +1977,9 @@ func TestGetCategoryFeedsEndpoint(t *testing.T) {
 func TestExportEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	if _, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{FeedURL: testConfig.testFeedURL}); err != nil {
 		t.Fatal(err)
@@ -2574,18 +2002,9 @@ func TestExportEndpoint(t *testing.T) {
 func TestImportEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	data := `<?xml version="1.0" encoding="UTF-8"?>
     <opml version="2.0">
@@ -2596,8 +2015,6 @@ func TestImportEndpoint(t *testing.T) {
 		</body>
 	</opml>`
 
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
-
 	bytesReader := bytes.NewReader([]byte(data))
 	if err := regularUserClient.Import(io.NopCloser(bytesReader)); err != nil {
 		t.Fatal(err)
@@ -2607,12 +2024,9 @@ func TestImportEndpoint(t *testing.T) {
 func TestDiscoverSubscriptionsEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	subscriptions, err := client.Discover(testConfig.testWebsiteURL)
 	if err != nil {
 		t.Fatal(err)
@@ -2634,12 +2048,9 @@ func TestDiscoverSubscriptionsEndpoint(t *testing.T) {
 func TestDiscoverSubscriptionsWithInvalidURL(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	_, err := client.Discover("invalid_url")
 	if !errors.Is(err, miniflux.ErrBadRequest) {
 		t.Fatalf(`Discovering subscriptions with an invalid URL should raise an error, got %v`, err)
@@ -2649,12 +2060,9 @@ func TestDiscoverSubscriptionsWithInvalidURL(t *testing.T) {
 func TestDiscoverSubscriptionsWithNoSubscription(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	client := testConfig.newAdminClient()
 	if _, err := client.Discover(testConfig.testBaseURL); !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Discovering subscriptions with no subscription should raise a "not found" error, got %v`, err)
 	}
@@ -2663,20 +2071,9 @@ func TestDiscoverSubscriptionsWithNoSubscription(t *testing.T) {
 func TestGetAllFeedEntriesEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -2714,20 +2111,9 @@ func TestGetAllFeedEntriesEndpoint(t *testing.T) {
 func TestGetAllCategoryEntriesEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	category, err := regularUserClient.CreateCategory("My category")
 	if err != nil {
@@ -2771,20 +2157,9 @@ func TestGetAllCategoryEntriesEndpoint(t *testing.T) {
 func TestGetAllEntriesEndpointWithFilter(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -2877,20 +2252,9 @@ func TestGetAllEntriesEndpointWithFilter(t *testing.T) {
 func TestGetGlobalEntriesEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:      testConfig.testFeedURL,
@@ -2936,20 +2300,9 @@ func TestGetGlobalEntriesEndpoint(t *testing.T) {
 func TestUpdateEnclosureEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -2996,20 +2349,9 @@ func TestUpdateEnclosureEndpoint(t *testing.T) {
 func TestGetEnclosureEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -3052,20 +2394,9 @@ func TestGetEnclosureEndpoint(t *testing.T) {
 func TestGetEntryEndpoints(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -3118,20 +2449,9 @@ func TestGetEntryEndpoints(t *testing.T) {
 func TestUpdateEntryStatusEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -3162,20 +2482,9 @@ func TestUpdateEntryStatusEndpoint(t *testing.T) {
 func TestUpdateEntriesStarredEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -3227,20 +2536,9 @@ func TestUpdateEntriesStarredEndpoint(t *testing.T) {
 func TestGetEntryIDsEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	boolPtr := func(b bool) *bool { return &b }
 
@@ -3463,20 +2761,9 @@ func TestGetEntryIDsEndpoint(t *testing.T) {
 func TestUpdateEntryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -3525,20 +2812,9 @@ func TestUpdateEntryEndpoint(t *testing.T) {
 func TestToggleStarredEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -3569,20 +2845,9 @@ func TestToggleStarredEndpoint(t *testing.T) {
 func TestShareEntryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -3657,13 +2922,7 @@ func TestShareEntryEndpoint(t *testing.T) {
 		t.Fatalf(`Expected Not Found when unsharing non existent entry: %v`, err)
 	}
 
-	otherTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(otherTestUser.ID)
-
-	otherUserClient := miniflux.NewClient(testConfig.testBaseURL, otherTestUser.Username, testConfig.testRegularPassword)
+	otherUserClient, _ := testConfig.newRegularUser(t)
 
 	otherFeedID, err := otherUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -3689,20 +2948,9 @@ func TestShareEntryEndpoint(t *testing.T) {
 func TestSaveEntryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -3724,20 +2972,9 @@ func TestSaveEntryEndpoint(t *testing.T) {
 func TestFetchIntegrationsStatusEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	hasIntegrations, err := regularUserClient.IntegrationsStatus()
 	if err != nil {
@@ -3752,20 +2989,9 @@ func TestFetchIntegrationsStatusEndpoint(t *testing.T) {
 func TestFetchContentEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -3792,20 +3018,9 @@ func TestFetchContentEndpoint(t *testing.T) {
 func TestFlushHistoryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-
-	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(regularTestUser.ID)
-
-	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
@@ -3840,16 +3055,9 @@ func TestFlushHistoryEndpoint(t *testing.T) {
 func TestImportFeedEntryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
-	client := miniflux.NewClient(
-		testConfig.testBaseURL,
-		testConfig.testAdminUsername,
-		testConfig.testAdminPassword,
-	)
+	client := testConfig.newAdminClient()
 
 	// Create a feed
 	feedID, err := client.CreateFeed(&miniflux.FeedCreationRequest{
