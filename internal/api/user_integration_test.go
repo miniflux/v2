@@ -509,21 +509,13 @@ func TestMarkUserAsReadEndpoint(t *testing.T) {
 	fixture := newFeedFixture(t)
 
 	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	if err := regularUserClient.MarkAllAsRead(regularTestUser.ID); err != nil {
 		t.Fatal(err)
 	}
 
-	results, err := regularUserClient.FeedEntries(feedID, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	results := listFeedEntries(t, regularUserClient, feedID, nil)
 
 	for _, entry := range results.Entries {
 		if entry.Status != miniflux.EntryStatusRead {

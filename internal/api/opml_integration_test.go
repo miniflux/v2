@@ -8,8 +8,6 @@ import (
 	"io"
 	"strings"
 	"testing"
-
-	miniflux "miniflux.app/v2/client"
 )
 
 func TestExportEndpoint(t *testing.T) {
@@ -20,9 +18,7 @@ func TestExportEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	if _, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{FeedURL: fixture.feedURL}); err != nil {
-		t.Fatal(err)
-	}
+	fixture.subscribe(t, regularUserClient)
 
 	exportedData, err := regularUserClient.Export()
 	if err != nil {

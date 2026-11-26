@@ -21,17 +21,9 @@ func TestGetAllFeedEntriesEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
-	results, err := regularUserClient.FeedEntries(feedID, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	results := listFeedEntries(t, regularUserClient, feedID, nil)
 
 	if len(results.Entries) == 0 {
 		t.Fatalf(`Invalid number of entries, got %d`, len(results.Entries))
@@ -109,12 +101,7 @@ func TestGetAllEntriesEndpointWithFilter(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	feedEntries, err := regularUserClient.Entries(&miniflux.Filter{FeedID: feedID})
 	if err != nil {
@@ -255,17 +242,9 @@ func TestGetEntryEndpoints(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
-	result, err := regularUserClient.FeedEntries(feedID, nil)
-	if err != nil {
-		t.Fatalf(`Failed to get entries: %v`, err)
-	}
+	result := listFeedEntries(t, regularUserClient, feedID, nil)
 
 	entry, err := regularUserClient.FeedEntry(feedID, result.Entries[0].ID)
 	if err != nil {
@@ -311,17 +290,9 @@ func TestUpdateEntryStatusEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
-	result, err := regularUserClient.FeedEntries(feedID, nil)
-	if err != nil {
-		t.Fatalf(`Failed to get entries: %v`, err)
-	}
+	result := listFeedEntries(t, regularUserClient, feedID, nil)
 
 	if err := regularUserClient.UpdateEntries([]int64{result.Entries[0].ID}, miniflux.EntryStatusRead); err != nil {
 		t.Fatal(err)
@@ -345,17 +316,9 @@ func TestUpdateEntriesStarredEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
-	result, err := regularUserClient.FeedEntries(feedID, nil)
-	if err != nil {
-		t.Fatalf(`Failed to get entries: %v`, err)
-	}
+	result := listFeedEntries(t, regularUserClient, feedID, nil)
 
 	entryID := result.Entries[0].ID
 
@@ -421,17 +384,9 @@ func TestGetEntryIDsEndpoint(t *testing.T) {
 	}
 
 	// Subscribe to a feed so there are entries.
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
-	allEntries, err := regularUserClient.FeedEntries(feedID, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	allEntries := listFeedEntries(t, regularUserClient, feedID, nil)
 
 	if len(allEntries.Entries) != fixtureEntryCount {
 		t.Fatalf(`Expected %d entries in the feed, got %d`, fixtureEntryCount, len(allEntries.Entries))
@@ -624,17 +579,9 @@ func TestUpdateEntryEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
-	result, err := regularUserClient.FeedEntries(feedID, nil)
-	if err != nil {
-		t.Fatalf(`Failed to get entries: %v`, err)
-	}
+	result := listFeedEntries(t, regularUserClient, feedID, nil)
 
 	entryUpdateRequest := &miniflux.EntryModificationRequest{
 		Title:   new("New title"),
@@ -676,17 +623,9 @@ func TestToggleStarredEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
-	result, err := regularUserClient.FeedEntries(feedID, &miniflux.Filter{Limit: 1})
-	if err != nil {
-		t.Fatalf(`Failed to get entries: %v`, err)
-	}
+	result := listFeedEntries(t, regularUserClient, feedID, &miniflux.Filter{Limit: 1})
 
 	if err := regularUserClient.ToggleStarred(result.Entries[0].ID); err != nil {
 		t.Fatal(err)
@@ -710,17 +649,9 @@ func TestShareEntryEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
-	result, err := regularUserClient.FeedEntries(feedID, &miniflux.Filter{Limit: 1})
-	if err != nil {
-		t.Fatalf(`Failed to get entries: %v`, err)
-	}
+	result := listFeedEntries(t, regularUserClient, feedID, &miniflux.Filter{Limit: 1})
 
 	entryID := result.Entries[0].ID
 
@@ -785,17 +716,9 @@ func TestShareEntryEndpoint(t *testing.T) {
 
 	otherUserClient, _ := testConfig.newRegularUser(t)
 
-	otherFeedID, err := otherUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	otherFeedID := fixture.subscribe(t, otherUserClient)
 
-	result, err = otherUserClient.FeedEntries(otherFeedID, &miniflux.Filter{Limit: 1})
-	if err != nil {
-		t.Fatalf(`Failed to get entries: %v`, err)
-	}
+	result = listFeedEntries(t, otherUserClient, otherFeedID, &miniflux.Filter{Limit: 1})
 
 	otherUserEntryID := result.Entries[0].ID
 	if _, err = regularUserClient.ShareEntry(otherUserEntryID); !errors.Is(err, miniflux.ErrNotFound) {
@@ -814,17 +737,9 @@ func TestSaveEntryEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
-	result, err := regularUserClient.FeedEntries(feedID, &miniflux.Filter{Limit: 1})
-	if err != nil {
-		t.Fatalf(`Failed to get entries: %v`, err)
-	}
+	result := listFeedEntries(t, regularUserClient, feedID, &miniflux.Filter{Limit: 1})
 
 	if err := regularUserClient.SaveEntry(result.Entries[0].ID); !errors.Is(err, miniflux.ErrBadRequest) {
 		t.Fatalf(`Saving an entry should raise a bad request error because no integration is configured`)
@@ -839,17 +754,9 @@ func TestFetchContentEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
-	result, err := regularUserClient.FeedEntries(feedID, &miniflux.Filter{Limit: 1})
-	if err != nil {
-		t.Fatalf(`Failed to get entries: %v`, err)
-	}
+	result := listFeedEntries(t, regularUserClient, feedID, &miniflux.Filter{Limit: 1})
 
 	content, err := regularUserClient.FetchEntryOriginalContent(result.Entries[0].ID)
 	if err != nil {
@@ -869,17 +776,9 @@ func TestFlushHistoryEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
-	result, err := regularUserClient.FeedEntries(feedID, &miniflux.Filter{Limit: 3})
-	if err != nil {
-		t.Fatalf(`Failed to get entries: %v`, err)
-	}
+	result := listFeedEntries(t, regularUserClient, feedID, &miniflux.Filter{Limit: 3})
 
 	if err := regularUserClient.UpdateEntries([]int64{result.Entries[0].ID, result.Entries[1].ID}, miniflux.EntryStatusRead); err != nil {
 		t.Fatal(err)
@@ -908,12 +807,7 @@ func TestImportFeedEntryEndpoint(t *testing.T) {
 	client := testConfig.newAdminClient()
 
 	// Create a feed
-	feedID, err := client.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, client)
 	defer client.DeleteFeed(feedID)
 
 	payload := map[string]any{
