@@ -156,6 +156,10 @@ type tagResult struct {
 	Type  string `json:"type"`
 }
 
+type tagListResult struct {
+	Tags []tagResult `json:"tags"`
+}
+
 type subscriptionResult struct {
 	ID         string      `json:"id"`
 	Title      string      `json:"title"`
