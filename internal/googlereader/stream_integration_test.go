@@ -114,14 +114,17 @@ func TestStreamItemIDsRejectsInvalidStreams(t *testing.T) {
 
 	user := newTestUser(t)
 
-	// The handler reports these requests as server errors, and does not support label streams.
 	scenarios := []struct {
 		name  string
 		query url.Values
 	}{
 		{"missing stream", url.Values{}},
 		{"invalid stream", url.Values{"s": {"invalid"}}},
+		{"invalid feed ID", url.Values{"s": {"feed/invalid"}}},
+		{"invalid exclusion", url.Values{"s": {readingListStream}, "xt": {"invalid"}}},
 		{"two streams", url.Values{"s": {readingListStream, starredStream}}},
+
+		// Label streams are not supported.
 		{"label stream", url.Values{"s": {labelStream("All")}}},
 	}
 
@@ -133,7 +136,7 @@ func TestStreamItemIDsRejectsInvalidStreams(t *testing.T) {
 			}
 
 			status, body := user.reader.get(t, "/reader/api/0/stream/items/ids", query)
-			requireStatus(t, status, body, http.StatusInternalServerError)
+			requireStatus(t, status, body, http.StatusBadRequest)
 		})
 	}
 }
@@ -211,23 +214,26 @@ func TestStreamItemContentsEndpoint(t *testing.T) {
 	}
 }
 
-func TestStreamItemContentsRejectsInvalidItemIDs(t *testing.T) {
+func TestStreamItemContentsRejectsInvalidRequests(t *testing.T) {
 	t.Parallel()
 
 	user := newTestUser(t)
 
+	// The stream filters are read from the query string, the item IDs from the form.
 	scenarios := []struct {
 		name    string
+		query   string
 		itemIDs []string
 	}{
-		{"missing item ID", nil},
-		{"invalid item ID", []string{"invalid"}},
-		{"zero long form item ID", []string{longItemID(0)}},
+		{"missing item ID", "", nil},
+		{"invalid item ID", "", []string{"invalid"}},
+		{"zero long form item ID", "", []string{longItemID(0)}},
+		{"invalid exclusion", "?xt=invalid", []string{"1"}},
 	}
 
 	for _, scenario := range scenarios {
 		t.Run(scenario.name, func(t *testing.T) {
-			status, body := user.reader.post(t, "/reader/api/0/stream/items/contents", url.Values{
+			status, body := user.reader.post(t, "/reader/api/0/stream/items/contents"+scenario.query, url.Values{
 				"output": {"json"},
 				"i":      scenario.itemIDs,
 			})
