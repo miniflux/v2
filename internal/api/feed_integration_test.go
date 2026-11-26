@@ -293,152 +293,60 @@ func TestUpdateFeedWithInvalidCategory(t *testing.T) {
 	}
 }
 
-func TestCreateFeedWithInvalidRewriteRules(t *testing.T) {
+func TestFeedRuleValidation(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	// Missing the second backslash in the search term makes this an invalid Go
-	// string literal, which the rewrite rule parser must reject.
-	_, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL:      fixture.feedURL,
-		RewriteRules: `replace("\d+"|"x")`,
-	})
-	if !errors.Is(err, miniflux.ErrBadRequest) {
-		t.Fatalf(`Creating a feed with a malformed rewrite rule should raise an error, got %v`, err)
-	}
-}
+	feedID := newFeedFixture(t).subscribe(t, regularUserClient)
 
-func TestUpdateFeedWithInvalidRewriteRules(t *testing.T) {
-	t.Parallel()
-
-	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
-
-	feedID := fixture.subscribe(t, regularUserClient)
-
-	feedUpdateRequest := &miniflux.FeedModificationRequest{
-		RewriteRules: new(`replace("\d+"|"x")`),
-	}
-
-	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); !errors.Is(err, miniflux.ErrBadRequest) {
-		t.Fatalf(`Updating a feed with a malformed rewrite rule should raise an error, got %v`, err)
-	}
-}
-
-func TestCreateFeedWithInvalidURLRewriteRules(t *testing.T) {
-	t.Parallel()
-
-	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
-
-	// "[" is an unterminated character class and therefore an invalid regexp.
-	_, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL:         fixture.feedURL,
-		UrlRewriteRules: "[",
-	})
-	if !errors.Is(err, miniflux.ErrBadRequest) {
-		t.Fatalf(`Creating a feed with an invalid URL rewrite rule should raise an error, got %v`, err)
-	}
-}
-
-func TestUpdateFeedWithInvalidURLRewriteRules(t *testing.T) {
-	t.Parallel()
-
-	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
-
-	feedID := fixture.subscribe(t, regularUserClient)
-
-	feedUpdateRequest := &miniflux.FeedModificationRequest{
-		UrlRewriteRules: new("["),
+	testCases := []struct {
+		name   string
+		create miniflux.FeedCreationRequest
+		update miniflux.FeedModificationRequest
+	}{
+		{
+			// Missing the second backslash in the search term makes this an invalid Go
+			// string literal, which the rewrite rule parser must reject.
+			name:   "malformed rewrite rule",
+			create: miniflux.FeedCreationRequest{RewriteRules: `replace("\d+"|"x")`},
+			update: miniflux.FeedModificationRequest{RewriteRules: new(`replace("\d+"|"x")`)},
+		},
+		{
+			// The rule is well formed, but "[invalid" is an unterminated character class,
+			// so the search term is not a valid regexp.
+			name:   "invalid URL rewrite rule",
+			create: miniflux.FeedCreationRequest{UrlRewriteRules: `rewrite("[invalid"|"x")`},
+			update: miniflux.FeedModificationRequest{UrlRewriteRules: new(`rewrite("[invalid"|"x")`)},
+		},
+		{
+			// cascadia does not support a relative selector inside :has().
+			name:   "invalid rewrite rule selector",
+			create: miniflux.FeedCreationRequest{RewriteRules: `remove("div:has(> p)")`},
+			update: miniflux.FeedModificationRequest{RewriteRules: new(`remove("div:has(> p)")`)},
+		},
+		{
+			// cascadia does not support a relative selector inside :has().
+			name:   "invalid scraper rules",
+			create: miniflux.FeedCreationRequest{ScraperRules: `div:has(> p)`},
+			update: miniflux.FeedModificationRequest{ScraperRules: new(`div:has(> p)`)},
+		},
 	}
 
-	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); !errors.Is(err, miniflux.ErrBadRequest) {
-		t.Fatalf(`Updating a feed with an invalid URL rewrite rule should raise an error, got %v`, err)
-	}
-}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// The URL must not be subscribed yet: a duplicate feed is rejected before its rules are checked.
+			tc.create.FeedURL = newFeedFixture(t).feedURL
+			if _, err := regularUserClient.CreateFeed(&tc.create); !errors.Is(err, miniflux.ErrBadRequest) {
+				t.Errorf(`Creating a feed should reject the %s, got %v`, tc.name, err)
+			}
 
-func TestCreateFeedWithInvalidRewriteRuleSelector(t *testing.T) {
-	t.Parallel()
-
-	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
-
-	// cascadia does not support a relative selector inside :has().
-	_, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL:      fixture.feedURL,
-		RewriteRules: `remove("div:has(> p)")`,
-	})
-	if !errors.Is(err, miniflux.ErrBadRequest) {
-		t.Fatalf(`Creating a feed with an invalid rewrite rule selector should raise an error, got %v`, err)
-	}
-}
-
-func TestUpdateFeedWithInvalidRewriteRuleSelector(t *testing.T) {
-	t.Parallel()
-
-	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
-
-	feedID := fixture.subscribe(t, regularUserClient)
-
-	feedUpdateRequest := &miniflux.FeedModificationRequest{
-		RewriteRules: new(`remove("div:has(> p)")`),
-	}
-
-	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); !errors.Is(err, miniflux.ErrBadRequest) {
-		t.Fatalf(`Updating a feed with an invalid rewrite rule selector should raise an error, got %v`, err)
-	}
-}
-
-func TestCreateFeedWithInvalidScraperRules(t *testing.T) {
-	t.Parallel()
-
-	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
-
-	// cascadia does not support a relative selector inside :has().
-	_, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL:      fixture.feedURL,
-		ScraperRules: `div:has(> p)`,
-	})
-	if !errors.Is(err, miniflux.ErrBadRequest) {
-		t.Fatalf(`Creating a feed with invalid scraper rules should raise an error, got %v`, err)
-	}
-}
-
-func TestUpdateFeedWithInvalidScraperRules(t *testing.T) {
-	t.Parallel()
-
-	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
-
-	feedID := fixture.subscribe(t, regularUserClient)
-
-	feedUpdateRequest := &miniflux.FeedModificationRequest{
-		ScraperRules: new(`div:has(> p)`),
-	}
-
-	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); !errors.Is(err, miniflux.ErrBadRequest) {
-		t.Fatalf(`Updating a feed with invalid scraper rules should raise an error, got %v`, err)
+			if _, err := regularUserClient.UpdateFeed(feedID, &tc.update); !errors.Is(err, miniflux.ErrBadRequest) {
+				t.Errorf(`Updating a feed should reject the %s, got %v`, tc.name, err)
+			}
+		})
 	}
 }
 
