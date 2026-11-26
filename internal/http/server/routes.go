@@ -15,7 +15,8 @@ import (
 	"miniflux.app/v2/internal/worker"
 )
 
-func newRouter(store *storage.Storage, pool *worker.Pool) http.Handler {
+// NewRouter returns the HTTP handler that serves all Miniflux routes.
+func NewRouter(store *storage.Storage, pool *worker.Pool) http.Handler {
 	readinessProbe := newReadinessProbe(store)
 
 	// Application routes served under the base path.

@@ -60,7 +60,7 @@ func StartWebServer(store *storage.Storage, pool *worker.Pool) ([]*http.Server, 
 	}
 
 	for _, t := range targets {
-		srv := newHTTPServer(t.address, newRouter(store, pool))
+		srv := newHTTPServer(t.address, NewRouter(store, pool))
 
 		switch t.mode {
 		case modeSystemd:

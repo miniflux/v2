@@ -1,100 +1,19 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package api // import "miniflux.app/v2/internal/api"
+package api_test
 
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"io"
 	"math"
-	"math/rand/v2"
-	"os"
 	"strings"
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
 	"miniflux.app/v2/internal/model"
 )
-
-const skipIntegrationTestsMessage = `Set TEST_MINIFLUX_* environment variables to run the API integration tests`
-
-type integrationTestConfig struct {
-	testBaseURL         string
-	testAdminUsername   string
-	testAdminPassword   string
-	testRegularUsername string
-	testRegularPassword string
-}
-
-func newIntegrationTestConfig() *integrationTestConfig {
-	getDefaultEnvValues := func(key, defaultValue string) string {
-		value := os.Getenv(key)
-		if value == "" {
-			return defaultValue
-		}
-		return value
-	}
-
-	return &integrationTestConfig{
-		testBaseURL:         getDefaultEnvValues("TEST_MINIFLUX_BASE_URL", ""),
-		testAdminUsername:   getDefaultEnvValues("TEST_MINIFLUX_ADMIN_USERNAME", ""),
-		testAdminPassword:   getDefaultEnvValues("TEST_MINIFLUX_ADMIN_PASSWORD", ""),
-		testRegularUsername: getDefaultEnvValues("TEST_MINIFLUX_REGULAR_USERNAME_PREFIX", "regular_test_user"),
-		testRegularPassword: getDefaultEnvValues("TEST_MINIFLUX_REGULAR_PASSWORD", "regular_test_user_password"),
-	}
-}
-
-func (c *integrationTestConfig) isConfigured() bool {
-	return c.testBaseURL != "" && c.testAdminUsername != "" && c.testAdminPassword != ""
-}
-
-func (c *integrationTestConfig) genRandomUsername() string {
-	return fmt.Sprintf("%s_%10d", c.testRegularUsername, rand.Int())
-}
-
-// requireIntegrationTestConfig returns the integration test configuration,
-// or skips the test when the TEST_MINIFLUX_* environment variables are not set.
-func requireIntegrationTestConfig(t *testing.T) *integrationTestConfig {
-	t.Helper()
-
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
-	return testConfig
-}
-
-func (c *integrationTestConfig) newAdminClient() *miniflux.Client {
-	return miniflux.NewClient(c.testBaseURL, c.testAdminUsername, c.testAdminPassword)
-}
-
-// deleteUserOnCleanup removes the user when the test and its subtests finish,
-// and fails the test if the user cannot be removed.
-func (c *integrationTestConfig) deleteUserOnCleanup(t *testing.T, userID int64) {
-	t.Helper()
-
-	t.Cleanup(func() {
-		if err := c.newAdminClient().DeleteUser(userID); err != nil {
-			t.Errorf(`Unable to delete user %d: %v`, userID, err)
-		}
-	})
-}
-
-// newRegularUser creates a regular user that is removed when the test ends,
-// and returns a client authenticated as that user.
-func (c *integrationTestConfig) newRegularUser(t *testing.T) (*miniflux.Client, *miniflux.User) {
-	t.Helper()
-
-	user, err := c.newAdminClient().CreateUser(c.genRandomUsername(), c.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	c.deleteUserOnCleanup(t, user.ID)
-
-	return miniflux.NewClient(c.testBaseURL, user.Username, c.testRegularPassword), user
-}
 
 func TestIncorrectEndpoint(t *testing.T) {
 	t.Parallel()
