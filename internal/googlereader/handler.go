@@ -1035,19 +1035,7 @@ func (h *greaderHandler) handleReadingListStreamHandler(w http.ResponseWriter, r
 		WithOffset(rm.Offset).
 		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 
-	for _, s := range rm.ExcludeTargets {
-		switch s.Type {
-		case ReadStream:
-			builder = builder.WithStatuses(model.EntryStatusUnread)
-		default:
-			slog.Warn("[GoogleReader] Unknown ExcludeTargets filter type",
-				slog.String("handler", "handleReadingListStreamHandler"),
-				slog.String("client_ip", clientIP),
-				slog.String("user_agent", r.UserAgent()),
-				slog.Int("filter_type", int(s.Type)),
-			)
-		}
-	}
+	applyStreamFilters(r, builder, rm)
 
 	if rm.StartTime > 0 {
 		builder = builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
@@ -1071,6 +1059,8 @@ func (h *greaderHandler) handleStarredStreamHandler(w http.ResponseWriter, r *ht
 		WithLimitAndMaximum(rm.Count, model.MaxEntryIDsLimit).
 		WithOffset(rm.Offset).
 		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
+
+	applyStreamFilters(r, builder, rm)
 
 	if rm.StartTime > 0 {
 		builder = builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
@@ -1096,6 +1086,8 @@ func (h *greaderHandler) handleReadStreamHandler(w http.ResponseWriter, r *http.
 		WithOffset(rm.Offset).
 		WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 
+	applyStreamFilters(r, builder, rm)
+
 	if rm.StartTime > 0 {
 		builder = builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
 	}
@@ -1111,6 +1103,42 @@ func (h *greaderHandler) handleReadStreamHandler(w http.ResponseWriter, r *http.
 	}
 
 	response.JSON(w, r, streamIDResponse{itemRefs, continuation})
+}
+
+// applyStreamFilters keeps only the items in the states the request includes (it),
+// and drops the items in the states it excludes (xt). Only the read and starred states
+// are supported: other filters are logged and ignored.
+func applyStreamFilters(r *http.Request, builder *storage.EntryQueryBuilder, rm requestModifiers) {
+	for _, s := range rm.ExcludeTargets {
+		switch s.Type {
+		case ReadStream:
+			builder.WithStatuses(model.EntryStatusUnread)
+		case StarredStream:
+			builder.WithStarred(false)
+		default:
+			logIgnoredStreamFilter(r, paramStreamExcludes, s)
+		}
+	}
+
+	for _, s := range rm.FilterTargets {
+		switch s.Type {
+		case ReadStream:
+			builder.WithStatuses(model.EntryStatusRead)
+		case StarredStream:
+			builder.WithStarred(true)
+		default:
+			logIgnoredStreamFilter(r, paramStreamFilters, s)
+		}
+	}
+}
+
+func logIgnoredStreamFilter(r *http.Request, param string, s Stream) {
+	slog.Warn("[GoogleReader] Ignoring unsupported stream filter",
+		slog.String("client_ip", request.ClientIP(r)),
+		slog.String("user_agent", r.UserAgent()),
+		slog.String("param", param),
+		slog.String("stream", s.String()),
+	)
 }
 
 func getItemRefsAndContinuation(builder storage.EntryQueryBuilder, rm requestModifiers) ([]itemRef, int, error) {
@@ -1156,11 +1184,7 @@ func (h *greaderHandler) handleFeedStreamHandler(w http.ResponseWriter, r *http.
 		builder = builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
 	}
 
-	for _, s := range rm.ExcludeTargets {
-		if s.Type == ReadStream {
-			builder = builder.WithoutStatus(model.EntryStatusRead)
-		}
-	}
+	applyStreamFilters(r, builder, rm)
 
 	itemRefs, continuation, err := getItemRefsAndContinuation(*builder, rm)
 	if err != nil {

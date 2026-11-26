@@ -45,8 +45,14 @@ func TestStreamItemIDsEndpoint(t *testing.T) {
 		{"feed newest first", url.Values{"s": {feedStream(feedID)}}, miniflux.Entries{entries[2], entries[1], entries[0]}, false},
 		{"feed oldest first", url.Values{"s": {feedStream(feedID)}, "r": {"o"}}, entries, false},
 		{"feed without read items", url.Values{"s": {feedStream(feedID)}, "xt": {readStream}}, miniflux.Entries{entries[2], entries[1]}, false},
+		{"feed without starred items", url.Values{"s": {feedStream(feedID)}, "xt": {starredStream}}, miniflux.Entries{entries[1], entries[0]}, false},
+		{"feed with only read items", url.Values{"s": {feedStream(feedID)}, "it": {readStream}}, miniflux.Entries{entries[0]}, false},
+		{"feed with only starred items", url.Values{"s": {feedStream(feedID)}, "it": {starredStream}}, miniflux.Entries{entries[2]}, false},
+		{"feed with an unsupported filter", url.Values{"s": {feedStream(feedID)}, "it": {labelStream("All")}}, miniflux.Entries{entries[2], entries[1], entries[0]}, false},
 		{"reading list", url.Values{"s": {readingListStream}}, allEntries, true},
 		{"reading list without read items", url.Values{"s": {readingListStream}, "xt": {readStream}}, allEntries[1:], true},
+		{"reading list without read or starred items", url.Values{"s": {readingListStream}, "xt": {readStream, starredStream}}, append(miniflux.Entries{entries[1]}, otherEntries...), true},
+		{"reading list with only starred items", url.Values{"s": {readingListStream}, "it": {starredStream}}, miniflux.Entries{entries[2]}, false},
 		{"reading list published during the second day", url.Values{
 			"s":  {readingListStream},
 			"ot": {strconv.FormatInt(secondDay.Unix(), 10)},
@@ -54,7 +60,9 @@ func TestStreamItemIDsEndpoint(t *testing.T) {
 		}, miniflux.Entries{entries[1], otherEntries[1]}, true},
 		{"starred", url.Values{"s": {starredStream}}, miniflux.Entries{entries[2]}, false},
 		{"starred with the user ID", url.Values{"s": {fmt.Sprintf("user/%d/state/com.google/starred", user.id)}}, miniflux.Entries{entries[2]}, false},
+		{"starred with only read items", url.Values{"s": {starredStream}, "it": {readStream}}, miniflux.Entries{}, false},
 		{"read", url.Values{"s": {readStream}}, miniflux.Entries{entries[0]}, false},
+		{"read with only starred items", url.Values{"s": {readStream}, "it": {starredStream}}, miniflux.Entries{}, false},
 	}
 
 	for _, scenario := range scenarios {
