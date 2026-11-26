@@ -19,5 +19,5 @@ func ValidateSubscriptionDiscovery(request *model.SubscriptionDiscoveryRequest) 
 		return locale.NewLocalizedError("error.invalid_feed_proxy_url")
 	}
 
-	return nil
+	return ValidateTLSCertificates(request.ClientCertificate, request.ClientKey, request.CACertificate)
 }

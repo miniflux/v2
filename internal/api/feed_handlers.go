@@ -148,6 +148,10 @@ func (h *handler) updateFeedHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	feedModificationRequest.Patch(originalFeed)
+	if validationErr := validator.ValidateTLSCertificates(originalFeed.ClientCertificate, originalFeed.ClientKey, originalFeed.CACertificate); validationErr != nil {
+		response.JSONBadRequest(w, r, validationErr.Error())
+		return
+	}
 	originalFeed.ResetErrorCounter()
 	if err := h.store.UpdateFeed(originalFeed); err != nil {
 		response.JSONServerError(w, r, err)

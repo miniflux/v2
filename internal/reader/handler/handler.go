@@ -44,6 +44,10 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 		slog.String("proxy_url", feedCreationRequest.ProxyURL),
 	)
 
+	if err := fetcher.ValidateTLSCertificates(feedCreationRequest.ClientCertificate, feedCreationRequest.ClientKey, feedCreationRequest.CACertificate); err != nil {
+		return nil, locale.NewLocalizedErrorWrapper(err, "error.invalid_tls_certificates", err)
+	}
+
 	categoryExists, storeErr := store.CategoryIDExists(userID, feedCreationRequest.CategoryID)
 	if storeErr != nil {
 		return nil, locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
@@ -66,6 +70,9 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 	subscription.Cookie = feedCreationRequest.Cookie
 	subscription.Username = feedCreationRequest.Username
 	subscription.Password = feedCreationRequest.Password
+	subscription.ClientCertificate = feedCreationRequest.ClientCertificate
+	subscription.ClientKey = feedCreationRequest.ClientKey
+	subscription.CACertificate = feedCreationRequest.CACertificate
 	subscription.Crawler = feedCreationRequest.Crawler
 	subscription.IgnoreEntryUpdates = feedCreationRequest.IgnoreEntryUpdates
 	subscription.Disabled = feedCreationRequest.Disabled
@@ -130,6 +137,8 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 		WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL()).
 		UseCustomApplicationProxyURL(feedCreationRequest.FetchViaProxy).
 		IgnoreTLSErrors(feedCreationRequest.AllowSelfSignedCertificates).
+		WithClientCertificate(feedCreationRequest.ClientCertificate, feedCreationRequest.ClientKey).
+		WithCACertificate(feedCreationRequest.CACertificate).
 		DisableHTTP2(feedCreationRequest.DisableHTTP2)
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(feedCreationRequest.FeedURL))
@@ -160,6 +169,9 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.Cookie = feedCreationRequest.Cookie
 	subscription.Username = feedCreationRequest.Username
 	subscription.Password = feedCreationRequest.Password
+	subscription.ClientCertificate = feedCreationRequest.ClientCertificate
+	subscription.ClientKey = feedCreationRequest.ClientKey
+	subscription.CACertificate = feedCreationRequest.CACertificate
 	subscription.Crawler = feedCreationRequest.Crawler
 	subscription.IgnoreEntryUpdates = feedCreationRequest.IgnoreEntryUpdates
 	subscription.Disabled = feedCreationRequest.Disabled
@@ -239,6 +251,8 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL()).
 		UseCustomApplicationProxyURL(originalFeed.FetchViaProxy).
 		IgnoreTLSErrors(originalFeed.AllowSelfSignedCertificates).
+		WithClientCertificate(originalFeed.ClientCertificate, originalFeed.ClientKey).
+		WithCACertificate(originalFeed.CACertificate).
 		DisableHTTP2(originalFeed.DisableHTTP2)
 
 	ignoreHTTPCache := originalFeed.IgnoreHTTPCache || forceRefresh

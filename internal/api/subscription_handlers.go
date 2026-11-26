@@ -47,6 +47,8 @@ func (h *handler) discoverSubscriptionsHandler(w http.ResponseWriter, r *http.Re
 		WithCookie(subscriptionDiscoveryRequest.Cookie, subscriptionDiscoveryRequest.URL).
 		WithUsernameAndPassword(subscriptionDiscoveryRequest.Username, subscriptionDiscoveryRequest.Password).
 		IgnoreTLSErrors(subscriptionDiscoveryRequest.AllowSelfSignedCertificates).
+		WithClientCertificate(subscriptionDiscoveryRequest.ClientCertificate, subscriptionDiscoveryRequest.ClientKey).
+		WithCACertificate(subscriptionDiscoveryRequest.CACertificate).
 		DisableHTTP2(subscriptionDiscoveryRequest.DisableHTTP2)
 
 	subscriptions, localizedError := subscription.NewSubscriptionFinder(requestBuilder).FindSubscriptions(
