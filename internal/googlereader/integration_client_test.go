@@ -8,9 +8,21 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 )
+
+const starredStream = "user/-/state/com.google/starred"
+
+func feedStream(feedID int64) string {
+	return "feed/" + strconv.FormatInt(feedID, 10)
+}
+
+// labelStream returns the stream ID of a label in the "user/-/" form, which clients send for the current user.
+func labelStream(title string) string {
+	return "user/-/label/" + title
+}
 
 // googleReaderClient calls the Google Reader API. It sends no credentials when token is empty.
 type googleReaderClient struct {
@@ -76,6 +88,16 @@ func (client *googleReaderClient) postJSON(t *testing.T, path string, form url.V
 	decodeJSON(t, status, body, result)
 }
 
+// postOK sends a form and requires the plain text OK response.
+func (client *googleReaderClient) postOK(t *testing.T, path string, form url.Values) {
+	t.Helper()
+
+	status, body := client.post(t, path, form)
+	if status != http.StatusOK || string(body) != "OK" {
+		t.Fatalf(`POST %s %v: expected status 200 with body "OK", got %d: %s`, path, form, status, body)
+	}
+}
+
 func send(t *testing.T, request *http.Request) (int, []byte) {
 	t.Helper()
 
@@ -126,4 +148,30 @@ type userInfoResult struct {
 	UserName      string `json:"userName"`
 	UserProfileID string `json:"userProfileId"`
 	UserEmail     string `json:"userEmail"`
+}
+
+type tagResult struct {
+	ID    string `json:"id"`
+	Label string `json:"label"`
+	Type  string `json:"type"`
+}
+
+type subscriptionResult struct {
+	ID         string      `json:"id"`
+	Title      string      `json:"title"`
+	Categories []tagResult `json:"categories"`
+	URL        string      `json:"url"`
+	HTMLURL    string      `json:"htmlUrl"`
+	IconURL    string      `json:"iconUrl"`
+}
+
+type subscriptionListResult struct {
+	Subscriptions []subscriptionResult `json:"subscriptions"`
+}
+
+type quickAddResult struct {
+	NumResults int64  `json:"numResults"`
+	Query      string `json:"query"`
+	StreamID   string `json:"streamId"`
+	StreamName string `json:"streamName"`
 }
