@@ -4,6 +4,12 @@
 package model // import "miniflux.app/v2/internal/model"
 
 import (
+	"crypto/sha256"
+	"encoding/binary"
+	"encoding/hex"
+	"slices"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -45,6 +51,9 @@ type Entry struct {
 	Enclosures  EnclosureList `json:"enclosures"`
 	Feed        *Feed         `json:"feed,omitempty"`
 	Tags        []string      `json:"tags"`
+
+	// SourceFingerprint identifies the version of the entry published by the feed.
+	SourceFingerprint string `json:"-"`
 }
 
 func NewEntry() *Entry {
@@ -56,6 +65,49 @@ func NewEntry() *Entry {
 			Icon:     &FeedIcon{},
 		},
 	}
+}
+
+// ComputeSourceFingerprint hashes the fields that a refresh can overwrite.
+// Call it on a parsed entry before applying local processing. The publication
+// date, reading time, and entry identity do not indicate changes to these fields.
+func (e *Entry) ComputeSourceFingerprint() string {
+	digest := sha256.New()
+	var fieldLength [8]byte
+	writeField := func(value string) {
+		binary.LittleEndian.PutUint64(fieldLength[:], uint64(len(value)))
+		digest.Write(fieldLength[:])
+		digest.Write([]byte(value))
+	}
+
+	for _, value := range []string{
+		e.Title,
+		e.Content,
+		e.URL,
+		e.CommentsURL,
+		e.Author,
+		e.Language,
+	} {
+		writeField(value)
+	}
+	writeField(strconv.Itoa(len(e.Tags)))
+	for _, tag := range e.Tags {
+		writeField(tag)
+	}
+
+	// Refresh adds or removes enclosures by URL. It keeps existing enclosures
+	// with the same URL, including their metadata and playback progress.
+	enclosureURLs := make([]string, 0, len(e.Enclosures))
+	for _, enclosure := range e.Enclosures {
+		if url := strings.TrimSpace(enclosure.URL); url != "" {
+			enclosureURLs = append(enclosureURLs, url)
+		}
+	}
+	slices.Sort(enclosureURLs)
+	for _, url := range slices.Compact(enclosureURLs) {
+		writeField(url)
+	}
+
+	return hex.EncodeToString(digest.Sum(nil))
 }
 
 // ShouldMarkAsReadOnView Return whether the entry should be marked as viewed considering all user settings and entry state.

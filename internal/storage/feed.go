@@ -311,7 +311,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			return fmt.Errorf(`store: unable to start transaction: %v`, err)
 		}
 
-		entryExists, err := s.entryExists(tx, entry)
+		_, entryExists, err := s.storedEntrySourceFingerprint(tx, entry)
 		if err != nil {
 			if rollbackErr := tx.Rollback(); rollbackErr != nil {
 				return fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)

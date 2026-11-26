@@ -102,7 +102,8 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				changed_at,
 				document_vectors,
 				tags,
-				language
+				language,
+				source_fingerprint
 			)
 		SELECT
 			$1,
@@ -118,7 +119,8 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 			now(),
 			setweight(to_tsvector($11), 'A') || setweight(to_tsvector($12), 'B'),
 			$13,
-			$14
+			$14,
+			$15
 		WHERE NOT EXISTS (
 			SELECT 1 FROM entry_tombstones WHERE feed_id=$9 AND hash=$2
 		)
@@ -141,6 +143,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		truncatedContent,
 		pq.Array(entry.Tags),
 		entry.Language,
+		entry.SourceFingerprint,
 	).Scan(
 		&entry.ID,
 		&entry.Status,
@@ -183,7 +186,8 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 			reading_time=$6,
 			document_vectors = setweight(to_tsvector($7), 'A') || setweight(to_tsvector($8), 'B'),
 			tags=$12,
-			language=$13
+			language=$13,
+			source_fingerprint=$14
 		WHERE
 			user_id=$9 AND feed_id=$10 AND hash=$11
 		RETURNING
@@ -204,6 +208,7 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.Hash,
 		pq.Array(entry.Tags),
 		entry.Language,
+		entry.SourceFingerprint,
 	).Scan(&entry.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to update entry %q: %v`, entry.URL, err)
@@ -217,18 +222,21 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 	return s.updateEnclosures(tx, entry)
 }
 
-// entryExists checks if an entry already exists based on its hash when refreshing a feed.
-func (s *Storage) entryExists(tx *sql.Tx, entry *model.Entry) (bool, error) {
-	var result bool
+// storedEntrySourceFingerprint returns the stored fingerprint and whether the entry exists.
+func (s *Storage) storedEntrySourceFingerprint(tx *sql.Tx, entry *model.Entry) (string, bool, error) {
+	var sourceFingerprint string
 
 	// Note: This query uses entries_feed_id_hash_key index (filtering on user_id is not necessary).
-	err := tx.QueryRow(`SELECT true FROM entries WHERE feed_id=$1 AND hash=$2 LIMIT 1`, entry.FeedID, entry.Hash).Scan(&result)
-
-	if err != nil && err != sql.ErrNoRows {
-		return result, fmt.Errorf(`store: unable to check if entry exists: %v`, err)
+	err := tx.QueryRow(`SELECT source_fingerprint FROM entries WHERE feed_id=$1 AND hash=$2 LIMIT 1`, entry.FeedID, entry.Hash).Scan(&sourceFingerprint)
+	if errors.Is(err, sql.ErrNoRows) {
+		return "", false, nil
 	}
 
-	return result, nil
+	if err != nil {
+		return "", false, fmt.Errorf(`store: unable to fetch stored entry source fingerprint: %v`, err)
+	}
+
+	return sourceFingerprint, true, nil
 }
 
 func (s *Storage) getEntryIDByHash(tx *sql.Tx, feedID int64, entryHash string) (int64, error) {
@@ -319,8 +327,17 @@ func (s *Storage) GetReadTime(feedID int64, entryHash string) int {
 	return result
 }
 
-// RefreshFeedEntries updates feed entries while refreshing a feed.
-func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (newEntries model.Entries, err error) {
+// ExistingEntryUpdatePolicy controls whether a refresh rewrites existing entries.
+type ExistingEntryUpdatePolicy uint8
+
+const (
+	ExistingEntryUpdateNever ExistingEntryUpdatePolicy = iota
+	ExistingEntryUpdateIfChanged
+	ExistingEntryUpdateAlways
+)
+
+// RefreshFeedEntries stores new entries and updates existing entries according to the refresh policy.
+func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updatePolicy ExistingEntryUpdatePolicy) (newEntries model.Entries, err error) {
 	for _, entry := range entries {
 		entry.UserID = userID
 		entry.FeedID = feedID
@@ -330,7 +347,7 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 			return nil, fmt.Errorf(`store: unable to start transaction: %v`, err)
 		}
 
-		entryExists, err := s.entryExists(tx, entry)
+		storedSourceFingerprint, entryExists, err := s.storedEntrySourceFingerprint(tx, entry)
 		if err != nil {
 			if rollbackErr := tx.Rollback(); rollbackErr != nil {
 				return nil, fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
@@ -339,7 +356,9 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 		}
 
 		if entryExists {
-			if updateExistingEntries {
+			// Entries created before fingerprinting must be updated once to record their source version.
+			unchanged := entry.SourceFingerprint != "" && entry.SourceFingerprint == storedSourceFingerprint
+			if updatePolicy == ExistingEntryUpdateAlways || (updatePolicy == ExistingEntryUpdateIfChanged && !unchanged) {
 				err = s.updateEntry(tx, entry)
 			}
 		} else {

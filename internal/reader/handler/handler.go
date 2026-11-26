@@ -326,11 +326,16 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		originalFeed.Entries = updatedFeed.Entries
 		processor.ProcessFeedEntries(store, originalFeed, userID, forceRefresh)
 
-		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries).
-		// We also skip updating existing entries if the feed has ignore_entry_updates enabled.
-		// Unless it is forced to refresh.
-		updateExistingEntries := forceRefresh || (!originalFeed.Crawler && !originalFeed.IgnoreEntryUpdates)
-		newEntries, storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, updateExistingEntries)
+		// Normal refreshes preserve existing entries for crawled feeds and feeds
+		// that ignore updates. A forced refresh reprocesses all existing entries.
+		updatePolicy := storage.ExistingEntryUpdateNever
+		switch {
+		case forceRefresh:
+			updatePolicy = storage.ExistingEntryUpdateAlways
+		case !originalFeed.Crawler && !originalFeed.IgnoreEntryUpdates:
+			updatePolicy = storage.ExistingEntryUpdateIfChanged
+		}
+		newEntries, storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, updatePolicy)
 		if storeErr != nil {
 			localizedError := locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
 			return getTranslatedLocalizedError(store, userID, originalFeed, localizedError)
