@@ -18,14 +18,18 @@ import (
 var errPostNotFound = errors.New("pinboard: post not found")
 var errMissingCredentials = errors.New("pinboard: missing auth token")
 
-const defaultClientTimeout = 10 * time.Second
+const (
+	defaultClientTimeout = 10 * time.Second
+	defaultAPIBaseURL    = "https://api.pinboard.in/v1"
+)
 
 type Client struct {
-	authToken string
+	apiBaseURL string
+	authToken  string
 }
 
 func NewClient(authToken string) *Client {
-	return &Client{authToken: authToken}
+	return &Client{apiBaseURL: defaultAPIBaseURL, authToken: authToken}
 }
 
 func (c *Client) CreateBookmark(entryURL, entryTitle, pinboardTags string, markAsUnread bool) error {
@@ -52,7 +56,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle, pinboardTags string, markA
 	values.Add("auth_token", c.authToken)
 	post.AddValues(values)
 
-	apiEndpoint := "https://api.pinboard.in/v1/posts/add?" + values.Encode()
+	apiEndpoint := c.apiBaseURL + "/posts/add?" + values.Encode()
 	request, err := http.NewRequest(http.MethodGet, apiEndpoint, nil)
 	if err != nil {
 		return fmt.Errorf("pinboard: unable to create request: %v", err)
@@ -63,12 +67,12 @@ func (c *Client) CreateBookmark(entryURL, entryTitle, pinboardTags string, markA
 	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
-		return fmt.Errorf("pinboard: unable to send request: %v", err)
+		return fmt.Errorf("pinboard: unable to send request: %w", withoutURL(err))
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return fmt.Errorf("pinboard: unable to create a bookmark: url=%s status=%d", apiEndpoint, response.StatusCode)
+		return fmt.Errorf("pinboard: unable to create a bookmark, status=%d", response.StatusCode)
 	}
 
 	return nil
@@ -84,7 +88,7 @@ func (c *Client) getBookmark(entryURL string) (*Post, error) {
 	values.Add("auth_token", c.authToken)
 	values.Add("url", entryURL)
 
-	apiEndpoint := "https://api.pinboard.in/v1/posts/get?" + values.Encode()
+	apiEndpoint := c.apiBaseURL + "/posts/get?" + values.Encode()
 	request, err := http.NewRequest(http.MethodGet, apiEndpoint, nil)
 	if err != nil {
 		return nil, fmt.Errorf("pinboard: unable to create request: %v", err)
@@ -95,7 +99,7 @@ func (c *Client) getBookmark(entryURL string) (*Post, error) {
 	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf("pinboard: unable fetch bookmark: %v", err)
+		return nil, fmt.Errorf("pinboard: unable fetch bookmark: %w", withoutURL(err))
 	}
 	defer response.Body.Close()
 
@@ -114,4 +118,12 @@ func (c *Client) getBookmark(entryURL string) (*Post, error) {
 	}
 
 	return &results.Posts[0], nil
+}
+
+// withoutURL drops the request URL, which contains the auth token, from HTTP client errors.
+func withoutURL(err error) error {
+	if urlErr, ok := errors.AsType[*url.Error](err); ok {
+		return urlErr.Err
+	}
+	return err
 }
