@@ -121,6 +121,8 @@ func TestStreamItemIDsRejectsInvalidStreams(t *testing.T) {
 		{"missing stream", url.Values{}},
 		{"invalid stream", url.Values{"s": {"invalid"}}},
 		{"invalid feed ID", url.Values{"s": {"feed/invalid"}}},
+		{"zero feed ID", url.Values{"s": {"feed/0"}}},
+		{"negative feed ID", url.Values{"s": {"feed/-1"}}},
 		{"invalid exclusion", url.Values{"s": {readingListStream}, "xt": {"invalid"}}},
 		{"two streams", url.Values{"s": {readingListStream, starredStream}}},
 
