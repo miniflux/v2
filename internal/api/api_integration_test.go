@@ -148,12 +148,8 @@ func TestInvalidCredentials(t *testing.T) {
 
 	client := miniflux.NewClient(testConfig.testBaseURL, "invalid", "invalid")
 	_, err := client.Users()
-	if err == nil {
-		t.Fatal(`Using bad credentials should raise an error`)
-	}
-
-	if err != miniflux.ErrNotAuthorized {
-		t.Fatal(`A "Not Authorized" error should be raised`)
+	if !errors.Is(err, miniflux.ErrNotAuthorized) {
+		t.Fatalf(`Using bad credentials should raise a "not authorized" error, got %v`, err)
 	}
 }
 
@@ -260,8 +256,8 @@ func TestGetUsersEndpointAsRegularUser(t *testing.T) {
 
 	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
 	_, err = regularUserClient.Users()
-	if err == nil {
-		t.Fatal(`Regular users should not have access to the users endpoint`)
+	if !errors.Is(err, miniflux.ErrForbidden) {
+		t.Fatalf(`Regular users should not have access to the users endpoint, got %v`, err)
 	}
 }
 
@@ -344,8 +340,8 @@ func TestCreateUserEndpointAsRegularUser(t *testing.T) {
 
 	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
 	_, err = regularUserClient.CreateUser(regularTestUser.Username, testConfig.testRegularPassword, false)
-	if err == nil {
-		t.Fatal(`Regular users should not have access to the create user endpoint`)
+	if !errors.Is(err, miniflux.ErrForbidden) {
+		t.Fatalf(`Regular users should not have access to the create user endpoint, got %v`, err)
 	}
 }
 
@@ -359,8 +355,8 @@ func TestCannotCreateDuplicateUser(t *testing.T) {
 
 	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
 	_, err := client.CreateUser(testConfig.testAdminUsername, testConfig.testAdminPassword, true)
-	if err == nil {
-		t.Fatal(`Duplicated users should not be allowed`)
+	if !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Duplicated users should not be allowed, got %v`, err)
 	}
 }
 
@@ -404,8 +400,8 @@ func TestRemoveUserEndpointAsRegularUser(t *testing.T) {
 
 	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
 	err = regularUserClient.DeleteUser(regularTestUser.ID)
-	if err == nil {
-		t.Fatal(`Regular users should not have access to the remove user endpoint`)
+	if !errors.Is(err, miniflux.ErrForbidden) {
+		t.Fatalf(`Regular users should not have access to the remove user endpoint, got %v`, err)
 	}
 }
 
@@ -502,8 +498,8 @@ func TestGetUserByIDEndpointAsRegularUser(t *testing.T) {
 
 	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
 	_, err = regularUserClient.UserByID(regularTestUser.ID)
-	if err == nil {
-		t.Fatal(`Regular users should not have access to the user by ID endpoint`)
+	if !errors.Is(err, miniflux.ErrForbidden) {
+		t.Fatalf(`Regular users should not have access to the user by ID endpoint, got %v`, err)
 	}
 }
 
@@ -596,8 +592,8 @@ func TestGetUserByUsernameEndpointAsRegularUser(t *testing.T) {
 
 	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
 	_, err = regularUserClient.UserByUsername(regularTestUser.Username)
-	if err == nil {
-		t.Fatal(`Regular users should not have access to the user by username endpoint`)
+	if !errors.Is(err, miniflux.ErrForbidden) {
+		t.Fatalf(`Regular users should not have access to the user by username endpoint, got %v`, err)
 	}
 }
 
@@ -684,8 +680,8 @@ func TestUpdateUserEndpointByChangingExternalFontsWithInvalidValue(t *testing.T)
 		ExternalFontHosts: new("'self' *"),
 	}
 
-	if _, err := regularUserClient.UpdateUser(regularTestUser.ID, userUpdateRequest); err == nil {
-		t.Fatal(`Updating the user with an invalid external font host should raise an error`)
+	if _, err := regularUserClient.UpdateUser(regularTestUser.ID, userUpdateRequest); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Updating the user with an invalid external font host should raise an error, got %v`, err)
 	}
 }
 
@@ -742,8 +738,8 @@ func TestUpdateUserEndpointByChangingDefaultThemeToInvalidValue(t *testing.T) {
 	}
 
 	_, err = regularUserClient.UpdateUser(regularTestUser.ID, userUpdateRequest)
-	if err == nil {
-		t.Fatal(`Updating the user with an invalid theme should raise an error`)
+	if !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Updating the user with an invalid theme should raise an error, got %v`, err)
 	}
 }
 
@@ -774,8 +770,8 @@ func TestRegularUsersCannotUpdateOtherUsers(t *testing.T) {
 	}
 
 	_, err = regularUserClient.UpdateUser(adminUser.ID, userUpdateRequest)
-	if err == nil {
-		t.Fatal(`Regular users should not be able to update other users`)
+	if !errors.Is(err, miniflux.ErrForbidden) {
+		t.Fatalf(`Regular users should not be able to update other users, got %v`, err)
 	}
 }
 
@@ -823,8 +819,8 @@ func TestAPIKeysEndpoint(t *testing.T) {
 	}
 
 	// Create a duplicate API key with the same description.
-	if _, err := regularUserClient.CreateAPIKey("Test API Key"); err == nil {
-		t.Fatal(`Creating a duplicate API key with the same description should raise an error`)
+	if _, err := regularUserClient.CreateAPIKey("Test API Key"); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Creating a duplicate API key with the same description should raise an error, got %v`, err)
 	}
 
 	// Fetch the API keys again.
@@ -878,16 +874,13 @@ func TestAPIKeysEndpoint(t *testing.T) {
 
 	// Try to delete the API key again, it should return an error.
 	err = regularUserClient.DeleteAPIKey(apiKey.ID)
-	if err == nil {
-		t.Fatal(`Deleting a non-existent API key should raise an error`)
-	}
 	if !errors.Is(err, miniflux.ErrNotFound) {
-		t.Fatalf(`Expected "not found" error, got %v`, err)
+		t.Fatalf(`Deleting a non-existent API key should raise a "not found" error, got %v`, err)
 	}
 
 	// Try to create an API key with an empty description.
-	if _, err := regularUserClient.CreateAPIKey(""); err == nil {
-		t.Fatal(`Creating an API key with an empty description should raise an error`)
+	if _, err := regularUserClient.CreateAPIKey(""); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Creating an API key with an empty description should raise an error, got %v`, err)
 	}
 }
 
@@ -952,8 +945,8 @@ func TestCannotMarkUserAsReadAsOtherUser(t *testing.T) {
 	defer adminClient.DeleteUser(regularTestUser.ID)
 
 	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
-	if err := regularUserClient.MarkAllAsRead(adminUser.ID); err == nil {
-		t.Fatalf(`Non-admin users should not be able to mark another user as read`)
+	if err := regularUserClient.MarkAllAsRead(adminUser.ID); !errors.Is(err, miniflux.ErrForbidden) {
+		t.Fatalf(`Non-admin users should not be able to mark another user as read, got %v`, err)
 	}
 }
 
@@ -1008,8 +1001,8 @@ func TestCreateCategoryWithEmptyTitle(t *testing.T) {
 
 	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
 	_, err := client.CreateCategory("")
-	if err == nil {
-		t.Fatalf(`Creating a category with an empty title should raise an error`)
+	if !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Creating a category with an empty title should raise an error, got %v`, err)
 	}
 }
 
@@ -1036,8 +1029,8 @@ func TestCannotCreateDuplicatedCategory(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err = regularUserClient.CreateCategory(categoryName); err == nil {
-		t.Fatalf(`Duplicated categories should not be allowed`)
+	if _, err = regularUserClient.CreateCategory(categoryName); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Duplicated categories should not be allowed, got %v`, err)
 	}
 }
 
@@ -1224,8 +1217,8 @@ func TestUpdateInexistingCategory(t *testing.T) {
 
 	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
 	_, err := client.UpdateCategory(123456789, "new title")
-	if err == nil {
-		t.Fatalf(`Updating an inexisting category should raise an error`)
+	if !errors.Is(err, miniflux.ErrNotFound) {
+		t.Fatalf(`Updating an inexisting category should raise an error, got %v`, err)
 	}
 }
 func TestDeleteCategoryEndpoint(t *testing.T) {
@@ -1267,8 +1260,8 @@ func TestCannotDeleteInexistingCategory(t *testing.T) {
 
 	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
 	err := client.DeleteCategory(123456789)
-	if err == nil {
-		t.Fatalf(`Deleting an inexisting category should raise an error`)
+	if !errors.Is(err, miniflux.ErrNotFound) {
+		t.Fatalf(`Deleting an inexisting category should raise an error, got %v`, err)
 	}
 }
 
@@ -1295,8 +1288,8 @@ func TestCannotDeleteCategoryOfAnotherUser(t *testing.T) {
 	}
 
 	err = adminClient.DeleteCategory(category.ID)
-	if err == nil {
-		t.Fatalf(`Regular users should not be able to delete categories of other users`)
+	if !errors.Is(err, miniflux.ErrNotFound) {
+		t.Fatalf(`Regular users should not be able to delete categories of other users, got %v`, err)
 	}
 }
 
@@ -1508,8 +1501,8 @@ func TestCannotCreateDuplicatedFeed(t *testing.T) {
 	_, err = regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: testConfig.testFeedURL,
 	})
-	if err == nil {
-		t.Fatalf(`Duplicated feeds should not be allowed`)
+	if !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Duplicated feeds should not be allowed, got %v`, err)
 	}
 }
 
@@ -1586,8 +1579,8 @@ func TestCreateFeedWithInexistingCategory(t *testing.T) {
 		CategoryID: 123456789,
 	})
 
-	if err == nil {
-		t.Fatalf(`Creating a feed with an inexisting category should raise an error`)
+	if !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Creating a feed with an inexisting category should raise an error, got %v`, err)
 	}
 }
 
@@ -1603,8 +1596,8 @@ func TestCreateFeedWithEmptyFeedURL(t *testing.T) {
 	_, err := client.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: "",
 	})
-	if err == nil {
-		t.Fatalf(`Creating a feed with an empty feed URL should raise an error`)
+	if !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Creating a feed with an empty feed URL should raise an error, got %v`, err)
 	}
 }
 
@@ -1620,8 +1613,8 @@ func TestCreateFeedWithInvalidFeedURL(t *testing.T) {
 	_, err := client.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: "invalid_feed_url",
 	})
-	if err == nil {
-		t.Fatalf(`Creating a feed with an invalid feed URL should raise an error`)
+	if !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Creating a feed with an invalid feed URL should raise an error, got %v`, err)
 	}
 }
 
@@ -1805,8 +1798,8 @@ func TestCannotHaveDuplicateFeedWhenUpdatingFeed(t *testing.T) {
 		FeedURL: new(testConfig.testFeedURL),
 	}
 
-	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); err == nil {
-		t.Fatalf(`Duplicated feeds should not be allowed`)
+	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Duplicated feeds should not be allowed, got %v`, err)
 	}
 }
 
@@ -1839,12 +1832,14 @@ func TestUpdateFeedWithInvalidCategory(t *testing.T) {
 		CategoryID: new(int64(123456789)),
 	}
 
-	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); err == nil {
-		t.Fatalf(`Updating a feed with an inexisting category should raise an error`)
+	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Updating a feed with an inexisting category should raise an error, got %v`, err)
 	}
 }
 
 func TestCreateFeedWithInvalidRewriteRules(t *testing.T) {
+	t.Parallel()
+
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
 		t.Skip(skipIntegrationTestsMessage)
@@ -1866,12 +1861,14 @@ func TestCreateFeedWithInvalidRewriteRules(t *testing.T) {
 		FeedURL:      testConfig.testFeedURL,
 		RewriteRules: `replace("\d+"|"x")`,
 	})
-	if err == nil {
-		t.Fatalf(`Creating a feed with a malformed rewrite rule should raise an error`)
+	if !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Creating a feed with a malformed rewrite rule should raise an error, got %v`, err)
 	}
 }
 
 func TestUpdateFeedWithInvalidRewriteRules(t *testing.T) {
+	t.Parallel()
+
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
 		t.Skip(skipIntegrationTestsMessage)
@@ -1898,12 +1895,14 @@ func TestUpdateFeedWithInvalidRewriteRules(t *testing.T) {
 		RewriteRules: new(`replace("\d+"|"x")`),
 	}
 
-	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); err == nil {
-		t.Fatalf(`Updating a feed with a malformed rewrite rule should raise an error`)
+	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Updating a feed with a malformed rewrite rule should raise an error, got %v`, err)
 	}
 }
 
 func TestCreateFeedWithInvalidURLRewriteRules(t *testing.T) {
+	t.Parallel()
+
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
 		t.Skip(skipIntegrationTestsMessage)
@@ -1924,12 +1923,14 @@ func TestCreateFeedWithInvalidURLRewriteRules(t *testing.T) {
 		FeedURL:         testConfig.testFeedURL,
 		UrlRewriteRules: "[",
 	})
-	if err == nil {
-		t.Fatalf(`Creating a feed with an invalid URL rewrite rule should raise an error`)
+	if !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Creating a feed with an invalid URL rewrite rule should raise an error, got %v`, err)
 	}
 }
 
 func TestUpdateFeedWithInvalidURLRewriteRules(t *testing.T) {
+	t.Parallel()
+
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
 		t.Skip(skipIntegrationTestsMessage)
@@ -1956,12 +1957,14 @@ func TestUpdateFeedWithInvalidURLRewriteRules(t *testing.T) {
 		UrlRewriteRules: new("["),
 	}
 
-	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); err == nil {
-		t.Fatalf(`Updating a feed with an invalid URL rewrite rule should raise an error`)
+	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Updating a feed with an invalid URL rewrite rule should raise an error, got %v`, err)
 	}
 }
 
 func TestCreateFeedWithInvalidRewriteRuleSelector(t *testing.T) {
+	t.Parallel()
+
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
 		t.Skip(skipIntegrationTestsMessage)
@@ -1982,12 +1985,14 @@ func TestCreateFeedWithInvalidRewriteRuleSelector(t *testing.T) {
 		FeedURL:      testConfig.testFeedURL,
 		RewriteRules: `remove("div:has(> p)")`,
 	})
-	if err == nil {
-		t.Fatalf(`Creating a feed with an invalid rewrite rule selector should raise an error`)
+	if !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Creating a feed with an invalid rewrite rule selector should raise an error, got %v`, err)
 	}
 }
 
 func TestUpdateFeedWithInvalidRewriteRuleSelector(t *testing.T) {
+	t.Parallel()
+
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
 		t.Skip(skipIntegrationTestsMessage)
@@ -2014,12 +2019,14 @@ func TestUpdateFeedWithInvalidRewriteRuleSelector(t *testing.T) {
 		RewriteRules: new(`remove("div:has(> p)")`),
 	}
 
-	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); err == nil {
-		t.Fatalf(`Updating a feed with an invalid rewrite rule selector should raise an error`)
+	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Updating a feed with an invalid rewrite rule selector should raise an error, got %v`, err)
 	}
 }
 
 func TestCreateFeedWithInvalidScraperRules(t *testing.T) {
+	t.Parallel()
+
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
 		t.Skip(skipIntegrationTestsMessage)
@@ -2040,12 +2047,14 @@ func TestCreateFeedWithInvalidScraperRules(t *testing.T) {
 		FeedURL:      testConfig.testFeedURL,
 		ScraperRules: `div:has(> p)`,
 	})
-	if err == nil {
-		t.Fatalf(`Creating a feed with invalid scraper rules should raise an error`)
+	if !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Creating a feed with invalid scraper rules should raise an error, got %v`, err)
 	}
 }
 
 func TestUpdateFeedWithInvalidScraperRules(t *testing.T) {
+	t.Parallel()
+
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
 		t.Skip(skipIntegrationTestsMessage)
@@ -2072,8 +2081,8 @@ func TestUpdateFeedWithInvalidScraperRules(t *testing.T) {
 		ScraperRules: new(`div:has(> p)`),
 	}
 
-	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); err == nil {
-		t.Fatalf(`Updating a feed with invalid scraper rules should raise an error`)
+	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Updating a feed with invalid scraper rules should raise an error, got %v`, err)
 	}
 }
 
@@ -2361,8 +2370,8 @@ func TestGetFeedIconWithInexistingFeedID(t *testing.T) {
 
 	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
 	_, err := client.FeedIcon(123456789)
-	if err == nil {
-		t.Fatalf(`Fetching the icon of an inexisting feed should raise an error`)
+	if !errors.Is(err, miniflux.ErrNotFound) {
+		t.Fatalf(`Fetching the icon of an inexisting feed should raise an error, got %v`, err)
 	}
 }
 
@@ -2632,8 +2641,8 @@ func TestDiscoverSubscriptionsWithInvalidURL(t *testing.T) {
 
 	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
 	_, err := client.Discover("invalid_url")
-	if err == nil {
-		t.Fatalf(`Discovering subscriptions with an invalid URL should raise an error`)
+	if !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Discovering subscriptions with an invalid URL should raise an error, got %v`, err)
 	}
 }
 
@@ -2646,8 +2655,8 @@ func TestDiscoverSubscriptionsWithNoSubscription(t *testing.T) {
 	}
 
 	client := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	if _, err := client.Discover(testConfig.testBaseURL); err != miniflux.ErrNotFound {
-		t.Fatalf(`Discovering subscriptions with no subscription should raise a 404 error`)
+	if _, err := client.Discover(testConfig.testBaseURL); !errors.Is(err, miniflux.ErrNotFound) {
+		t.Fatalf(`Discovering subscriptions with no subscription should raise a "not found" error, got %v`, err)
 	}
 }
 
@@ -2852,16 +2861,16 @@ func TestGetAllEntriesEndpointWithFilter(t *testing.T) {
 		t.Fatalf(`Invalid total, got %d`, searchedEntries.Total)
 	}
 
-	if _, err := regularUserClient.Entries(&miniflux.Filter{Status: "invalid"}); err == nil {
-		t.Fatal(`Using invalid status should raise an error`)
+	if _, err := regularUserClient.Entries(&miniflux.Filter{Status: "invalid"}); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Using invalid status should raise an error, got %v`, err)
 	}
 
-	if _, err = regularUserClient.Entries(&miniflux.Filter{Direction: "invalid"}); err == nil {
-		t.Fatal(`Using invalid direction should raise an error`)
+	if _, err = regularUserClient.Entries(&miniflux.Filter{Direction: "invalid"}); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Using invalid direction should raise an error, got %v`, err)
 	}
 
-	if _, err = regularUserClient.Entries(&miniflux.Filter{Order: "invalid"}); err == nil {
-		t.Fatal(`Using invalid order should raise an error`)
+	if _, err = regularUserClient.Entries(&miniflux.Filter{Order: "invalid"}); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Using invalid order should raise an error, got %v`, err)
 	}
 }
 
@@ -3035,8 +3044,8 @@ func TestGetEnclosureEndpoint(t *testing.T) {
 		t.Fatalf(`Invalid enclosureID, got %d while expecting %d`, enclosure.ID, expectedEnclosure.ID)
 	}
 
-	if _, err = regularUserClient.Enclosure(99999); err == nil {
-		t.Fatalf(`Fetching an inexisting enclosure should raise an error`)
+	if _, err = regularUserClient.Enclosure(99999); !errors.Is(err, miniflux.ErrNotFound) {
+		t.Fatalf(`Fetching an inexisting enclosure should raise an error, got %v`, err)
 	}
 }
 
@@ -3446,8 +3455,8 @@ func TestGetEntryIDsEndpoint(t *testing.T) {
 
 	// Invalid starred value should return 400.
 	_, err = regularUserClient.EntryIDs(&miniflux.EntryIDsFilter{Status: "maybe"})
-	if err == nil {
-		t.Fatal(`Expected error for invalid status parameter, got nil`)
+	if !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Expected error for invalid status parameter, got nil, got %v`, err)
 	}
 }
 
