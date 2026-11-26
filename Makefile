@@ -89,8 +89,8 @@ openbsd-amd64:
 
 build: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 linux-riscv64 darwin-amd64 darwin-arm64 freebsd-amd64 freebsd-arm64 openbsd-amd64
 
-run:
-	@ LOG_DATE_TIME=1 LOG_LEVEL=debug RUN_MIGRATIONS=1 CREATE_ADMIN=1 ADMIN_USERNAME=admin ADMIN_PASSWORD=test123 go run .
+run: miniflux
+	@ LOG_DATE_TIME=1 LOG_LEVEL=debug RUN_MIGRATIONS=1 CREATE_ADMIN=1 ADMIN_USERNAME=admin ADMIN_PASSWORD=test123 ./$(APP)
 
 clean:
 	@ rm -f $(APP)-* $(APP) $(APP)*.rpm $(APP)*.deb
@@ -113,41 +113,16 @@ lint:
 	gofmt -d -e .
 	golangci-lint run
 
-integration-test:
+integration-test: miniflux
 	psql -U postgres -c 'drop database if exists miniflux_test;'
 	psql -U postgres -c 'create database miniflux_test;'
 
-	DATABASE_URL=$(DB_URL) \
-	ADMIN_USERNAME=admin \
-	ADMIN_PASSWORD=test123 \
-	CREATE_ADMIN=1 \
-	RUN_MIGRATIONS=1 \
-	LOG_LEVEL=debug \
-	FETCHER_ALLOW_PRIVATE_NETWORKS=1 \
-	INTEGRATION_ALLOW_PRIVATE_NETWORKS=1 \
-	go run . >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
-
-	for attempt in $$(seq 1 120); do \
-		curl -fs -o /dev/null http://127.0.0.1:8080/healthcheck && break; \
-		if [ "$$attempt" = 120 ]; then echo "Miniflux did not start:"; cat /tmp/miniflux.log; exit 1; fi; \
-		sleep 1; \
-	done
+	DATABASE_URL=$(DB_URL) ./$(APP) -migrate
 
 	TEST_DATABASE_URL=$(DB_URL) go test -v -count=1 ./internal/storage
-
-	TEST_DATABASE_URL=$(DB_URL) \
-	TEST_MINIFLUX_BASE_URL=http://127.0.0.1:8080 \
-	TEST_MINIFLUX_ADMIN_USERNAME=admin \
-	TEST_MINIFLUX_ADMIN_PASSWORD=test123 \
-	go test -v -count=1 ./internal/api
+	TEST_DATABASE_URL=$(DB_URL) go test -v -count=1 ./internal/api
 
 clean-integration-test:
-	@ go_run_pid=$$(cat /tmp/miniflux.pid 2>/dev/null); \
-	  if [ -n "$$go_run_pid" ]; then \
-	    pkill -P "$$go_run_pid"; \
-	    for attempt in $$(seq 1 30); do kill -0 "$$go_run_pid" 2>/dev/null || break; sleep 1; done; \
-	  fi
-	@ rm -f /tmp/miniflux.pid /tmp/miniflux.log
 	@ psql -U postgres -c 'drop database if exists miniflux_test;'
 
 docker-image:
