@@ -18,12 +18,7 @@ func TestGetFeedIcon(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	icon, err := regularUserClient.FeedIcon(feedID)
 	if err != nil {
@@ -93,12 +88,7 @@ func TestGetIconByIconIDFromAnotherUser(t *testing.T) {
 	// The owner subscribes to a feed, which fetches and stores its icon.
 	ownerClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := ownerClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, ownerClient)
 
 	ownerIcon, err := ownerClient.FeedIcon(feedID)
 	if err != nil {

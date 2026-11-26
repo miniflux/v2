@@ -160,3 +160,14 @@ func (c *integrationTestConfig) newRegularUser(t *testing.T) (*miniflux.Client, 
 
 	return miniflux.NewClient(c.testBaseURL, user.Username, c.testRegularPassword), user
 }
+
+// listFeedEntries returns the entries of the feed that match the filter.
+func listFeedEntries(t *testing.T, client *miniflux.Client, feedID int64, filter *miniflux.Filter) *miniflux.EntryResultSet {
+	t.Helper()
+
+	result, err := client.FeedEntries(feedID, filter)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return result
+}

@@ -45,18 +45,13 @@ func TestCannotCreateDuplicatedFeed(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	if feedID == 0 {
 		t.Fatalf(`Invalid feedID, got "%v"`, feedID)
 	}
 
-	_, err = regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+	_, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: fixture.feedURL,
 	})
 	if !errors.Is(err, miniflux.ErrBadRequest) {
@@ -236,12 +231,7 @@ func TestUpdateFeedEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	feedUpdateRequest := &miniflux.FeedModificationRequest{
 		FeedURL: new("https://example.org/feed.xml"),
@@ -266,9 +256,7 @@ func TestCannotHaveDuplicateFeedWhenUpdatingFeed(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	if _, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{FeedURL: fixture.feedURL}); err != nil {
-		t.Fatal(err)
-	}
+	fixture.subscribe(t, regularUserClient)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: otherFixture.feedURL,
@@ -294,12 +282,7 @@ func TestUpdateFeedWithInvalidCategory(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	feedUpdateRequest := &miniflux.FeedModificationRequest{
 		CategoryID: new(int64(123456789)),
@@ -337,12 +320,7 @@ func TestUpdateFeedWithInvalidRewriteRules(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	feedUpdateRequest := &miniflux.FeedModificationRequest{
 		RewriteRules: new(`replace("\d+"|"x")`),
@@ -379,12 +357,7 @@ func TestUpdateFeedWithInvalidURLRewriteRules(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	feedUpdateRequest := &miniflux.FeedModificationRequest{
 		UrlRewriteRules: new("["),
@@ -421,12 +394,7 @@ func TestUpdateFeedWithInvalidRewriteRuleSelector(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	feedUpdateRequest := &miniflux.FeedModificationRequest{
 		RewriteRules: new(`remove("div:has(> p)")`),
@@ -463,12 +431,7 @@ func TestUpdateFeedWithInvalidScraperRules(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	feedUpdateRequest := &miniflux.FeedModificationRequest{
 		ScraperRules: new(`div:has(> p)`),
@@ -487,21 +450,13 @@ func TestMarkFeedAsReadEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	if err := regularUserClient.MarkFeedAsRead(feedID); err != nil {
 		t.Fatal(err)
 	}
 
-	results, err := regularUserClient.FeedEntries(feedID, nil)
-	if err != nil {
-		t.Fatalf(`Failed to get updated entries: %v`, err)
-	}
+	results := listFeedEntries(t, regularUserClient, feedID, nil)
 
 	for _, entry := range results.Entries {
 		if entry.Status != miniflux.EntryStatusRead {
@@ -518,12 +473,7 @@ func TestFetchCountersEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	counters, err := regularUserClient.FetchCounters()
 	if err != nil {
@@ -547,12 +497,7 @@ func TestDeleteFeedEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	if err := regularUserClient.DeleteFeed(feedID); err != nil {
 		t.Fatal(err)
@@ -579,12 +524,7 @@ func TestRefreshFeedEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	if err := regularUserClient.RefreshFeed(feedID); err != nil {
 		t.Fatal(err)
@@ -603,12 +543,7 @@ func TestGetFeedEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	feed, err := regularUserClient.Feed(feedID)
 	if err != nil {
@@ -640,12 +575,7 @@ func TestGetFeedsEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
 	feeds, err := regularUserClient.Feeds()
 	if err != nil {

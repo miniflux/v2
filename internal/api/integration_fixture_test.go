@@ -14,6 +14,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	miniflux "miniflux.app/v2/client"
 )
 
 const (
@@ -90,6 +92,17 @@ func newFeedFixture(t *testing.T) *feedFixture {
 	})
 
 	return fixture
+}
+
+// subscribe creates a feed for the fixture with the given client and returns its ID.
+func (f *feedFixture) subscribe(t *testing.T, client *miniflux.Client) int64 {
+	t.Helper()
+
+	feedID, err := client.CreateFeed(&miniflux.FeedCreationRequest{FeedURL: f.feedURL})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return feedID
 }
 
 // feedDocument returns an RSS feed with fixtureEntryCount entries published a day apart.

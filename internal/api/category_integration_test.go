@@ -378,10 +378,7 @@ func TestMarkCategoryAsReadEndpoint(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	results, err := regularUserClient.FeedEntries(feedID, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	results := listFeedEntries(t, regularUserClient, feedID, nil)
 
 	for _, entry := range results.Entries {
 		if entry.Status != miniflux.EntryStatusRead {

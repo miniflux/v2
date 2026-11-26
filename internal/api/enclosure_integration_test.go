@@ -18,18 +18,9 @@ func TestUpdateEnclosureEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
+	feedID := fixture.subscribe(t, regularUserClient)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	result, err := regularUserClient.FeedEntries(feedID, nil)
-	if err != nil {
-		t.Fatalf(`Failed to get entries: %v`, err)
-	}
+	result := listFeedEntries(t, regularUserClient, feedID, nil)
 
 	var enclosure *miniflux.Enclosure
 	for _, entry := range result.Entries {
@@ -43,7 +34,7 @@ func TestUpdateEnclosureEndpoint(t *testing.T) {
 		t.Fatal(`The second fixture entry should have an enclosure`)
 	}
 
-	err = regularUserClient.UpdateEnclosure(enclosure.ID, &miniflux.EnclosureUpdateRequest{
+	err := regularUserClient.UpdateEnclosure(enclosure.ID, &miniflux.EnclosureUpdateRequest{
 		MediaProgression: 20,
 	})
 	if err != nil {
@@ -68,17 +59,9 @@ func TestGetEnclosureEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL: fixture.feedURL,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	feedID := fixture.subscribe(t, regularUserClient)
 
-	result, err := regularUserClient.FeedEntries(feedID, nil)
-	if err != nil {
-		t.Fatalf(`Failed to get entries: %v`, err)
-	}
+	result := listFeedEntries(t, regularUserClient, feedID, nil)
 
 	var expectedEnclosure *miniflux.Enclosure
 	for _, entry := range result.Entries {
