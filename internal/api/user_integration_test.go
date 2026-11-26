@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 func TestGetMeEndpoint(t *testing.T) {
@@ -506,10 +507,10 @@ func TestMarkUserAsReadEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	if err := regularUserClient.MarkAllAsRead(regularTestUser.ID); err != nil {
 		t.Fatal(err)

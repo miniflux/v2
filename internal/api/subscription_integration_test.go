@@ -8,16 +8,17 @@ import (
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 func TestDiscoverSubscriptionsEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	client := testConfig.newAdminClient()
-	subscriptions, err := client.Discover(fixture.websiteURL)
+	subscriptions, err := client.Discover(fixture.WebsiteURL)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -26,11 +27,11 @@ func TestDiscoverSubscriptionsEndpoint(t *testing.T) {
 		t.Fatalf(`Invalid number of subscriptions, got %d`, len(subscriptions))
 	}
 
-	if subscriptions[0].Title != fixtureSubscriptionTitle {
+	if subscriptions[0].Title != servertest.SubscriptionTitle {
 		t.Fatalf(`Invalid title, got %q`, subscriptions[0].Title)
 	}
 
-	if subscriptions[0].URL != fixture.feedURL {
+	if subscriptions[0].URL != fixture.FeedURL {
 		t.Fatalf(`Invalid URL, got %q`, subscriptions[0].URL)
 	}
 }

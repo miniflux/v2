@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 func TestCreateCategoryEndpoint(t *testing.T) {
@@ -358,7 +359,7 @@ func TestMarkCategoryAsReadEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 	category, err := regularUserClient.CreateCategory("My category")
@@ -367,7 +368,7 @@ func TestMarkCategoryAsReadEndpoint(t *testing.T) {
 	}
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL:    fixture.feedURL,
+		FeedURL:    fixture.FeedURL,
 		CategoryID: category.ID,
 	})
 	if err != nil {
@@ -391,11 +392,11 @@ func TestRefreshCategoryEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feed, err := regularUserClient.Feed(fixture.subscribe(t, regularUserClient))
+	feed, err := regularUserClient.Feed(fixture.Subscribe(t, regularUserClient))
 	if err != nil {
 		t.Fatal(err)
 	}

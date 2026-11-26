@@ -8,17 +8,18 @@ import (
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 func TestUpdateEnclosureEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	result := listFeedEntries(t, regularUserClient, feedID, nil)
 
@@ -55,11 +56,11 @@ func TestGetEnclosureEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	result := listFeedEntries(t, regularUserClient, feedID, nil)
 
