@@ -17,10 +17,7 @@ import (
 func TestGetEntriesStablePaginationWithIdenticalPublishedDates(t *testing.T) {
 	t.Parallel()
 
-	testConfig := newIntegrationTestConfig()
-	if !testConfig.isConfigured() {
-		t.Skip(skipIntegrationTestsMessage)
-	}
+	testConfig := requireIntegrationTestConfig(t)
 
 	const (
 		entryCount = 120
@@ -39,14 +36,7 @@ func TestGetEntriesStablePaginationWithIdenticalPublishedDates(t *testing.T) {
 	}))
 	defer server.Close()
 
-	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
-	user, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer adminClient.DeleteUser(user.ID)
-
-	client := miniflux.NewClient(testConfig.testBaseURL, user.Username, testConfig.testRegularPassword)
+	client, _ := testConfig.newRegularUser(t)
 	if _, err := client.CreateFeed(&miniflux.FeedCreationRequest{FeedURL: server.URL}); err != nil {
 		t.Fatal(err)
 	}
