@@ -102,3 +102,18 @@ func TestParseItemID(t *testing.T) {
 		t.Fatalf("expected error, got nil")
 	}
 }
+
+func TestParseItemIDRejectsNonPositiveIDs(t *testing.T) {
+	for _, itemID := range []string{
+		"0",
+		"-1",
+		"0000000000000000",
+		"tag:google.com,2005:reader/item/0000000000000000",
+	} {
+		t.Run(itemID, func(t *testing.T) {
+			if _, err := parseItemID(itemID); err == nil {
+				t.Fatalf("expected error for non-positive item ID %q", itemID)
+			}
+		})
+	}
+}
