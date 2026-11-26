@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"math/rand/v2"
+	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
@@ -159,6 +160,26 @@ func (c *integrationTestConfig) newRegularUser(t *testing.T) (*miniflux.Client, 
 	c.deleteUserOnCleanup(t, user.ID)
 
 	return miniflux.NewClient(c.testBaseURL, user.Username, c.testRegularPassword), user
+}
+
+// requestStatus sends an API request authenticated as the regular user and returns the status code.
+// It covers routes that the client does not use, such as aliases and alternative methods.
+func (c *integrationTestConfig) requestStatus(t *testing.T, user *miniflux.User, method, path string) int {
+	t.Helper()
+
+	request, err := http.NewRequest(method, c.testBaseURL+path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	request.SetBasicAuth(user.Username, c.testRegularPassword)
+
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		t.Fatal(err)
+	}
+	response.Body.Close()
+
+	return response.StatusCode
 }
 
 // listFeedEntries returns the entries of the feed that match the filter.

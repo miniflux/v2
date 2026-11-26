@@ -173,6 +173,16 @@ func (h *handler) refreshCategoryHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	exists, err := h.store.CategoryIDExists(userID, categoryID)
+	if err != nil {
+		response.JSONServerError(w, r, err)
+		return
+	}
+	if !exists {
+		response.JSONNotFound(w, r)
+		return
+	}
+
 	jobs, err := h.store.NewBatchBuilder().
 		WithErrorLimit(config.Opts.PollingParsingErrorLimit()).
 		WithoutDisabledFeeds().

@@ -386,3 +386,39 @@ func TestMarkCategoryAsReadEndpoint(t *testing.T) {
 		}
 	}
 }
+
+func TestRefreshCategoryEndpoint(t *testing.T) {
+	t.Parallel()
+
+	testConfig := requireIntegrationTestConfig(t)
+	fixture := newFeedFixture(t)
+
+	regularUserClient, _ := testConfig.newRegularUser(t)
+
+	feed, err := regularUserClient.Feed(fixture.subscribe(t, regularUserClient))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := regularUserClient.RefreshCategory(feed.Category.ID); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := regularUserClient.RefreshCategory(0); !errors.Is(err, miniflux.ErrBadRequest) {
+		t.Fatalf(`Refreshing a category with an invalid ID should raise a bad request error, got %v`, err)
+	}
+
+	if err := regularUserClient.RefreshCategory(123456789); !errors.Is(err, miniflux.ErrNotFound) {
+		t.Fatalf(`Refreshing an inexisting category should raise a "not found" error, got %v`, err)
+	}
+
+	otherUserClient, _ := testConfig.newRegularUser(t)
+	otherCategory, err := otherUserClient.CreateCategory("Other category")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := regularUserClient.RefreshCategory(otherCategory.ID); !errors.Is(err, miniflux.ErrNotFound) {
+		t.Fatalf(`Refreshing a category of another user should raise a "not found" error, got %v`, err)
+	}
+}

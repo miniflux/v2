@@ -5,9 +5,12 @@ package api_test
 
 import (
 	"errors"
+	"fmt"
 	"math"
+	"net/http"
 	"strings"
 	"testing"
+	"time"
 
 	miniflux "miniflux.app/v2/client"
 	"miniflux.app/v2/internal/model"
@@ -621,7 +624,7 @@ func TestToggleStarredEndpoint(t *testing.T) {
 	testConfig := requireIntegrationTestConfig(t)
 	fixture := newFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
 
 	feedID := fixture.subscribe(t, regularUserClient)
 
@@ -638,6 +641,21 @@ func TestToggleStarredEndpoint(t *testing.T) {
 
 	if !entry.Starred {
 		t.Fatalf(`The entry should be starred`)
+	}
+
+	// The bookmark route is an alias of the star route.
+	path := fmt.Sprintf("/v1/entries/%d/bookmark", entry.ID)
+	if status := testConfig.requestStatus(t, regularTestUser, http.MethodPut, path); status != http.StatusNoContent {
+		t.Fatalf(`Toggling the bookmark should return status %d, got %d`, http.StatusNoContent, status)
+	}
+
+	entry, err = regularUserClient.Entry(entry.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.Starred {
+		t.Fatalf(`The entry should no longer be starred`)
 	}
 }
 
@@ -774,11 +792,31 @@ func TestFlushHistoryEndpoint(t *testing.T) {
 	testConfig := requireIntegrationTestConfig(t)
 	fixture := newFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
 
 	feedID := fixture.subscribe(t, regularUserClient)
 
 	result := listFeedEntries(t, regularUserClient, feedID, &miniflux.Filter{Limit: 3})
+
+	// The API replies before the history is flushed in the background.
+	waitForNoReadEntries := func() {
+		t.Helper()
+
+		deadline := time.Now().Add(5 * time.Second)
+		for {
+			readEntries, err := regularUserClient.Entries(&miniflux.Filter{Status: miniflux.EntryStatusRead})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if readEntries.Total == 0 {
+				return
+			}
+			if time.Now().After(deadline) {
+				t.Fatalf(`Expected no read entries after flushing the history, got %d`, readEntries.Total)
+			}
+			time.Sleep(50 * time.Millisecond)
+		}
+	}
 
 	if err := regularUserClient.UpdateEntries([]int64{result.Entries[0].ID, result.Entries[1].ID}, miniflux.EntryStatusRead); err != nil {
 		t.Fatal(err)
@@ -787,15 +825,17 @@ func TestFlushHistoryEndpoint(t *testing.T) {
 	if err := regularUserClient.FlushHistory(); err != nil {
 		t.Fatal(err)
 	}
+	waitForNoReadEntries()
 
-	readEntries, err := regularUserClient.Entries(&miniflux.Filter{Status: miniflux.EntryStatusRead})
-	if err != nil {
+	// The endpoint also accepts the DELETE method, which the client does not use.
+	if err := regularUserClient.UpdateEntries([]int64{result.Entries[2].ID}, miniflux.EntryStatusRead); err != nil {
 		t.Fatal(err)
 	}
 
-	if readEntries.Total != 0 {
-		t.Fatalf(`Invalid total, got %d`, readEntries.Total)
+	if status := testConfig.requestStatus(t, regularTestUser, http.MethodDelete, "/v1/flush-history"); status != http.StatusAccepted {
+		t.Fatalf(`Flushing the history with DELETE should return status %d, got %d`, http.StatusAccepted, status)
 	}
+	waitForNoReadEntries()
 }
 
 func TestImportFeedEntryEndpoint(t *testing.T) {
