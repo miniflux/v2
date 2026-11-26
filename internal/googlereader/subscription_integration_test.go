@@ -143,6 +143,21 @@ func TestQuickAddRejectsInvalidURLs(t *testing.T) {
 	}
 }
 
+func TestQuickAddRejectsExistingFeed(t *testing.T) {
+	t.Parallel()
+
+	user := newTestUser(t)
+	fixture := servertest.NewFeedFixture(t)
+	fixture.Subscribe(t, user.rest)
+
+	status, body := user.reader.post(t, "/reader/api/0/subscription/quickadd", url.Values{"quickadd": {fixture.WebsiteURL}})
+	requireStatus(t, status, body, http.StatusBadRequest)
+
+	if feeds := userFeeds(t, user); len(feeds) != 1 {
+		t.Errorf(`Expected 1 feed, got %d`, len(feeds))
+	}
+}
+
 func TestEditSubscriptionSubscribe(t *testing.T) {
 	t.Parallel()
 
@@ -252,8 +267,12 @@ func TestEditSubscriptionRejectsInvalidRequests(t *testing.T) {
 	t.Parallel()
 
 	user := newTestUser(t)
-	feedID := servertest.NewFeedFixture(t).Subscribe(t, user.rest)
+	fixture := servertest.NewFeedFixture(t)
+	feedID := fixture.Subscribe(t, user.rest)
 	unknownFeed := feedStream(feedID + 1_000_000)
+
+	// A label whose title is the feed ID must not be taken for the feed.
+	numericLabel := labelStream(strconv.FormatInt(feedID, 10))
 
 	scenarios := []struct {
 		name string
@@ -264,9 +283,16 @@ func TestEditSubscriptionRejectsInvalidRequests(t *testing.T) {
 		{"missing stream", url.Values{"ac": {"edit"}, "t": {"Renamed"}}},
 		{"invalid stream", url.Values{"ac": {"edit"}, "s": {"invalid"}, "t": {"Renamed"}}},
 		{"invalid label", url.Values{"ac": {"edit"}, "s": {feedStream(feedID)}, "a": {"invalid"}}},
+		{"subscribe to an existing feed", url.Values{"ac": {"subscribe"}, "s": {"feed/" + fixture.FeedURL}}},
+		{"subscribe to an invalid URL", url.Values{"ac": {"subscribe"}, "s": {"feed/invalid"}}},
 		{"move to a state instead of a label", url.Values{"ac": {"edit"}, "s": {feedStream(feedID)}, "a": {starredStream}}},
 		{"rename an unknown feed", url.Values{"ac": {"edit"}, "s": {unknownFeed}, "t": {"Renamed"}}},
+		{"rename an invalid feed ID", url.Values{"ac": {"edit"}, "s": {"feed/invalid"}, "t": {"Renamed"}}},
+		{"rename a label", url.Values{"ac": {"edit"}, "s": {numericLabel}, "t": {"Renamed"}}},
 		{"move an unknown feed", url.Values{"ac": {"edit"}, "s": {unknownFeed}, "a": {labelStream("Tech")}}},
+		{"move an invalid feed ID", url.Values{"ac": {"edit"}, "s": {"feed/invalid"}, "a": {labelStream("Tech")}}},
+		{"unsubscribe from an invalid feed ID", url.Values{"ac": {"unsubscribe"}, "s": {feedStream(feedID), "feed/invalid"}}},
+		{"unsubscribe from a label", url.Values{"ac": {"unsubscribe"}, "s": {numericLabel}}},
 	}
 
 	for _, scenario := range scenarios {
@@ -278,7 +304,7 @@ func TestEditSubscriptionRejectsInvalidRequests(t *testing.T) {
 
 	feed, err := user.rest.Feed(feedID)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf(`Expected the feed to remain: %v`, err)
 	}
 	if feed.Title != servertest.FeedTitle || feed.Category.Title != "All" {
 		t.Errorf(`Expected the feed to be unchanged, got %q in %q`, feed.Title, feed.Category.Title)
