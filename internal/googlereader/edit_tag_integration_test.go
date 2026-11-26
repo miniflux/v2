@@ -85,28 +85,26 @@ func TestEditTagRejectsInvalidRequests(t *testing.T) {
 	itemID := strconv.FormatInt(entries[0].ID, 10)
 
 	scenarios := []struct {
-		name           string
-		form           url.Values
-		expectedStatus int
+		name string
+		form url.Values
 	}{
-		{"missing item ID", url.Values{"a": {readStream}}, http.StatusBadRequest},
-		{"invalid item ID", url.Values{"i": {"invalid"}, "a": {readStream}}, http.StatusBadRequest},
-
-		// The handler reports invalid tags as server errors.
-		{"no tags", url.Values{"i": {itemID}}, http.StatusInternalServerError},
-		{"invalid tag", url.Values{"i": {itemID}, "a": {"invalid"}}, http.StatusInternalServerError},
-		{"label tag", url.Values{"i": {itemID}, "a": {labelStream("All")}}, http.StatusInternalServerError},
-		{"add and remove read", url.Values{"i": {itemID}, "a": {readStream}, "r": {readStream}}, http.StatusInternalServerError},
-		{"add read then kept-unread", url.Values{"i": {itemID}, "a": {readStream, keptUnreadStream}}, http.StatusInternalServerError},
-		{"add kept-unread then read", url.Values{"i": {itemID}, "a": {keptUnreadStream, readStream}}, http.StatusInternalServerError},
-		{"add and remove kept-unread", url.Values{"i": {itemID}, "a": {keptUnreadStream}, "r": {keptUnreadStream}}, http.StatusInternalServerError},
-		{"add and remove starred", url.Values{"i": {itemID}, "a": {starredStream}, "r": {starredStream}}, http.StatusInternalServerError},
+		{"missing item ID", url.Values{"a": {readStream}}},
+		{"invalid item ID", url.Values{"i": {"invalid"}, "a": {readStream}}},
+		{"no tags", url.Values{"i": {itemID}}},
+		{"invalid tag", url.Values{"i": {itemID}, "a": {"invalid"}}},
+		{"invalid removed tag", url.Values{"i": {itemID}, "r": {"invalid"}}},
+		{"label tag", url.Values{"i": {itemID}, "a": {labelStream("All")}}},
+		{"add and remove read", url.Values{"i": {itemID}, "a": {readStream}, "r": {readStream}}},
+		{"add read then kept-unread", url.Values{"i": {itemID}, "a": {readStream, keptUnreadStream}}},
+		{"add kept-unread then read", url.Values{"i": {itemID}, "a": {keptUnreadStream, readStream}}},
+		{"add and remove kept-unread", url.Values{"i": {itemID}, "a": {keptUnreadStream}, "r": {keptUnreadStream}}},
+		{"add and remove starred", url.Values{"i": {itemID}, "a": {starredStream}, "r": {starredStream}}},
 	}
 
 	for _, scenario := range scenarios {
 		t.Run(scenario.name, func(t *testing.T) {
 			status, body := user.reader.post(t, "/reader/api/0/edit-tag", scenario.form)
-			requireStatus(t, status, body, scenario.expectedStatus)
+			requireStatus(t, status, body, http.StatusBadRequest)
 		})
 	}
 

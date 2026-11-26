@@ -202,22 +202,22 @@ func (h *greaderHandler) editTagHandler(w http.ResponseWriter, r *http.Request) 
 
 	addTags, err := getStreams(r.PostForm[paramTagsAdd], userID)
 	if err != nil {
-		response.JSONServerError(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 	removeTags, err := getStreams(r.PostForm[paramTagsRemove], userID)
 	if err != nil {
-		response.JSONServerError(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 	if len(addTags) == 0 && len(removeTags) == 0 {
 		err = errors.New("googlreader: add or/and remove tags should be supplied")
-		response.JSONServerError(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 	tags, err := checkAndSimplifyTags(addTags, removeTags)
 	if err != nil {
-		response.JSONServerError(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
@@ -640,7 +640,7 @@ func (h *greaderHandler) streamItemContentsHandler(w http.ResponseWriter, r *htt
 
 	requestModifiers, err := parseStreamFilterFromRequest(r)
 	if err != nil {
-		response.JSONServerError(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
@@ -985,7 +985,7 @@ func (h *greaderHandler) streamItemIDsHandler(w http.ResponseWriter, r *http.Req
 
 	rm, err := parseStreamFilterFromRequest(r)
 	if err != nil {
-		response.JSONServerError(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
@@ -997,7 +997,7 @@ func (h *greaderHandler) streamItemIDsHandler(w http.ResponseWriter, r *http.Req
 	)
 
 	if len(rm.Streams) != 1 {
-		response.JSONServerError(w, r, errors.New("googlereader: only one stream type expected"))
+		response.JSONBadRequest(w, r, errors.New("googlereader: only one stream type expected"))
 		return
 	}
 	switch rm.Streams[0].Type {
@@ -1016,7 +1016,7 @@ func (h *greaderHandler) streamItemIDsHandler(w http.ResponseWriter, r *http.Req
 			slog.String("user_agent", r.UserAgent()),
 			slog.Any("stream_type", rm.Streams[0].Type),
 		)
-		response.JSONServerError(w, r, fmt.Errorf("googlereader: unknown stream type %s", rm.Streams[0].Type))
+		response.JSONBadRequest(w, r, fmt.Errorf("googlereader: unknown stream type %s", rm.Streams[0].Type))
 	}
 }
 
@@ -1137,7 +1137,7 @@ func getItemRefsAndContinuation(builder storage.EntryQueryBuilder, rm requestMod
 func (h *greaderHandler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request, rm requestModifiers) {
 	feedID, err := strconv.ParseInt(rm.Streams[0].ID, 10, 64)
 	if err != nil {
-		response.JSONServerError(w, r, err)
+		response.JSONBadRequest(w, r, err)
 		return
 	}
 
