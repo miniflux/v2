@@ -4,6 +4,7 @@
 package googlereader // import "miniflux.app/v2/internal/googlereader"
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -117,6 +118,20 @@ type contentItemOrigin struct {
 	StreamID string `json:"streamId"`
 	Title    string `json:"title"`
 	HTMLUrl  string `json:"htmlUrl"`
+}
+
+// sendErrorResponse responds with 400 when the request caused the error, and with 500 otherwise.
+func sendErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
+	switch {
+	case errors.Is(err, errEmptyFeedTitle),
+		errors.Is(err, errFeedNotFound),
+		errors.Is(err, errCategoryNotFound),
+		errors.Is(err, errInvalidFeedStream),
+		errors.Is(err, errInvalidSubscription):
+		response.JSONBadRequest(w, r, err)
+	default:
+		response.JSONServerError(w, r, err)
+	}
 }
 
 func sendUnauthorizedResponse(w http.ResponseWriter, r *http.Request) {
