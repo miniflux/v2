@@ -36,21 +36,27 @@ func parseItemID(itemIDValue string) (int64, error) {
 		if n != 1 {
 			return 0, fmt.Errorf("failed to parse hexadecimal item ID %s: expected 1 value, got %d", itemIDValue, n)
 		}
-		if itemID == 0 {
-			return 0, fmt.Errorf("failed to parse hexadecimal item ID %s: item ID is zero", itemIDValue)
+		if itemID <= 0 {
+			return 0, fmt.Errorf("failed to parse hexadecimal item ID %s: item ID must be positive", itemIDValue)
 		}
 		return itemID, nil
 	}
 
 	if len(itemIDValue) == 16 {
 		if n, err := fmt.Sscanf(itemIDValue, "%016x", &itemID); err == nil && n == 1 {
-			return itemID, nil
+			if itemID > 0 {
+				return itemID, nil
+			}
+			return 0, fmt.Errorf("failed to parse hexadecimal item ID %s: item ID must be positive", itemIDValue)
 		}
 	}
 
 	itemID, err := strconv.ParseInt(itemIDValue, 10, 64)
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse decimal item ID %s: %w", itemIDValue, err)
+	}
+	if itemID <= 0 {
+		return 0, fmt.Errorf("failed to parse decimal item ID %s: item ID must be positive", itemIDValue)
 	}
 
 	return itemID, nil
