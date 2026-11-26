@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package api_test
+package servertest // import "miniflux.app/v2/internal/http/server/servertest"
 
 import (
 	"bytes"
@@ -19,27 +19,26 @@ import (
 )
 
 const (
-	fixtureFeedTitle         = "Integration Test Feed"
-	fixtureSubscriptionTitle = "Integration Test Subscription"
-	fixtureEntryCount        = 3
+	FeedTitle         = "Integration Test Feed"
+	SubscriptionTitle = "Integration Test Subscription"
+	EntryCount        = 3
 
-	// fixtureSearchTerm appears only in the content of the second entry.
-	fixtureSearchTerm = "zanzibar"
+	// SearchTerm appears only in the content of the second entry.
+	SearchTerm = "zanzibar"
 
-	// fixtureArticleText appears in every article page, but not in the feed.
-	fixtureArticleText = "This paragraph only exists on the original article page."
+	// ArticleText appears in every article page, but not in the feed.
+	ArticleText = "This paragraph only exists on the original article page."
 )
 
-// feedFixture is a local website with a feed, an icon and article pages.
-// The Miniflux server under test fetches it instead of a remote site,
-// which requires FETCHER_ALLOW_PRIVATE_NETWORKS=1.
-type feedFixture struct {
-	websiteURL string
-	feedURL    string
+// FeedFixture is a local website with a feed, an icon and article pages.
+// The server under test fetches it instead of a remote site.
+type FeedFixture struct {
+	WebsiteURL string
+	FeedURL    string
 }
 
-// newFeedFixture starts a fixture website that is shut down when the test ends.
-func newFeedFixture(t *testing.T) *feedFixture {
+// NewFeedFixture starts a fixture website that is shut down when the test ends.
+func NewFeedFixture(t testing.TB) *FeedFixture {
 	t.Helper()
 
 	icon := newFixtureIcon(t)
@@ -47,9 +46,9 @@ func newFeedFixture(t *testing.T) *feedFixture {
 	server := httptest.NewServer(mux)
 	t.Cleanup(server.Close)
 
-	fixture := &feedFixture{
-		websiteURL: server.URL + "/",
-		feedURL:    server.URL + "/feed.xml",
+	fixture := &FeedFixture{
+		WebsiteURL: server.URL + "/",
+		FeedURL:    server.URL + "/feed.xml",
 	}
 
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +61,7 @@ func newFeedFixture(t *testing.T) *feedFixture {
 	<link rel="icon" type="image/png" href="/icon.png">
 </head>
 <body><h1>Integration Test Website</h1></body>
-</html>`, fixtureSubscriptionTitle)
+</html>`, SubscriptionTitle)
 	})
 
 	mux.HandleFunc("GET /feed.xml", func(w http.ResponseWriter, r *http.Request) {
@@ -88,40 +87,40 @@ func newFeedFixture(t *testing.T) *feedFixture {
 		<p>A second paragraph gives the article some more text, so that it does not look like a navigation block.</p>
 	</article>
 </body>
-</html>`, id, fixtureArticleText)
+</html>`, id, ArticleText)
 	})
 
 	return fixture
 }
 
-// subscribe creates a feed for the fixture with the given client and returns its ID.
-func (f *feedFixture) subscribe(t *testing.T, client *miniflux.Client) int64 {
+// Subscribe creates a feed for the fixture with the given client and returns its ID.
+func (f *FeedFixture) Subscribe(t testing.TB, client *miniflux.Client) int64 {
 	t.Helper()
 
-	feedID, err := client.CreateFeed(&miniflux.FeedCreationRequest{FeedURL: f.feedURL})
+	feedID, err := client.CreateFeed(&miniflux.FeedCreationRequest{FeedURL: f.FeedURL})
 	if err != nil {
 		t.Fatal(err)
 	}
 	return feedID
 }
 
-// feedDocument returns an RSS feed with fixtureEntryCount entries published a day apart.
-// The second entry mentions fixtureSearchTerm and has an audio enclosure.
-func (f *feedFixture) feedDocument() string {
+// feedDocument returns an RSS feed with EntryCount entries published a day apart.
+// The second entry mentions SearchTerm and has an audio enclosure.
+func (f *FeedFixture) feedDocument() string {
 	var feed strings.Builder
 	fmt.Fprintf(&feed, `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
 <channel>
 	<title>%s</title>
 	<link>%s</link>
-	<description>Feed served by the API integration tests</description>`, fixtureFeedTitle, f.websiteURL)
+	<description>Feed served by the integration tests</description>`, FeedTitle, f.WebsiteURL)
 
-	for i := 1; i <= fixtureEntryCount; i++ {
-		content := fmt.Sprintf("Content of entry %d.", i)
+	for index := 1; index <= EntryCount; index++ {
+		content := fmt.Sprintf("Content of entry %d.", index)
 		enclosure := ""
-		if i == 2 {
-			content += " It mentions " + fixtureSearchTerm + "."
-			enclosure = fmt.Sprintf(`<enclosure url="%smedia/episode-%d.mp3" length="1024" type="audio/mpeg"/>`, f.websiteURL, i)
+		if index == 2 {
+			content += " It mentions " + SearchTerm + "."
+			enclosure = fmt.Sprintf(`<enclosure url="%smedia/episode-%d.mp3" length="1024" type="audio/mpeg"/>`, f.WebsiteURL, index)
 		}
 
 		fmt.Fprintf(&feed, `
@@ -132,20 +131,20 @@ func (f *feedFixture) feedDocument() string {
 		<pubDate>%[3]s</pubDate>
 		<description>%[4]s</description>
 		%[5]s
-	</item>`, i, f.websiteURL, time.Date(2025, time.January, i, 10, 0, 0, 0, time.UTC).Format(time.RFC1123Z), content, enclosure)
+	</item>`, index, f.WebsiteURL, time.Date(2025, time.January, index, 10, 0, 0, 0, time.UTC).Format(time.RFC1123Z), content, enclosure)
 	}
 
 	feed.WriteString("\n</channel>\n</rss>\n")
 	return feed.String()
 }
 
-func newFixtureIcon(t *testing.T) []byte {
+func newFixtureIcon(t testing.TB) []byte {
 	t.Helper()
 
 	img := image.NewRGBA(image.Rect(0, 0, 16, 16))
-	for x := range 16 {
-		for y := range 16 {
-			img.Set(x, y, color.RGBA{R: 0x33, G: 0x66, B: 0x99, A: 0xff})
+	for column := range 16 {
+		for row := range 16 {
+			img.Set(column, row, color.RGBA{R: 0x33, G: 0x66, B: 0x99, A: 0xff})
 		}
 	}
 

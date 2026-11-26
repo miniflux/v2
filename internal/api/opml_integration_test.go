@@ -8,17 +8,19 @@ import (
 	"io"
 	"strings"
 	"testing"
+
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 func TestExportEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	fixture.subscribe(t, regularUserClient)
+	fixture.Subscribe(t, regularUserClient)
 
 	exportedData, err := regularUserClient.Export()
 	if err != nil {
@@ -38,7 +40,7 @@ func TestImportEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
@@ -46,7 +48,7 @@ func TestImportEndpoint(t *testing.T) {
     <opml version="2.0">
         <body>
             <outline text="Test Category">
-				<outline title="Test" text="Test" xmlUrl="` + fixture.feedURL + `" htmlUrl="` + fixture.websiteURL + `"></outline>
+				<outline title="Test" text="Test" xmlUrl="` + fixture.FeedURL + `" htmlUrl="` + fixture.WebsiteURL + `"></outline>
 			</outline>
 		</body>
 	</opml>`

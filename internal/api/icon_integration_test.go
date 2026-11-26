@@ -8,17 +8,18 @@ import (
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 func TestGetFeedIcon(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	icon, err := regularUserClient.FeedIcon(feedID)
 	if err != nil {
@@ -83,12 +84,12 @@ func TestGetIconByIconIDFromAnotherUser(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	// The owner subscribes to a feed, which fetches and stores its icon.
 	ownerClient, _ := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, ownerClient)
+	feedID := fixture.Subscribe(t, ownerClient)
 
 	ownerIcon, err := ownerClient.FeedIcon(feedID)
 	if err != nil {

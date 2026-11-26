@@ -13,6 +13,7 @@ import (
 	"time"
 
 	miniflux "miniflux.app/v2/client"
+	"miniflux.app/v2/internal/http/server/servertest"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -20,11 +21,11 @@ func TestGetAllFeedEntriesEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	results := listFeedEntries(t, regularUserClient, feedID, nil)
 
@@ -40,7 +41,7 @@ func TestGetAllFeedEntriesEndpoint(t *testing.T) {
 		t.Fatalf(`Invalid feedID, got %d`, results.Entries[0].FeedID)
 	}
 
-	if results.Entries[0].Feed.FeedURL != fixture.feedURL {
+	if results.Entries[0].Feed.FeedURL != fixture.FeedURL {
 		t.Fatalf(`Invalid feed URL, got %q`, results.Entries[0].Feed.FeedURL)
 	}
 
@@ -53,7 +54,7 @@ func TestGetAllCategoryEntriesEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
@@ -63,7 +64,7 @@ func TestGetAllCategoryEntriesEndpoint(t *testing.T) {
 	}
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL:    fixture.feedURL,
+		FeedURL:    fixture.FeedURL,
 		CategoryID: category.ID,
 	})
 	if err != nil {
@@ -87,7 +88,7 @@ func TestGetAllCategoryEntriesEndpoint(t *testing.T) {
 		t.Fatalf(`Invalid feedID, got %d`, results.Entries[0].FeedID)
 	}
 
-	if results.Entries[0].Feed.FeedURL != fixture.feedURL {
+	if results.Entries[0].Feed.FeedURL != fixture.FeedURL {
 		t.Fatalf(`Invalid feed URL, got %q`, results.Entries[0].Feed.FeedURL)
 	}
 
@@ -100,30 +101,30 @@ func TestGetAllEntriesEndpointWithFilter(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	feedEntries, err := regularUserClient.Entries(&miniflux.Filter{FeedID: feedID})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if len(feedEntries.Entries) != fixtureEntryCount {
-		t.Fatalf(`Invalid number of entries, got %d instead of %d`, len(feedEntries.Entries), fixtureEntryCount)
+	if len(feedEntries.Entries) != servertest.EntryCount {
+		t.Fatalf(`Invalid number of entries, got %d instead of %d`, len(feedEntries.Entries), servertest.EntryCount)
 	}
 
-	if feedEntries.Total != fixtureEntryCount {
-		t.Fatalf(`Invalid total, got %d instead of %d`, feedEntries.Total, fixtureEntryCount)
+	if feedEntries.Total != servertest.EntryCount {
+		t.Fatalf(`Invalid total, got %d instead of %d`, feedEntries.Total, servertest.EntryCount)
 	}
 
 	if feedEntries.Entries[0].FeedID != feedID {
 		t.Fatalf(`Invalid feedID, got %d`, feedEntries.Entries[0].FeedID)
 	}
 
-	if feedEntries.Entries[0].Feed.FeedURL != fixture.feedURL {
+	if feedEntries.Entries[0].Feed.FeedURL != fixture.FeedURL {
 		t.Fatalf(`Invalid feed URL, got %q`, feedEntries.Entries[0].Feed.FeedURL)
 	}
 
@@ -154,15 +155,15 @@ func TestGetAllEntriesEndpointWithFilter(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(recentEntries.Entries) != fixtureEntryCount {
-		t.Fatalf(`Invalid number of entries, got %d instead of %d`, len(recentEntries.Entries), fixtureEntryCount)
+	if len(recentEntries.Entries) != servertest.EntryCount {
+		t.Fatalf(`Invalid number of entries, got %d instead of %d`, len(recentEntries.Entries), servertest.EntryCount)
 	}
 
 	if recentEntries.Entries[0].Title != "Entry 3" {
 		t.Fatalf(`Invalid order, got %q instead of the most recent entry`, recentEntries.Entries[0].Title)
 	}
 
-	searchedEntries, err := regularUserClient.Entries(&miniflux.Filter{Search: fixtureSearchTerm})
+	searchedEntries, err := regularUserClient.Entries(&miniflux.Filter{Search: servertest.SearchTerm})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -192,12 +193,12 @@ func TestGetGlobalEntriesEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL:      fixture.feedURL,
+		FeedURL:      fixture.FeedURL,
 		HideGlobally: true,
 	})
 
@@ -241,11 +242,11 @@ func TestGetEntryEndpoints(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	result := listFeedEntries(t, regularUserClient, feedID, nil)
 
@@ -262,7 +263,7 @@ func TestGetEntryEndpoints(t *testing.T) {
 		t.Fatalf(`Invalid feedID, got %d`, entry.FeedID)
 	}
 
-	if entry.Feed.FeedURL != fixture.feedURL {
+	if entry.Feed.FeedURL != fixture.FeedURL {
 		t.Fatalf(`Invalid feed URL, got %q`, entry.Feed.FeedURL)
 	}
 
@@ -289,11 +290,11 @@ func TestUpdateEntryStatusEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	result := listFeedEntries(t, regularUserClient, feedID, nil)
 
@@ -315,11 +316,11 @@ func TestUpdateEntriesStarredEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	result := listFeedEntries(t, regularUserClient, feedID, nil)
 
@@ -362,7 +363,7 @@ func TestGetEntryIDsEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
@@ -387,12 +388,12 @@ func TestGetEntryIDsEndpoint(t *testing.T) {
 	}
 
 	// Subscribe to a feed so there are entries.
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	allEntries := listFeedEntries(t, regularUserClient, feedID, nil)
 
-	if len(allEntries.Entries) != fixtureEntryCount {
-		t.Fatalf(`Expected %d entries in the feed, got %d`, fixtureEntryCount, len(allEntries.Entries))
+	if len(allEntries.Entries) != servertest.EntryCount {
+		t.Fatalf(`Expected %d entries in the feed, got %d`, servertest.EntryCount, len(allEntries.Entries))
 	}
 
 	// Without filters, all entries should be returned.
@@ -578,11 +579,11 @@ func TestUpdateEntryEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	result := listFeedEntries(t, regularUserClient, feedID, nil)
 
@@ -622,11 +623,11 @@ func TestToggleStarredEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	result := listFeedEntries(t, regularUserClient, feedID, &miniflux.Filter{Limit: 1})
 
@@ -663,11 +664,11 @@ func TestShareEntryEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	result := listFeedEntries(t, regularUserClient, feedID, &miniflux.Filter{Limit: 1})
 
@@ -734,7 +735,7 @@ func TestShareEntryEndpoint(t *testing.T) {
 
 	otherUserClient, _ := testConfig.newRegularUser(t)
 
-	otherFeedID := fixture.subscribe(t, otherUserClient)
+	otherFeedID := fixture.Subscribe(t, otherUserClient)
 
 	result = listFeedEntries(t, otherUserClient, otherFeedID, &miniflux.Filter{Limit: 1})
 
@@ -751,11 +752,11 @@ func TestSaveEntryEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	result := listFeedEntries(t, regularUserClient, feedID, &miniflux.Filter{Limit: 1})
 
@@ -768,11 +769,11 @@ func TestFetchContentEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	result := listFeedEntries(t, regularUserClient, feedID, &miniflux.Filter{Limit: 1})
 
@@ -781,7 +782,7 @@ func TestFetchContentEndpoint(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !strings.Contains(content, fixtureArticleText) {
+	if !strings.Contains(content, servertest.ArticleText) {
 		t.Fatalf(`The content should come from the original article page, got %q`, content)
 	}
 }
@@ -790,11 +791,11 @@ func TestFlushHistoryEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
 
-	feedID := fixture.subscribe(t, regularUserClient)
+	feedID := fixture.Subscribe(t, regularUserClient)
 
 	result := listFeedEntries(t, regularUserClient, feedID, &miniflux.Filter{Limit: 3})
 
@@ -842,12 +843,12 @@ func TestImportFeedEntryEndpoint(t *testing.T) {
 	t.Parallel()
 
 	testConfig := requireIntegrationTestConfig(t)
-	fixture := newFeedFixture(t)
+	fixture := servertest.NewFeedFixture(t)
 
 	client := testConfig.newAdminClient()
 
 	// Create a feed
-	feedID := fixture.subscribe(t, client)
+	feedID := fixture.Subscribe(t, client)
 	defer client.DeleteFeed(feedID)
 
 	payload := map[string]any{
