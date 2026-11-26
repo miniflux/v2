@@ -10,6 +10,7 @@ import (
 	"os"
 	"testing"
 
+	miniflux "miniflux.app/v2/client"
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/server/servertest"
 	"miniflux.app/v2/internal/model"
@@ -18,7 +19,7 @@ import (
 const (
 	skipIntegrationTestsMessage = `Set TEST_DATABASE_URL to a PostgreSQL database to run the Google Reader API integration tests`
 
-	// testUserPassword is the Miniflux password of the test users.
+	// testUserPassword is the Miniflux password of the test users, used by the REST API.
 	testUserPassword = "miniflux_test_password"
 
 	// testGoogleReaderPassword is the Google Reader password of the test users, used by ClientLogin.
@@ -66,6 +67,9 @@ type testUser struct {
 
 	// reader calls the Google Reader API with the token returned by ClientLogin.
 	reader *googleReaderClient
+
+	// rest calls the REST API, to set up data and to check changes independently.
+	rest *miniflux.Client
 }
 
 // newTestUser creates a user with the Google Reader API enabled that is removed when the test ends.
@@ -92,6 +96,7 @@ func newTestUser(t *testing.T) *testUser {
 		id:       user.ID,
 		username: user.Username,
 		reader:   &googleReaderClient{baseURL: server.URL, token: clientLogin(t, user.Username, testGoogleReaderPassword)},
+		rest:     miniflux.NewClient(server.URL, user.Username, testUserPassword),
 	}
 }
 
