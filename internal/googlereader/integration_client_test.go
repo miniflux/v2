@@ -19,6 +19,7 @@ const (
 	readingListStream = "user/-/state/com.google/reading-list"
 	readStream        = "user/-/state/com.google/read"
 	starredStream     = "user/-/state/com.google/starred"
+	keptUnreadStream  = "user/-/state/com.google/kept-unread"
 )
 
 func feedStream(feedID int64) string {
