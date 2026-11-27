@@ -51,7 +51,7 @@ func (c *Client) CreateLink(entryURL, entryTitle, espialTags string) error {
 		responseBody := new(bytes.Buffer)
 		responseBody.ReadFrom(response.Body)
 
-		return fmt.Errorf("espial: unable to create link: url=%s status=%d body=%s", apiEndpoint, response.StatusCode, responseBody.String())
+		return fmt.Errorf("espial: unable to create link: url=%s status=%d body=%s", urllib.RedactedURL(apiEndpoint), response.StatusCode, responseBody.String())
 	}
 
 	return nil

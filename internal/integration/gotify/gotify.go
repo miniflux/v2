@@ -90,7 +90,7 @@ func (c *Client) SendMessage(title, message string, priority int, extras map[str
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return fmt.Errorf("gotify: unable to send message: url=%s status=%d", apiEndpoint, response.StatusCode)
+		return fmt.Errorf("gotify: unable to send message: url=%s status=%d", urllib.RedactedURL(apiEndpoint), response.StatusCode)
 	}
 
 	return nil
@@ -121,7 +121,7 @@ func (c *Client) SendMessages(feed *model.Feed, entries model.Entries) error {
 		}
 
 		slog.Debug("Sending Gotify notification",
-			slog.String("url", c.baseURL),
+			slog.String("url", urllib.RedactedURL(c.baseURL)),
 			slog.String("title", title),
 			slog.String("entry_title", entry.Title),
 			slog.String("entry_url", entry.URL),

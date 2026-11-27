@@ -60,7 +60,7 @@ func (c *Client) SendNotification(feed *model.Feed, entries model.Entries) error
 		request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 
 		slog.Debug("Sending Apprise notification",
-			slog.String("apprise_url", c.baseURL),
+			slog.String("apprise_url", urllib.RedactedURL(c.baseURL)),
 			slog.String("services_url", c.servicesURL),
 			slog.String("title", feed.Title),
 			slog.String("body", message),
@@ -75,7 +75,7 @@ func (c *Client) SendNotification(feed *model.Feed, entries model.Entries) error
 		response.Body.Close()
 
 		if response.StatusCode >= 400 {
-			return fmt.Errorf("apprise: unable to send a notification: url=%s status=%d", apiEndpoint, response.StatusCode)
+			return fmt.Errorf("apprise: unable to send a notification: url=%s status=%d", urllib.RedactedURL(apiEndpoint), response.StatusCode)
 		}
 	}
 

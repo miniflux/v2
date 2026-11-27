@@ -51,7 +51,7 @@ func (c *Client) CreateLink(entryURL, entryTitle string) error {
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusCreated {
-		return fmt.Errorf("shaarli: unable to add link: url=%s status=%d", apiEndpoint, response.StatusCode)
+		return fmt.Errorf("shaarli: unable to add link: url=%s status=%d", urllib.RedactedURL(apiEndpoint), response.StatusCode)
 	}
 
 	return nil

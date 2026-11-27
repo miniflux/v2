@@ -94,7 +94,7 @@ func (c *Client) createEntry(accessToken, entryURL, entryTitle, entryContent, ta
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return fmt.Errorf("wallabag: unable to save entry: url=%s status=%d", apiEndpoint, response.StatusCode)
+		return fmt.Errorf("wallabag: unable to save entry: url=%s status=%d", urllib.RedactedURL(apiEndpoint), response.StatusCode)
 	}
 
 	return nil
@@ -130,7 +130,7 @@ func (c *Client) getAccessToken() (string, error) {
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return "", fmt.Errorf("wallabag: unable to get access token: url=%s status=%d", apiEndpoint, response.StatusCode)
+		return "", fmt.Errorf("wallabag: unable to get access token: url=%s status=%d", urllib.RedactedURL(apiEndpoint), response.StatusCode)
 	}
 
 	var responseBody tokenResponse

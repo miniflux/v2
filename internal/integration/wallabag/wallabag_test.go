@@ -324,6 +324,52 @@ func TestNewClient(t *testing.T) {
 	}
 }
 
+func TestCreateEntryErrorsDoNotContainURLPassword(t *testing.T) {
+	configureIntegrationAllowPrivateNetworksOption(t)
+
+	tests := []struct {
+		name    string
+		handler http.HandlerFunc
+	}{
+		{
+			name: "access token request fails",
+			handler: func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusUnauthorized)
+			},
+		},
+		{
+			name: "save entry request fails",
+			handler: func(w http.ResponseWriter, r *http.Request) {
+				if strings.Contains(r.URL.Path, "/oauth/v2/token") {
+					json.NewEncoder(w).Encode(map[string]any{"access_token": "test-token"})
+					return
+				}
+				w.WriteHeader(http.StatusInternalServerError)
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			server := httptest.NewServer(tt.handler)
+			defer server.Close()
+
+			baseURL := strings.Replace(server.URL, "http://", "http://user:secret-password@", 1)
+			client := NewClient(baseURL, "clientId", "clientSecret", "username", "password", "", true)
+			err := client.CreateEntry("https://example.org/entry", "title", "content")
+			if err == nil {
+				t.Fatal("expected an error, got nil")
+			}
+			if strings.Contains(err.Error(), "secret-password") {
+				t.Fatalf("expected the error to not contain the password, got %q", err)
+			}
+			if !strings.Contains(err.Error(), "user:xxxxx@") {
+				t.Fatalf("expected the error to contain the redacted URL, got %q", err)
+			}
+		})
+	}
+}
+
 func configureIntegrationAllowPrivateNetworksOption(t *testing.T) {
 	t.Helper()
 

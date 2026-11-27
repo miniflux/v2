@@ -57,7 +57,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("shiori: unable to create bookmark: url=%s status=%d", apiEndpoint, response.StatusCode)
+		return fmt.Errorf("shiori: unable to create bookmark: url=%s status=%d", urllib.RedactedURL(apiEndpoint), response.StatusCode)
 	}
 
 	return nil
@@ -80,7 +80,7 @@ func (c *Client) authenticate() (string, error) {
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("shiori: unable to authenticate: url=%s status=%d", apiEndpoint, response.StatusCode)
+		return "", fmt.Errorf("shiori: unable to authenticate: url=%s status=%d", urllib.RedactedURL(apiEndpoint), response.StatusCode)
 	}
 
 	var authResponse authResponse

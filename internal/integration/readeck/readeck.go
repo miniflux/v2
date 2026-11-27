@@ -130,7 +130,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string, entryContent string
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return fmt.Errorf("readeck: unable to create bookmark: url=%s status=%d", apiEndpoint, response.StatusCode)
+		return fmt.Errorf("readeck: unable to create bookmark: url=%s status=%d", urllib.RedactedURL(apiEndpoint), response.StatusCode)
 	}
 
 	return nil

@@ -65,7 +65,7 @@ func (c *Client) AddEntry(entryURL, entryTitle, entryContent string) error {
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("nunux-keeper: unable to create document: url=%s status=%d", apiEndpoint, response.StatusCode)
+		return fmt.Errorf("nunux-keeper: unable to create document: url=%s status=%d", urllib.RedactedURL(apiEndpoint), response.StatusCode)
 	}
 
 	return nil
