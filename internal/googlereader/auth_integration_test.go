@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestClientLogin(t *testing.T) {
@@ -75,6 +76,53 @@ func TestClientLoginRejectsInvalidCredentials(t *testing.T) {
 			})
 			requireStatus(t, status, body, http.StatusUnauthorized)
 		})
+	}
+}
+
+// ClientLogin must take as long for usernames that cannot log in as for a wrong password, or the response time reveals which usernames exist.
+func TestClientLoginTakesAsLongForUnknownUsernames(t *testing.T) {
+	// Not parallel: Go runs sequential tests while the parallel ones are paused, so no other ClientLogin skews the measurements.
+	user := newTestUser(t)
+	disabledUser := newTestUser(t)
+	setGoogleReaderIntegration(t, disabledUser.id, false, testGoogleReaderPassword)
+
+	anonymous := &googleReaderClient{baseURL: requireTestServer(t).URL}
+
+	// The first scenario is the baseline: the username exists, so the password is compared with its bcrypt hash.
+	scenarios := []struct {
+		name     string
+		username string
+	}{
+		{"wrong password", user.username},
+		{"unknown username", "unknown_googlereader_user"},
+		{"Google Reader disabled", disabledUser.username},
+	}
+
+	// Interleave the scenarios so that load on the machine affects them all alike, and keep the fastest attempt because noise only adds time.
+	fastest := make([]time.Duration, len(scenarios))
+	for attempt := range 5 {
+		for i, scenario := range scenarios {
+			start := time.Now()
+			status, body := anonymous.post(t, "/accounts/ClientLogin", url.Values{
+				"Email":  {scenario.username},
+				"Passwd": {"wrong password"},
+				"output": {"json"},
+			})
+			elapsed := time.Since(start)
+			requireStatus(t, status, body, http.StatusUnauthorized)
+
+			if attempt == 0 || elapsed < fastest[i] {
+				fastest[i] = elapsed
+			}
+		}
+	}
+
+	baseline := fastest[0]
+	for i, scenario := range scenarios[1:] {
+		if elapsed := fastest[i+1]; elapsed < baseline/2 {
+			t.Errorf(`ClientLogin with %s took %v, much less than the %v it took with a wrong password: the response time reveals whether the username exists`,
+				scenario.name, elapsed, baseline)
+		}
 	}
 }
 
