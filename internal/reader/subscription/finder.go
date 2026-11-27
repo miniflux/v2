@@ -116,7 +116,7 @@ func (f *subscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string, 
 		if subscriptions, localizedError := f.findSubscriptionsFromRSSBridge(websiteURL, rssBridgeURL, rssBridgeToken); localizedError != nil {
 			return nil, localizedError
 		} else if len(subscriptions) > 0 {
-			slog.Debug("Subscriptions found from RSS-Bridge", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
+			slog.Debug("Subscriptions found from RSS-Bridge", slog.String("website_url", websiteURL), slog.Int("nb_subscriptions", len(subscriptions)))
 			return subscriptions, nil
 		}
 	}
@@ -267,7 +267,6 @@ func (f *subscriptionFinder) findSubscriptionsFromRSSBridge(websiteURL, rssBridg
 	slog.Debug("Trying to detect feeds using RSS-Bridge",
 		slog.String("website_url", websiteURL),
 		slog.String("rssbridge_url", rssBridgeURL),
-		slog.String("rssbridge_token", rssBridgeToken),
 	)
 
 	bridges, err := rssbridge.DetectBridges(rssBridgeURL, rssBridgeToken, websiteURL)
@@ -278,7 +277,6 @@ func (f *subscriptionFinder) findSubscriptionsFromRSSBridge(websiteURL, rssBridg
 	slog.Debug("RSS-Bridge results",
 		slog.String("website_url", websiteURL),
 		slog.String("rssbridge_url", rssBridgeURL),
-		slog.String("rssbridge_token", rssBridgeToken),
 		slog.Int("nb_bridges", len(bridges)),
 	)
 
