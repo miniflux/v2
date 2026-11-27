@@ -3,9 +3,7 @@ permissions:
   contents: read
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+'
+  workflow_call:
   schedule:
     - cron: '0 0 * * 1,4' # Runs at 00:00 UTC on Monday and Thursday
   pull_request:
@@ -60,6 +58,13 @@ jobs:
       run: make rpm
     - name: List generated files
       run: ls -l *.rpm
+    - name: Upload package for the release
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: rpm-packages
+        path: "*.rpm"
+        if-no-files-found: error
+        retention-days: 5
     - name: Upload package to repository
       env:
         FURY_TOKEN: ${{ secrets.FURY_TOKEN }}
