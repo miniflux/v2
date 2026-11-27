@@ -141,6 +141,31 @@ func subscribeToFixture(t *testing.T, user *testUser) (int64, miniflux.Entries) 
 	return feedID, feedEntries(t, user, feedID)
 }
 
+// createCategory creates a category, which the Fever API calls a group.
+func createCategory(t *testing.T, user *testUser, title string) *miniflux.Category {
+	t.Helper()
+
+	category, err := user.rest.CreateCategory(title)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return category
+}
+
+// subscribeInCategory subscribes the user to a new fixture feed in the category and returns the feed ID.
+func subscribeInCategory(t *testing.T, user *testUser, categoryID int64) int64 {
+	t.Helper()
+
+	feedID, err := user.rest.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:    servertest.NewFeedFixture(t).FeedURL,
+		CategoryID: categoryID,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return feedID
+}
+
 // feedEntries returns the entries of the feed oldest first: entry 1 is published on 2025-01-01, entry 3 on 2025-01-03.
 func feedEntries(t *testing.T, user *testUser, feedID int64) miniflux.Entries {
 	t.Helper()

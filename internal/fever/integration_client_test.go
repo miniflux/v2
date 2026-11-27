@@ -8,6 +8,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"slices"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -46,8 +48,16 @@ func (client *feverClient) getRawQuery(t *testing.T, rawQuery string) (int, []by
 func (client *feverClient) post(t *testing.T, form url.Values) (int, []byte) {
 	t.Helper()
 
+	return client.postWithQuery(t, nil, form)
+}
+
+// postWithQuery sends a form with the API key in the request body and the query parameters in the URL.
+// Fever clients send read requests this way: the selector in the URL, the API key as POST data.
+func (client *feverClient) postWithQuery(t *testing.T, query, form url.Values) (int, []byte) {
+	t.Helper()
+
 	body := strings.NewReader(client.withAPIKey(form).Encode())
-	request, err := http.NewRequest(http.MethodPost, client.endpoint(""), body)
+	request, err := http.NewRequest(http.MethodPost, client.endpoint(query.Encode()), body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,6 +98,38 @@ func (client *feverClient) withAPIKey(params url.Values) url.Values {
 		values.Set("api_key", client.apiKey)
 	}
 	return values
+}
+
+// selector returns the query parameter that selects a read operation, such as groups or unread_item_ids.
+func selector(name string) url.Values {
+	return url.Values{name: {""}}
+}
+
+// parseIDs returns the IDs of a comma-separated list, such as unread_item_ids, in ascending order.
+// Fever does not specify the order of these lists, so the tests compare them sorted.
+func parseIDs(t *testing.T, list string) []int64 {
+	t.Helper()
+
+	ids := []int64{}
+	if list == "" {
+		return ids
+	}
+	for value := range strings.SplitSeq(list, ",") {
+		id, err := strconv.ParseInt(value, 10, 64)
+		if err != nil {
+			t.Fatalf(`Invalid ID %q in %q`, value, list)
+		}
+		ids = append(ids, id)
+	}
+	slices.Sort(ids)
+	return ids
+}
+
+// sortedIDs returns a sorted copy of the IDs, to compare them with the result of parseIDs.
+func sortedIDs(ids ...int64) []int64 {
+	sorted := slices.Clone(ids)
+	slices.Sort(sorted)
+	return sorted
 }
 
 func send(t *testing.T, request *http.Request) (int, []byte) {
@@ -149,4 +191,51 @@ type baseResult struct {
 	APIVersion          int   `json:"api_version"`
 	Auth                int   `json:"auth"`
 	LastRefreshedOnTime int64 `json:"last_refreshed_on_time"`
+}
+
+type groupResult struct {
+	ID    int64  `json:"id"`
+	Title string `json:"title"`
+}
+
+type feedsGroupResult struct {
+	GroupID int64  `json:"group_id"`
+	FeedIDs string `json:"feed_ids"`
+}
+
+type groupsResult struct {
+	Groups      []groupResult      `json:"groups"`
+	FeedsGroups []feedsGroupResult `json:"feeds_groups"`
+}
+
+type feedResult struct {
+	ID                int64  `json:"id"`
+	FaviconID         int64  `json:"favicon_id"`
+	Title             string `json:"title"`
+	URL               string `json:"url"`
+	SiteURL           string `json:"site_url"`
+	IsSpark           int    `json:"is_spark"`
+	LastUpdatedOnTime int64  `json:"last_updated_on_time"`
+}
+
+type feedsResult struct {
+	Feeds       []feedResult       `json:"feeds"`
+	FeedsGroups []feedsGroupResult `json:"feeds_groups"`
+}
+
+type faviconResult struct {
+	ID   int64  `json:"id"`
+	Data string `json:"data"`
+}
+
+type faviconsResult struct {
+	Favicons []faviconResult `json:"favicons"`
+}
+
+type unreadItemIDsResult struct {
+	UnreadItemIDs string `json:"unread_item_ids"`
+}
+
+type savedItemIDsResult struct {
+	SavedItemIDs string `json:"saved_item_ids"`
 }
