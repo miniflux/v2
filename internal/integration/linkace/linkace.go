@@ -56,7 +56,7 @@ func (c *Client) AddURL(entryURL, entryTitle string) error {
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return fmt.Errorf("linkace: unable to create item: url=%s status=%d", apiEndpoint, response.StatusCode)
+		return fmt.Errorf("linkace: unable to create item: url=%s status=%d", urllib.RedactedURL(apiEndpoint), response.StatusCode)
 	}
 
 	return nil

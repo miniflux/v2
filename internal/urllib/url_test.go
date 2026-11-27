@@ -265,6 +265,27 @@ func TestJoinBaseURLAndPath(t *testing.T) {
 	}
 }
 
+func TestRedactedURL(t *testing.T) {
+	tests := []struct {
+		name   string
+		rawURL string
+		want   string
+	}{
+		{"password", "https://user:secret@example.org/api/bookmarks", "https://user:xxxxx@example.org/api/bookmarks"},
+		{"password and port", "http://user:secret@127.0.0.1:8080/oauth/v2/token", "http://user:xxxxx@127.0.0.1:8080/oauth/v2/token"},
+		{"username only", "https://user@example.org/api", "https://user@example.org/api"},
+		{"no userinfo", "https://example.org/api?page=1", "https://example.org/api?page=1"},
+		{"unparsable", "https://user:secret@example.org/" + string(rune(0x7f)), "xxxxx"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RedactedURL(tt.rawURL); got != tt.want {
+				t.Errorf("RedactedURL(%q) = %q, want %q", tt.rawURL, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestIsNonPublicIP(t *testing.T) {
 	testCases := []struct {
 		name     string

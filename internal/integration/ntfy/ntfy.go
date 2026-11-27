@@ -15,6 +15,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -69,7 +70,7 @@ func (c *Client) SendMessages(feed *model.Feed, entries model.Entries) error {
 		}
 
 		slog.Debug("Sending Ntfy message",
-			slog.String("url", c.ntfyURL),
+			slog.String("url", urllib.RedactedURL(c.ntfyURL)),
 			slog.String("topic", c.ntfyTopic),
 			slog.Int("priority", ntfyMessage.Priority),
 			slog.String("message", ntfyMessage.Message),
@@ -116,7 +117,7 @@ func (c *Client) makeRequest(payload any) error {
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return fmt.Errorf("ntfy: incorrect response status code %d for url %s", response.StatusCode, c.ntfyURL)
+		return fmt.Errorf("ntfy: incorrect response status code %d for url %s", response.StatusCode, urllib.RedactedURL(c.ntfyURL))
 	}
 
 	return nil

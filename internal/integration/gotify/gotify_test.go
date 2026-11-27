@@ -520,6 +520,27 @@ func TestNewClientPriorityClamping(t *testing.T) {
 	}
 }
 
+func TestSendMessageErrorDoesNotContainURLPassword(t *testing.T) {
+	configureIntegrationAllowPrivateNetworksOption(t)
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	defer server.Close()
+
+	baseURL := strings.Replace(server.URL, "http://", "http://user:secret-password@", 1)
+	err := NewClient(baseURL, "token", 0).SendMessage("title", "msg", 0, nil)
+	if err == nil {
+		t.Fatal("expected an error, got nil")
+	}
+	if strings.Contains(err.Error(), "secret-password") {
+		t.Fatalf("expected the error to not contain the password, got %q", err)
+	}
+	if !strings.Contains(err.Error(), "user:xxxxx@") {
+		t.Fatalf("expected the error to contain the redacted URL, got %q", err)
+	}
+}
+
 func configureIntegrationAllowPrivateNetworksOption(t *testing.T) {
 	t.Helper()
 

@@ -14,6 +14,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -50,7 +51,7 @@ func (c *Client) DiscoverEndpoints() (*DiscoveryEndpointResponse, error) {
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return nil, fmt.Errorf("matrix: unexpected response from %s status code is %d", endpointURL, response.StatusCode)
+		return nil, fmt.Errorf("matrix: unexpected response from %s status code is %d", urllib.RedactedURL(endpointURL), response.StatusCode)
 	}
 
 	var discoveryEndpointResponse DiscoveryEndpointResponse
@@ -99,7 +100,7 @@ func (c *Client) Login(homeServerURL, matrixUsername, matrixPassword string) (*L
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return nil, fmt.Errorf("matrix: unexpected response from %s status code is %d", endpointURL, response.StatusCode)
+		return nil, fmt.Errorf("matrix: unexpected response from %s status code is %d", urllib.RedactedURL(endpointURL), response.StatusCode)
 	}
 
 	var loginResponse LoginResponse
@@ -148,7 +149,7 @@ func (c *Client) SendFormattedTextMessage(homeServerURL, accessToken, roomID, te
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return nil, fmt.Errorf("matrix: unexpected response from %s status code is %d", endpointURL, response.StatusCode)
+		return nil, fmt.Errorf("matrix: unexpected response from %s status code is %d", urllib.RedactedURL(endpointURL), response.StatusCode)
 	}
 
 	var eventResponse RoomEventResponse

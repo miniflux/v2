@@ -212,6 +212,17 @@ func JoinBaseURLAndPath(baseURL, path string) (string, error) {
 	return finalURL, nil
 }
 
+// RedactedURL returns rawURL with the password of its userinfo replaced
+// by "xxxxx", for logs and errors. It returns "xxxxx" when rawURL cannot
+// be parsed, since the raw string could hold a password.
+func RedactedURL(rawURL string) string {
+	parsedURL, err := url.Parse(rawURL)
+	if err != nil {
+		return "xxxxx"
+	}
+	return parsedURL.Redacted()
+}
+
 // IsNonPublicIP returns true if the given IP is not safe to access from the network.
 func IsNonPublicIP(ip net.IP) bool {
 	addr, ok := netip.AddrFromSlice(ip)

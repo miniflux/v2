@@ -54,7 +54,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return fmt.Errorf("linkding: unable to create bookmark: url=%s status=%d", apiEndpoint, response.StatusCode)
+		return fmt.Errorf("linkding: unable to create bookmark: url=%s status=%d", urllib.RedactedURL(apiEndpoint), response.StatusCode)
 	}
 
 	return nil
