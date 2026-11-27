@@ -239,3 +239,29 @@ type unreadItemIDsResult struct {
 type savedItemIDsResult struct {
 	SavedItemIDs string `json:"saved_item_ids"`
 }
+
+type itemResult struct {
+	ID            int64  `json:"id"`
+	FeedID        int64  `json:"feed_id"`
+	Title         string `json:"title"`
+	Author        string `json:"author"`
+	HTML          string `json:"html"`
+	URL           string `json:"url"`
+	IsSaved       int    `json:"is_saved"`
+	IsRead        int    `json:"is_read"`
+	CreatedOnTime int64  `json:"created_on_time"`
+}
+
+type itemsResult struct {
+	Items      []itemResult `json:"items"`
+	TotalItems int          `json:"total_items"`
+}
+
+// ids returns the item IDs in the order of the response.
+func (result itemsResult) ids() []int64 {
+	ids := make([]int64, 0, len(result.Items))
+	for _, item := range result.Items {
+		ids = append(ids, item.ID)
+	}
+	return ids
+}
