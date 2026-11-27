@@ -32,7 +32,7 @@ func middleware(next http.Handler) http.Handler {
 				slog.String("client_ip", clientIP),
 				slog.Group("request",
 					slog.String("method", r.Method),
-					slog.String("uri", r.RequestURI),
+					slog.String("uri", r.URL.Path),
 					slog.String("protocol", r.Proto),
 					slog.Duration("execution_time", time.Since(t1)),
 				),

@@ -59,7 +59,7 @@ func (m *csrfMiddleware) validate(w http.ResponseWriter, r *http.Request) bool {
 	}
 
 	slog.Warn("Invalid or missing CSRF token",
-		slog.String("url", r.RequestURI),
+		slog.String("url", r.URL.Path),
 	)
 
 	if r.URL.Path == "/login" {

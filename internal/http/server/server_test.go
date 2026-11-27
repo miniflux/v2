@@ -4,9 +4,13 @@
 package server
 
 import (
+	"bytes"
+	"log/slog"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"runtime"
+	"strings"
 	"testing"
 	"time"
 
@@ -250,5 +254,28 @@ func TestCreateUnixSocketListenerPermissions(t *testing.T) {
 
 	if got, want := fileInfo.Mode().Perm(), os.FileMode(0660); got != want {
 		t.Errorf("Unix socket permissions = %04o, want %04o", got, want)
+	}
+}
+
+func TestMiddlewareDoesNotLogQueryString(t *testing.T) {
+	const secret = "Abcdef123456"
+
+	previousOptions := config.Opts
+	config.Opts = config.NewConfigOptions()
+	t.Cleanup(func() { config.Opts = previousOptions })
+
+	var logs bytes.Buffer
+	previousLogger := slog.Default()
+	slog.SetDefault(slog.New(slog.NewTextHandler(&logs, &slog.HandlerOptions{Level: slog.LevelDebug})))
+	t.Cleanup(func() { slog.SetDefault(previousLogger) })
+
+	handler := middleware(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {}))
+	handler.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(http.MethodGet, "/fever/?api&api_key="+secret, nil))
+
+	if !strings.Contains(logs.String(), "Incoming request") || !strings.Contains(logs.String(), "/fever/") {
+		t.Fatalf("Expected the request path to be logged, got:\n%s", logs.String())
+	}
+	if strings.Contains(logs.String(), secret) {
+		t.Errorf("Logs contain the query string:\n%s", logs.String())
 	}
 }
