@@ -54,9 +54,27 @@ func TestGroupsWithoutFeeds(t *testing.T) {
 	if len(result.Groups) != 1 {
 		t.Errorf(`Expected the default category only, got %+v`, result.Groups)
 	}
-	if result.FeedsGroups == nil || len(result.FeedsGroups) != 0 {
-		t.Errorf(`Expected an empty feeds_groups array, got %+v`, result.FeedsGroups)
+	requireEmptyArray(t, "feeds_groups", result.FeedsGroups)
+}
+
+func TestGroupsWithoutCategories(t *testing.T) {
+	t.Parallel()
+
+	user := newTestUser(t)
+	categories, err := user.rest.Categories()
+	if err != nil {
+		t.Fatal(err)
 	}
+	for _, category := range categories {
+		if err := user.rest.DeleteCategory(category.ID); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	var result groupsResult
+	user.fever.getJSON(t, selector("groups"), &result)
+
+	requireEmptyArray(t, "groups", result.Groups)
 }
 
 func TestFeeds(t *testing.T) {
@@ -103,12 +121,8 @@ func TestFeedsWithoutFeeds(t *testing.T) {
 	var result feedsResult
 	user.fever.getJSON(t, selector("feeds"), &result)
 
-	if result.Feeds == nil || len(result.Feeds) != 0 {
-		t.Errorf(`Expected an empty feeds array, got %+v`, result.Feeds)
-	}
-	if result.FeedsGroups == nil || len(result.FeedsGroups) != 0 {
-		t.Errorf(`Expected an empty feeds_groups array, got %+v`, result.FeedsGroups)
-	}
+	requireEmptyArray(t, "feeds", result.Feeds)
+	requireEmptyArray(t, "feeds_groups", result.FeedsGroups)
 }
 
 func TestFavicons(t *testing.T) {
@@ -134,6 +148,17 @@ func TestFavicons(t *testing.T) {
 	if !strings.HasPrefix(result.Favicons[0].Data, "image/png;base64,") {
 		t.Errorf(`Expected PNG data with a MIME type prefix, got %q`, result.Favicons[0].Data)
 	}
+}
+
+func TestFaviconsWithoutIcons(t *testing.T) {
+	t.Parallel()
+
+	user := newTestUser(t)
+
+	var result faviconsResult
+	user.fever.getJSON(t, selector("favicons"), &result)
+
+	requireEmptyArray(t, "favicons", result.Favicons)
 }
 
 func TestUnreadAndSavedItemIDs(t *testing.T) {
@@ -176,6 +201,19 @@ func TestReadSelectorsInPOSTRequests(t *testing.T) {
 				t.Errorf(`Expected the %s member, got %s`, name, body)
 			}
 		})
+	}
+}
+
+// requireEmptyArray fails the test unless the member was an empty JSON array, which decodes to
+// an empty slice: null decodes to a nil slice, and clients iterating over the member may reject it.
+func requireEmptyArray[T any](t *testing.T, member string, values []T) {
+	t.Helper()
+
+	switch {
+	case values == nil:
+		t.Errorf(`Expected an empty %s array, got null`, member)
+	case len(values) != 0:
+		t.Errorf(`Expected an empty %s array, got %+v`, member, values)
 	}
 }
 
