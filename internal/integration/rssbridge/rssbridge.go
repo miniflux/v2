@@ -5,6 +5,7 @@ package rssbridge // import "miniflux.app/v2/internal/integration/rssbridge"
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -43,7 +44,7 @@ func DetectBridges(rssBridgeURL, rssBridgeToken, websiteURL string) ([]*Bridge, 
 	values.Add("url", websiteURL)
 	endpointURL.RawQuery = values.Encode()
 
-	slog.Debug("Detecting RSS bridges", slog.String("url", endpointURL.String()))
+	slog.Debug("Detecting RSS bridges", slog.String("url", redactedURL(endpointURL)))
 
 	request, err := http.NewRequest(http.MethodGet, endpointURL.String(), nil)
 	if err != nil {
@@ -56,6 +57,9 @@ func DetectBridges(rssBridgeURL, rssBridgeToken, websiteURL string) ([]*Bridge, 
 
 	response, err := httpClient.Do(request)
 	if err != nil {
+		if urlErr, ok := errors.AsType[*url.Error](err); ok {
+			urlErr.URL = redactedURL(endpointURL)
+		}
 		return nil, fmt.Errorf("rssbridge: unable to execute request: %w", err)
 	}
 	defer response.Body.Close()
@@ -90,13 +94,19 @@ func DetectBridges(rssBridgeURL, rssBridgeToken, websiteURL string) ([]*Bridge, 
 
 		if rssBridgeToken != "" {
 			bridge.URL = bridge.URL + "&token=" + rssBridgeToken
-
-			slog.Debug("Appended token to RSS bridge URL",
-				slog.String("name", bridge.BridgeMeta.Name),
-				slog.String("url", bridge.URL),
-			)
 		}
 	}
 
 	return bridgeResponse, nil
+}
+
+// redactedURL returns the URL as a string with the token query parameter
+// and any userinfo password replaced, for logs and errors.
+func redactedURL(u *url.URL) string {
+	redacted := *u
+	if values := redacted.Query(); values.Has("token") {
+		values.Set("token", "xxxxx")
+		redacted.RawQuery = values.Encode()
+	}
+	return redacted.Redacted()
 }
