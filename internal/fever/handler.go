@@ -91,6 +91,7 @@ func (h *feverHandler) handleGroups(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var result groupsResponse
+	result.Groups = make([]group, 0, len(categories))
 	for _, category := range categories {
 		result.Groups = append(result.Groups, group{ID: category.ID, Title: category.Title})
 	}
@@ -192,6 +193,7 @@ func (h *feverHandler) handleFavicons(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var result faviconsResponse
+	result.Favicons = make([]favicon, 0, len(icons))
 	for _, i := range icons {
 		result.Favicons = append(result.Favicons, favicon{
 			ID:   i.ID,
