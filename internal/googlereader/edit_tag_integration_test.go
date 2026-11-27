@@ -32,6 +32,8 @@ func TestEditTagEndpoint(t *testing.T) {
 		{"remove read", read, false, url.Values{"r": {readStream}}, unread, false},
 		{"add kept-unread", read, false, url.Values{"a": {keptUnreadStream}}, unread, false},
 		{"remove kept-unread", unread, false, url.Values{"r": {keptUnreadStream}}, read, false},
+		{"add read and remove kept-unread", unread, false, url.Values{"a": {readStream}, "r": {keptUnreadStream}}, read, false},
+		{"add kept-unread and remove read", read, false, url.Values{"a": {keptUnreadStream}, "r": {readStream}}, unread, false},
 		{"add starred", unread, false, url.Values{"a": {starredStream}}, unread, true},
 		{"remove starred", unread, true, url.Values{"r": {starredStream}}, unread, false},
 		{"add read and starred", unread, false, url.Values{"a": {readStream, starredStream}}, read, true},
