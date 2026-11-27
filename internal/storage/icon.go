@@ -119,6 +119,7 @@ func (s *Storage) StoreFeedIcon(feedID int64, icon *model.Icon) error {
 				(hash, mime_type, content, external_id)
 			VALUES
 				($1, $2, $3, $4)
+			ON CONFLICT (hash) DO NOTHING
 			RETURNING
 				id
 		`
@@ -129,6 +130,10 @@ func (s *Storage) StoreFeedIcon(feedID int64, icon *model.Icon) error {
 			icon.Content,
 			crypto.GenerateRandomStringHex(20),
 		).Scan(&icon.ID)
+		if errors.Is(err, sql.ErrNoRows) {
+			// Another transaction created the same icon after the SELECT above.
+			err = tx.QueryRow(`SELECT id FROM icons WHERE hash=$1`, icon.Hash).Scan(&icon.ID)
+		}
 		if err != nil {
 			tx.Rollback()
 			return fmt.Errorf(`store: unable to create icon: %v`, err)
