@@ -166,7 +166,7 @@ func TestReadSelectorsInPOSTRequests(t *testing.T) {
 	subscribeToFixture(t, user)
 
 	// Fever clients send the selector in the URL and the API key as POST data.
-	for _, name := range []string{"groups", "feeds", "favicons", "unread_item_ids", "saved_item_ids"} {
+	for _, name := range []string{"groups", "feeds", "favicons", "unread_item_ids", "saved_item_ids", "items"} {
 		t.Run(name, func(t *testing.T) {
 			status, body := user.fever.postWithQuery(t, selector(name), nil)
 
