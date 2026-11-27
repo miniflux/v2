@@ -115,6 +115,9 @@ func TestGetFeedID(t *testing.T) {
 		{"valid feed ID", Stream{Type: FeedStream, ID: "123"}, 123, false},
 		{"zero feed ID", Stream{Type: FeedStream, ID: "0"}, 0, true},
 		{"negative feed ID", Stream{Type: FeedStream, ID: "-1"}, 0, true},
+		{"non-numeric feed ID", Stream{Type: FeedStream, ID: "abc"}, 0, true},
+		{"empty feed ID", Stream{Type: FeedStream, ID: ""}, 0, true},
+		{"label stream with a numeric ID", Stream{Type: LabelStream, ID: "123"}, 0, true},
 	}
 
 	for _, scenario := range scenarios {

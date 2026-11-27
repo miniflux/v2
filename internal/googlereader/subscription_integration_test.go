@@ -292,6 +292,8 @@ func TestEditSubscriptionRejectsInvalidRequests(t *testing.T) {
 		{"move an unknown feed", url.Values{"ac": {"edit"}, "s": {unknownFeed}, "a": {labelStream("Tech")}}},
 		{"move an invalid feed ID", url.Values{"ac": {"edit"}, "s": {"feed/invalid"}, "a": {labelStream("Tech")}}},
 		{"unsubscribe from an invalid feed ID", url.Values{"ac": {"unsubscribe"}, "s": {feedStream(feedID), "feed/invalid"}}},
+		{"unsubscribe from a zero feed ID", url.Values{"ac": {"unsubscribe"}, "s": {feedStream(feedID), "feed/0"}}},
+		{"unsubscribe from a negative feed ID", url.Values{"ac": {"unsubscribe"}, "s": {feedStream(feedID), "feed/-1"}}},
 		{"unsubscribe from a label", url.Values{"ac": {"unsubscribe"}, "s": {numericLabel}}},
 	}
 
