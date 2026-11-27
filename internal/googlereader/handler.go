@@ -941,7 +941,7 @@ func (h *greaderHandler) fallbackHandler(w http.ResponseWriter, r *http.Request)
 	clientIP := request.ClientIP(r)
 
 	slog.Debug("[GoogleReader] API endpoint not implemented yet",
-		slog.Any("url", r.RequestURI),
+		slog.String("url", r.URL.Path),
 		slog.String("client_ip", clientIP),
 		slog.String("user_agent", r.UserAgent()),
 	)

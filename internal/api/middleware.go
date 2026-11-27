@@ -44,7 +44,7 @@ func (m *middleware) validateAPIKeyAuth(next http.Handler) http.Handler {
 			slog.Debug("[API] Skipped API token authentication because no API Key has been provided",
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
-				slog.String("request_uri", r.RequestURI),
+				slog.String("request_uri", r.URL.Path),
 			)
 			next.ServeHTTP(w, r)
 			return
@@ -61,7 +61,7 @@ func (m *middleware) validateAPIKeyAuth(next http.Handler) http.Handler {
 				slog.Bool("authentication_failed", true),
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
-				slog.String("request_uri", r.RequestURI),
+				slog.String("request_uri", r.URL.Path),
 			)
 			response.JSONUnauthorized(w, r)
 			return
@@ -72,7 +72,7 @@ func (m *middleware) validateAPIKeyAuth(next http.Handler) http.Handler {
 			slog.String("client_ip", clientIP),
 			slog.String("user_agent", r.UserAgent()),
 			slog.String("username", user.Username),
-			slog.String("request_uri", r.RequestURI),
+			slog.String("request_uri", r.URL.Path),
 		)
 
 		m.store.SetLastLogin(user.ID)
@@ -104,7 +104,7 @@ func (m *middleware) validateBasicAuth(next http.Handler) http.Handler {
 				slog.Bool("authentication_failed", true),
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
-				slog.String("request_uri", r.RequestURI),
+				slog.String("request_uri", r.URL.Path),
 			)
 			response.JSONUnauthorized(w, r)
 			return
@@ -115,7 +115,7 @@ func (m *middleware) validateBasicAuth(next http.Handler) http.Handler {
 				slog.Bool("authentication_failed", true),
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
-				slog.String("request_uri", r.RequestURI),
+				slog.String("request_uri", r.URL.Path),
 			)
 			response.JSONUnauthorized(w, r)
 			return
@@ -126,7 +126,7 @@ func (m *middleware) validateBasicAuth(next http.Handler) http.Handler {
 				slog.Bool("authentication_failed", true),
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
-				slog.String("request_uri", r.RequestURI),
+				slog.String("request_uri", r.URL.Path),
 			)
 			response.JSONUnauthorized(w, r)
 			return
@@ -138,7 +138,7 @@ func (m *middleware) validateBasicAuth(next http.Handler) http.Handler {
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
 				slog.String("username", username),
-				slog.String("request_uri", r.RequestURI),
+				slog.String("request_uri", r.URL.Path),
 			)
 			response.JSONUnauthorized(w, r)
 			return
@@ -156,7 +156,7 @@ func (m *middleware) validateBasicAuth(next http.Handler) http.Handler {
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
 				slog.String("username", username),
-				slog.String("request_uri", r.RequestURI),
+				slog.String("request_uri", r.URL.Path),
 			)
 			response.JSONUnauthorized(w, r)
 			return
@@ -167,7 +167,7 @@ func (m *middleware) validateBasicAuth(next http.Handler) http.Handler {
 			slog.String("client_ip", clientIP),
 			slog.String("user_agent", r.UserAgent()),
 			slog.String("username", username),
-			slog.String("request_uri", r.RequestURI),
+			slog.String("request_uri", r.URL.Path),
 		)
 
 		m.store.SetLastLogin(user.ID)
