@@ -15,7 +15,7 @@ Fever authentication is enabled per user from the Miniflux integrations page.
 
 - `Fever Username` and `Fever Password` are configured in Miniflux
 - Miniflux stores the Fever token as the MD5 hash of `username:password`
-- Clients authenticate by sending that token as the `api_key` parameter
+- Clients authenticate by sending that token as the `api_key` parameter, in the query string or the form body
 - Token lookup is case-insensitive
 
 Example:
@@ -35,7 +35,8 @@ Authentication failure does not return HTTP 401. The middleware returns HTTP 200
 ```json
 {
   "api_version": 3,
-  "auth": 0
+  "auth": 0,
+  "last_refreshed_on_time": 0
 }
 ```
 
@@ -64,6 +65,8 @@ If no selector is provided, the server returns the base authenticated response o
 For read operations, the selector must be present in the query string. For write operations, `mark`, `as`, `id`, and `before` are read from request form values, so they may come from the query string or a form body.
 
 ## Read Operations
+
+Lists are always JSON arrays: they are empty, not `null`, when there is nothing to return.
 
 ### `?groups`
 
@@ -166,7 +169,7 @@ Returns:
 Returns:
 
 - `items`: list of entries
-- `total_items`: total number of non-removed entries for the user
+- `total_items`: total number of entries of the user, whatever the selection
 
 Item fields:
 
@@ -179,8 +182,6 @@ Item fields:
 - `is_saved`
 - `is_read`
 - `created_on_time`
-
-The implementation always excludes entries whose status is `removed`.
 
 #### Pagination and filtering
 
@@ -202,7 +203,7 @@ Selector precedence inside `?items` is:
 Notes:
 
 - `with_ids` does not enforce the 50-ID maximum mentioned in older Fever documentation, but the 50-row limit still applies: a longer list returns its 50 lowest IDs
-- invalid `with_ids` members are parsed as `0` and do not match normal entries
+- invalid and non-positive `with_ids` members are ignored, and a list without valid IDs returns no items
 - when `items` is requested without `since_id`, `max_id`, or `with_ids`, the 50 oldest entries are returned, ordered by `id ASC`
 - `html` is returned after Miniflux content rewriting and may include media-proxy-rewritten URLs
 
@@ -254,16 +255,15 @@ Behavior:
 
 - `as=read`: marks the entry as read
 - `as=unread`: marks the entry as unread
-- `as=saved`: toggles the starred flag
-- `as=unsaved`: toggles the starred flag
+- `as=saved`: stars the entry, and sends it to the enabled integrations when it was not starred yet
+- `as=unsaved`: unstars the entry
 
-Important:
+Notes:
 
-- `saved` and `unsaved` both call the same toggle operation
-- sending `as=saved` twice will save, then unsave
-- sending `as=unsaved` twice will unsave, then save
-- if `id <= 0`, the handler returns without writing a response body
-- if the entry does not exist or is already removed, the server returns the base response without an error
+- `saved` and `unsaved` set the starred state: sending them twice has the same effect as sending them once
+- another `as` value changes nothing
+- if `id` is missing, invalid or not positive, the server returns the base response without changes
+- if the entry does not exist or belongs to another user, the server returns the base response without changes
 
 ### `mark=feed`
 
@@ -276,12 +276,11 @@ Parameters:
 
 Behavior:
 
-- marks unread entries in the feed as read when `published_at < before`
-- the update runs asynchronously in a goroutine after the response is returned
+- marks unread entries in the feed as read when `published_at < before`, before sending the response
 
 Notes:
 
-- if `id <= 0`, the handler returns without writing a response body
+- if `id` is missing, invalid or not positive, the server returns the base response without changes
 - if `before` is missing or invalid, it is treated as Unix time `0`, which usually means nothing is marked as read
 
 ### `mark=group`
@@ -295,14 +294,14 @@ Parameters:
 
 Behavior:
 
-- `id=0`: marks all unread entries as read, ignoring `before`
+- `id=0`: marks all unread entries as read, or only those with `published_at < before` when `before` is a positive timestamp
 - `id>0`: marks unread entries in the matching category as read when `published_at < before`
-- the update runs asynchronously in a goroutine after the response is returned
+- the entries are marked before sending the response
 
 Notes:
 
 - group IDs map to Miniflux category IDs
-- if `id < 0`, the handler returns without writing a response body
+- `id=0` must be sent explicitly: if `id` is missing, invalid or negative, the server returns the base response without changes
 - if `before` is missing or invalid for `id>0`, it is treated as Unix time `0`, which usually means nothing is marked as read
 
 ## Error Handling
@@ -310,7 +309,9 @@ Notes:
 Authentication failures:
 
 - HTTP status: `200`
-- body: `{"api_version":3,"auth":0}`
+- body: `{"api_version":3,"auth":0,"last_refreshed_on_time":0}`
+
+Invalid write requests, such as a missing or invalid `id`, are not errors: they return the base authenticated response and change nothing.
 
 Internal errors:
 
@@ -332,7 +333,8 @@ This implementation is Fever-compatible, but it does not match every detail of h
 - `last_refreshed_on_time` is set to the current response time, not the timestamp of the most recently refreshed feed
 - the `Kindling` and `Sparks` super groups are not returned
 - `feeds[].is_spark` is always `0`
-- `as=saved` and `as=unsaved` toggle the saved flag instead of setting it absolutely
+- `mark=item` also accepts `as=unread`
+- `mark=feed` and `mark=group` ignore the `as` parameter: they always mark entries as read
 
 ## Examples
 
