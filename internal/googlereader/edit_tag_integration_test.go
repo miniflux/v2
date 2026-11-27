@@ -92,6 +92,7 @@ func TestEditTagRejectsInvalidRequests(t *testing.T) {
 	}{
 		{"missing item ID", url.Values{"a": {readStream}}},
 		{"invalid item ID", url.Values{"i": {"invalid"}, "a": {readStream}}},
+		{"item ID with trailing characters", url.Values{"i": {longItemID(entries[0].ID) + "garbage"}, "a": {readStream}}},
 		{"no tags", url.Values{"i": {itemID}}},
 		{"invalid tag", url.Values{"i": {itemID}, "a": {"invalid"}}},
 		{"invalid removed tag", url.Values{"i": {itemID}, "r": {"invalid"}}},
