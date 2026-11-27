@@ -328,7 +328,7 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	slog.Debug("Making outgoing request", slog.Group("request",
 		slog.String("method", req.Method),
 		slog.String("url", req.URL.String()),
-		slog.Any("headers", req.Header),
+		slog.Any("headers", redactedHeaders(req.Header)),
 		slog.Bool("without_redirects", r.withoutRedirects),
 		slog.Bool("use_app_client_proxy", r.useClientProxy),
 		slog.String("client_proxy_url", clientProxyURLRedacted),
@@ -337,6 +337,17 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	))
 
 	return client.Do(req)
+}
+
+// redactedHeaders returns a copy of headers with the credential values replaced, for logging.
+func redactedHeaders(headers http.Header) http.Header {
+	redacted := headers.Clone()
+	for _, headerName := range []string{"Authorization", "Cookie", "Proxy-Authorization"} {
+		if redacted.Get(headerName) != "" {
+			redacted.Set(headerName, "<redacted>")
+		}
+	}
+	return redacted
 }
 
 // isSameSite reports whether host and siteHost are the same host, or share the

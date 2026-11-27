@@ -4,6 +4,8 @@
 package fetcher // import "miniflux.app/v2/internal/reader/fetcher"
 
 import (
+	"bytes"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -335,6 +337,51 @@ func TestRequestBuilder_WithUsernameAndPassword(t *testing.T) {
 			}
 			defer resp.Body.Close()
 		})
+	}
+}
+
+func TestRequestBuilder_CredentialsNotLogged(t *testing.T) {
+	credentialHeaders := map[string]string{
+		"Authorization":       "Basic dGVzdDpwYXNzd29yZA==", // base64 of "test:password"
+		"Cookie":              "session=abc123",
+		"Proxy-Authorization": "Basic cHJveHk6c2VjcmV0", // base64 of "proxy:secret"
+	}
+
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		for headerName, expectedValue := range credentialHeaders {
+			if request.Header.Get(headerName) != expectedValue {
+				t.Errorf("Expected %s to be %q, got %q", headerName, expectedValue, request.Header.Get(headerName))
+			}
+		}
+		writer.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	var logs bytes.Buffer
+	previousLogger := slog.Default()
+	slog.SetDefault(slog.New(slog.NewTextHandler(&logs, &slog.HandlerOptions{Level: slog.LevelDebug})))
+	t.Cleanup(func() { slog.SetDefault(previousLogger) })
+
+	resp, err := NewRequestBuilder().
+		WithUsernameAndPassword("test", "password").
+		WithCookie(credentialHeaders["Cookie"], server.URL).
+		WithHeader("Proxy-Authorization", credentialHeaders["Proxy-Authorization"]).
+		ExecuteRequest(server.URL)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	defer resp.Body.Close()
+
+	if !strings.Contains(logs.String(), "Making outgoing request") {
+		t.Fatalf("Expected the outgoing request to be logged, got:\n%s", logs.String())
+	}
+	for headerName, credential := range credentialHeaders {
+		if strings.Contains(logs.String(), credential) {
+			t.Errorf("Logs contain the %s value %q:\n%s", headerName, credential, logs.String())
+		}
+	}
+	if redactedCount := strings.Count(logs.String(), "<redacted>"); redactedCount != len(credentialHeaders) {
+		t.Errorf("Expected %d redacted headers, got %d:\n%s", len(credentialHeaders), redactedCount, logs.String())
 	}
 }
 
