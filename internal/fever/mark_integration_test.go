@@ -119,6 +119,42 @@ func TestMarkAllItems(t *testing.T) {
 	requireUnreadEntries(t, user)
 }
 
+func TestMarkOperationsIgnoreInvalidIDs(t *testing.T) {
+	t.Parallel()
+
+	now := strconv.FormatInt(time.Now().Unix(), 10)
+	scenarios := []struct {
+		name   string
+		params url.Values
+	}{
+		{"item without ID", url.Values{"mark": {"item"}, "as": {"read"}}},
+		{"item with ID 0", url.Values{"mark": {"item"}, "as": {"read"}, "id": {"0"}}},
+		{"item with a negative ID", url.Values{"mark": {"item"}, "as": {"read"}, "id": {"-1"}}},
+		{"item with an invalid ID", url.Values{"mark": {"item"}, "as": {"read"}, "id": {"invalid"}}},
+		{"feed without ID", url.Values{"mark": {"feed"}, "as": {"read"}, "before": {now}}},
+		{"feed with ID 0", url.Values{"mark": {"feed"}, "as": {"read"}, "id": {"0"}, "before": {now}}},
+		{"feed with a negative ID", url.Values{"mark": {"feed"}, "as": {"read"}, "id": {"-1"}, "before": {now}}},
+		{"feed with an invalid ID", url.Values{"mark": {"feed"}, "as": {"read"}, "id": {"invalid"}, "before": {now}}},
+		{"group without ID", url.Values{"mark": {"group"}, "as": {"read"}, "before": {now}}},
+		{"group with a negative ID", url.Values{"mark": {"group"}, "as": {"read"}, "id": {"-1"}, "before": {now}}},
+		{"group with an invalid ID", url.Values{"mark": {"group"}, "as": {"read"}, "id": {"invalid"}, "before": {now}}},
+	}
+
+	for _, scenario := range scenarios {
+		t.Run(scenario.name, func(t *testing.T) {
+			t.Parallel()
+
+			user := newTestUser(t)
+			_, entries := subscribeToFixture(t, user)
+
+			// Fever has no error response: the request gets the authenticated response and changes nothing.
+			var result baseResult
+			user.fever.postJSON(t, scenario.params, &result)
+			requireUnreadEntries(t, user, entryIDs(entries)...)
+		})
+	}
+}
+
 // markItem sends a mark=item request with the given sender and requires the authenticated response.
 // An empty as is left out of the request.
 func markItem(t *testing.T, send func(*testing.T, url.Values, any), entryID int64, as string) {

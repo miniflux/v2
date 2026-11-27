@@ -407,6 +407,8 @@ func (h *feverHandler) handleWriteItems(w http.ResponseWriter, r *http.Request) 
 
 	entryID := request.FormInt64Value(r, "id")
 	if entryID <= 0 {
+		// Fever has no error response: an invalid item ID changes nothing.
+		response.JSON(w, r, newBaseResponse())
 		return
 	}
 
@@ -499,6 +501,8 @@ func (h *feverHandler) handleWriteFeeds(w http.ResponseWriter, r *http.Request) 
 	)
 
 	if feedID <= 0 {
+		// Fever has no error response: an invalid feed ID changes nothing.
+		response.JSON(w, r, newBaseResponse())
 		return
 	}
 
@@ -518,13 +522,15 @@ before=? where ? is replaced with the Unix timestamp of the the local client’s
 */
 func (h *feverHandler) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	groupID := request.FormInt64Value(r, "id")
 
-	if groupID < 0 {
+	// Group 0 marks every item as read, so it must be requested explicitly:
+	// a missing or invalid group ID changes nothing, as Fever has no error response.
+	groupID, err := strconv.ParseInt(r.FormValue("id"), 10, 64)
+	if err != nil || groupID < 0 {
+		response.JSON(w, r, newBaseResponse())
 		return
 	}
 
-	var err error
 	beforeTimestamp := request.FormInt64Value(r, "before")
 	before := time.Unix(beforeTimestamp, 0)
 
