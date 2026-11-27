@@ -25,41 +25,26 @@ func convertEntryIDToLongFormItemID(entryID int64) string {
 // NetNewsWire uses this format: "tag:google.com,2005:reader/item/2f2" (hexadecimal string with prefix and no padding)
 // Reeder uses this format: "000000000000048c" (hexadecimal string without prefix and padding)
 // Liferea uses this format: "12345" (decimal string)
+// A 16-character ID without prefix is read as hexadecimal, since decimal IDs only reach 16 digits at 10^15.
 // It returns the parsed ID as a int64 and an error if parsing fails.
 func parseItemID(itemIDValue string) (int64, error) {
-	var itemID int64
-	if strings.HasPrefix(itemIDValue, ItemIDPrefix) {
-		n, err := fmt.Sscanf(itemIDValue, ItemIDFormat, &itemID)
-		if err != nil {
-			return 0, fmt.Errorf("failed to parse hexadecimal item ID %s: %w", itemIDValue, err)
-		}
-		if n != 1 {
-			return 0, fmt.Errorf("failed to parse hexadecimal item ID %s: expected 1 value, got %d", itemIDValue, n)
-		}
-		if itemID <= 0 {
-			return 0, fmt.Errorf("failed to parse hexadecimal item ID %s: item ID must be positive", itemIDValue)
-		}
-		return itemID, nil
+	value, base, format := itemIDValue, 10, "decimal"
+	if hexID, found := strings.CutPrefix(itemIDValue, ItemIDPrefix); found {
+		value, base, format = hexID, 16, "hexadecimal"
+	} else if len(itemIDValue) == 16 {
+		base, format = 16, "hexadecimal"
 	}
 
-	if len(itemIDValue) == 16 {
-		if n, err := fmt.Sscanf(itemIDValue, "%016x", &itemID); err == nil && n == 1 {
-			if itemID > 0 {
-				return itemID, nil
-			}
-			return 0, fmt.Errorf("failed to parse hexadecimal item ID %s: item ID must be positive", itemIDValue)
-		}
-	}
-
-	itemID, err := strconv.ParseInt(itemIDValue, 10, 64)
+	// ParseUint rejects signs, spaces and trailing characters, and a bit size of 63 keeps the ID within int64.
+	itemID, err := strconv.ParseUint(value, base, 63)
 	if err != nil {
-		return 0, fmt.Errorf("failed to parse decimal item ID %s: %w", itemIDValue, err)
+		return 0, fmt.Errorf("failed to parse %s item ID %s: %w", format, itemIDValue, err)
 	}
-	if itemID <= 0 {
-		return 0, fmt.Errorf("failed to parse decimal item ID %s: item ID must be positive", itemIDValue)
+	if itemID == 0 {
+		return 0, fmt.Errorf("failed to parse %s item ID %s: item ID must be positive", format, itemIDValue)
 	}
 
-	return itemID, nil
+	return int64(itemID), nil
 }
 
 func parseItemIDsFromRequest(r *http.Request) ([]int64, error) {
