@@ -1280,18 +1280,20 @@ func (h *greaderHandler) markAllAsReadHandler(w http.ResponseWriter, r *http.Req
 	response.Text(w, r, "OK")
 }
 
+// checkAndSimplifyTags returns the read and starred states requested by the added and removed tags.
+// kept-unread is stored as ReadStream=false, so a=read&r=kept-unread both mean read and are accepted.
+// Tags are rejected only when they ask for opposite states, like a=read&r=read.
 func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType]bool, error) {
 	tags := make(map[StreamType]bool)
 	for _, s := range addTags {
 		switch s.Type {
 		case ReadStream:
-			// kept-unread is stored as ReadStream=false.
 			if read, ok := tags[ReadStream]; ok && !read {
 				return nil, errSimultaneously
 			}
 			tags[ReadStream] = true
 		case KeptUnreadStream:
-			if _, ok := tags[ReadStream]; ok {
+			if read, ok := tags[ReadStream]; ok && read {
 				return nil, errSimultaneously
 			}
 			tags[ReadStream] = false
@@ -1306,17 +1308,17 @@ func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType
 	for _, s := range removeTags {
 		switch s.Type {
 		case ReadStream:
-			if _, ok := tags[ReadStream]; ok {
+			if read, ok := tags[ReadStream]; ok && read {
 				return nil, errSimultaneously
 			}
 			tags[ReadStream] = false
 		case KeptUnreadStream:
-			if _, ok := tags[ReadStream]; ok {
+			if read, ok := tags[ReadStream]; ok && !read {
 				return nil, errSimultaneously
 			}
 			tags[ReadStream] = true
 		case StarredStream:
-			if _, ok := tags[StarredStream]; ok {
+			if starred, ok := tags[StarredStream]; ok && starred {
 				return nil, fmt.Errorf("googlereader: %s should not be supplied for add and remove simultaneously", starredStreamSuffix)
 			}
 			tags[StarredStream] = false

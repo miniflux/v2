@@ -33,6 +33,11 @@ func TestCheckAndSimplifyTags(t *testing.T) {
 		{"add starred", []Stream{starred}, nil, map[StreamType]bool{StarredStream: true}},
 		{"remove starred", nil, []Stream{starred}, map[StreamType]bool{StarredStream: false}},
 		{"add read twice", []Stream{read, read}, nil, map[StreamType]bool{ReadStream: true}},
+		{"add kept-unread twice", []Stream{keptUnread, keptUnread}, nil, map[StreamType]bool{ReadStream: false}},
+		{"remove read twice", nil, []Stream{read, read}, map[StreamType]bool{ReadStream: false}},
+		{"remove starred twice", nil, []Stream{starred, starred}, map[StreamType]bool{StarredStream: false}},
+		{"add read and remove kept-unread", []Stream{read}, []Stream{keptUnread}, map[StreamType]bool{ReadStream: true}},
+		{"add kept-unread and remove read", []Stream{keptUnread}, []Stream{read}, map[StreamType]bool{ReadStream: false}},
 		{"add read and starred", []Stream{read, starred}, nil, map[StreamType]bool{ReadStream: true, StarredStream: true}},
 		{"add read and remove starred", []Stream{read}, []Stream{starred}, map[StreamType]bool{ReadStream: true, StarredStream: false}},
 		{"like and broadcast are ignored", []Stream{like, broadcast}, []Stream{like, broadcast}, map[StreamType]bool{}},
@@ -65,6 +70,8 @@ func TestCheckAndSimplifyTagsRejectsConflicts(t *testing.T) {
 		{"add read then kept-unread", []Stream{read, keptUnread}, nil},
 		{"add kept-unread then read", []Stream{keptUnread, read}, nil},
 		{"add and remove kept-unread", []Stream{keptUnread}, []Stream{keptUnread}},
+		{"remove read and kept-unread", nil, []Stream{read, keptUnread}},
+		{"remove kept-unread and read", nil, []Stream{keptUnread, read}},
 		{"add and remove starred", []Stream{starred}, []Stream{starred}},
 	}
 
