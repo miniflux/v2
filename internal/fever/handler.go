@@ -243,6 +243,9 @@ func (h *feverHandler) handleItems(w http.ResponseWriter, r *http.Request) {
 	builder := h.store.NewEntryQueryBuilder(userID).
 		WithLimit(50)
 
+	// A with_ids list without valid IDs selects no item, rather than every item.
+	selectsNoItem := false
+
 	switch {
 	case request.HasQueryParam(r, "since_id"):
 		sinceID := request.QueryInt64Param(r, "since_id", 0)
@@ -269,19 +272,10 @@ func (h *feverHandler) handleItems(w http.ResponseWriter, r *http.Request) {
 		}
 		builder = builder.WithSorting("id", "DESC")
 	case request.HasQueryParam(r, "with_ids"):
-		csvItemIDs := request.QueryStringParam(r, "with_ids", "")
-		if csvItemIDs != "" {
-			var itemIDs []int64
-
-			for strItemID := range strings.SplitSeq(csvItemIDs, ",") {
-				strItemID = strings.TrimSpace(strItemID)
-				itemID, _ := strconv.ParseInt(strItemID, 10, 64)
-				itemIDs = append(itemIDs, itemID)
-			}
-
-			builder = builder.WithEntryIDs(itemIDs...)
-		}
-		builder = builder.WithSorting("id", "ASC")
+		itemIDs := parseItemIDs(request.QueryStringParam(r, "with_ids", ""))
+		selectsNoItem = len(itemIDs) == 0
+		builder = builder.WithEntryIDs(itemIDs...).
+			WithSorting("id", "ASC")
 	default:
 		slog.Debug("[Fever] Fetching oldest items",
 			slog.Int64("user_id", userID),
@@ -289,10 +283,14 @@ func (h *feverHandler) handleItems(w http.ResponseWriter, r *http.Request) {
 		builder = builder.WithSorting("id", "ASC")
 	}
 
-	entries, err := builder.GetEntries()
-	if err != nil {
-		response.JSONServerError(w, r, err)
-		return
+	var entries model.Entries
+	var err error
+	if !selectsNoItem {
+		entries, err = builder.GetEntries()
+		if err != nil {
+			response.JSONServerError(w, r, err)
+			return
+		}
 	}
 
 	result.Total, err = h.store.NewEntryQueryBuilder(userID).
@@ -557,6 +555,18 @@ func (h *feverHandler) handleWriteGroups(w http.ResponseWriter, r *http.Request)
 	}
 
 	response.JSON(w, r, newBaseResponse())
+}
+
+// parseItemIDs returns the positive IDs of a comma-separated list, skipping the other values.
+func parseItemIDs(list string) []int64 {
+	var itemIDs []int64
+	for value := range strings.SplitSeq(list, ",") {
+		itemID, err := strconv.ParseInt(strings.TrimSpace(value), 10, 64)
+		if err == nil && itemID > 0 {
+			itemIDs = append(itemIDs, itemID)
+		}
+	}
+	return itemIDs
 }
 
 /*

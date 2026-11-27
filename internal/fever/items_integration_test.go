@@ -91,6 +91,8 @@ func TestItemsSelection(t *testing.T) {
 		{"with_ids returns the items, oldest first", url.Values{"with_ids": {formatID(newest) + "," + formatID(oldest)}}, []int64{oldest, newest}},
 		{"with_ids ignores spaces", url.Values{"with_ids": {formatID(newest) + ", " + formatID(oldest)}}, []int64{oldest, newest}},
 		{"with_ids ignores invalid IDs", url.Values{"with_ids": {formatID(middle) + ",invalid"}}, []int64{middle}},
+		{"with_ids without IDs returns nothing", url.Values{"with_ids": {""}}, []int64{}},
+		{"with_ids without valid IDs returns nothing", url.Values{"with_ids": {"invalid,0,-1"}}, []int64{}},
 		{
 			"since_id takes precedence over max_id",
 			url.Values{"since_id": {formatID(oldest)}, "max_id": {formatID(middle)}},
