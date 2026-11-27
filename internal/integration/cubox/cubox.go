@@ -28,6 +28,7 @@ func (c *Client) SaveLink(entryURL string) error {
 
 	response, err := client.NewRequestBuilder(c.apiLink).
 		WithMethod(http.MethodPost).
+		WithSecretEndpoint().
 		WithJSON(&card{
 			Type:    "url",
 			Content: entryURL,

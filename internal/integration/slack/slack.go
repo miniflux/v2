@@ -35,6 +35,7 @@ func (c *Client) SendSlackMsg(feed *model.Feed, entries model.Entries) error {
 
 		response, err := client.NewRequestBuilder(c.webhookURL).
 			WithMethod(http.MethodPost).
+			WithSecretEndpoint().
 			WithJSON(&slackMessage{
 				Attachments: []slackAttachments{
 					{
@@ -74,7 +75,7 @@ func (c *Client) SendSlackMsg(feed *model.Feed, entries model.Entries) error {
 		response.Body.Close()
 
 		if response.StatusCode >= 400 {
-			return fmt.Errorf("slack: unable to send a notification: url=%s status=%d", c.webhookURL, response.StatusCode)
+			return fmt.Errorf("slack: unable to send a notification: status=%d", response.StatusCode)
 		}
 	}
 

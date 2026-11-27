@@ -25,20 +25,22 @@ const (
 )
 
 type Client struct {
-	botToken string
-	chatID   string
+	apiEndpoint string
+	botToken    string
+	chatID      string
 }
 
 func NewClient(botToken, chatID string) *Client {
 	return &Client{
-		botToken: botToken,
-		chatID:   chatID,
+		apiEndpoint: telegramAPIEndpoint,
+		botToken:    botToken,
+		chatID:      chatID,
 	}
 }
 
 // Specs: https://core.telegram.org/bots/api#getme
 func (c *Client) GetMe() (*User, error) {
-	endpointURL, err := url.JoinPath(telegramAPIEndpoint, "/bot"+c.botToken, "/getMe")
+	endpointURL, err := url.JoinPath(c.apiEndpoint, "/bot"+c.botToken, "/getMe")
 	if err != nil {
 		return nil, fmt.Errorf("telegram: unable to join base URL and path: %w", err)
 	}
@@ -54,7 +56,7 @@ func (c *Client) GetMe() (*User, error) {
 	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf("telegram: unable to send request: %v", err)
+		return nil, fmt.Errorf("telegram: unable to send request: %v", client.RedactURLInError(err))
 	}
 	defer response.Body.Close()
 
@@ -72,7 +74,7 @@ func (c *Client) GetMe() (*User, error) {
 
 // Specs: https://core.telegram.org/bots/api#sendmessage
 func (c *Client) SendMessage(message *MessageRequest) (*Message, error) {
-	endpointURL, err := url.JoinPath(telegramAPIEndpoint, "/bot"+c.botToken, "/sendMessage")
+	endpointURL, err := url.JoinPath(c.apiEndpoint, "/bot"+c.botToken, "/sendMessage")
 	if err != nil {
 		return nil, fmt.Errorf("telegram: unable to join base URL and path: %w", err)
 	}
@@ -94,7 +96,7 @@ func (c *Client) SendMessage(message *MessageRequest) (*Message, error) {
 	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf("telegram: unable to send request: %v", err)
+		return nil, fmt.Errorf("telegram: unable to send request: %v", client.RedactURLInError(err))
 	}
 	defer response.Body.Close()
 

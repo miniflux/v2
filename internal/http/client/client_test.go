@@ -9,6 +9,8 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 	"time"
 
@@ -165,6 +167,101 @@ func TestRequestBuilderWithInvalidEndpoint(t *testing.T) {
 	_, err := NewRequestBuilder("://invalid").WithMethod(http.MethodPost).WithJSON(nil).Do()
 	if err == nil {
 		t.Fatal("expected an error for an invalid endpoint, got nil")
+	}
+}
+
+func TestRequestBuilderWithSecretEndpointRedactsErrors(t *testing.T) {
+	configureIntegrationAllowPrivateNetworksOption(t)
+
+	const secret = "secret-token"
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		connection, _, err := w.(http.Hijacker).Hijack()
+		if err != nil {
+			t.Errorf("unable to hijack connection: %v", err)
+			return
+		}
+		connection.Close()
+	}))
+	defer server.Close()
+
+	tests := []struct {
+		name            string
+		endpoint        string
+		wantErrContains string
+	}{
+		{
+			name:            "connection fails",
+			endpoint:        server.URL + "/webhooks/" + secret + "?token=" + secret,
+			wantErrContains: `unable to send request: Post "` + server.URL + `/xxxxx"`,
+		},
+		{
+			name:            "invalid endpoint",
+			endpoint:        server.URL + "/webhooks/" + secret + "\n",
+			wantErrContains: `unable to create request: parse "xxxxx"`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			response, err := NewRequestBuilder(tt.endpoint).
+				WithMethod(http.MethodPost).
+				WithSecretEndpoint().
+				Do()
+			if err == nil {
+				response.Body.Close()
+				t.Fatal("expected an error, got nil")
+			}
+
+			if strings.Contains(err.Error(), secret) {
+				t.Fatalf("expected the error to not contain the secret, got %q", err)
+			}
+
+			if !strings.Contains(err.Error(), tt.wantErrContains) {
+				t.Fatalf("expected the error to contain %q, got %q", tt.wantErrContains, err)
+			}
+		})
+	}
+}
+
+func TestRedactURLInError(t *testing.T) {
+	tests := []struct {
+		name string
+		err  error
+		want string
+	}{
+		{
+			name: "network error",
+			err:  &url.Error{Op: "Post", URL: "https://example.org/bot123:secret-token/sendMessage?key=secret-token", Err: io.ErrUnexpectedEOF},
+			want: `Post "https://example.org/xxxxx": unexpected EOF`,
+		},
+		{
+			name: "network error with userinfo and port",
+			err:  &url.Error{Op: "Get", URL: "https://user:password@example.org:8443/secret-token", Err: io.ErrUnexpectedEOF},
+			want: `Get "https://example.org:8443/xxxxx": unexpected EOF`,
+		},
+		{
+			name: "unparsable URL",
+			err:  &url.Error{Op: "parse", URL: "https://example.org/secret-token\n", Err: errors.New("net/url: invalid control character in URL")},
+			want: `parse "xxxxx": net/url: invalid control character in URL`,
+		},
+		{
+			name: "error without URL",
+			err:  io.ErrUnexpectedEOF,
+			want: "unexpected EOF",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RedactURLInError(tt.err).Error(); got != tt.want {
+				t.Fatalf("expected %q, got %q", tt.want, got)
+			}
+		})
+	}
+
+	if err := RedactURLInError(nil); err != nil {
+		t.Fatalf("expected nil, got %v", err)
 	}
 }
 

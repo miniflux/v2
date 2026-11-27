@@ -12,6 +12,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/url"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -78,11 +79,12 @@ func NewClientWithOptions(opts Options) *http.Client {
 
 // requestBuilder builds and executes HTTP requests with the builder pattern.
 type requestBuilder struct {
-	err      error
-	endpoint string
-	method   string
-	body     io.Reader
-	headers  http.Header
+	err            error
+	endpoint       string
+	method         string
+	body           io.Reader
+	headers        http.Header
+	secretEndpoint bool
 }
 
 // NewRequestBuilder creates a new request builder for the given endpoint.
@@ -103,6 +105,13 @@ func (r *requestBuilder) WithMethod(method string) *requestBuilder {
 // WithHeader sets a header value.
 func (r *requestBuilder) WithHeader(key, value string) *requestBuilder {
 	r.headers.Set(key, value)
+	return r
+}
+
+// WithSecretEndpoint keeps the path and query of the endpoint out of the
+// returned errors, for endpoints that embed a secret such as a webhook token.
+func (r *requestBuilder) WithSecretEndpoint() *requestBuilder {
+	r.secretEndpoint = true
 	return r
 }
 
@@ -142,7 +151,7 @@ func (r *requestBuilder) Do() (*http.Response, error) {
 	// Content-Length header and lets the client replay the body on redirects.
 	req, err := http.NewRequest(r.method, r.endpoint, r.body)
 	if err != nil {
-		return nil, fmt.Errorf("unable to create request: %w", err)
+		return nil, fmt.Errorf("unable to create request: %w", r.redactURL(err))
 	}
 
 	for key, values := range r.headers {
@@ -160,8 +169,33 @@ func (r *requestBuilder) Do() (*http.Response, error) {
 
 	response, err := NewClientWithOptions(clientOptions).Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("unable to send request: %w", err)
+		return nil, fmt.Errorf("unable to send request: %w", r.redactURL(err))
 	}
 
 	return response, nil
+}
+
+func (r *requestBuilder) redactURL(err error) error {
+	if r.secretEndpoint {
+		return RedactURLInError(err)
+	}
+	return err
+}
+
+// RedactURLInError hides the path and query of the URL carried by a
+// *url.Error in err, for requests whose URL embeds a secret such as a token.
+// Only the scheme and host are kept, which is enough to diagnose network
+// failures. The error is modified in place and returned.
+//
+// Call it before wrapping err: fmt.Errorf formats the message of the
+// wrapping error immediately, so a later change would not be reflected.
+func RedactURLInError(err error) error {
+	if urlErr, ok := errors.AsType[*url.Error](err); ok {
+		redactedURL := "xxxxx"
+		if parsedURL, parseErr := url.Parse(urlErr.URL); parseErr == nil && parsedURL.Host != "" {
+			redactedURL = parsedURL.Scheme + "://" + parsedURL.Host + "/xxxxx"
+		}
+		urlErr.URL = redactedURL
+	}
+	return err
 }

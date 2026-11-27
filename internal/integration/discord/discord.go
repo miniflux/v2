@@ -35,6 +35,7 @@ func (c *Client) SendDiscordMsg(feed *model.Feed, entries model.Entries) error {
 
 		response, err := client.NewRequestBuilder(c.webhookURL).
 			WithMethod(http.MethodPost).
+			WithSecretEndpoint().
 			WithJSON(&discordMessage{
 				Embeds: []discordEmbed{
 					{
@@ -70,7 +71,7 @@ func (c *Client) SendDiscordMsg(feed *model.Feed, entries model.Entries) error {
 		response.Body.Close()
 
 		if response.StatusCode >= 400 {
-			return fmt.Errorf("discord: unable to send a notification: url=%s status=%d", c.webhookURL, response.StatusCode)
+			return fmt.Errorf("discord: unable to send a notification: status=%d", response.StatusCode)
 		}
 	}
 
