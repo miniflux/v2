@@ -446,6 +446,9 @@ func TestEntryQueryAPIRejectsForeignScopes(t *testing.T) {
 		// The query string cannot replace or clear a foreign route scope.
 		"/v1/feeds/16/entries?feed_id=11", "/v1/feeds/16/entries?feed_id=0",
 		"/v1/categories/40/entries?category_id=10", "/v1/categories/40/entries?category_id=0",
+		// Feed and category endpoints reject invalid scope IDs in the query string.
+		"/v1/feeds/11/entries?feed_id=-1", "/v1/feeds/11/entries?category_id=invalid",
+		"/v1/categories/10/entries?category_id=invalid", "/v1/categories/10/entries?feed_id=-1",
 	} {
 		w := entryQueryAPIRequest(api, http.MethodGet, path, "")
 		if w.Code != http.StatusBadRequest {

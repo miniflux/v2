@@ -40,6 +40,16 @@ type entryFilters struct {
 // parseEntryFilters reads the entry filters shared by the entry endpoints.
 // A non-zero feedID or categoryID comes from the route and takes precedence over the query string.
 func parseEntryFilters(r *http.Request, feedID, categoryID int64) (entryFilters, error) {
+	// Feed and category endpoints reject an invalid feed_id or category_id instead of ignoring it.
+	// /v1/entries keeps ignoring invalid values for compatibility with existing clients.
+	if feedID != 0 || categoryID != 0 {
+		for _, name := range []string{"feed_id", "category_id"} {
+			if err := validateEntryScopeQueryID(r, name); err != nil {
+				return entryFilters{}, err
+			}
+		}
+	}
+
 	if feedID == 0 {
 		feedID = request.QueryInt64Param(r, "feed_id", 0)
 	}
@@ -100,6 +110,18 @@ func parseEntryFilters(r *http.Request, feedID, categoryID int64) (entryFilters,
 	}
 
 	return filters, nil
+}
+
+// validateEntryScopeQueryID rejects a non-empty query value that is not a non-negative integer.
+func validateEntryScopeQueryID(r *http.Request, name string) error {
+	value := r.URL.Query().Get(name)
+	if value == "" {
+		return nil
+	}
+	if id, err := strconv.ParseInt(value, 10, 64); err != nil || id < 0 {
+		return fmt.Errorf("invalid %s parameter, must be a non-negative integer", name)
+	}
+	return nil
 }
 
 // maxEntryFilterTimestamp is the first Unix timestamp past PostgreSQL's finite timestamp range.
