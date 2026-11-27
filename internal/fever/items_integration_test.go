@@ -73,11 +73,7 @@ func TestItemsSelection(t *testing.T) {
 	user := newTestUser(t)
 	_, entries := subscribeToFixture(t, user)
 
-	ids := make([]int64, 0, len(entries))
-	for _, entry := range entries {
-		ids = append(ids, entry.ID)
-	}
-	ids = sortedIDs(ids...)
+	ids := sortedIDs(entryIDs(entries)...)
 	oldest, middle, newest := ids[0], ids[1], ids[2]
 
 	scenarios := []struct {
