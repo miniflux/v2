@@ -69,6 +69,8 @@ func (s *Storage) GoogleReaderUserCheckPassword(username, password string) error
 
 	err := s.db.QueryRow(query, username).Scan(&hash)
 	if errors.Is(err, sql.ErrNoRows) {
+		// Perform a dummy bcrypt comparison to avoid leaking whether the Google Reader username exists via response timing.
+		_ = bcrypt.CompareHashAndPassword(dummyBcryptHash, []byte(password))
 		return fmt.Errorf(`store: unable to find this user: %s`, username)
 	} else if err != nil {
 		return fmt.Errorf(`store: unable to fetch user: %v`, err)
