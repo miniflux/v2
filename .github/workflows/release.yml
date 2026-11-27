@@ -1,0 +1,43 @@
+name: Release
+permissions:
+  contents: read
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+jobs:
+  binaries:
+    name: Binaries
+    uses: ./.github/workflows/build_binaries.yml
+  debian-packages:
+    name: Debian Packages
+    uses: ./.github/workflows/debian_packages.yml
+  rpm-packages:
+    name: RPM Packages
+    uses: ./.github/workflows/rpm_packages.yml
+  draft-release:
+    name: Draft Release
+    if: github.repository_owner == 'miniflux'
+    needs: [binaries, debian-packages, rpm-packages]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: dist
+          merge-multiple: true
+      - name: List release files
+        run: ls -l dist
+      - name: Create or update draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if [ "$(gh release view "$TAG" --json isDraft --jq .isDraft 2>/dev/null)" = "true" ]; then
+            gh release upload "$TAG" dist/* --clobber
+          else
+            gh release create "$TAG" dist/* --draft --verify-tag --title "Miniflux $TAG" --notes ""
+          fi
