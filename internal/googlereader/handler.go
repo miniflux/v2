@@ -770,6 +770,10 @@ func (h *greaderHandler) disableTagHandler(w http.ResponseWriter, r *http.Reques
 		response.JSONBadRequest(w, r, fmt.Errorf("googlereader: invalid data in %s", paramStreamID))
 		return
 	}
+	if len(streams) == 0 {
+		response.JSONBadRequest(w, r, fmt.Errorf("googlereader: missing %s parameter", paramStreamID))
+		return
+	}
 
 	titles := make([]string, len(streams))
 	for i, stream := range streams {

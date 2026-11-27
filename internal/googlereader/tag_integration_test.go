@@ -143,6 +143,7 @@ func TestDisableTagRejectsInvalidRequests(t *testing.T) {
 		streams        []string
 		expectedStatus int
 	}{
+		{"missing stream", nil, http.StatusBadRequest},
 		{"invalid stream", []string{"invalid"}, http.StatusBadRequest},
 		{"not a label", []string{feedStream(1)}, http.StatusBadRequest},
 		{"a label and a state", []string{labelStream("All"), starredStream}, http.StatusBadRequest},
