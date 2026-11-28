@@ -468,8 +468,8 @@
     "page.api_keys.table.created_at": "创建日期",
     "page.api_keys.table.description": "描述",
     "page.api_keys.table.last_used_at": "最后使用",
-    "page.api_keys.table.token": "令牌",
     "page.api_keys.title": "API 密钥",
+    "page.api_keys.token_shown_once": "请立即复制此 API 密钥。出于安全原因，它将不会再次显示。",
     "page.authentication.title": "认证",
     "page.categories.entries": "条目",
     "page.categories.feed_count": [

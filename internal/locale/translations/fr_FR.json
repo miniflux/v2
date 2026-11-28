@@ -471,8 +471,8 @@
     "page.api_keys.table.created_at": "Date de création",
     "page.api_keys.table.description": "Description",
     "page.api_keys.table.last_used_at": "Dernière utilisation",
-    "page.api_keys.table.token": "Jeton",
     "page.api_keys.title": "Clés d'API",
+    "page.api_keys.token_shown_once": "Copiez cette clé d'API maintenant. Pour des raisons de sécurité, elle ne sera plus affichée.",
     "page.authentication.title": "Authentification",
     "page.categories.entries": "Articles",
     "page.categories.feed_count": [

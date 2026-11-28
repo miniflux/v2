@@ -8,6 +8,7 @@ import (
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
+	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/view"
 )
 
@@ -18,6 +19,11 @@ func (h *handler) showAPIKeysPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.renderAPIKeysPage(w, r, user, nil)
+}
+
+// renderAPIKeysPage lists the user's API keys, with the token of createdAPIKey when it was just created.
+func (h *handler) renderAPIKeysPage(w http.ResponseWriter, r *http.Request, user *model.User, createdAPIKey *model.APIKey) {
 	apiKeys, err := h.store.APIKeys(user.ID)
 	if err != nil {
 		response.HTMLServerError(w, r, err)
@@ -26,6 +32,7 @@ func (h *handler) showAPIKeysPage(w http.ResponseWriter, r *http.Request) {
 
 	view := view.New(h.tpl, r)
 	view.Set("apiKeys", apiKeys)
+	view.Set("createdAPIKey", createdAPIKey)
 	view.Set("menu", "settings")
 	view.Set("user", user)
 	navMetadata, _ := h.store.GetNavMetadata(user.ID)

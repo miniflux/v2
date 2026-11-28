@@ -8,16 +8,19 @@
 {{ end }}
 
 {{ define "content"}}
+{{ if .createdAPIKey }}
+<div role="alert" class="alert alert-success">
+    <p>{{ t "page.api_keys.token_shown_once" }}</p>
+    <p><strong>{{ .createdAPIKey.Description }}</strong> = <code>{{ .createdAPIKey.Token }}</code></p>
+</div>
+{{ end }}
+
 {{ if .apiKeys }}
 {{ range .apiKeys }}
     <table>
     <tr>
         <th class="column-25">{{ t "page.api_keys.table.description" }}</th>
         <td>{{ .Description }}</td>
-    </tr>
-    <tr>
-        <th>{{ t "page.api_keys.table.token" }}</th>
-        <td>{{ .Token }}</td>
     </tr>
     <tr>
         <th>{{ t "page.api_keys.table.last_used_at" }}</th>

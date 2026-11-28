@@ -1590,4 +1590,18 @@ var migrations = [...]func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		// Keep only the SHA-256 digest of each API key, so a copy of the
+		// database is not enough to call the API. Existing keys keep
+		// working because the server hashes the X-Auth-Token header the
+		// same way before looking it up.
+		_, err = tx.Exec(`
+			ALTER TABLE api_keys ADD COLUMN token_hash bytea;
+			UPDATE api_keys SET token_hash = sha256(convert_to(token, 'UTF8'));
+			ALTER TABLE api_keys ALTER COLUMN token_hash SET NOT NULL;
+			CREATE UNIQUE INDEX api_keys_token_hash_idx ON api_keys (token_hash);
+			ALTER TABLE api_keys DROP COLUMN token;
+		`)
+		return err
+	},
 }

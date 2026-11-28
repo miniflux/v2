@@ -474,8 +474,8 @@
     "page.api_keys.table.created_at": "Dată Creare",
     "page.api_keys.table.description": "Descriere",
     "page.api_keys.table.last_used_at": "Utilizat ultima dată",
-    "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Chei API",
+    "page.api_keys.token_shown_once": "Copiați această cheie API acum. Din motive de securitate, nu va mai fi afișată.",
     "page.authentication.title": "Autentificare",
     "page.categories.entries": "Intrări",
     "page.categories.feed_count": [

@@ -13,7 +13,7 @@ import (
 type APIKey struct {
 	ID          int64      `json:"id"`
 	UserID      int64      `json:"user_id"`
-	Token       string     `json:"token"`
+	Token       string     `json:"token,omitempty"` // Only set by CreateAPIKey: the database keeps a SHA-256 digest.
 	Description string     `json:"description"`
 	LastUsedAt  *time.Time `json:"last_used_at"`
 	CreatedAt   time.Time  `json:"created_at"`

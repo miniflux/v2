@@ -23,8 +23,8 @@ func (s *Storage) APIKeyExists(userID int64, description string) bool {
 
 // SetAPIKeyUsedTimestamp updates the last used date of an API Key.
 func (s *Storage) SetAPIKeyUsedTimestamp(userID int64, token string) error {
-	query := `UPDATE api_keys SET last_used_at=now() WHERE user_id=$1 and token=$2`
-	_, err := s.db.Exec(query, userID, token)
+	query := `UPDATE api_keys SET last_used_at=now() WHERE user_id=$1 and token_hash=$2`
+	_, err := s.db.Exec(query, userID, crypto.HashToken(token))
 	if err != nil {
 		return fmt.Errorf(`store: unable to update last used date for API key: %v`, err)
 	}
@@ -36,7 +36,7 @@ func (s *Storage) SetAPIKeyUsedTimestamp(userID int64, token string) error {
 func (s *Storage) APIKeys(userID int64) (model.APIKeys, error) {
 	query := `
 		SELECT
-			id, user_id, token, description, last_used_at, created_at
+			id, user_id, description, last_used_at, created_at
 		FROM
 			api_keys
 		WHERE
@@ -55,7 +55,6 @@ func (s *Storage) APIKeys(userID int64) (model.APIKeys, error) {
 		if err := rows.Scan(
 			&apiKey.ID,
 			&apiKey.UserID,
-			&apiKey.Token,
 			&apiKey.Description,
 			&apiKey.LastUsedAt,
 			&apiKey.CreatedAt,
@@ -69,26 +68,25 @@ func (s *Storage) APIKeys(userID int64) (model.APIKeys, error) {
 	return apiKeys, nil
 }
 
-// CreateAPIKey inserts a new API key.
+// CreateAPIKey inserts a new API key and returns it with its token, which is not stored and cannot be read again.
 func (s *Storage) CreateAPIKey(userID int64, description string) (*model.APIKey, error) {
 	query := `
 		INSERT INTO api_keys
-			(user_id, token, description)
+			(user_id, token_hash, description)
 		VALUES
 			($1, $2, $3)
 		RETURNING
-			id, user_id, token, description, last_used_at, created_at
+			id, user_id, description, last_used_at, created_at
 	`
-	var apiKey model.APIKey
+	apiKey := model.APIKey{Token: crypto.GenerateRandomStringHex(32)}
 	err := s.db.QueryRow(
 		query,
 		userID,
-		crypto.GenerateRandomStringHex(32),
+		crypto.HashToken(apiKey.Token),
 		description,
 	).Scan(
 		&apiKey.ID,
 		&apiKey.UserID,
-		&apiKey.Token,
 		&apiKey.Description,
 		&apiKey.LastUsedAt,
 		&apiKey.CreatedAt,

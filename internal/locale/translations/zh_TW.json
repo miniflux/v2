@@ -468,8 +468,8 @@
     "page.api_keys.table.created_at": "建立日期",
     "page.api_keys.table.description": "描述",
     "page.api_keys.table.last_used_at": "最後使用",
-    "page.api_keys.table.token": "金鑰",
     "page.api_keys.title": "API 金鑰",
+    "page.api_keys.token_shown_once": "請立即複製此 API 金鑰。基於安全考量，它將不會再次顯示。",
     "page.authentication.title": "認證",
     "page.categories.entries": "檢視內容",
     "page.categories.feed_count": [

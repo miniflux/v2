@@ -468,8 +468,8 @@
     "page.api_keys.table.created_at": "Kiàn-tì li̍t-kî",
     "page.api_keys.table.description": "Biâu-su̍t",
     "page.api_keys.table.last_used_at": "Siōng-bóe pái sú-iōng",
-    "page.api_keys.table.token": "Só-sî",
     "page.api_keys.title": "API só-sî",
+    "page.api_keys.token_shown_once": "Chhiáⁿ chit-má khó-pih chit ê API só-sî. Ūi-tio̍h an-choân, i bē koh hián-sī.",
     "page.authentication.title": "Giām-chèng",
     "page.categories.entries": "Siau-sit",
     "page.categories.feed_count": [

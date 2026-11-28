@@ -471,8 +471,8 @@
     "page.api_keys.table.created_at": "Luomispäivä",
     "page.api_keys.table.description": "Kuvaus",
     "page.api_keys.table.last_used_at": "Viimeksi käytetty",
-    "page.api_keys.table.token": "Tunnus",
     "page.api_keys.title": "API-avaimet",
+    "page.api_keys.token_shown_once": "Kopioi tämä API-avain nyt. Turvallisuussyistä sitä ei näytetä uudelleen.",
     "page.authentication.title": "Todennus",
     "page.categories.entries": "Artikkelit",
     "page.categories.feed_count": [

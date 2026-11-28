@@ -401,7 +401,7 @@ type VersionResponse struct {
 type APIKey struct {
 	ID          int64      `json:"id"`
 	UserID      int64      `json:"user_id"`
-	Token       string     `json:"token"`
+	Token       string     `json:"token,omitempty"` // Only returned by CreateAPIKey.
 	Description string     `json:"description"`
 	LastUsedAt  *time.Time `json:"last_used_at"`
 	CreatedAt   time.Time  `json:"created_at"`

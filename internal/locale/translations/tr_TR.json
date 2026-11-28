@@ -471,8 +471,8 @@
     "page.api_keys.table.created_at": "Oluşturulma Tarihi",
     "page.api_keys.table.description": "Açıklama",
     "page.api_keys.table.last_used_at": "Son Kullanılma",
-    "page.api_keys.table.token": "Token",
     "page.api_keys.title": "API Anahtarları",
+    "page.api_keys.token_shown_once": "Bu API anahtarını şimdi kopyalayın. Güvenlik nedeniyle tekrar gösterilmeyecektir.",
     "page.authentication.title": "Kimlik Doğrulama",
     "page.categories.entries": "Makaleler",
     "page.categories.feed_count": [

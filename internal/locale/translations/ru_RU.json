@@ -474,8 +474,8 @@
     "page.api_keys.table.created_at": "Дата создания",
     "page.api_keys.table.description": "Описание",
     "page.api_keys.table.last_used_at": "Последнее использование",
-    "page.api_keys.table.token": "Токен",
     "page.api_keys.title": "API-ключи",
+    "page.api_keys.token_shown_once": "Скопируйте этот API-ключ сейчас. В целях безопасности он больше не будет показан.",
     "page.authentication.title": "Аутентификация",
     "page.categories.entries": "Статьи",
     "page.categories.feed_count": [

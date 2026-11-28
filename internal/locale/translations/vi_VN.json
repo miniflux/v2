@@ -468,8 +468,8 @@
     "page.api_keys.table.created_at": "Ngày tạo",
     "page.api_keys.table.description": "Mô tả",
     "page.api_keys.table.last_used_at": "Lần dùng cuối",
-    "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Khóa API",
+    "page.api_keys.token_shown_once": "Hãy sao chép khóa API này ngay bây giờ. Vì lý do bảo mật, khóa sẽ không được hiển thị lại.",
     "page.authentication.title": "Xác thực",
     "page.categories.entries": "Bài viết",
     "page.categories.feed_count": [
