@@ -61,7 +61,6 @@ func (c *Client) SendNotification(feed *model.Feed, entries model.Entries) error
 
 		slog.Debug("Sending Apprise notification",
 			slog.String("apprise_url", urllib.RedactedURL(c.baseURL)),
-			slog.String("services_url", c.servicesURL),
 			slog.String("title", feed.Title),
 			slog.String("body", message),
 			slog.String("entry_url", entry.URL),
