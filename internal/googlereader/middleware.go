@@ -5,16 +5,11 @@ package googlereader // import "miniflux.app/v2/internal/googlereader"
 
 import (
 	"context"
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"log/slog"
 	"net/http"
 	"strings"
 
-	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 )
 
@@ -121,11 +116,9 @@ func (m *authMiddleware) serveValidated(w http.ResponseWriter, r *http.Request, 
 		sendUnauthorizedResponse(w, r)
 		return
 	}
-	var integration *model.Integration
-	var user *model.User
-	var err error
-	if integration, err = m.store.GoogleReaderUserGetIntegration(parts[0]); err != nil {
-		slog.Warn("[GoogleReader] No user found with the given Google Reader username",
+	userID, err := m.store.GoogleReaderUserIDByToken(parts[0], parts[1])
+	if err != nil {
+		slog.Error("[GoogleReader] Unable to look up the token in the database",
 			slog.Bool("authentication_failed", true),
 			slog.String("client_ip", clientIP),
 			slog.String("user_agent", r.UserAgent()),
@@ -134,9 +127,8 @@ func (m *authMiddleware) serveValidated(w http.ResponseWriter, r *http.Request, 
 		sendUnauthorizedResponse(w, r)
 		return
 	}
-	expectedToken := getAuthToken(integration.GoogleReaderUsername, integration.GoogleReaderPassword)
-	if !crypto.ConstantTimeCmp(expectedToken, token) {
-		slog.Warn("[GoogleReader] Token does not match",
+	if userID == 0 {
+		slog.Warn("[GoogleReader] No user found with the given token",
 			slog.Bool("authentication_failed", true),
 			slog.String("client_ip", clientIP),
 			slog.String("user_agent", r.UserAgent()),
@@ -144,7 +136,9 @@ func (m *authMiddleware) serveValidated(w http.ResponseWriter, r *http.Request, 
 		sendUnauthorizedResponse(w, r)
 		return
 	}
-	if user, err = m.store.UserByID(integration.UserID); err != nil {
+
+	user, err := m.store.UserByID(userID)
+	if err != nil {
 		slog.Error("[GoogleReader] Unable to fetch user from database",
 			slog.Bool("authentication_failed", true),
 			slog.String("client_ip", clientIP),
@@ -165,7 +159,7 @@ func (m *authMiddleware) serveValidated(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	m.store.SetLastLogin(integration.UserID)
+	m.store.SetLastLogin(user.ID)
 
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, request.UserIDContextKey, user.ID)
@@ -176,10 +170,4 @@ func (m *authMiddleware) serveValidated(w http.ResponseWriter, r *http.Request, 
 	ctx = context.WithValue(ctx, request.GoogleReaderTokenKey, token)
 
 	next.ServeHTTP(w, r.WithContext(ctx))
-}
-
-func getAuthToken(username, password string) string {
-	token := hex.EncodeToString(hmac.New(sha256.New, []byte(username+password)).Sum(nil))
-	token = username + "/" + token
-	return token
 }

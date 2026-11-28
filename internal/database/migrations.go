@@ -1617,4 +1617,18 @@ var migrations = [...]func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		// The Google Reader token was an HMAC keyed with the stored bcrypt
+		// hash, so a copy of the database was enough to compute it. The
+		// token is now derived from the password with Argon2id, and only
+		// its salt and SHA-256 digest are stored. The bcrypt hash is kept
+		// until the next ClientLogin, which replaces it.
+		_, err = tx.Exec(`
+			ALTER TABLE integrations
+				ADD COLUMN googlereader_token_salt bytea,
+				ADD COLUMN googlereader_token_hash bytea;
+			CREATE INDEX integrations_googlereader_token_hash_idx ON integrations (googlereader_token_hash);
+		`)
+		return err
+	},
 }

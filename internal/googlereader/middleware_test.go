@@ -12,7 +12,7 @@ import (
 )
 
 func TestAuthMiddlewareRejectsTokenWithEmptyUsername(t *testing.T) {
-	token := getAuthToken("", "")
+	token := "/" + strings.Repeat("0", 64)
 
 	getRequest := httptest.NewRequest(http.MethodGet, "/reader/api/0/user-info", nil)
 	getRequest.Header.Set("Authorization", "GoogleLogin auth="+token)

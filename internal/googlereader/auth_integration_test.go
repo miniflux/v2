@@ -4,6 +4,9 @@
 package googlereader_test
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -12,6 +15,7 @@ import (
 	"testing"
 	"time"
 
+	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/server/servertest"
 )
 
@@ -81,6 +85,55 @@ func TestClientLoginRejectsInvalidCredentials(t *testing.T) {
 	}
 }
 
+// Google Reader passwords set before the upgrade are stored as a bcrypt hash until the next ClientLogin.
+func TestClientLoginUpgradesLegacyPasswordHash(t *testing.T) {
+	t.Parallel()
+
+	server := servertest.Require(t)
+	user := server.NewUser(t, testUserPassword)
+	integration, err := server.Store.Integration(user.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	legacyHash, err := crypto.HashPassword(testGoogleReaderPassword)
+	if err != nil {
+		t.Fatal(err)
+	}
+	integration.GoogleReaderEnabled = true
+	integration.GoogleReaderUsername = user.Username
+	integration.GoogleReaderPassword = legacyHash
+	if err := server.Store.UpdateIntegration(integration); err != nil {
+		t.Fatal(err)
+	}
+
+	// The legacy token was an HMAC keyed with the bcrypt hash: anyone with a copy of the database could compute it.
+	legacyDigest := hmac.New(sha256.New, []byte(user.Username+legacyHash)).Sum(nil)
+	legacyClient := &googleReaderClient{baseURL: server.URL, token: user.Username + "/" + hex.EncodeToString(legacyDigest)}
+	status, body := legacyClient.get(t, "/reader/api/0/user-info", url.Values{"output": {"json"}})
+	requireStatus(t, status, body, http.StatusUnauthorized)
+
+	token := clientLogin(t, user.Username, testGoogleReaderPassword)
+	client := &googleReaderClient{baseURL: server.URL, token: token}
+	status, body = client.get(t, "/reader/api/0/user-info", url.Values{"output": {"json"}})
+	requireStatus(t, status, body, http.StatusOK)
+
+	upgraded, err := server.Store.Integration(user.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if upgraded.GoogleReaderPassword != "" {
+		t.Errorf(`Expected ClientLogin to remove the legacy bcrypt hash`)
+	}
+	if len(upgraded.GoogleReaderTokenSalt) == 0 || len(upgraded.GoogleReaderTokenHash) == 0 {
+		t.Errorf(`Expected ClientLogin to store a token salt and hash`)
+	}
+
+	if again := clientLogin(t, user.Username, testGoogleReaderPassword); again != token {
+		t.Errorf(`Expected the next ClientLogin to return the same token, got %q instead of %q`, again, token)
+	}
+}
+
 // ClientLogin must take as long for usernames that cannot log in as for a wrong password, or the response time reveals which usernames exist.
 func TestClientLoginTakesAsLongForUnknownUsernames(t *testing.T) {
 	// Not parallel: Go runs sequential tests while the parallel ones are paused, so no other ClientLogin skews the measurements.
@@ -90,7 +143,7 @@ func TestClientLoginTakesAsLongForUnknownUsernames(t *testing.T) {
 
 	anonymous := &googleReaderClient{baseURL: servertest.Require(t).URL}
 
-	// The first scenario is the baseline: the username exists, so the password is compared with its bcrypt hash.
+	// The first scenario is the baseline: the username exists, so a token is derived from the password with Argon2id.
 	scenarios := []struct {
 		name     string
 		username string

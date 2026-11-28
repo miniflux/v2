@@ -45,7 +45,7 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 		integration.FeverTokenHash = nil
 	}
 
-	if validationErr := integrationForm.ValidateGoogleReader(integration.GoogleReaderPassword); validationErr != nil {
+	if validationErr := integrationForm.ValidateGoogleReader(integration.HasGoogleReaderPassword()); validationErr != nil {
 		sess.SetErrorMessage(validationErr.Translate(sess.Language()))
 		response.HTMLRedirect(w, r, h.routePath("/integrations"))
 		return
@@ -59,14 +59,10 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 
 	if integration.GoogleReaderEnabled {
 		if integrationForm.GoogleReaderPassword != "" {
-			integration.GoogleReaderPassword, err = crypto.HashPassword(integrationForm.GoogleReaderPassword)
-			if err != nil {
-				response.HTMLServerError(w, r, err)
-				return
-			}
+			integration.SetGoogleReaderPassword(integrationForm.GoogleReaderPassword)
 		}
 	} else {
-		integration.GoogleReaderPassword = ""
+		integration.ClearGoogleReaderPassword()
 	}
 
 	if integrationForm.WebhookEnabled {

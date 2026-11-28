@@ -106,7 +106,8 @@ func (h *greaderHandler) clientLoginHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	if err := h.store.GoogleReaderUserCheckPassword(username, password); err != nil {
+	userID, secret, err := h.store.GoogleReaderUserLogin(username, password)
+	if err != nil {
 		slog.Warn("[GoogleReader] Invalid username or password",
 			slog.Bool("authentication_failed", true),
 			slog.String("client_ip", clientIP),
@@ -125,15 +126,9 @@ func (h *greaderHandler) clientLoginHandler(w http.ResponseWriter, r *http.Reque
 		slog.String("username", username),
 	)
 
-	integration, err := h.store.GoogleReaderUserGetIntegration(username)
-	if err != nil {
-		response.JSONServerError(w, r, err)
-		return
-	}
+	h.store.SetLastLogin(userID)
 
-	h.store.SetLastLogin(integration.UserID)
-
-	token := getAuthToken(integration.GoogleReaderUsername, integration.GoogleReaderPassword)
+	token := username + "/" + secret
 	slog.Debug("[GoogleReader] Created token",
 		slog.String("client_ip", clientIP),
 		slog.String("user_agent", r.UserAgent()),
