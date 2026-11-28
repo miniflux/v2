@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -67,7 +68,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle, pinboardTags string, markA
 	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
-		return fmt.Errorf("pinboard: unable to send request: %w", withoutURL(err))
+		return fmt.Errorf("pinboard: unable to send request: %w", urllib.RedactSecretURLInError(err))
 	}
 	defer response.Body.Close()
 
@@ -99,7 +100,7 @@ func (c *Client) getBookmark(entryURL string) (*Post, error) {
 	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf("pinboard: unable fetch bookmark: %w", withoutURL(err))
+		return nil, fmt.Errorf("pinboard: unable fetch bookmark: %w", urllib.RedactSecretURLInError(err))
 	}
 	defer response.Body.Close()
 
@@ -118,12 +119,4 @@ func (c *Client) getBookmark(entryURL string) (*Post, error) {
 	}
 
 	return &results.Posts[0], nil
-}
-
-// withoutURL drops the request URL, which contains the auth token, from HTTP client errors.
-func withoutURL(err error) error {
-	if urlErr, ok := errors.AsType[*url.Error](err); ok {
-		return urlErr.Err
-	}
-	return err
 }

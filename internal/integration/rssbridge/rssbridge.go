@@ -5,7 +5,6 @@ package rssbridge // import "miniflux.app/v2/internal/integration/rssbridge"
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -58,10 +57,7 @@ func DetectBridges(rssBridgeURL, rssBridgeToken, websiteURL string) ([]*Bridge, 
 
 	response, err := httpClient.Do(request)
 	if err != nil {
-		if urlErr, ok := errors.AsType[*url.Error](err); ok {
-			urlErr.URL = urllib.RedactedURL(urlErr.URL)
-		}
-		return nil, fmt.Errorf("rssbridge: unable to execute request: %w", err)
+		return nil, fmt.Errorf("rssbridge: unable to execute request: %w", urllib.RedactURLInError(err))
 	}
 	defer response.Body.Close()
 

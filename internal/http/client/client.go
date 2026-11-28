@@ -12,7 +12,6 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"net/url"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -177,25 +176,7 @@ func (r *requestBuilder) Do() (*http.Response, error) {
 
 func (r *requestBuilder) redactURL(err error) error {
 	if r.secretEndpoint {
-		return RedactURLInError(err)
-	}
-	return err
-}
-
-// RedactURLInError hides the path and query of the URL carried by a
-// *url.Error in err, for requests whose URL embeds a secret such as a token.
-// Only the scheme and host are kept, which is enough to diagnose network
-// failures. The error is modified in place and returned.
-//
-// Call it before wrapping err: fmt.Errorf formats the message of the
-// wrapping error immediately, so a later change would not be reflected.
-func RedactURLInError(err error) error {
-	if urlErr, ok := errors.AsType[*url.Error](err); ok {
-		redactedURL := "xxxxx"
-		if parsedURL, parseErr := url.Parse(urlErr.URL); parseErr == nil && parsedURL.Host != "" {
-			redactedURL = parsedURL.Scheme + "://" + parsedURL.Host + "/xxxxx"
-		}
-		urlErr.URL = redactedURL
+		return urllib.RedactSecretURLInError(err)
 	}
 	return err
 }

@@ -212,19 +212,44 @@ func JoinBaseURLAndPath(baseURL, path string) (string, error) {
 	return finalURL, nil
 }
 
+// redactedPlaceholder replaces secrets in URLs, like url.URL.Redacted does for passwords.
+const redactedPlaceholder = "xxxxx"
+
 // RedactedURL returns rawURL with the userinfo password and the token query
 // parameter replaced by "xxxxx", for logs and errors. It returns "xxxxx" when
 // rawURL cannot be parsed, since the raw string could hold a password.
 func RedactedURL(rawURL string) string {
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
-		return "xxxxx"
+		return redactedPlaceholder
 	}
 	if values := parsedURL.Query(); values.Has("token") {
-		values.Set("token", "xxxxx")
+		values.Set("token", redactedPlaceholder)
 		parsedURL.RawQuery = values.Encode()
 	}
 	return parsedURL.Redacted()
+}
+
+// RedactURLInError applies RedactedURL to the URL of the *url.Error in err, in
+// place, and returns err; call it before fmt.Errorf wraps err.
+func RedactURLInError(err error) error {
+	if urlErr, ok := errors.AsType[*url.Error](err); ok {
+		urlErr.URL = RedactedURL(urlErr.URL)
+	}
+	return err
+}
+
+// RedactSecretURLInError keeps only the scheme and host of the URL of the
+// *url.Error in err, in place, and returns err; call it before fmt.Errorf wraps err.
+func RedactSecretURLInError(err error) error {
+	if urlErr, ok := errors.AsType[*url.Error](err); ok {
+		redactedURL := redactedPlaceholder
+		if parsedURL, parseErr := url.Parse(urlErr.URL); parseErr == nil && parsedURL.Host != "" {
+			redactedURL = parsedURL.Scheme + "://" + parsedURL.Host + "/" + redactedPlaceholder
+		}
+		urlErr.URL = redactedURL
+	}
+	return err
 }
 
 // IsNonPublicIP returns true if the given IP is not safe to access from the network.

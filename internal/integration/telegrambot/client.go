@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -56,7 +57,7 @@ func (c *Client) GetMe() (*User, error) {
 	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf("telegram: unable to send request: %v", client.RedactURLInError(err))
+		return nil, fmt.Errorf("telegram: unable to send request: %v", urllib.RedactSecretURLInError(err))
 	}
 	defer response.Body.Close()
 
@@ -96,7 +97,7 @@ func (c *Client) SendMessage(message *MessageRequest) (*Message, error) {
 	httpClient := client.NewClientWithOptions(client.Options{Timeout: defaultClientTimeout})
 	response, err := httpClient.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf("telegram: unable to send request: %v", client.RedactURLInError(err))
+		return nil, fmt.Errorf("telegram: unable to send request: %v", urllib.RedactSecretURLInError(err))
 	}
 	defer response.Body.Close()
 

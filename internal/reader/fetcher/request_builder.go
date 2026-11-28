@@ -337,10 +337,7 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	))
 
 	response, err := client.Do(req)
-	if urlErr, ok := errors.AsType[*url.Error](err); ok {
-		urlErr.URL = urllib.RedactedURL(urlErr.URL)
-	}
-	return response, err
+	return response, urllib.RedactURLInError(err)
 }
 
 // redactedHeaders returns a copy of headers with the credential values replaced, for logging.
