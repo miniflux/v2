@@ -367,7 +367,7 @@ func TestGetEntryIDsEndpoint(t *testing.T) {
 
 	regularUserClient, _ := testConfig.newRegularUser(t)
 
-	boolPtr := func(b bool) *bool { return &b }
+	boolPtr := func(value bool) *bool { return &value }
 
 	// A new user should have no entries at all.
 	result, err := regularUserClient.EntryIDs(nil)

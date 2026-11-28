@@ -107,9 +107,9 @@ func TestGetEntryIDsSorting(t *testing.T) {
 				if len(entries) != len(ids) {
 					t.Fatalf("Got %d entries, want %d", len(entries), len(ids))
 				}
-				for i, entry := range entries {
-					if entry.ID != ids[i] {
-						t.Fatalf("Entry %d has ID %d, want %d", i, entry.ID, ids[i])
+				for index, entry := range entries {
+					if entry.ID != ids[index] {
+						t.Fatalf("Entry %d has ID %d, want %d", index, entry.ID, ids[index])
 					}
 				}
 			})
@@ -125,25 +125,33 @@ func TestGetEntryIDsFiltersAndCount(t *testing.T) {
 		configure func(*EntryQueryBuilder) *EntryQueryBuilder
 		ids       []int64
 	}{
-		{"all including hidden", func(b *EntryQueryBuilder) *EntryQueryBuilder { return b }, []int64{1, 2, 3, 4, 5, 6}},
-		{"globally visible", func(b *EntryQueryBuilder) *EntryQueryBuilder { return b.WithGloballyVisible() }, []int64{1, 2, 3}},
-		{"hidden feed", func(b *EntryQueryBuilder) *EntryQueryBuilder { return b.WithFeedID(13).WithGloballyVisible() }, nil},
-		{"hidden category", func(b *EntryQueryBuilder) *EntryQueryBuilder { return b.WithCategoryID(30).WithGloballyVisible() }, nil},
-		{"matching scope", func(b *EntryQueryBuilder) *EntryQueryBuilder { return b.WithFeedID(11).WithCategoryID(10) }, []int64{1, 3}},
-		{"mismatched scope", func(b *EntryQueryBuilder) *EntryQueryBuilder { return b.WithFeedID(11).WithCategoryID(20) }, nil},
-		{"unread", func(b *EntryQueryBuilder) *EntryQueryBuilder { return b.WithStatuses(model.EntryStatusUnread) }, []int64{1, 3, 4, 6}},
-		{"read", func(b *EntryQueryBuilder) *EntryQueryBuilder { return b.WithStatuses(model.EntryStatusRead) }, []int64{2, 5}},
-		{"both statuses", func(b *EntryQueryBuilder) *EntryQueryBuilder {
-			return b.WithStatuses(model.EntryStatusRead, model.EntryStatusUnread)
+		{"all including hidden", func(builder *EntryQueryBuilder) *EntryQueryBuilder { return builder }, []int64{1, 2, 3, 4, 5, 6}},
+		{"globally visible", func(builder *EntryQueryBuilder) *EntryQueryBuilder { return builder.WithGloballyVisible() }, []int64{1, 2, 3}},
+		{"hidden feed", func(builder *EntryQueryBuilder) *EntryQueryBuilder {
+			return builder.WithFeedID(13).WithGloballyVisible()
+		}, nil},
+		{"hidden category", func(builder *EntryQueryBuilder) *EntryQueryBuilder {
+			return builder.WithCategoryID(30).WithGloballyVisible()
+		}, nil},
+		{"matching scope", func(builder *EntryQueryBuilder) *EntryQueryBuilder { return builder.WithFeedID(11).WithCategoryID(10) }, []int64{1, 3}},
+		{"mismatched scope", func(builder *EntryQueryBuilder) *EntryQueryBuilder { return builder.WithFeedID(11).WithCategoryID(20) }, nil},
+		{"unread", func(builder *EntryQueryBuilder) *EntryQueryBuilder {
+			return builder.WithStatuses(model.EntryStatusUnread)
+		}, []int64{1, 3, 4, 6}},
+		{"read", func(builder *EntryQueryBuilder) *EntryQueryBuilder {
+			return builder.WithStatuses(model.EntryStatusRead)
+		}, []int64{2, 5}},
+		{"both statuses", func(builder *EntryQueryBuilder) *EntryQueryBuilder {
+			return builder.WithStatuses(model.EntryStatusRead, model.EntryStatusUnread)
 		}, []int64{1, 2, 3, 4, 5, 6}},
-		{"starred", func(b *EntryQueryBuilder) *EntryQueryBuilder { return b.WithStarred(true) }, []int64{2, 4}},
-		{"not starred", func(b *EntryQueryBuilder) *EntryQueryBuilder { return b.WithStarred(false) }, []int64{1, 3, 5, 6}},
-		{"combined", func(b *EntryQueryBuilder) *EntryQueryBuilder {
-			return b.WithGloballyVisible().WithStatuses(model.EntryStatusUnread).WithTags("ONE", "two").WithSearchQuery("shared")
+		{"starred", func(builder *EntryQueryBuilder) *EntryQueryBuilder { return builder.WithStarred(true) }, []int64{2, 4}},
+		{"not starred", func(builder *EntryQueryBuilder) *EntryQueryBuilder { return builder.WithStarred(false) }, []int64{1, 3, 5, 6}},
+		{"combined", func(builder *EntryQueryBuilder) *EntryQueryBuilder {
+			return builder.WithGloballyVisible().WithStatuses(model.EntryStatusUnread).WithTags("ONE", "two").WithSearchQuery("shared")
 		}, []int64{1, 3}},
-		{"strict ID boundaries", func(b *EntryQueryBuilder) *EntryQueryBuilder { return b.AfterEntryID(1).BeforeEntryID(3) }, []int64{2}},
-		{"strict time boundaries", func(b *EntryQueryBuilder) *EntryQueryBuilder {
-			return b.AfterPublishedDate(time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)).
+		{"strict ID boundaries", func(builder *EntryQueryBuilder) *EntryQueryBuilder { return builder.AfterEntryID(1).BeforeEntryID(3) }, []int64{2}},
+		{"strict time boundaries", func(builder *EntryQueryBuilder) *EntryQueryBuilder {
+			return builder.AfterPublishedDate(time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)).
 				BeforePublishedDate(time.Date(2025, 1, 3, 0, 0, 0, 0, time.UTC))
 		}, []int64{3}},
 	} {
@@ -191,8 +199,8 @@ func TestGetEntryIDsStablePagination(t *testing.T) {
 	for _, order := range []string{"id", "status", "changed_at", "published_at", "created_at", "category_title", "category_id", "title", "author"} {
 		for _, direction := range []string{"asc", "desc"} {
 			want := make([]int64, 120)
-			for i := range want {
-				want[i] = int64(i + 1)
+			for index := range want {
+				want[index] = int64(index + 1)
 			}
 			if direction == "desc" {
 				slices.Reverse(want)

@@ -13,9 +13,9 @@ import (
 
 func TestMiddlewareRejectsMissingAPIKey(t *testing.T) {
 	newPostRequest := func(body string) *http.Request {
-		r := httptest.NewRequest(http.MethodPost, "/fever/?api", strings.NewReader(body))
-		r.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		return r
+		request := httptest.NewRequest(http.MethodPost, "/fever/?api", strings.NewReader(body))
+		request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		return request
 	}
 
 	scenarios := []struct {

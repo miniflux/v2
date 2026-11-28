@@ -33,8 +33,8 @@ func configureTestOptions(t *testing.T) {
 
 func webSessionRequest(path string) (*http.Request, *model.WebSession) {
 	session, _ := model.NewWebSession("test", "127.0.0.1")
-	r := httptest.NewRequest(http.MethodGet, path, nil)
-	return r.WithContext(context.WithValue(r.Context(), request.WebSessionContextKey, session)), session
+	httpRequest := httptest.NewRequest(http.MethodGet, path, nil)
+	return httpRequest.WithContext(context.WithValue(httpRequest.Context(), request.WebSessionContextKey, session)), session
 }
 
 func TestNewPublicOmitsSessionSecrets(t *testing.T) {
@@ -42,9 +42,9 @@ func TestNewPublicOmitsSessionSecrets(t *testing.T) {
 	session, _ := model.NewWebSession("test", "127.0.0.1")
 	session.SetSuccessMessage("saved")
 
-	r, _ := webSessionRequest("/share/code")
+	httpRequest, _ := webSessionRequest("/share/code")
 
-	publicView := NewPublic(nil, r)
+	publicView := NewPublic(nil, httpRequest)
 
 	for _, key := range []string{"csrf", "flashSuccessMessage", "flashErrorMessage"} {
 		if value, ok := publicView.params[key]; ok {
@@ -61,9 +61,9 @@ func TestNewPublicOmitsSessionSecrets(t *testing.T) {
 func TestNewIncludesCSRFToken(t *testing.T) {
 	configureTestOptions(t)
 
-	r, session := webSessionRequest("/unread")
+	httpRequest, session := webSessionRequest("/unread")
 
-	defaultView := New(nil, r)
+	defaultView := New(nil, httpRequest)
 
 	if csrf := defaultView.params["csrf"]; csrf != session.CSRF() || csrf == "" {
 		t.Fatalf(`Unexpected CSRF token, got %v`, csrf)
@@ -75,16 +75,16 @@ func TestViewSetsCSPNonceAndPolicy(t *testing.T) {
 	configureTestOptions(t)
 
 	engine := template.NewEngine("")
-	r, _ := webSessionRequest("/")
+	httpRequest, _ := webSessionRequest("/")
 
-	v := New(engine, r)
+	defaultView := New(engine, httpRequest)
 
-	nonce, ok := v.params["cspNonce"].(string)
+	nonce, ok := defaultView.params["cspNonce"].(string)
 	if !ok || nonce == "" {
-		t.Fatalf("view params must contain a non-empty cspNonce, got %v", v.params["cspNonce"])
+		t.Fatalf("view params must contain a non-empty cspNonce, got %v", defaultView.params["cspNonce"])
 	}
 
-	if policy := v.CSP(); !strings.Contains(policy, "'nonce-"+nonce+"'") {
+	if policy := defaultView.CSP(); !strings.Contains(policy, "'nonce-"+nonce+"'") {
 		t.Fatalf("view CSP() must contain the request nonce, nonce=%q policy=%q", nonce, policy)
 	}
 }
@@ -94,18 +94,18 @@ func TestViewHTMLSetsCSPHeaderWithMatchingNonce(t *testing.T) {
 
 	engine := template.NewEngine("")
 	engine.ParseTemplates()
-	r, _ := webSessionRequest("/")
+	httpRequest, _ := webSessionRequest("/")
 
-	w := httptest.NewRecorder()
+	recorder := httptest.NewRecorder()
 
-	v := New(engine, r)
-	v.HTML(w, r, "offline")
+	defaultView := New(engine, httpRequest)
+	defaultView.HTML(recorder, httpRequest, "offline")
 
-	if policy := w.Result().Header.Get("Content-Security-Policy"); policy != v.CSP() {
-		t.Fatalf("view HTML() must send the policy of the view, got %q, want %q", policy, v.CSP())
+	if policy := recorder.Result().Header.Get("Content-Security-Policy"); policy != defaultView.CSP() {
+		t.Fatalf("view HTML() must send the policy of the view, got %q, want %q", policy, defaultView.CSP())
 	}
 
-	body := w.Body.String()
+	body := recorder.Body.String()
 	if strings.Contains(strings.ToLower(body), `http-equiv="content-security-policy"`) {
 		t.Fatal("rendered HTML must not contain a meta Content-Security-Policy tag")
 	}

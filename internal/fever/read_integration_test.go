@@ -232,7 +232,7 @@ func feedCategory(t *testing.T, user *testUser, feedID int64) *miniflux.Category
 func requireGroups(t *testing.T, groups, expected []groupResult) {
 	t.Helper()
 
-	byID := func(a, b groupResult) int { return cmp.Compare(a.ID, b.ID) }
+	byID := func(left, right groupResult) int { return cmp.Compare(left.ID, right.ID) }
 	groups = slices.SortedFunc(slices.Values(groups), byID)
 	expected = slices.SortedFunc(slices.Values(expected), byID)
 	if !slices.Equal(groups, expected) {
