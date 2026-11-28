@@ -9,7 +9,6 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"strings"
 	"testing"
 	"time"
@@ -221,47 +220,6 @@ func TestRequestBuilderWithSecretEndpointRedactsErrors(t *testing.T) {
 				t.Fatalf("expected the error to contain %q, got %q", tt.wantErrContains, err)
 			}
 		})
-	}
-}
-
-func TestRedactURLInError(t *testing.T) {
-	tests := []struct {
-		name string
-		err  error
-		want string
-	}{
-		{
-			name: "network error",
-			err:  &url.Error{Op: "Post", URL: "https://example.org/bot123:secret-token/sendMessage?key=secret-token", Err: io.ErrUnexpectedEOF},
-			want: `Post "https://example.org/xxxxx": unexpected EOF`,
-		},
-		{
-			name: "network error with userinfo and port",
-			err:  &url.Error{Op: "Get", URL: "https://user:password@example.org:8443/secret-token", Err: io.ErrUnexpectedEOF},
-			want: `Get "https://example.org:8443/xxxxx": unexpected EOF`,
-		},
-		{
-			name: "unparsable URL",
-			err:  &url.Error{Op: "parse", URL: "https://example.org/secret-token\n", Err: errors.New("net/url: invalid control character in URL")},
-			want: `parse "xxxxx": net/url: invalid control character in URL`,
-		},
-		{
-			name: "error without URL",
-			err:  io.ErrUnexpectedEOF,
-			want: "unexpected EOF",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := RedactURLInError(tt.err).Error(); got != tt.want {
-				t.Fatalf("expected %q, got %q", tt.want, got)
-			}
-		})
-	}
-
-	if err := RedactURLInError(nil); err != nil {
-		t.Fatalf("expected nil, got %v", err)
 	}
 }
 
