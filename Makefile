@@ -113,11 +113,9 @@ lint:
 	gofmt -d -e .
 	golangci-lint run
 
-integration-test: miniflux
+integration-test:
 	psql -U postgres -c 'drop database if exists miniflux_test;'
 	psql -U postgres -c 'create database miniflux_test;'
-
-	DATABASE_URL=$(DB_URL) ./$(APP) -migrate
 
 	TEST_DATABASE_URL=$(DB_URL) go test -v -count=1 ./internal/storage
 	TEST_DATABASE_URL=$(DB_URL) go test -v -count=1 ./internal/api

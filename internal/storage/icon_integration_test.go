@@ -5,7 +5,6 @@ package storage
 
 import (
 	"database/sql"
-	"os"
 	"testing"
 	"time"
 
@@ -14,16 +13,7 @@ import (
 )
 
 func TestStoreFeedIconWhenAnotherTransactionCreatesTheSameIcon(t *testing.T) {
-	databaseURL := os.Getenv("TEST_DATABASE_URL")
-	if databaseURL == "" {
-		t.Skip("Set TEST_DATABASE_URL to a migrated PostgreSQL database to run storage integration tests")
-	}
-
-	db, err := sql.Open("postgres", databaseURL)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(func() { db.Close() })
+	db := openTestDatabase(t)
 	store := NewStorage(db)
 
 	suffix := crypto.GenerateRandomStringHex(10)

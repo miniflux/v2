@@ -4,8 +4,6 @@
 package storage
 
 import (
-	"database/sql"
-	"os"
 	"slices"
 	"testing"
 	"time"
@@ -16,20 +14,11 @@ import (
 func newEntryQueryTestStorage(t *testing.T) *Storage {
 	t.Helper()
 
-	databaseURL := os.Getenv("TEST_DATABASE_URL")
-	if databaseURL == "" {
-		t.Skip("Set TEST_DATABASE_URL to a migrated PostgreSQL database to run storage integration tests")
-	}
-
-	db, err := sql.Open("postgres", databaseURL)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(func() { db.Close() })
+	db := openTestDatabase(t)
 
 	// Keep temporary tables on the same connection and leave the database unchanged.
 	db.SetMaxOpenConns(1)
-	_, err = db.Exec(`
+	_, err := db.Exec(`
 		SET TIME ZONE 'UTC';
 		CREATE TEMP TABLE users (LIKE users INCLUDING DEFAULTS);
 		CREATE TEMP TABLE categories (LIKE categories INCLUDING DEFAULTS);
