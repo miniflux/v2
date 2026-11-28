@@ -342,7 +342,7 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 // redactedHeaders returns a copy of headers with the credential values replaced, for logging.
 func redactedHeaders(headers http.Header) http.Header {
 	redacted := headers.Clone()
-	for _, headerName := range []string{"Authorization", "Cookie", "Proxy-Authorization"} {
+	for _, headerName := range []string{"Authorization", "Cookie", "Proxy-Authorization", "X-Goog-Api-Key"} {
 		if redacted.Get(headerName) != "" {
 			redacted.Set(headerName, "<redacted>")
 		}

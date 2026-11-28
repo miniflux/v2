@@ -17,6 +17,8 @@ import (
 	"miniflux.app/v2/internal/reader/fetcher"
 )
 
+const youTubeVideosAPIURL = "https://www.googleapis.com/youtube/v3/videos"
+
 func isYouTubeVideoURL(websiteURL string) bool {
 	return strings.Contains(websiteURL, "youtube.com/watch?v=")
 }
@@ -64,7 +66,7 @@ func fetchYouTubeWatchTimeInBulk(entries []*model.Entry) {
 		return
 	}
 
-	watchTimeMap, err := fetchYouTubeWatchTimeFromApiInBulk(videoIDs)
+	watchTimeMap, err := fetchYouTubeWatchTimeFromApiInBulk(youTubeVideosAPIURL, videoIDs)
 	if err != nil {
 		slog.Warn("Unable to fetch YouTube watch time in bulk", slog.Any("error", err))
 		return
@@ -77,26 +79,20 @@ func fetchYouTubeWatchTimeInBulk(entries []*model.Entry) {
 	}
 }
 
-func fetchYouTubeWatchTimeFromApiInBulk(videoIDs []string) (map[string]time.Duration, error) {
+func fetchYouTubeWatchTimeFromApiInBulk(apiURL string, videoIDs []string) (map[string]time.Duration, error) {
 	slog.Debug("Fetching YouTube watch time in bulk", slog.Any("video_ids", videoIDs))
 
 	apiQuery := url.Values{}
 	apiQuery.Set("id", strings.Join(videoIDs, ","))
-	apiQuery.Set("key", config.Opts.YouTubeAPIKey())
 	apiQuery.Set("part", "contentDetails")
 
-	apiURL := url.URL{
-		Scheme:   "https",
-		Host:     "www.googleapis.com",
-		Path:     "youtube/v3/videos",
-		RawQuery: apiQuery.Encode(),
-	}
-
+	// The key goes in a header rather than the query string to keep it out of logged URLs.
 	requestBuilder := fetcher.NewRequestBuilder().
+		WithHeader("X-Goog-Api-Key", config.Opts.YouTubeAPIKey()).
 		WithTimeout(config.Opts.HTTPClientTimeout()).
 		WithProxyRotator(proxyrotator.ProxyRotatorInstance)
 
-	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(apiURL.String()))
+	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(apiURL + "?" + apiQuery.Encode()))
 	defer responseHandler.Close()
 
 	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
