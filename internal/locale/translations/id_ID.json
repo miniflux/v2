@@ -468,8 +468,8 @@
     "page.api_keys.table.created_at": "Tanggal Pembuatan",
     "page.api_keys.table.description": "Deskripsi",
     "page.api_keys.table.last_used_at": "Terakhir Digunakan",
-    "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Kunci API",
+    "page.api_keys.token_shown_once": "Salin kunci API ini sekarang. Demi alasan keamanan, kunci ini tidak akan ditampilkan lagi.",
     "page.authentication.title": "Autentikasi",
     "page.categories.entries": "Artikel",
     "page.categories.feed_count": [

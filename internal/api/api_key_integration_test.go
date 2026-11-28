@@ -61,8 +61,8 @@ func TestAPIKeysEndpoint(t *testing.T) {
 	if apiKeys[0].UserID != regularTestUser.ID {
 		t.Fatalf(`Invalid user ID for API key, got "%v" instead of "%v"`, apiKeys[0].UserID, regularTestUser.ID)
 	}
-	if apiKeys[0].Token != apiKey.Token {
-		t.Fatalf(`Invalid API key token, got "%v" instead of "%v"`, apiKeys[0].Token, apiKey.Token)
+	if apiKeys[0].Token != "" {
+		t.Fatalf(`Listing API keys should not return their token, got "%v"`, apiKeys[0].Token)
 	}
 	if apiKeys[0].Description != "Test API Key" {
 		t.Fatalf(`Invalid API key description, got "%v" instead of "Test API Key"`, apiKeys[0].Description)

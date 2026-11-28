@@ -471,8 +471,8 @@
     "page.api_keys.table.created_at": "Aanmaakdatum",
     "page.api_keys.table.description": "Omschrijving",
     "page.api_keys.table.last_used_at": "Laatst gebruikt",
-    "page.api_keys.table.token": "API-token",
     "page.api_keys.title": "API-sleutels",
+    "page.api_keys.token_shown_once": "Kopieer deze API-sleutel nu. Om veiligheidsredenen wordt hij niet opnieuw getoond.",
     "page.authentication.title": "Authenticatie",
     "page.categories.entries": "Artikelen",
     "page.categories.feed_count": [

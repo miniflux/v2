@@ -471,8 +471,8 @@
     "page.api_keys.table.created_at": "Data de criação",
     "page.api_keys.table.description": "Descrição",
     "page.api_keys.table.last_used_at": "Ultima utilização",
-    "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Chaves de API",
+    "page.api_keys.token_shown_once": "Copie esta chave de API agora. Por motivos de segurança, ela não será exibida novamente.",
     "page.authentication.title": "Autenticação",
     "page.categories.entries": "Itens",
     "page.categories.feed_count": [

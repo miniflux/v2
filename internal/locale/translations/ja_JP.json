@@ -468,8 +468,8 @@
     "page.api_keys.table.created_at": "作成日",
     "page.api_keys.table.description": "説明",
     "page.api_keys.table.last_used_at": "最終使用",
-    "page.api_keys.table.token": "トークン",
     "page.api_keys.title": "API キー",
+    "page.api_keys.token_shown_once": "この API キーを今すぐコピーしてください。セキュリティ上の理由から、再度表示されることはありません。",
     "page.authentication.title": "認証",
     "page.categories.entries": "記事一覧",
     "page.categories.feed_count": [

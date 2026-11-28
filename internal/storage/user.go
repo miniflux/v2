@@ -518,9 +518,9 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 		INNER JOIN
 			api_keys ON api_keys.user_id=u.id
 		WHERE
-			api_keys.token = $1
+			api_keys.token_hash = $1
 	`
-	return s.fetchUser(query, token)
+	return s.fetchUser(query, crypto.HashToken(token))
 }
 
 func (s *Storage) fetchUser(query string, args ...any) (*model.User, error) {

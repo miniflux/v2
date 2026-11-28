@@ -474,8 +474,8 @@
     "page.api_keys.table.created_at": "Дата створення",
     "page.api_keys.table.description": "Опис",
     "page.api_keys.table.last_used_at": "Дата останнього використання",
-    "page.api_keys.table.token": "Токен",
     "page.api_keys.title": "Ключі API",
+    "page.api_keys.token_shown_once": "Скопіюйте цей ключ API зараз. З міркувань безпеки його більше не буде показано.",
     "page.authentication.title": "Автентифікація",
     "page.categories.entries": "Статті",
     "page.categories.feed_count": [

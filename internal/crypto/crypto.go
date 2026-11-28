@@ -28,6 +28,12 @@ func SHA256(value string) string {
 	return hex.EncodeToString(h[:])
 }
 
+// HashToken returns the SHA-256 digest of a random token, to store and look it up without keeping the token itself.
+func HashToken(token string) []byte {
+	digest := sha256.Sum256([]byte(token))
+	return digest[:]
+}
+
 // GenerateRandomBytes returns random bytes.
 func GenerateRandomBytes(size int) []byte {
 	b := make([]byte, size)

@@ -471,8 +471,8 @@
     "page.api_keys.table.created_at": "Ημερομηνία Δημιουργίας",
     "page.api_keys.table.description": "Περιγραφή",
     "page.api_keys.table.last_used_at": "Τελευταία Χρήση",
-    "page.api_keys.table.token": "Διακριτικό",
     "page.api_keys.title": "Κλειδιά API",
+    "page.api_keys.token_shown_once": "Αντιγράψτε αυτό το κλειδί API τώρα. Για λόγους ασφαλείας, δεν θα εμφανιστεί ξανά.",
     "page.authentication.title": "Έλεγχος ταυτότητας",
     "page.categories.entries": "Άρθρα",
     "page.categories.feed_count": [

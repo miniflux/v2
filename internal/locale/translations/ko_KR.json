@@ -468,8 +468,8 @@
     "page.api_keys.table.created_at": "생성일",
     "page.api_keys.table.description": "설명",
     "page.api_keys.table.last_used_at": "마지막 사용",
-    "page.api_keys.table.token": "토큰",
     "page.api_keys.title": "API 키",
+    "page.api_keys.token_shown_once": "지금 이 API 키를 복사하세요. 보안상의 이유로 다시 표시되지 않습니다.",
     "page.authentication.title": "인증",
     "page.categories.entries": "게시물 목록",
     "page.categories.feed_count": [

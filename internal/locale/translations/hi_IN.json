@@ -471,8 +471,8 @@
     "page.api_keys.table.created_at": "निर्माण तिथि",
     "page.api_keys.table.description": "विवरण",
     "page.api_keys.table.last_used_at": "आखरी इस्त्तमाल किया गया",
-    "page.api_keys.table.token": "टोकन",
     "page.api_keys.title": "एपीआई कुंजी",
+    "page.api_keys.token_shown_once": "इस एपीआई कुंजी को अभी कॉपी करें। सुरक्षा कारणों से, इसे दोबारा नहीं दिखाया जाएगा।",
     "page.authentication.title": "प्रमाणीकरण",
     "page.categories.entries": "विषयवस्तुया",
     "page.categories.feed_count": [

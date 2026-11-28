@@ -39,10 +39,12 @@ func (h *handler) saveAPIKey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err = h.store.CreateAPIKey(user.ID, apiKeyCreationRequest.Description); err != nil {
+	apiKey, err := h.store.CreateAPIKey(user.ID, apiKeyCreationRequest.Description)
+	if err != nil {
 		response.HTMLServerError(w, r, err)
 		return
 	}
 
-	response.HTMLRedirect(w, r, h.routePath("/keys"))
+	// Render the token in this response rather than redirecting: only its hash is stored, so it cannot be shown later.
+	h.renderAPIKeysPage(w, r, user, apiKey)
 }

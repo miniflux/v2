@@ -474,8 +474,8 @@
     "page.api_keys.table.created_at": "Data utworzenia",
     "page.api_keys.table.description": "Opis",
     "page.api_keys.table.last_used_at": "Ostatnio używane",
-    "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Klucze API",
+    "page.api_keys.token_shown_once": "Skopiuj teraz ten klucz API. Ze względów bezpieczeństwa nie zostanie on ponownie wyświetlony.",
     "page.authentication.title": "Uwierzytelnianie",
     "page.categories.entries": "Wpisy",
     "page.categories.feed_count": [
