@@ -345,6 +345,7 @@ func TestRequestBuilder_CredentialsNotLogged(t *testing.T) {
 		"Authorization":       "Basic dGVzdDpwYXNzd29yZA==", // base64 of "test:password"
 		"Cookie":              "session=abc123",
 		"Proxy-Authorization": "Basic cHJveHk6c2VjcmV0", // base64 of "proxy:secret"
+		"X-Goog-Api-Key":      "AIzaSyTestKey",
 	}
 
 	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
@@ -366,6 +367,7 @@ func TestRequestBuilder_CredentialsNotLogged(t *testing.T) {
 		WithUsernameAndPassword("test", "password").
 		WithCookie(credentialHeaders["Cookie"], server.URL).
 		WithHeader("Proxy-Authorization", credentialHeaders["Proxy-Authorization"]).
+		WithHeader("X-Goog-Api-Key", credentialHeaders["X-Goog-Api-Key"]).
 		ExecuteRequest(server.URL)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
