@@ -142,3 +142,22 @@ func TestFetchYouTubeWatchTimeFromAPIInBulkKeepsKeyOutOfErrors(t *testing.T) {
 		t.Errorf("Logs contain the API key:\n%s", logs.String())
 	}
 }
+
+func TestFetchYouTubeWatchTimeFromAPIInBulkDoesNotFollowRedirects(t *testing.T) {
+	const apiKey = "AIzaSyTestKey"
+	configureYouTubeAPIOptions(t, apiKey)
+
+	redirectTarget := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		t.Errorf("Expected the redirect not to be followed, got a request with X-Goog-Api-Key %q", request.Header.Get("X-Goog-Api-Key"))
+	}))
+	defer redirectTarget.Close()
+
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		http.Redirect(writer, request, redirectTarget.URL, http.StatusFound)
+	}))
+	defer server.Close()
+
+	if _, err := fetchYouTubeWatchTimeFromApiInBulk(server.URL, []string{"video1"}); err == nil {
+		t.Fatal("Expected an error when the API responds with a redirect")
+	}
+}

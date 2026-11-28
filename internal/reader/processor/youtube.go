@@ -5,6 +5,7 @@ package processor // import "miniflux.app/v2/internal/reader/processor"
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/url"
@@ -86,9 +87,11 @@ func fetchYouTubeWatchTimeFromApiInBulk(apiURL string, videoIDs []string) (map[s
 	apiQuery.Set("id", strings.Join(videoIDs, ","))
 	apiQuery.Set("part", "contentDetails")
 
-	// The key goes in a header rather than the query string to keep it out of logged URLs.
+	// The key goes in a header to keep it out of logged URLs, and redirects are not
+	// followed because the HTTP client forwards custom headers to the redirect target.
 	requestBuilder := fetcher.NewRequestBuilder().
 		WithHeader("X-Goog-Api-Key", config.Opts.YouTubeAPIKey()).
+		WithoutRedirects().
 		WithTimeout(config.Opts.HTTPClientTimeout()).
 		WithProxyRotator(proxyrotator.ProxyRotatorInstance)
 
@@ -98,6 +101,10 @@ func fetchYouTubeWatchTimeFromApiInBulk(apiURL string, videoIDs []string) (map[s
 	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
 		slog.Warn("Unable to fetch contentDetails from YouTube API", slog.Any("error", localizedError.Error()))
 		return nil, localizedError.Error()
+	}
+
+	if responseHandler.IsRedirect() {
+		return nil, errors.New("youtube: unexpected redirect from the API")
 	}
 
 	videos := struct {
