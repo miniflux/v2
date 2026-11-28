@@ -101,7 +101,7 @@ func TestClientLoginTakesAsLongForUnknownUsernames(t *testing.T) {
 	// Interleave the scenarios so that load on the machine affects them all alike, and keep the fastest attempt because noise only adds time.
 	fastest := make([]time.Duration, len(scenarios))
 	for attempt := range 5 {
-		for i, scenario := range scenarios {
+		for index, scenario := range scenarios {
 			start := time.Now()
 			status, body := anonymous.post(t, "/accounts/ClientLogin", url.Values{
 				"Email":  {scenario.username},
@@ -111,15 +111,15 @@ func TestClientLoginTakesAsLongForUnknownUsernames(t *testing.T) {
 			elapsed := time.Since(start)
 			requireStatus(t, status, body, http.StatusUnauthorized)
 
-			if attempt == 0 || elapsed < fastest[i] {
-				fastest[i] = elapsed
+			if attempt == 0 || elapsed < fastest[index] {
+				fastest[index] = elapsed
 			}
 		}
 	}
 
 	baseline := fastest[0]
-	for i, scenario := range scenarios[1:] {
-		if elapsed := fastest[i+1]; elapsed < baseline/2 {
+	for index, scenario := range scenarios[1:] {
+		if elapsed := fastest[index+1]; elapsed < baseline/2 {
 			t.Errorf(`ClientLogin with %s took %v, much less than the %v it took with a wrong password: the response time reveals whether the username exists`,
 				scenario.name, elapsed, baseline)
 		}

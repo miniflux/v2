@@ -93,6 +93,18 @@ func expectFromJSON[T any](
 	}
 }
 
+func TestIncorrectEndpoint(t *testing.T) {
+	client := NewClient("incorrect url")
+	if _, err := client.Users(); err == nil {
+		t.Fatal(`Using an incorrect URL should raise an error`)
+	}
+
+	client = NewClient("")
+	if _, err := client.Users(); err == nil {
+		t.Fatal(`Using an empty URL should raise an error`)
+	}
+}
+
 func TestHealthcheck(t *testing.T) {
 	client := NewClientWithOptions(
 		"http://mf",

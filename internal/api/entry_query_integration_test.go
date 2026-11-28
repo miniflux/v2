@@ -97,11 +97,11 @@ func newEntryQueryAPI(t *testing.T) (http.Handler, *sql.DB) {
 }
 
 func entryQueryAPIRequest(api http.Handler, method, path, body string) *httptest.ResponseRecorder {
-	r := httptest.NewRequest(method, path, strings.NewReader(body))
-	r.SetBasicAuth("entry-query-user", "entry-query-password")
-	w := httptest.NewRecorder()
-	api.ServeHTTP(w, r)
-	return w
+	request := httptest.NewRequest(method, path, strings.NewReader(body))
+	request.SetBasicAuth("entry-query-user", "entry-query-password")
+	recorder := httptest.NewRecorder()
+	api.ServeHTTP(recorder, request)
+	return recorder
 }
 
 func checkEntryQueryAPIs(t *testing.T, api http.Handler, query string, want []int64, total int) {
@@ -118,25 +118,25 @@ func checkEntryQueryAPIs(t *testing.T, api http.Handler, query string, want []in
 	}
 	query = values.Encode()
 
-	w := entryQueryAPIRequest(api, http.MethodGet, "/v1/entries?"+query, "")
-	if w.Code != http.StatusOK {
-		t.Fatalf("GetEntries returned %d: %s", w.Code, w.Body.String())
+	recorder := entryQueryAPIRequest(api, http.MethodGet, "/v1/entries?"+query, "")
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("GetEntries returned %d: %s", recorder.Code, recorder.Body.String())
 	}
 	var entries entriesResponse
-	if err := json.Unmarshal(w.Body.Bytes(), &entries); err != nil {
+	if err := json.Unmarshal(recorder.Body.Bytes(), &entries); err != nil {
 		t.Fatal(err)
 	}
 	ids := make([]int64, len(entries.Entries))
-	for i, entry := range entries.Entries {
-		ids[i] = entry.ID
+	for index, entry := range entries.Entries {
+		ids[index] = entry.ID
 	}
 
-	w = entryQueryAPIRequest(api, http.MethodGet, "/v1/entries/ids?"+query, "")
-	if w.Code != http.StatusOK {
-		t.Fatalf("GetEntryIDs returned %d: %s", w.Code, w.Body.String())
+	recorder = entryQueryAPIRequest(api, http.MethodGet, "/v1/entries/ids?"+query, "")
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("GetEntryIDs returned %d: %s", recorder.Code, recorder.Body.String())
 	}
 	var entryIDs entryIDsResponse
-	if err := json.Unmarshal(w.Body.Bytes(), &entryIDs); err != nil {
+	if err := json.Unmarshal(recorder.Body.Bytes(), &entryIDs); err != nil {
 		t.Fatal(err)
 	}
 	if entryIDs.EntryIDs == nil {
@@ -253,17 +253,17 @@ func TestEntryQueryAPISorting(t *testing.T) {
 			for _, search := range []string{"", "shared"} {
 				t.Run(order+"/"+direction+"/search="+search, func(t *testing.T) {
 					want := slices.Clone(visible)
-					slices.SortFunc(want, func(a, b int64) int {
-						i, j := slices.Index(visible, a), slices.Index(visible, b)
-						result := cmp.Compare(key[i], key[j])
+					slices.SortFunc(want, func(leftID, rightID int64) int {
+						leftIndex, rightIndex := slices.Index(visible, leftID), slices.Index(visible, rightID)
+						result := cmp.Compare(key[leftIndex], key[rightIndex])
 						if result == 0 && search != "" {
 							// Equal vectors leave the search expression's publication recency first.
-							if rank := cmp.Compare(keys["published_at"][j], keys["published_at"][i]); rank != 0 {
+							if rank := cmp.Compare(keys["published_at"][rightIndex], keys["published_at"][leftIndex]); rank != 0 {
 								return rank
 							}
 						}
 						if result == 0 {
-							result = cmp.Compare(a, b)
+							result = cmp.Compare(leftID, rightID)
 						}
 						if direction == "desc" {
 							result = -result
@@ -316,21 +316,21 @@ func TestEntryQueryAPIStablePagination(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	w := entryQueryAPIRequest(api, http.MethodGet, "/v1/entries", "")
+	recorder := entryQueryAPIRequest(api, http.MethodGet, "/v1/entries", "")
 	var entries entriesResponse
-	if err := json.Unmarshal(w.Body.Bytes(), &entries); err != nil {
+	if err := json.Unmarshal(recorder.Body.Bytes(), &entries); err != nil {
 		t.Fatal(err)
 	}
-	if w.Code != http.StatusOK || len(entries.Entries) != 100 || entries.Total != count {
-		t.Fatalf("GetEntries lost its default page size: status=%d length=%d total=%d", w.Code, len(entries.Entries), entries.Total)
+	if recorder.Code != http.StatusOK || len(entries.Entries) != 100 || entries.Total != count {
+		t.Fatalf("GetEntries lost its default page size: status=%d length=%d total=%d", recorder.Code, len(entries.Entries), entries.Total)
 	}
-	w = entryQueryAPIRequest(api, http.MethodGet, "/v1/entries/ids", "")
+	recorder = entryQueryAPIRequest(api, http.MethodGet, "/v1/entries/ids", "")
 	var ids entryIDsResponse
-	if err := json.Unmarshal(w.Body.Bytes(), &ids); err != nil {
+	if err := json.Unmarshal(recorder.Body.Bytes(), &ids); err != nil {
 		t.Fatal(err)
 	}
-	if w.Code != http.StatusOK || len(ids.EntryIDs) != count || ids.Total != count {
-		t.Fatalf("GetEntryIDs unexpectedly inherited the entries page size: status=%d length=%d total=%d", w.Code, len(ids.EntryIDs), ids.Total)
+	if recorder.Code != http.StatusOK || len(ids.EntryIDs) != count || ids.Total != count {
+		t.Fatalf("GetEntryIDs unexpectedly inherited the entries page size: status=%d length=%d total=%d", recorder.Code, len(ids.EntryIDs), ids.Total)
 	}
 
 	for _, order := range []string{"published_at", "title", "status"} {
@@ -338,8 +338,8 @@ func TestEntryQueryAPIStablePagination(t *testing.T) {
 			for _, search := range []string{"", "pagination"} {
 				t.Run(order+"/"+direction+"/search="+search, func(t *testing.T) {
 					want := make([]int64, count)
-					for i := range count {
-						want[i] = int64(i + 1)
+					for index := range count {
+						want[index] = int64(index + 1)
 					}
 					if direction == "desc" {
 						slices.Reverse(want)
@@ -360,8 +360,8 @@ func TestEntryQueryAPIStablePagination(t *testing.T) {
 func TestEntryQueryAPIRejectsInvalidParametersAfterAuthentication(t *testing.T) {
 	api, _ := newEntryQueryAPI(t)
 	// Prove these credentials reach the handler before testing its validation errors.
-	if w := entryQueryAPIRequest(api, http.MethodGet, "/v1/me", ""); w.Code != http.StatusOK {
-		t.Fatalf("Authentication failed: %d %s", w.Code, w.Body.String())
+	if recorder := entryQueryAPIRequest(api, http.MethodGet, "/v1/me", ""); recorder.Code != http.StatusOK {
+		t.Fatalf("Authentication failed: %d %s", recorder.Code, recorder.Body.String())
 	}
 
 	queries := []string{
@@ -392,18 +392,18 @@ func TestEntryQueryAPIRejectsInvalidParametersAfterAuthentication(t *testing.T) 
 	}
 	for _, query := range queries {
 		t.Run(query, func(t *testing.T) {
-			w := entryQueryAPIRequest(api, http.MethodGet, "/v1/entries/ids?"+query, "")
-			if w.Code != http.StatusBadRequest {
-				t.Fatalf("Got status %d, want 400: %s", w.Code, w.Body.String())
+			recorder := entryQueryAPIRequest(api, http.MethodGet, "/v1/entries/ids?"+query, "")
+			if recorder.Code != http.StatusBadRequest {
+				t.Fatalf("Got status %d, want 400: %s", recorder.Code, recorder.Body.String())
 			}
 		})
 	}
 
 	for _, query := range []string{"status=invalid", "status=unread&status=invalid", "order=invalid", "direction=invalid", "limit=1001"} {
 		t.Run("entries/"+query, func(t *testing.T) {
-			w := entryQueryAPIRequest(api, http.MethodGet, "/v1/entries?"+query, "")
-			if w.Code != http.StatusBadRequest {
-				t.Fatalf("Got status %d, want 400: %s", w.Code, w.Body.String())
+			recorder := entryQueryAPIRequest(api, http.MethodGet, "/v1/entries?"+query, "")
+			if recorder.Code != http.StatusBadRequest {
+				t.Fatalf("Got status %d, want 400: %s", recorder.Code, recorder.Body.String())
 			}
 		})
 	}
@@ -416,9 +416,9 @@ func TestEntryQueryAPIRejectsInvalidParametersAfterAuthentication(t *testing.T) 
 	for _, path := range []string{"/v1/entries", "/v1/feeds/11/entries", "/v1/categories/10/entries"} {
 		for _, query := range queries {
 			t.Run(path+"?"+query, func(t *testing.T) {
-				w := entryQueryAPIRequest(api, http.MethodGet, path+"?"+query, "")
-				if w.Code != http.StatusBadRequest {
-					t.Fatalf("Got status %d, want 400: %s", w.Code, w.Body.String())
+				recorder := entryQueryAPIRequest(api, http.MethodGet, path+"?"+query, "")
+				if recorder.Code != http.StatusBadRequest {
+					t.Fatalf("Got status %d, want 400: %s", recorder.Code, recorder.Body.String())
 				}
 			})
 		}
@@ -434,9 +434,9 @@ func TestEntryQueryAPIRejectsForeignScopes(t *testing.T) {
 			"feed_id=999", "category_id=999",
 		} {
 			t.Run(endpoint+"/"+query, func(t *testing.T) {
-				w := entryQueryAPIRequest(api, http.MethodGet, endpoint+"?"+query, "")
-				if w.Code != http.StatusBadRequest {
-					t.Fatalf("Got status %d, want 400: %s", w.Code, w.Body.String())
+				recorder := entryQueryAPIRequest(api, http.MethodGet, endpoint+"?"+query, "")
+				if recorder.Code != http.StatusBadRequest {
+					t.Fatalf("Got status %d, want 400: %s", recorder.Code, recorder.Body.String())
 				}
 			})
 		}
@@ -447,9 +447,9 @@ func TestEntryQueryAPIRejectsForeignScopes(t *testing.T) {
 		"/v1/feeds/16/entries?feed_id=11", "/v1/feeds/16/entries?feed_id=0",
 		"/v1/categories/40/entries?category_id=10", "/v1/categories/40/entries?category_id=0",
 	} {
-		w := entryQueryAPIRequest(api, http.MethodGet, path, "")
-		if w.Code != http.StatusBadRequest {
-			t.Fatalf("%s: got status %d, want 400: %s", path, w.Code, w.Body.String())
+		recorder := entryQueryAPIRequest(api, http.MethodGet, path, "")
+		if recorder.Code != http.StatusBadRequest {
+			t.Fatalf("%s: got status %d, want 400: %s", path, recorder.Code, recorder.Body.String())
 		}
 	}
 }
@@ -469,12 +469,12 @@ func TestEntryQueryAPICompatibility(t *testing.T) {
 		{"/v1/entries/ids?limit=invalid&offset=-1", []int64{8, 6, 5, 4, 3, 2, 1}},
 	} {
 		t.Run(test.path, func(t *testing.T) {
-			w := entryQueryAPIRequest(api, http.MethodGet, test.path, "")
-			if w.Code != http.StatusOK {
-				t.Fatalf("Got status %d: %s", w.Code, w.Body.String())
+			recorder := entryQueryAPIRequest(api, http.MethodGet, test.path, "")
+			if recorder.Code != http.StatusOK {
+				t.Fatalf("Got status %d: %s", recorder.Code, recorder.Body.String())
 			}
 			var result entryIDsResponse
-			if err := json.Unmarshal(w.Body.Bytes(), &result); err != nil {
+			if err := json.Unmarshal(recorder.Body.Bytes(), &result); err != nil {
 				t.Fatal(err)
 			}
 			if !slices.Equal(result.EntryIDs, test.ids) || result.Total != len(test.ids) {
@@ -505,17 +505,17 @@ func TestEntryQueryAPICompatibility(t *testing.T) {
 		{"/v1/entries?search=caf%C3%A9", nil},
 	} {
 		t.Run(test.path, func(t *testing.T) {
-			w := entryQueryAPIRequest(api, http.MethodGet, test.path, "")
-			if w.Code != http.StatusOK {
-				t.Fatalf("Got status %d: %s", w.Code, w.Body.String())
+			recorder := entryQueryAPIRequest(api, http.MethodGet, test.path, "")
+			if recorder.Code != http.StatusOK {
+				t.Fatalf("Got status %d: %s", recorder.Code, recorder.Body.String())
 			}
 			var result entriesResponse
-			if err := json.Unmarshal(w.Body.Bytes(), &result); err != nil {
+			if err := json.Unmarshal(recorder.Body.Bytes(), &result); err != nil {
 				t.Fatal(err)
 			}
 			ids := make([]int64, len(result.Entries))
-			for i, entry := range result.Entries {
-				ids[i] = entry.ID
+			for index, entry := range result.Entries {
+				ids[index] = entry.ID
 			}
 			if !slices.Equal(ids, test.ids) || result.Total != len(test.ids) {
 				t.Fatalf("Got IDs %v total=%d, want %v total=%d", ids, result.Total, test.ids, len(test.ids))
@@ -529,12 +529,12 @@ func TestEntryQueryAPIUnreadIDBatchesSurviveStatusUpdates(t *testing.T) {
 	const query = "/v1/entries/ids?status=unread&order=id&direction=desc"
 	readPage := func(path string) entryIDsResponse {
 		t.Helper()
-		w := entryQueryAPIRequest(api, http.MethodGet, path, "")
-		if w.Code != http.StatusOK {
-			t.Fatalf("Got status %d: %s", w.Code, w.Body.String())
+		recorder := entryQueryAPIRequest(api, http.MethodGet, path, "")
+		if recorder.Code != http.StatusOK {
+			t.Fatalf("Got status %d: %s", recorder.Code, recorder.Body.String())
 		}
 		var page entryIDsResponse
-		if err := json.Unmarshal(w.Body.Bytes(), &page); err != nil {
+		if err := json.Unmarshal(recorder.Body.Bytes(), &page); err != nil {
 			t.Fatal(err)
 		}
 		return page
@@ -566,9 +566,9 @@ func TestEntryQueryAPIUnreadIDBatchesSurviveStatusUpdates(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		w := entryQueryAPIRequest(api, http.MethodPut, "/v1/entries", string(body))
-		if w.Code != http.StatusNoContent {
-			t.Fatalf("Unable to mark batch read: %d %s", w.Code, w.Body.String())
+		recorder := entryQueryAPIRequest(api, http.MethodPut, "/v1/entries", string(body))
+		if recorder.Code != http.StatusNoContent {
+			t.Fatalf("Unable to mark batch read: %d %s", recorder.Code, recorder.Body.String())
 		}
 		before = page.EntryIDs[len(page.EntryIDs)-1]
 	}

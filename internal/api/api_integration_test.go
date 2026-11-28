@@ -10,22 +10,6 @@ import (
 	miniflux "miniflux.app/v2/client"
 )
 
-func TestIncorrectEndpoint(t *testing.T) {
-	t.Parallel()
-
-	requireIntegrationTestConfig(t)
-
-	client := miniflux.NewClient("incorrect url")
-	if _, err := client.Users(); err == nil {
-		t.Fatal(`Using an incorrect URL should raise an error`)
-	}
-
-	client = miniflux.NewClient("")
-	if _, err := client.Users(); err == nil {
-		t.Fatal(`Using an empty URL should raise an error`)
-	}
-}
-
 func TestHealthcheckEndpoint(t *testing.T) {
 	t.Parallel()
 

@@ -51,7 +51,7 @@ func TestItems(t *testing.T) {
 			CreatedOnTime: entry.Date.Unix(),
 		})
 	}
-	slices.SortFunc(expected, func(a, b itemResult) int { return cmp.Compare(a.ID, b.ID) })
+	slices.SortFunc(expected, func(left, right itemResult) int { return cmp.Compare(left.ID, right.ID) })
 
 	if !slices.Equal(result.Items, expected) {
 		t.Fatalf(`Unexpected items, got %+v instead of %+v`, result.Items, expected)

@@ -26,8 +26,8 @@ func TestGetEntriesStablePaginationWithIdenticalPublishedDates(t *testing.T) {
 
 	var feed strings.Builder
 	feed.WriteString(`<?xml version="1.0"?><rss version="2.0"><channel><title>Pagination</title><link>https://example.org</link><description>Pagination test</description>`)
-	for i := range entryCount {
-		fmt.Fprintf(&feed, `<item><guid>pagination-%d</guid><title>Shared pagination title</title><link>https://example.org/%d</link><pubDate>Wed, 01 Jan 2025 00:00:00 GMT</pubDate><description>Shared pagination content</description></item>`, i, i)
+	for index := range entryCount {
+		fmt.Fprintf(&feed, `<item><guid>pagination-%d</guid><title>Shared pagination title</title><link>https://example.org/%d</link><pubDate>Wed, 01 Jan 2025 00:00:00 GMT</pubDate><description>Shared pagination content</description></item>`, index, index)
 	}
 	feed.WriteString(`</channel></rss>`)
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
