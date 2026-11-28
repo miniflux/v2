@@ -121,6 +121,7 @@ func (c *Client) makeRequest(eventType string, payload any) error {
 
 	response, err := client.NewRequestBuilder(c.webhookURL).
 		WithMethod(http.MethodPost).
+		WithSecretEndpoint().
 		WithJSONBody(requestBody).
 		WithHeader("X-Miniflux-Signature", crypto.GenerateSHA256Hmac(c.webhookSecret, requestBody)).
 		WithHeader("X-Miniflux-Event-Type", eventType).
@@ -131,7 +132,7 @@ func (c *Client) makeRequest(eventType string, payload any) error {
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return fmt.Errorf("webhook: incorrect response status code %d for url %s", response.StatusCode, c.webhookURL)
+		return fmt.Errorf("webhook: incorrect response status code %d", response.StatusCode)
 	}
 
 	return nil
