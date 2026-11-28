@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/urllib"
 )
 
 var customReplaceRuleRegex = regexp.MustCompile(`^rewrite\("([^"]+)"\|"([^"]+)"\)$`)
@@ -59,14 +60,14 @@ func RewriteEntryURL(feed *model.Feed, entry *model.Entry) string {
 			slog.String("original_entry_url", entry.URL),
 			slog.String("rewritten_entry_url", rewrittenURL),
 			slog.Int64("feed_id", feed.ID),
-			slog.String("feed_url", feed.FeedURL),
+			slog.String("feed_url", urllib.RedactedURL(feed.FeedURL)),
 		)
 	} else {
 		slog.Debug("Cannot find search and replace terms for replace rule",
 			slog.String("original_entry_url", entry.URL),
 			slog.String("rewritten_entry_url", rewrittenURL),
 			slog.Int64("feed_id", feed.ID),
-			slog.String("feed_url", feed.FeedURL),
+			slog.String("feed_url", urllib.RedactedURL(feed.FeedURL)),
 			slog.String("url_rewrite_rules", feed.UrlRewriteRules),
 		)
 	}

@@ -21,6 +21,7 @@ import (
 	"miniflux.app/v2/internal/reader/scraper"
 	"miniflux.app/v2/internal/reader/urlcleaner"
 	"miniflux.app/v2/internal/storage"
+	"miniflux.app/v2/internal/urllib"
 )
 
 // ProcessFeedEntries downloads original web page for entries and apply filters.
@@ -69,7 +70,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 			slog.String("entry_hash", entry.Hash),
 			slog.String("entry_title", entry.Title),
 			slog.Int64("feed_id", feed.ID),
-			slog.String("feed_url", feed.FeedURL),
+			slog.String("feed_url", urllib.RedactedURL(feed.FeedURL)),
 		)
 
 		if filter.IsBlockedEntry(blockRules, allowRules, feed, entry) {
@@ -79,7 +80,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 				slog.String("entry_hash", entry.Hash),
 				slog.String("entry_title", entry.Title),
 				slog.Int64("feed_id", feed.ID),
-				slog.String("feed_url", feed.FeedURL),
+				slog.String("feed_url", urllib.RedactedURL(feed.FeedURL)),
 				slog.String("filter_stage", "before_scrape"),
 			)
 			continue
@@ -101,7 +102,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 				slog.String("entry_hash", entry.Hash),
 				slog.String("entry_title", entry.Title),
 				slog.Int64("feed_id", feed.ID),
-				slog.String("feed_url", feed.FeedURL),
+				slog.String("feed_url", urllib.RedactedURL(feed.FeedURL)),
 				slog.Bool("entry_is_new", entryIsNew),
 				slog.Bool("force_refresh", forceRefresh),
 			)
@@ -131,7 +132,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 					slog.Int64("user_id", user.ID),
 					slog.String("entry_url", entry.URL),
 					slog.Int64("feed_id", feed.ID),
-					slog.String("feed_url", feed.FeedURL),
+					slog.String("feed_url", urllib.RedactedURL(feed.FeedURL)),
 					slog.Any("error", scraperErr),
 				)
 			} else if extractedContent != "" {
@@ -151,7 +152,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 				slog.String("entry_hash", entry.Hash),
 				slog.String("entry_title", entry.Title),
 				slog.Int64("feed_id", feed.ID),
-				slog.String("feed_url", feed.FeedURL),
+				slog.String("feed_url", urllib.RedactedURL(feed.FeedURL)),
 				slog.String("filter_stage", "after_scrape"),
 			)
 			continue

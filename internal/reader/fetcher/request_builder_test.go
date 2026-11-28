@@ -387,6 +387,63 @@ func TestRequestBuilder_CredentialsNotLogged(t *testing.T) {
 	}
 }
 
+var urlSecrets = []string{"secret-password", "secret-token"}
+
+// secretURL returns serverURL with a password in its userinfo and a token in its query.
+func secretURL(serverURL string) string {
+	return strings.Replace(serverURL, "://", "://user:secret-password@", 1) + "/feed.xml?token=secret-token"
+}
+
+func TestRequestBuilder_URLCredentialsNotLogged(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		writer.Write([]byte("feed"))
+	}))
+	defer server.Close()
+
+	var logs bytes.Buffer
+	previousLogger := slog.Default()
+	slog.SetDefault(slog.New(slog.NewTextHandler(&logs, &slog.HandlerOptions{Level: slog.LevelDebug})))
+	t.Cleanup(func() { slog.SetDefault(previousLogger) })
+
+	responseHandler := NewResponseHandler(NewRequestBuilder().ExecuteRequest(secretURL(server.URL)))
+	defer responseHandler.Close()
+
+	if _, localizedError := responseHandler.ReadBody(1024); localizedError != nil {
+		t.Fatalf("Expected no error, got %v", localizedError.Error())
+	}
+
+	for _, message := range []string{"Making outgoing request", "Request response"} {
+		if !strings.Contains(logs.String(), message) {
+			t.Fatalf("Expected %q in logs, got:\n%s", message, logs.String())
+		}
+	}
+	for _, secret := range urlSecrets {
+		if strings.Contains(logs.String(), secret) {
+			t.Errorf("Logs contain %q:\n%s", secret, logs.String())
+		}
+	}
+}
+
+func TestRequestBuilder_URLCredentialsNotInErrors(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {}))
+	serverURL := server.URL
+	server.Close()
+
+	_, err := NewRequestBuilder().ExecuteRequest(secretURL(serverURL))
+	if err == nil {
+		t.Fatal("Expected an error when the server is unreachable")
+	}
+
+	if !strings.Contains(err.Error(), "/feed.xml?token=xxxxx") {
+		t.Errorf("Expected the error to contain the redacted URL, got %q", err)
+	}
+	for _, secret := range urlSecrets {
+		if strings.Contains(err.Error(), secret) {
+			t.Errorf("Error contains %q: %v", secret, err)
+		}
+	}
+}
+
 func TestRequestBuilder_DefaultAcceptHeader(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Accept") != defaultAcceptHeader {

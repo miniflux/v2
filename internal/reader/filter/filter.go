@@ -34,6 +34,7 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/urllib"
 )
 
 type filterRule struct {
@@ -150,7 +151,7 @@ func matchesEntryRegexRules(regexPattern string, feed *model.Feed, entry *model.
 			slog.String("entry_url", entry.URL),
 			slog.String("entry_title", entry.Title),
 			slog.String("entry_author", entry.Author),
-			slog.String("feed_url", feed.FeedURL),
+			slog.String("feed_url", urllib.RedactedURL(feed.FeedURL)),
 			slog.String("regex_pattern", regexPattern),
 		)
 		return true, true // Pattern matches and is valid
@@ -166,7 +167,7 @@ func matchesEntryFilterRules(rules filterRules, feed *model.Feed, entry *model.E
 				slog.String("entry_url", entry.URL),
 				slog.String("entry_title", entry.Title),
 				slog.String("entry_author", entry.Author),
-				slog.String("feed_url", feed.FeedURL),
+				slog.String("feed_url", urllib.RedactedURL(feed.FeedURL)),
 				slog.String("rule_type", rule.Type),
 				slog.String("rule_value", rule.Value),
 			)

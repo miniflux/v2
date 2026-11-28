@@ -275,6 +275,8 @@ func TestRedactedURL(t *testing.T) {
 		{"password and port", "http://user:secret@127.0.0.1:8080/oauth/v2/token", "http://user:xxxxx@127.0.0.1:8080/oauth/v2/token"},
 		{"username only", "https://user@example.org/api", "https://user@example.org/api"},
 		{"no userinfo", "https://example.org/api?page=1", "https://example.org/api?page=1"},
+		{"token", "https://bridge.example.org/?action=display&token=secret", "https://bridge.example.org/?action=display&token=xxxxx"},
+		{"password and token", "https://user:secret@bridge.example.org/?token=secret", "https://user:xxxxx@bridge.example.org/?token=xxxxx"},
 		{"unparsable", "https://user:secret@example.org/" + string(rune(0x7f)), "xxxxx"},
 	}
 	for _, tt := range tests {

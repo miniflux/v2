@@ -3,6 +3,8 @@
 
 package model // import "miniflux.app/v2/internal/model"
 
+import "miniflux.app/v2/internal/urllib"
+
 // Job represents a payload sent to the processing queue.
 type Job struct {
 	UserID  int64
@@ -13,12 +15,11 @@ type Job struct {
 // JobList represents a list of jobs.
 type JobList []Job
 
-// FeedURLs returns a list of feed URLs from the job list.
-// This is useful for logging or debugging purposes to see which feeds are being processed.
+// FeedURLs returns the feed URLs of the job list with credentials redacted, for logging.
 func (jl *JobList) FeedURLs() []string {
 	feedURLs := make([]string, len(*jl))
 	for i, job := range *jl {
-		feedURLs[i] = job.FeedURL
+		feedURLs[i] = urllib.RedactedURL(job.FeedURL)
 	}
 	return feedURLs
 }

@@ -19,6 +19,7 @@ import (
 	"miniflux.app/v2/internal/reader/parser"
 	"miniflux.app/v2/internal/reader/processor"
 	"miniflux.app/v2/internal/storage"
+	"miniflux.app/v2/internal/urllib"
 )
 
 var (
@@ -40,7 +41,7 @@ func getTranslatedLocalizedError(store *storage.Storage, userID int64, originalF
 func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, feedCreationRequest *model.FeedCreationRequestFromSubscriptionDiscovery) (*model.Feed, *locale.LocalizedErrorWrapper) {
 	slog.Debug("Begin feed creation process from subscription discovery",
 		slog.Int64("user_id", userID),
-		slog.String("feed_url", feedCreationRequest.FeedURL),
+		slog.String("feed_url", urllib.RedactedURL(feedCreationRequest.FeedURL)),
 		slog.String("proxy_url", feedCreationRequest.ProxyURL),
 	)
 
@@ -96,7 +97,7 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 	slog.Debug("Created feed",
 		slog.Int64("user_id", userID),
 		slog.Int64("feed_id", subscription.ID),
-		slog.String("feed_url", subscription.FeedURL),
+		slog.String("feed_url", urllib.RedactedURL(subscription.FeedURL)),
 	)
 
 	icon.NewIconChecker(store, subscription).UpdateOrCreateFeedIcon()
@@ -108,7 +109,7 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model.FeedCreationRequest) (*model.Feed, *locale.LocalizedErrorWrapper) {
 	slog.Debug("Begin feed creation process",
 		slog.Int64("user_id", userID),
-		slog.String("feed_url", feedCreationRequest.FeedURL),
+		slog.String("feed_url", urllib.RedactedURL(feedCreationRequest.FeedURL)),
 		slog.String("proxy_url", feedCreationRequest.ProxyURL),
 	)
 
@@ -136,13 +137,13 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	defer responseHandler.Close()
 
 	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
-		slog.Warn("Unable to fetch feed", slog.String("feed_url", feedCreationRequest.FeedURL), slog.Any("error", localizedError.Error()))
+		slog.Warn("Unable to fetch feed", slog.String("feed_url", urllib.RedactedURL(feedCreationRequest.FeedURL)), slog.Any("error", localizedError.Error()))
 		return nil, localizedError
 	}
 
 	responseBody, localizedError := responseHandler.ReadBody(config.Opts.HTTPClientMaxBodySize())
 	if localizedError != nil {
-		slog.Warn("Unable to fetch feed", slog.String("feed_url", feedCreationRequest.FeedURL), slog.Any("error", localizedError.Error()))
+		slog.Warn("Unable to fetch feed", slog.String("feed_url", urllib.RedactedURL(feedCreationRequest.FeedURL)), slog.Any("error", localizedError.Error()))
 		return nil, localizedError
 	}
 
@@ -192,7 +193,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	slog.Debug("Created feed",
 		slog.Int64("user_id", userID),
 		slog.Int64("feed_id", subscription.ID),
-		slog.String("feed_url", subscription.FeedURL),
+		slog.String("feed_url", urllib.RedactedURL(subscription.FeedURL)),
 	)
 
 	icon.NewIconChecker(store, subscription).UpdateOrCreateFeedIcon()
@@ -256,7 +257,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		calculatedNextCheckInterval := originalFeed.ScheduleNextCheck(weeklyEntryCount, retryDelay)
 
 		slog.Warn("Feed is rate limited",
-			slog.String("feed_url", originalFeed.FeedURL),
+			slog.String("feed_url", urllib.RedactedURL(originalFeed.FeedURL)),
 			slog.Int("retry_delay_in_seconds", int(retryDelay.Seconds())),
 			slog.Int("calculated_next_check_interval_in_minutes", int(calculatedNextCheckInterval.Minutes())),
 			slog.Time("new_next_check_at", originalFeed.NextCheckAt),
@@ -267,7 +268,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		slog.Warn("Unable to fetch feed",
 			slog.Int64("user_id", userID),
 			slog.Int64("feed_id", feedID),
-			slog.String("feed_url", originalFeed.FeedURL),
+			slog.String("feed_url", urllib.RedactedURL(originalFeed.FeedURL)),
 			slog.Any("error", localizedError.Error()),
 		)
 		return getTranslatedLocalizedError(store, userID, originalFeed, localizedError)
@@ -288,7 +289,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 		responseBody, localizedError := responseHandler.ReadBody(config.Opts.HTTPClientMaxBodySize())
 		if localizedError != nil {
-			slog.Warn("Unable to fetch feed", slog.String("feed_url", originalFeed.FeedURL), slog.Any("error", localizedError.Error()))
+			slog.Warn("Unable to fetch feed", slog.String("feed_url", urllib.RedactedURL(originalFeed.FeedURL)), slog.Any("error", localizedError.Error()))
 			return localizedError
 		}
 
@@ -314,7 +315,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		slog.Debug("Updated next check date",
 			slog.Int64("user_id", userID),
 			slog.Int64("feed_id", feedID),
-			slog.String("feed_url", originalFeed.FeedURL),
+			slog.String("feed_url", urllib.RedactedURL(originalFeed.FeedURL)),
 			slog.Int("feed_ttl_minutes", int(feedTTLValue.Minutes())),
 			slog.Int("cache_control_max_age_in_minutes", int(cacheControlMaxAgeValue.Minutes())),
 			slog.Int("expires_in_minutes", int(expiresValue.Minutes())),

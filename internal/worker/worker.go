@@ -13,6 +13,7 @@ import (
 	"miniflux.app/v2/internal/model"
 	feedHandler "miniflux.app/v2/internal/reader/handler"
 	"miniflux.app/v2/internal/storage"
+	"miniflux.app/v2/internal/urllib"
 )
 
 type worker struct {
@@ -40,7 +41,7 @@ func (w *worker) Run(c <-chan model.Job, shutdown <-chan struct{}, wg *sync.Wait
 			slog.Int("worker_id", w.id),
 			slog.Int64("user_id", job.UserID),
 			slog.Int64("feed_id", job.FeedID),
-			slog.String("feed_url", job.FeedURL),
+			slog.String("feed_url", urllib.RedactedURL(job.FeedURL)),
 		)
 
 		startTime := time.Now()
