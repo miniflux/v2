@@ -1604,4 +1604,17 @@ var migrations = [...]func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		// Keep only the SHA-256 digest of the Fever API key, the
+		// md5(username:password) value that clients send with every
+		// request, so a copy of the database is not enough to call the
+		// Fever API. Existing Fever clients keep working.
+		_, err = tx.Exec(`
+			ALTER TABLE integrations ADD COLUMN fever_token_hash bytea;
+			UPDATE integrations SET fever_token_hash = sha256(convert_to(lower(fever_token), 'UTF8')) WHERE fever_token <> '';
+			ALTER TABLE integrations DROP COLUMN fever_token;
+			CREATE INDEX integrations_fever_token_hash_idx ON integrations (fever_token_hash);
+		`)
+		return err
+	},
 }

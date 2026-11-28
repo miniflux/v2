@@ -28,7 +28,7 @@ func SHA256(value string) string {
 	return hex.EncodeToString(h[:])
 }
 
-// HashToken returns the SHA-256 digest of a random token, to store and look it up without keeping the token itself.
+// HashToken returns the SHA-256 digest of an API token, to store and look it up without keeping the token itself.
 func HashToken(token string) []byte {
 	digest := sha256.Sum256([]byte(token))
 	return digest[:]

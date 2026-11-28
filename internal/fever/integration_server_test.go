@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
+	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/server/servertest"
 )
 
@@ -71,7 +72,7 @@ func setFeverIntegration(t *testing.T, userID int64, enabled bool, password stri
 	apiKey := feverAPIKey(user.Username, password)
 	integration.FeverEnabled = enabled
 	integration.FeverUsername = user.Username
-	integration.FeverToken = apiKey
+	integration.FeverTokenHash = crypto.HashToken(apiKey)
 	if err := server.Store.UpdateIntegration(integration); err != nil {
 		t.Fatal(err)
 	}
@@ -79,7 +80,7 @@ func setFeverIntegration(t *testing.T, userID int64, enabled bool, password stri
 }
 
 // feverAPIKey returns the API key that Fever clients send: the MD5 hash of "username:password",
-// which is also the token that the integrations page stores.
+// whose SHA-256 digest the integrations page stores.
 func feverAPIKey(username, password string) string {
 	sum := md5.Sum([]byte(username + ":" + password))
 	return hex.EncodeToString(sum[:])
