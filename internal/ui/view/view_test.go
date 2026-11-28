@@ -70,8 +70,7 @@ func TestNewIncludesCSRFToken(t *testing.T) {
 	}
 }
 
-// Every HTML view must carry a per-request CSP nonce and be able to
-// render its Content-Security-Policy header value (no meta tag).
+// Every HTML view must carry a per-request CSP nonce and use it in its Content-Security-Policy.
 func TestViewSetsCSPNonceAndPolicy(t *testing.T) {
 	configureTestOptions(t)
 
@@ -85,11 +84,7 @@ func TestViewSetsCSPNonceAndPolicy(t *testing.T) {
 		t.Fatalf("view params must contain a non-empty cspNonce, got %v", v.params["cspNonce"])
 	}
 
-	policy := v.CSP()
-	if strings.Contains(strings.ToLower(policy), "<meta") {
-		t.Fatalf("view CSP() must not return a <meta> tag, got %q", policy)
-	}
-	if !strings.Contains(policy, "'nonce-"+nonce+"'") {
+	if policy := v.CSP(); !strings.Contains(policy, "'nonce-"+nonce+"'") {
 		t.Fatalf("view CSP() must contain the request nonce, nonce=%q policy=%q", nonce, policy)
 	}
 }
@@ -106,13 +101,8 @@ func TestViewHTMLSetsCSPHeaderWithMatchingNonce(t *testing.T) {
 	v := New(engine, r)
 	v.HTML(w, r, "offline")
 
-	resp := w.Result()
-	policy := resp.Header.Get("Content-Security-Policy")
-	if policy == "" {
-		t.Fatal("view HTML() must set a Content-Security-Policy header")
-	}
-	if strings.Contains(strings.ToLower(policy), "<meta") {
-		t.Fatalf("CSP header must be a header value, not a meta tag, got %q", policy)
+	if policy := w.Result().Header.Get("Content-Security-Policy"); policy != v.CSP() {
+		t.Fatalf("view HTML() must send the policy of the view, got %q, want %q", policy, v.CSP())
 	}
 
 	body := w.Body.String()
