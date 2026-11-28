@@ -3,6 +3,11 @@
 
 package model // import "miniflux.app/v2/internal/model"
 
+import "miniflux.app/v2/internal/crypto"
+
+// googleReaderTokenSaltSize is the size in bytes of the random salt of the Google Reader token.
+const googleReaderTokenSaltSize = 16
+
 // Integration represents user integration settings.
 type Integration struct {
 	UserID                           int64
@@ -21,7 +26,9 @@ type Integration struct {
 	FeverTokenHash                   []byte
 	GoogleReaderEnabled              bool
 	GoogleReaderUsername             string
-	GoogleReaderPassword             string
+	GoogleReaderPassword             string // Legacy bcrypt hash, replaced by the token salt and hash at the next ClientLogin.
+	GoogleReaderTokenSalt            []byte
+	GoogleReaderTokenHash            []byte
 	WallabagEnabled                  bool
 	WallabagOnlyURL                  bool
 	WallabagURL                      string
@@ -131,4 +138,25 @@ type Integration struct {
 	GotifyURL                        string
 	GotifyToken                      string
 	GotifyPriority                   int
+}
+
+// SetGoogleReaderPassword derives a new Google Reader token secret from the password and keeps only its salt and SHA-256 digest.
+func (i *Integration) SetGoogleReaderPassword(password string) (secret string) {
+	i.GoogleReaderPassword = ""
+	i.GoogleReaderTokenSalt = crypto.GenerateRandomBytes(googleReaderTokenSaltSize)
+	secret = crypto.DerivePasswordToken(password, i.GoogleReaderTokenSalt)
+	i.GoogleReaderTokenHash = crypto.HashToken(secret)
+	return secret
+}
+
+// ClearGoogleReaderPassword removes the Google Reader credentials, which revokes the token.
+func (i *Integration) ClearGoogleReaderPassword() {
+	i.GoogleReaderPassword = ""
+	i.GoogleReaderTokenSalt = nil
+	i.GoogleReaderTokenHash = nil
+}
+
+// HasGoogleReaderPassword reports whether a Google Reader password is stored, in the current or the legacy form.
+func (i *Integration) HasGoogleReaderPassword() bool {
+	return len(i.GoogleReaderTokenHash) > 0 || i.GoogleReaderPassword != ""
 }

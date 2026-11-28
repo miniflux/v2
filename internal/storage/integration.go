@@ -4,6 +4,7 @@
 package storage // import "miniflux.app/v2/internal/storage"
 
 import (
+	"crypto/subtle"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -56,59 +57,111 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	}
 }
 
-// GoogleReaderUserCheckPassword validates the Google Reader hashed password.
-func (s *Storage) GoogleReaderUserCheckPassword(username, password string) error {
-	var hash string
+// dummyGoogleReaderTokenSalt is used to derive a token for unknown usernames, so they take as long as a wrong password.
+var dummyGoogleReaderTokenSalt = make([]byte, 16)
 
-	query := `
-		SELECT
-			googlereader_password
-		FROM
-			integrations
-		WHERE
-			integrations.googlereader_enabled='t' AND integrations.googlereader_username=$1 AND integrations.googlereader_password <> ''
-	`
-
-	err := s.db.QueryRow(query, username).Scan(&hash)
-	if errors.Is(err, sql.ErrNoRows) {
-		// Perform a dummy bcrypt comparison to avoid leaking whether the Google Reader username exists via response timing.
-		_ = bcrypt.CompareHashAndPassword(dummyBcryptHash, []byte(password))
-		return fmt.Errorf(`store: unable to find this user: %s`, username)
-	} else if err != nil {
-		return fmt.Errorf(`store: unable to fetch user: %v`, err)
-	}
-
-	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
-		return fmt.Errorf(`store: invalid password for "%s" (%v)`, username, err)
-	}
-
-	return nil
-}
-
-// GoogleReaderUserGetIntegration returns part of the Google Reader parts of the integration struct.
-func (s *Storage) GoogleReaderUserGetIntegration(username string) (*model.Integration, error) {
+// GoogleReaderUserLogin checks the Google Reader credentials and returns the user ID with the secret of the API token.
+func (s *Storage) GoogleReaderUserLogin(username, password string) (int64, string, error) {
 	var integration model.Integration
 
 	query := `
 		SELECT
 			user_id,
-			googlereader_enabled,
-			googlereader_username,
-			googlereader_password
+			googlereader_password,
+			googlereader_token_salt,
+			googlereader_token_hash
 		FROM
 			integrations
 		WHERE
-			integrations.googlereader_enabled='t' AND integrations.googlereader_username=$1 AND integrations.googlereader_password <> ''
+			integrations.googlereader_enabled='t' AND
+			integrations.googlereader_username=$1 AND
+			(integrations.googlereader_token_hash IS NOT NULL OR integrations.googlereader_password <> '')
 	`
 
-	err := s.db.QueryRow(query, username).Scan(&integration.UserID, &integration.GoogleReaderEnabled, &integration.GoogleReaderUsername, &integration.GoogleReaderPassword)
+	err := s.db.QueryRow(query, username).Scan(
+		&integration.UserID,
+		&integration.GoogleReaderPassword,
+		&integration.GoogleReaderTokenSalt,
+		&integration.GoogleReaderTokenHash,
+	)
 	if errors.Is(err, sql.ErrNoRows) {
-		return &integration, fmt.Errorf(`store: unable to find this user: %s`, username)
+		// Derive a token anyway to avoid leaking whether the Google Reader username exists via response timing.
+		_ = crypto.DerivePasswordToken(password, dummyGoogleReaderTokenSalt)
+		return 0, "", fmt.Errorf(`store: unable to find this user: %s`, username)
 	} else if err != nil {
-		return &integration, fmt.Errorf(`store: unable to fetch user: %v`, err)
+		return 0, "", fmt.Errorf(`store: unable to fetch user: %v`, err)
 	}
 
-	return &integration, nil
+	if len(integration.GoogleReaderTokenHash) == 0 {
+		return s.upgradeGoogleReaderPassword(&integration, username, password)
+	}
+
+	secret := crypto.DerivePasswordToken(password, integration.GoogleReaderTokenSalt)
+	if subtle.ConstantTimeCompare(crypto.HashToken(secret), integration.GoogleReaderTokenHash) != 1 {
+		return 0, "", fmt.Errorf(`store: invalid password for "%s"`, username)
+	}
+
+	return integration.UserID, secret, nil
+}
+
+// upgradeGoogleReaderPassword checks the password against the legacy bcrypt hash and replaces it with a token salt and hash.
+func (s *Storage) upgradeGoogleReaderPassword(integration *model.Integration, username, password string) (int64, string, error) {
+	legacyHash := integration.GoogleReaderPassword
+	if err := bcrypt.CompareHashAndPassword([]byte(legacyHash), []byte(password)); err != nil {
+		return 0, "", fmt.Errorf(`store: invalid password for "%s" (%v)`, username, err)
+	}
+
+	secret := integration.SetGoogleReaderPassword(password)
+	query := `
+		UPDATE
+			integrations
+		SET
+			googlereader_password='',
+			googlereader_token_salt=$1,
+			googlereader_token_hash=$2
+		WHERE
+			user_id=$3 AND googlereader_password=$4
+	`
+	result, err := s.db.Exec(query, integration.GoogleReaderTokenSalt, integration.GoogleReaderTokenHash, integration.UserID, legacyHash)
+	if err != nil {
+		return 0, "", fmt.Errorf(`store: unable to upgrade the Google Reader password: %v`, err)
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return 0, "", fmt.Errorf(`store: unable to upgrade the Google Reader password: %v`, err)
+	}
+	if count == 0 {
+		// Another login upgraded the hash first: derive the token from the salt it stored.
+		return s.GoogleReaderUserLogin(username, password)
+	}
+
+	return integration.UserID, secret, nil
+}
+
+// GoogleReaderUserIDByToken returns the ID of the user with the given Google Reader username and token secret, or 0 if none matches.
+func (s *Storage) GoogleReaderUserIDByToken(username, secret string) (int64, error) {
+	query := `
+		SELECT
+			user_id
+		FROM
+			integrations
+		WHERE
+			integrations.googlereader_enabled='t' AND
+			integrations.googlereader_token_hash=$1 AND
+			integrations.googlereader_username=$2
+	`
+
+	var userID int64
+	err := s.db.QueryRow(query, crypto.HashToken(secret), username).Scan(&userID)
+	switch {
+	case errors.Is(err, sql.ErrNoRows):
+		return 0, nil
+	case err != nil:
+		return 0, fmt.Errorf(`store: unable to fetch user: %v`, err)
+	default:
+		return userID, nil
+	}
 }
 
 // Integration returns user integration settings.
@@ -240,7 +293,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			gotify_enabled,
 			gotify_url,
 			gotify_token,
-			gotify_priority
+			gotify_priority,
+			googlereader_token_salt,
+			googlereader_token_hash
 		FROM
 			integrations
 		WHERE
@@ -374,6 +429,8 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.GotifyURL,
 		&integration.GotifyToken,
 		&integration.GotifyPriority,
+		&integration.GoogleReaderTokenSalt,
+		&integration.GoogleReaderTokenHash,
 	)
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
@@ -515,9 +572,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			gotify_enabled=$122,
 			gotify_url=$123,
 			gotify_token=$124,
-			gotify_priority=$125
+			gotify_priority=$125,
+			googlereader_token_salt=$126,
+			googlereader_token_hash=$127
 		WHERE
-			user_id=$126
+			user_id=$128
 	`
 	_, err := s.db.Exec(
 		query,
@@ -646,6 +705,8 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.GotifyURL,
 		integration.GotifyToken,
 		integration.GotifyPriority,
+		integration.GoogleReaderTokenSalt,
+		integration.GoogleReaderTokenHash,
 		integration.UserID,
 	)
 

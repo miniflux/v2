@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
-	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/server/servertest"
 )
 
@@ -67,14 +66,9 @@ func setGoogleReaderIntegration(t *testing.T, userID int64, enabled bool, passwo
 		t.Fatal(err)
 	}
 
-	passwordHash, err := crypto.HashPassword(password)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	integration.GoogleReaderEnabled = enabled
 	integration.GoogleReaderUsername = user.Username
-	integration.GoogleReaderPassword = passwordHash
+	integration.SetGoogleReaderPassword(password)
 	if err := server.Store.UpdateIntegration(integration); err != nil {
 		t.Fatal(err)
 	}

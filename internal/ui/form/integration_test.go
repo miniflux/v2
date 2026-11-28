@@ -12,10 +12,10 @@ import (
 
 func TestValidateGoogleReader(t *testing.T) {
 	scenarios := []struct {
-		name               string
-		form               IntegrationForm
-		storedPasswordHash string
-		expectError        bool
+		name              string
+		form              IntegrationForm
+		hasStoredPassword bool
+		expectError       bool
 	}{
 		{
 			name: "disabled without credentials",
@@ -26,9 +26,9 @@ func TestValidateGoogleReader(t *testing.T) {
 			form: IntegrationForm{GoogleReaderEnabled: true, GoogleReaderUsername: "user", GoogleReaderPassword: "secret"},
 		},
 		{
-			name:               "enabled with username and stored password",
-			form:               IntegrationForm{GoogleReaderEnabled: true, GoogleReaderUsername: "user"},
-			storedPasswordHash: "$2a$10$hash",
+			name:              "enabled with username and stored password",
+			form:              IntegrationForm{GoogleReaderEnabled: true, GoogleReaderUsername: "user"},
+			hasStoredPassword: true,
 		},
 		{
 			name:        "enabled without password",
@@ -36,10 +36,10 @@ func TestValidateGoogleReader(t *testing.T) {
 			expectError: true,
 		},
 		{
-			name:               "enabled without username",
-			form:               IntegrationForm{GoogleReaderEnabled: true, GoogleReaderPassword: "secret"},
-			storedPasswordHash: "$2a$10$hash",
-			expectError:        true,
+			name:              "enabled without username",
+			form:              IntegrationForm{GoogleReaderEnabled: true, GoogleReaderPassword: "secret"},
+			hasStoredPassword: true,
+			expectError:       true,
 		},
 		{
 			name:        "enabled without username and password",
@@ -50,7 +50,7 @@ func TestValidateGoogleReader(t *testing.T) {
 
 	for _, scenario := range scenarios {
 		t.Run(scenario.name, func(t *testing.T) {
-			validationErr := scenario.form.ValidateGoogleReader(scenario.storedPasswordHash)
+			validationErr := scenario.form.ValidateGoogleReader(scenario.hasStoredPassword)
 			if scenario.expectError && validationErr == nil {
 				t.Fatal("expected a validation error")
 			}

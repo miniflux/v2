@@ -267,11 +267,11 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 }
 
 // ValidateGoogleReader ensures the Google Reader integration is not enabled without credentials.
-func (i IntegrationForm) ValidateGoogleReader(storedPasswordHash string) *locale.LocalizedError {
+func (i IntegrationForm) ValidateGoogleReader(hasStoredPassword bool) *locale.LocalizedError {
 	if !i.GoogleReaderEnabled {
 		return nil
 	}
-	if i.GoogleReaderUsername == "" || (i.GoogleReaderPassword == "" && storedPasswordHash == "") {
+	if i.GoogleReaderUsername == "" || (i.GoogleReaderPassword == "" && !hasStoredPassword) {
 		return locale.NewLocalizedError("error.googlereader_missing_required_fields")
 	}
 	return nil

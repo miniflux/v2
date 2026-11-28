@@ -20,7 +20,7 @@ Google Reader compatibility is configured per user from the Miniflux integration
 
 - `Google Reader API` must be enabled
 - `Google Reader Username` must be unique across all Miniflux users
-- `Google Reader Password` is stored as a bcrypt hash
+- `Google Reader Password` is not stored: only the salt and digest of the token derived from it are kept (see [Auth token format](#auth-token-format))
 
 The Google Reader username and password are separate integration credentials. They are not the Miniflux account password.
 
@@ -72,21 +72,16 @@ On authentication failure, `ClientLogin` returns HTTP `401` with the normal JSON
 The token format is:
 
 ```text
-<googlereader_username>/<hex_digest>
+<googlereader_username>/<hex_secret>
 ```
 
-The digest is generated server-side from:
+The secret is derived from the Google Reader password with Argon2id and a random salt. The database stores only the salt and the SHA-256 digest of the secret, so a copy of the database is not enough to compute a token. Each API call looks up the digest of the secret it receives.
 
-- the Google Reader username
-- the stored bcrypt hash of the Google Reader password
+The secret depends on a salt that only the server knows, so clients should not try to precompute the token. Use `ClientLogin` or `GET /reader/api/0/token`.
 
-Specifically, the code computes an HMAC-SHA256 digest of an empty message using the key:
+The secret changes when the Google Reader password changes. Changing only the Google Reader username keeps the secret, but tokens that start with the previous username stop working.
 
-```text
-googlereader_username + bcrypt_hash
-```
-
-Because the bcrypt hash is only known to the server, clients should not try to precompute the token. Use `ClientLogin` or `GET /reader/api/0/token`.
+Passwords set before Miniflux derived tokens this way are stored as a bcrypt hash. The next successful `ClientLogin` replaces that hash with a salt and a digest. Tokens issued before that are rejected, so clients have to log in again once.
 
 ### Authenticating API calls
 
