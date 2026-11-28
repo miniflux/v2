@@ -4,7 +4,10 @@
 package api // import "miniflux.app/v2/internal/api"
 
 import (
+	"database/sql"
+	"database/sql/driver"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -16,6 +19,7 @@ import (
 	"testing"
 
 	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -214,6 +218,11 @@ func TestParseEntryFiltersPreservesEndpointCompatibility(t *testing.T) {
 		{routeCategoryID: 10, query: "category_id=0", categoryID: 10},
 		{routeCategoryID: 10, query: "feed_id=12", feedID: 12, categoryID: 10},
 		{routeFeedID: 11, query: "feed_id=&category_id=", feedID: 11},
+		// The route's own ID always wins, so an invalid query value for it is ignored.
+		{routeFeedID: 11, query: "feed_id=-1", feedID: 11},
+		{routeFeedID: 11, query: "feed_id=invalid", feedID: 11},
+		{routeCategoryID: 10, query: "category_id=-1", categoryID: 10},
+		{routeCategoryID: 10, query: "category_id=invalid", categoryID: 10},
 		{query: "starred=1", starred: new(true)},
 		{query: "starred=0", starred: new(false)},
 		{query: "starred=invalid"},
@@ -249,17 +258,19 @@ func TestParseEntryFiltersRejectsInvalidRouteScopedQueryIDs(t *testing.T) {
 	for _, route := range []struct {
 		name               string
 		feedID, categoryID int64
+		param              string
 	}{
-		{"feed", 11, 0},
-		{"category", 0, 10},
+		{"feed", 11, 0, "category_id"},
+		{"category", 0, 10, "feed_id"},
 	} {
 		for _, query := range []string{
-			"feed_id=-1",
-			"category_id=-1",
-			"feed_id=invalid",
-			"category_id=invalid",
-			"feed_id=9223372036854775808",
-			"category_id=9223372036854775808",
+			route.param + "=-1",
+			route.param + "=invalid",
+			route.param + "=9223372036854775808",
+			route.param + "=%zz",
+			route.param + "=-1;",
+			route.param + "=&" + route.param + "=-1",
+			route.param + "=1&" + route.param + "=invalid",
 		} {
 			t.Run(route.name+"/"+query, func(t *testing.T) {
 				r := httptest.NewRequest(http.MethodGet, "/v1/entries?"+query, nil)
@@ -269,6 +280,28 @@ func TestParseEntryFiltersRejectsInvalidRouteScopedQueryIDs(t *testing.T) {
 			})
 		}
 	}
+}
+
+// failingDriver is a database/sql driver whose connections always fail, so a handler
+// that reaches the store returns an error instead of crashing on a nil store.
+type failingDriver struct{}
+
+func (failingDriver) Open(string) (driver.Conn, error) {
+	return nil, errors.New("no database in unit tests")
+}
+
+func init() {
+	sql.Register("api-unit-test-failing", failingDriver{})
+}
+
+func newFailingStoreHandler(t *testing.T) *handler {
+	t.Helper()
+	db, err := sql.Open("api-unit-test-failing", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { db.Close() })
+	return &handler{store: storage.NewStorage(db)}
 }
 
 func TestRouteScopedEntryHandlersRejectInvalidScopeQueryIDs(t *testing.T) {
@@ -300,7 +333,7 @@ func TestRouteScopedEntryHandlersRejectInvalidScopeQueryIDs(t *testing.T) {
 			}
 			w := httptest.NewRecorder()
 
-			test.handle(&handler{}, w, r)
+			test.handle(newFailingStoreHandler(t), w, r)
 
 			if w.Code != http.StatusBadRequest {
 				t.Fatalf("Unexpected status code: got %d, want %d", w.Code, http.StatusBadRequest)
