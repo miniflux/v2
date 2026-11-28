@@ -35,58 +35,45 @@ func (v *view) Render(template string) []byte {
 }
 
 // CSP returns the Content-Security-Policy header value for this view.
-// The policy is delivered as an HTTP header (never as a meta tag, see
-// deadhead rule meta/http-equiv-content-security-policy): meta policies
-// drop frame-ancestors/report-uri/sandbox, stop the preload scanner, and
-// apply late.
 func (v *view) CSP() string {
-	var user *model.User
-	if u, ok := v.params["user"].(*model.User); ok {
-		user = u
-	}
+	user, _ := v.params["user"].(*model.User)
 	nonce, _ := v.params["cspNonce"].(string)
 	return csp(user, nonce)
 }
 
-// csp builds the Content-Security-Policy header value for templated pages.
-// It lives in the view layer because every templated page ships the policy
-// as a response header (never as a meta tag, see deadhead rule
-// meta/http-equiv-content-security-policy): meta policies drop
-// frame-ancestors/report-uri/sandbox, stop the preload scanner, and apply
-// late.
+// csp returns the Content-Security-Policy of templated pages, with the directives in a fixed order.
 func csp(user *model.User, nonce string) string {
-	policies := map[string]string{
-		"default-src":               "'none'",
-		"frame-src":                 "*",
-		"img-src":                   "* data:",
-		"manifest-src":              "'self'",
-		"media-src":                 "*",
-		"require-trusted-types-for": "'script'",
-		"script-src":                "'nonce-" + nonce + "' 'strict-dynamic'",
-		"style-src":                 "'nonce-" + nonce + "'",
-		"trusted-types":             "html url",
-		"connect-src":               "'self'",
-	}
-
-	if user != nil {
-		if user.ExternalFontHosts != "" {
-			policies["font-src"] = user.ExternalFontHosts
-			if user.Stylesheet != "" {
-				policies["style-src"] += " " + user.ExternalFontHosts
-			}
+	var fontSrc string
+	styleSrc := "'nonce-" + nonce + "'"
+	if user != nil && user.ExternalFontHosts != "" {
+		fontSrc = user.ExternalFontHosts
+		if user.Stylesheet != "" {
+			styleSrc += " " + user.ExternalFontHosts
 		}
 	}
 
-	var policy strings.Builder
-	policy.Grow(350)
-	for key, value := range policies {
-		policy.WriteString(key)
-		policy.WriteString(" ")
-		policy.WriteString(value)
-		policy.WriteString("; ")
+	directives := []struct{ name, value string }{
+		{"default-src", "'none'"},
+		{"connect-src", "'self'"},
+		{"font-src", fontSrc},
+		{"frame-src", "*"},
+		{"img-src", "* data:"},
+		{"manifest-src", "'self'"},
+		{"media-src", "*"},
+		{"require-trusted-types-for", "'script'"},
+		{"script-src", "'nonce-" + nonce + "' 'strict-dynamic'"},
+		{"style-src", styleSrc},
+		{"trusted-types", "html url"},
 	}
 
-	return policy.String()
+	policy := make([]string, 0, len(directives))
+	for _, directive := range directives {
+		// font-src is only set when the user has external font hosts.
+		if directive.value != "" {
+			policy = append(policy, directive.name+" "+directive.value)
+		}
+	}
+	return strings.Join(policy, "; ")
 }
 
 // HTML renders the given template and writes it as an HTML response with
