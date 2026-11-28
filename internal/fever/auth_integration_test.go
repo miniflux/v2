@@ -12,6 +12,7 @@ import (
 	"time"
 
 	miniflux "miniflux.app/v2/client"
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 func TestAuthentication(t *testing.T) {
@@ -37,7 +38,7 @@ func TestAuthentication(t *testing.T) {
 	})
 
 	t.Run("API key in uppercase", func(t *testing.T) {
-		client := &feverClient{baseURL: requireTestServer(t).URL, apiKey: strings.ToUpper(user.fever.apiKey)}
+		client := &feverClient{baseURL: servertest.Require(t).URL, apiKey: strings.ToUpper(user.fever.apiKey)}
 
 		var result baseResult
 		client.getJSON(t, nil, &result)
@@ -62,7 +63,7 @@ func TestAuthenticationRejectsInvalidAPIKeys(t *testing.T) {
 	disabledAPIKey := setFeverIntegration(t, disabledUser.id, false, testFeverPassword)
 
 	// The anonymous client sends the API key of each scenario as is.
-	anonymous := &feverClient{baseURL: requireTestServer(t).URL}
+	anonymous := &feverClient{baseURL: servertest.Require(t).URL}
 
 	scenarios := []struct {
 		name   string
@@ -97,7 +98,7 @@ func TestRejectedRequestsDoNotChangeEntries(t *testing.T) {
 	entryID := entries[0].ID
 	markAsRead := url.Values{"mark": {"item"}, "as": {"read"}, "id": {strconv.FormatInt(entryID, 10)}}
 
-	intruder := &feverClient{baseURL: requireTestServer(t).URL, apiKey: feverAPIKey(user.username, "wrong password")}
+	intruder := &feverClient{baseURL: servertest.Require(t).URL, apiKey: feverAPIKey(user.username, "wrong password")}
 	status, body := intruder.post(t, markAsRead)
 	requireAuthFailure(t, status, body)
 	requireEntryStatus(t, user, entryID, miniflux.EntryStatusUnread)

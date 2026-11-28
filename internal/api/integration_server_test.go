@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"math/rand/v2"
 	"net/http"
-	"os"
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
@@ -15,97 +14,50 @@ import (
 	"miniflux.app/v2/internal/model"
 )
 
-const skipIntegrationTestsMessage = `Set TEST_DATABASE_URL to a PostgreSQL database to run the API integration tests`
+const (
+	adminUsername = "admin"
+	adminPassword = "test123"
 
-// integrationConfig describes the Miniflux server started by TestMain.
-// It is nil when TEST_DATABASE_URL is not set.
-var integrationConfig *integrationTestConfig
-
-type integrationTestConfig struct {
-	testBaseURL         string
-	testAdminUsername   string
-	testAdminPassword   string
-	testRegularUsername string
-	testRegularPassword string
-}
+	// regularUserPassword is the password of the users created by newRegularUser.
+	regularUserPassword = "regular_test_user_password"
+)
 
 func TestMain(m *testing.M) {
-	os.Exit(runTests(m))
+	servertest.Main(m, createAdminUser)
 }
 
-func runTests(m *testing.M) int {
-	databaseURL := os.Getenv("TEST_DATABASE_URL")
-	if databaseURL == "" {
-		return m.Run()
+// createAdminUser creates the admin user that the tests share, unless an earlier run left it in the database.
+func createAdminUser(server *servertest.Server) error {
+	if server.Store.UserExists(adminUsername) {
+		return nil
 	}
 
-	stopServer, err := startIntegrationTestServer(databaseURL)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to start the integration test server: %v\n", err)
-		return 1
-	}
-	defer stopServer()
-
-	return m.Run()
+	_, err := server.Store.CreateUser(&model.UserCreationRequest{
+		Username: adminUsername,
+		Password: adminPassword,
+		IsAdmin:  true,
+	})
+	return err
 }
 
-// startIntegrationTestServer starts a Miniflux server backed by the given database
-// and creates its admin user.
-func startIntegrationTestServer(databaseURL string) (func(), error) {
-	testServer, err := servertest.NewServer(databaseURL)
-	if err != nil {
-		return nil, err
-	}
-
-	testConfig := &integrationTestConfig{
-		testBaseURL:         testServer.URL,
-		testAdminUsername:   "admin",
-		testAdminPassword:   "test123",
-		testRegularUsername: "regular_test_user",
-		testRegularPassword: "regular_test_user_password",
-	}
-
-	if !testServer.Store.UserExists(testConfig.testAdminUsername) {
-		if _, err := testServer.Store.CreateUser(&model.UserCreationRequest{
-			Username: testConfig.testAdminUsername,
-			Password: testConfig.testAdminPassword,
-			IsAdmin:  true,
-		}); err != nil {
-			testServer.Close()
-			return nil, err
-		}
-	}
-
-	integrationConfig = testConfig
-	return testServer.Close, nil
+func randomUsername() string {
+	return fmt.Sprintf("regular_test_user_%10d", rand.Int())
 }
 
-// requireIntegrationTestConfig returns the configuration of the integration test server,
-// or skips the test when TEST_DATABASE_URL is not set.
-func requireIntegrationTestConfig(t *testing.T) *integrationTestConfig {
+func newAdminClient(t *testing.T) *miniflux.Client {
 	t.Helper()
 
-	if integrationConfig == nil {
-		t.Skip(skipIntegrationTestsMessage)
-	}
-	return integrationConfig
-}
-
-func (c *integrationTestConfig) genRandomUsername() string {
-	return fmt.Sprintf("%s_%10d", c.testRegularUsername, rand.Int())
-}
-
-func (c *integrationTestConfig) newAdminClient() *miniflux.Client {
-	return miniflux.NewClient(c.testBaseURL, c.testAdminUsername, c.testAdminPassword)
+	return miniflux.NewClient(servertest.Require(t).URL, adminUsername, adminPassword)
 }
 
 // deleteUserOnCleanup removes the user when the test and its subtests finish,
 // and fails the test if the user cannot be removed.
-func (c *integrationTestConfig) deleteUserOnCleanup(t *testing.T, userID int64) {
+func deleteUserOnCleanup(t *testing.T, userID int64) {
 	t.Helper()
 
+	client := newAdminClient(t)
 	t.Cleanup(func() {
-		if err := c.newAdminClient().DeleteUser(userID); err != nil {
+		if err := client.DeleteUser(userID); err != nil {
 			t.Errorf(`Unable to delete user %d: %v`, userID, err)
 		}
 	})
@@ -113,36 +65,31 @@ func (c *integrationTestConfig) deleteUserOnCleanup(t *testing.T, userID int64) 
 
 // newRegularUser creates a regular user that is removed when the test ends,
 // and returns a client authenticated as that user.
-func (c *integrationTestConfig) newRegularUser(t *testing.T) (*miniflux.Client, *miniflux.User) {
+func newRegularUser(t *testing.T) (*miniflux.Client, *miniflux.User) {
 	t.Helper()
 
-	user, err := c.newAdminClient().CreateUser(c.genRandomUsername(), c.testRegularPassword, false)
+	user, err := newAdminClient(t).CreateUser(randomUsername(), regularUserPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
-	c.deleteUserOnCleanup(t, user.ID)
+	deleteUserOnCleanup(t, user.ID)
 
-	return miniflux.NewClient(c.testBaseURL, user.Username, c.testRegularPassword), user
+	return miniflux.NewClient(servertest.Require(t).URL, user.Username, regularUserPassword), user
 }
 
 // requestStatus sends an API request authenticated as the regular user and returns the status code.
 // It covers routes that the client does not use, such as aliases and alternative methods.
-func (c *integrationTestConfig) requestStatus(t *testing.T, user *miniflux.User, method, path string) int {
+func requestStatus(t *testing.T, user *miniflux.User, method, path string) int {
 	t.Helper()
 
-	request, err := http.NewRequest(method, c.testBaseURL+path, nil)
+	request, err := http.NewRequest(method, servertest.Require(t).URL+path, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	request.SetBasicAuth(user.Username, c.testRegularPassword)
+	request.SetBasicAuth(user.Username, regularUserPassword)
 
-	response, err := http.DefaultClient.Do(request)
-	if err != nil {
-		t.Fatal(err)
-	}
-	response.Body.Close()
-
-	return response.StatusCode
+	status, _ := servertest.Send(t, request)
+	return status
 }
 
 // listFeedEntries returns the entries of the feed that match the filter.

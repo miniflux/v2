@@ -16,10 +16,9 @@ import (
 func TestCreateFeedEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 	category, err := regularUserClient.CreateCategory("My category")
 	if err != nil {
 		t.Fatal(err)
@@ -41,10 +40,9 @@ func TestCreateFeedEndpoint(t *testing.T) {
 func TestCannotCreateDuplicatedFeed(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -63,10 +61,9 @@ func TestCannotCreateDuplicatedFeed(t *testing.T) {
 func TestFeedCreationWithoutCategoryReturnsBadRequest(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 	categories, err := regularUserClient.Categories()
 	if err != nil {
 		t.Fatal(err)
@@ -103,10 +100,9 @@ func TestFeedCreationWithoutCategoryReturnsBadRequest(t *testing.T) {
 func TestCreateFeedWithInexistingCategory(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	_, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:    fixture.FeedURL,
@@ -121,9 +117,7 @@ func TestCreateFeedWithInexistingCategory(t *testing.T) {
 func TestCreateFeedWithEmptyFeedURL(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	_, err := client.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: "",
 	})
@@ -135,9 +129,7 @@ func TestCreateFeedWithEmptyFeedURL(t *testing.T) {
 func TestCreateFeedWithInvalidFeedURL(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	_, err := client.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL: "invalid_feed_url",
 	})
@@ -149,10 +141,9 @@ func TestCreateFeedWithInvalidFeedURL(t *testing.T) {
 func TestCreateDisabledFeed(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:  fixture.FeedURL,
@@ -175,10 +166,9 @@ func TestCreateDisabledFeed(t *testing.T) {
 func TestCreateFeedWithDisabledHTTPCache(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:         fixture.FeedURL,
@@ -201,10 +191,9 @@ func TestCreateFeedWithDisabledHTTPCache(t *testing.T) {
 func TestCreateFeedWithScraperRule(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:      fixture.FeedURL,
@@ -227,10 +216,9 @@ func TestCreateFeedWithScraperRule(t *testing.T) {
 func TestUpdateFeedEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -251,11 +239,10 @@ func TestUpdateFeedEndpoint(t *testing.T) {
 func TestCannotHaveDuplicateFeedWhenUpdatingFeed(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 	otherFixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	fixture.Subscribe(t, regularUserClient)
 
@@ -278,10 +265,9 @@ func TestCannotHaveDuplicateFeedWhenUpdatingFeed(t *testing.T) {
 func TestUpdateFeedWithInvalidCategory(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -297,9 +283,7 @@ func TestUpdateFeedWithInvalidCategory(t *testing.T) {
 func TestFeedRuleValidation(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := servertest.NewFeedFixture(t).Subscribe(t, regularUserClient)
 
@@ -354,10 +338,9 @@ func TestFeedRuleValidation(t *testing.T) {
 func TestMarkFeedAsReadEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -377,10 +360,9 @@ func TestMarkFeedAsReadEndpoint(t *testing.T) {
 func TestFetchCountersEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -401,10 +383,9 @@ func TestFetchCountersEndpoint(t *testing.T) {
 func TestDeleteFeedEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -416,9 +397,7 @@ func TestDeleteFeedEndpoint(t *testing.T) {
 func TestRefreshAllFeedsEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	if err := regularUserClient.RefreshAllFeeds(); err != nil {
 		t.Fatal(err)
@@ -428,10 +407,9 @@ func TestRefreshAllFeedsEndpoint(t *testing.T) {
 func TestRefreshFeedEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -447,10 +425,9 @@ func TestRefreshFeedEndpoint(t *testing.T) {
 func TestGetFeedEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -479,10 +456,9 @@ func TestGetFeedEndpoint(t *testing.T) {
 func TestGetFeedsEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -507,10 +483,9 @@ func TestGetFeedsEndpoint(t *testing.T) {
 func TestGetCategoryFeedsEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	category, err := regularUserClient.CreateCategory("My category")
 	if err != nil {

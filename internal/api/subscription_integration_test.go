@@ -14,10 +14,9 @@ import (
 func TestDiscoverSubscriptionsEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	subscriptions, err := client.Discover(fixture.WebsiteURL)
 	if err != nil {
 		t.Fatal(err)
@@ -39,9 +38,7 @@ func TestDiscoverSubscriptionsEndpoint(t *testing.T) {
 func TestDiscoverSubscriptionsWithInvalidURL(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	_, err := client.Discover("invalid_url")
 	if !errors.Is(err, miniflux.ErrBadRequest) {
 		t.Fatalf(`Discovering subscriptions with an invalid URL should raise an error, got %v`, err)
@@ -51,10 +48,8 @@ func TestDiscoverSubscriptionsWithInvalidURL(t *testing.T) {
 func TestDiscoverSubscriptionsWithNoSubscription(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
-	if _, err := client.Discover(testConfig.testBaseURL); !errors.Is(err, miniflux.ErrNotFound) {
+	client := newAdminClient(t)
+	if _, err := client.Discover(servertest.Require(t).URL); !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Discovering subscriptions with no subscription should raise a "not found" error, got %v`, err)
 	}
 }

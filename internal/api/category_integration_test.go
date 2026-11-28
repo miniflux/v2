@@ -14,9 +14,7 @@ import (
 func TestCreateCategoryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	categoryName := "My category"
 	category, err := regularUserClient.CreateCategory(categoryName)
@@ -44,9 +42,7 @@ func TestCreateCategoryEndpoint(t *testing.T) {
 func TestCreateCategoryWithEmptyTitle(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	_, err := client.CreateCategory("")
 	if !errors.Is(err, miniflux.ErrBadRequest) {
 		t.Fatalf(`Creating a category with an empty title should raise an error, got %v`, err)
@@ -56,9 +52,7 @@ func TestCreateCategoryWithEmptyTitle(t *testing.T) {
 func TestCannotCreateDuplicatedCategory(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 	categoryName := "My category"
 
 	if _, err := regularUserClient.CreateCategory(categoryName); err != nil {
@@ -73,9 +67,7 @@ func TestCannotCreateDuplicatedCategory(t *testing.T) {
 func TestCreateCategoryWithOptions(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	newCategory, err := regularUserClient.CreateCategoryWithOptions(&miniflux.CategoryCreationRequest{
 		Title:        "My category",
@@ -106,9 +98,7 @@ func TestCreateCategoryWithOptions(t *testing.T) {
 func TestUpdateCategoryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 
 	categoryName := "My category"
 	category, err := regularUserClient.CreateCategory(categoryName)
@@ -141,9 +131,7 @@ func TestUpdateCategoryEndpoint(t *testing.T) {
 func TestUpdateCategoryWithOptions(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	newCategory, err := regularUserClient.CreateCategoryWithOptions(&miniflux.CategoryCreationRequest{
 		Title: "My category",
@@ -213,9 +201,7 @@ func TestUpdateCategoryWithOptions(t *testing.T) {
 func TestUpdateInexistingCategory(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	_, err := client.UpdateCategory(123456789, "new title")
 	if !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Updating an inexisting category should raise an error, got %v`, err)
@@ -225,9 +211,7 @@ func TestUpdateInexistingCategory(t *testing.T) {
 func TestDeleteCategoryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	categoryName := "My category"
 	category, err := regularUserClient.CreateCategory(categoryName)
@@ -243,9 +227,7 @@ func TestDeleteCategoryEndpoint(t *testing.T) {
 func TestCannotDeleteInexistingCategory(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	err := client.DeleteCategory(123456789)
 	if !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Deleting an inexisting category should raise an error, got %v`, err)
@@ -255,10 +237,8 @@ func TestCannotDeleteInexistingCategory(t *testing.T) {
 func TestCannotDeleteCategoryOfAnotherUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	adminClient := testConfig.newAdminClient()
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	adminClient := newAdminClient(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	category, err := regularUserClient.CreateCategory("My category")
 	if err != nil {
@@ -274,9 +254,7 @@ func TestCannotDeleteCategoryOfAnotherUser(t *testing.T) {
 func TestGetCategoriesEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 
 	category, err := regularUserClient.CreateCategory("My category")
 	if err != nil {
@@ -358,10 +336,9 @@ func TestGetCategoriesEndpoint(t *testing.T) {
 func TestMarkCategoryAsReadEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 	category, err := regularUserClient.CreateCategory("My category")
 	if err != nil {
 		t.Fatal(err)
@@ -391,10 +368,9 @@ func TestMarkCategoryAsReadEndpoint(t *testing.T) {
 func TestRefreshCategoryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feed, err := regularUserClient.Feed(fixture.Subscribe(t, regularUserClient))
 	if err != nil {
@@ -413,7 +389,7 @@ func TestRefreshCategoryEndpoint(t *testing.T) {
 		t.Fatalf(`Refreshing an inexisting category should raise a "not found" error, got %v`, err)
 	}
 
-	otherUserClient, _ := testConfig.newRegularUser(t)
+	otherUserClient, _ := newRegularUser(t)
 	otherCategory, err := otherUserClient.CreateCategory("Other category")
 	if err != nil {
 		t.Fatal(err)

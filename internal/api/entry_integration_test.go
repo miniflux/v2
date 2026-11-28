@@ -20,10 +20,9 @@ import (
 func TestGetAllFeedEntriesEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -53,10 +52,9 @@ func TestGetAllFeedEntriesEndpoint(t *testing.T) {
 func TestGetAllCategoryEntriesEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	category, err := regularUserClient.CreateCategory("My category")
 	if err != nil {
@@ -100,10 +98,9 @@ func TestGetAllCategoryEntriesEndpoint(t *testing.T) {
 func TestGetAllEntriesEndpointWithFilter(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -192,10 +189,9 @@ func TestGetAllEntriesEndpointWithFilter(t *testing.T) {
 func TestGetGlobalEntriesEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
 		FeedURL:      fixture.FeedURL,
@@ -241,10 +237,9 @@ func TestGetGlobalEntriesEndpoint(t *testing.T) {
 func TestGetEntryEndpoints(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -289,10 +284,9 @@ func TestGetEntryEndpoints(t *testing.T) {
 func TestUpdateEntryStatusEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -315,10 +309,9 @@ func TestUpdateEntryStatusEndpoint(t *testing.T) {
 func TestUpdateEntriesStarredEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -362,10 +355,9 @@ func TestUpdateEntriesStarredEndpoint(t *testing.T) {
 func TestGetEntryIDsEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	boolPtr := func(value bool) *bool { return &value }
 
@@ -578,10 +570,9 @@ func TestGetEntryIDsEndpoint(t *testing.T) {
 func TestUpdateEntryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -622,10 +613,9 @@ func TestUpdateEntryEndpoint(t *testing.T) {
 func TestToggleStarredEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -646,7 +636,7 @@ func TestToggleStarredEndpoint(t *testing.T) {
 
 	// The bookmark route is an alias of the star route.
 	path := fmt.Sprintf("/v1/entries/%d/bookmark", entry.ID)
-	if status := testConfig.requestStatus(t, regularTestUser, http.MethodPut, path); status != http.StatusNoContent {
+	if status := requestStatus(t, regularTestUser, http.MethodPut, path); status != http.StatusNoContent {
 		t.Fatalf(`Toggling the bookmark should return status %d, got %d`, http.StatusNoContent, status)
 	}
 
@@ -663,10 +653,9 @@ func TestToggleStarredEndpoint(t *testing.T) {
 func TestShareEntryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -733,7 +722,7 @@ func TestShareEntryEndpoint(t *testing.T) {
 		t.Fatalf(`Expected Not Found when unsharing non existent entry: %v`, err)
 	}
 
-	otherUserClient, _ := testConfig.newRegularUser(t)
+	otherUserClient, _ := newRegularUser(t)
 
 	otherFeedID := fixture.Subscribe(t, otherUserClient)
 
@@ -751,10 +740,9 @@ func TestShareEntryEndpoint(t *testing.T) {
 func TestSaveEntryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -768,10 +756,9 @@ func TestSaveEntryEndpoint(t *testing.T) {
 func TestFetchContentEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -790,10 +777,9 @@ func TestFetchContentEndpoint(t *testing.T) {
 func TestFlushHistoryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -833,7 +819,7 @@ func TestFlushHistoryEndpoint(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if status := testConfig.requestStatus(t, regularTestUser, http.MethodDelete, "/v1/flush-history"); status != http.StatusAccepted {
+	if status := requestStatus(t, regularTestUser, http.MethodDelete, "/v1/flush-history"); status != http.StatusAccepted {
 		t.Fatalf(`Flushing the history with DELETE should return status %d, got %d`, http.StatusAccepted, status)
 	}
 	waitForNoReadEntries()
@@ -842,10 +828,9 @@ func TestFlushHistoryEndpoint(t *testing.T) {
 func TestImportFeedEntryEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 
 	// Create a feed
 	feedID := fixture.Subscribe(t, client)

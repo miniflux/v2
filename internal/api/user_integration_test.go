@@ -14,25 +14,21 @@ import (
 func TestGetMeEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	user, err := client.Me()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if user.Username != testConfig.testAdminUsername {
-		t.Fatalf(`Invalid username, got %q instead of %q`, user.Username, testConfig.testAdminUsername)
+	if user.Username != adminUsername {
+		t.Fatalf(`Invalid username, got %q instead of %q`, user.Username, adminUsername)
 	}
 }
 
 func TestGetUsersEndpointAsAdmin(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	users, err := client.Users()
 	if err != nil {
 		t.Fatal(err)
@@ -46,8 +42,8 @@ func TestGetUsersEndpointAsAdmin(t *testing.T) {
 		t.Fatalf(`Invalid userID, got "%v"`, users[0].ID)
 	}
 
-	if users[0].Username != testConfig.testAdminUsername {
-		t.Fatalf(`Invalid username, got "%v" instead of "%v"`, users[0].Username, testConfig.testAdminUsername)
+	if users[0].Username != adminUsername {
+		t.Fatalf(`Invalid username, got "%v" instead of "%v"`, users[0].Username, adminUsername)
 	}
 
 	if users[0].Password != "" {
@@ -94,9 +90,7 @@ func TestGetUsersEndpointAsAdmin(t *testing.T) {
 func TestGetUsersEndpointAsRegularUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 	_, err := regularUserClient.Users()
 	if !errors.Is(err, miniflux.ErrForbidden) {
 		t.Fatalf(`Regular users should not have access to the users endpoint, got %v`, err)
@@ -106,16 +100,14 @@ func TestGetUsersEndpointAsRegularUser(t *testing.T) {
 func TestCreateUserEndpointAsAdmin(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
+	client := newAdminClient(t)
 
-	client := testConfig.newAdminClient()
-
-	username := testConfig.genRandomUsername()
-	regularTestUser, err := client.CreateUser(username, testConfig.testRegularPassword, false)
+	username := randomUsername()
+	regularTestUser, err := client.CreateUser(username, regularUserPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
-	testConfig.deleteUserOnCleanup(t, regularTestUser.ID)
+	deleteUserOnCleanup(t, regularTestUser.ID)
 
 	if regularTestUser.Username != username {
 		t.Fatalf(`Invalid username, got "%v" instead of "%v"`, regularTestUser.Username, username)
@@ -165,10 +157,8 @@ func TestCreateUserEndpointAsAdmin(t *testing.T) {
 func TestCreateUserEndpointAsRegularUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
-	_, err := regularUserClient.CreateUser(regularTestUser.Username, testConfig.testRegularPassword, false)
+	regularUserClient, regularTestUser := newRegularUser(t)
+	_, err := regularUserClient.CreateUser(regularTestUser.Username, regularUserPassword, false)
 	if !errors.Is(err, miniflux.ErrForbidden) {
 		t.Fatalf(`Regular users should not have access to the create user endpoint, got %v`, err)
 	}
@@ -177,10 +167,8 @@ func TestCreateUserEndpointAsRegularUser(t *testing.T) {
 func TestCannotCreateDuplicateUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
-	_, err := client.CreateUser(testConfig.testAdminUsername, testConfig.testAdminPassword, true)
+	client := newAdminClient(t)
+	_, err := client.CreateUser(adminUsername, adminPassword, true)
 	if !errors.Is(err, miniflux.ErrBadRequest) {
 		t.Fatalf(`Duplicated users should not be allowed, got %v`, err)
 	}
@@ -189,10 +177,8 @@ func TestCannotCreateDuplicateUser(t *testing.T) {
 func TestRemoveUserEndpointAsAdmin(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
-	user, err := client.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	client := newAdminClient(t)
+	user, err := client.CreateUser(randomUsername(), regularUserPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -209,9 +195,7 @@ func TestRemoveUserEndpointAsAdmin(t *testing.T) {
 func TestRemoveUserEndpointAsRegularUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 	err := regularUserClient.DeleteUser(regularTestUser.ID)
 	if !errors.Is(err, miniflux.ErrForbidden) {
 		t.Fatalf(`Regular users should not have access to the remove user endpoint, got %v`, err)
@@ -221,9 +205,7 @@ func TestRemoveUserEndpointAsRegularUser(t *testing.T) {
 func TestGetUserByIDEndpointAsAdmin(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	user, err := client.Me()
 	if err != nil {
 		t.Fatal(err)
@@ -294,9 +276,7 @@ func TestGetUserByIDEndpointAsAdmin(t *testing.T) {
 func TestGetUserByIDEndpointAsRegularUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 	_, err := regularUserClient.UserByID(regularTestUser.ID)
 	if !errors.Is(err, miniflux.ErrForbidden) {
 		t.Fatalf(`Regular users should not have access to the user by ID endpoint, got %v`, err)
@@ -306,9 +286,7 @@ func TestGetUserByIDEndpointAsRegularUser(t *testing.T) {
 func TestGetUserByUsernameEndpointAsAdmin(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	user, err := client.Me()
 	if err != nil {
 		t.Fatal(err)
@@ -375,9 +353,7 @@ func TestGetUserByUsernameEndpointAsAdmin(t *testing.T) {
 func TestGetUserByUsernameEndpointAsRegularUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 	_, err := regularUserClient.UserByUsername(regularTestUser.Username)
 	if !errors.Is(err, miniflux.ErrForbidden) {
 		t.Fatalf(`Regular users should not have access to the user by username endpoint, got %v`, err)
@@ -387,9 +363,7 @@ func TestGetUserByUsernameEndpointAsRegularUser(t *testing.T) {
 func TestUpdateUserEndpointByChangingDefaultTheme(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 
 	userUpdateRequest := &miniflux.UserModificationRequest{
 		Theme: new("dark_serif"),
@@ -408,9 +382,7 @@ func TestUpdateUserEndpointByChangingDefaultTheme(t *testing.T) {
 func TestUpdateUserEndpointByChangingExternalFonts(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 
 	userUpdateRequest := &miniflux.UserModificationRequest{
 		ExternalFontHosts: new("  fonts.example.org  "),
@@ -429,9 +401,7 @@ func TestUpdateUserEndpointByChangingExternalFonts(t *testing.T) {
 func TestUpdateUserEndpointByChangingExternalFontsWithInvalidValue(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 
 	userUpdateRequest := &miniflux.UserModificationRequest{
 		ExternalFontHosts: new("'self' *"),
@@ -445,9 +415,7 @@ func TestUpdateUserEndpointByChangingExternalFontsWithInvalidValue(t *testing.T)
 func TestUpdateUserEndpointByChangingCustomJS(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 
 	userUpdateRequest := &miniflux.UserModificationRequest{
 		CustomJS: new("alert('Hello, World!');"),
@@ -466,9 +434,7 @@ func TestUpdateUserEndpointByChangingCustomJS(t *testing.T) {
 func TestUpdateUserEndpointByChangingDefaultThemeToInvalidValue(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 
 	userUpdateRequest := &miniflux.UserModificationRequest{
 		Theme: new("invalid_theme"),
@@ -483,15 +449,13 @@ func TestUpdateUserEndpointByChangingDefaultThemeToInvalidValue(t *testing.T) {
 func TestRegularUsersCannotUpdateOtherUsers(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	adminClient := testConfig.newAdminClient()
+	adminClient := newAdminClient(t)
 	adminUser, err := adminClient.Me()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	userUpdateRequest := &miniflux.UserModificationRequest{
 		Theme: new("dark_serif"),
@@ -506,10 +470,9 @@ func TestRegularUsersCannotUpdateOtherUsers(t *testing.T) {
 func TestMarkUserAsReadEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 	feedID := fixture.Subscribe(t, regularUserClient)
 
 	if err := regularUserClient.MarkAllAsRead(regularTestUser.ID); err != nil {
@@ -528,16 +491,14 @@ func TestMarkUserAsReadEndpoint(t *testing.T) {
 func TestCannotMarkUserAsReadAsOtherUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	adminClient := testConfig.newAdminClient()
+	adminClient := newAdminClient(t)
 
 	adminUser, err := adminClient.Me()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 	if err := regularUserClient.MarkAllAsRead(adminUser.ID); !errors.Is(err, miniflux.ErrForbidden) {
 		t.Fatalf(`Non-admin users should not be able to mark another user as read, got %v`, err)
 	}
@@ -546,9 +507,7 @@ func TestCannotMarkUserAsReadAsOtherUser(t *testing.T) {
 func TestFetchIntegrationsStatusEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	hasIntegrations, err := regularUserClient.IntegrationsStatus()
 	if err != nil {

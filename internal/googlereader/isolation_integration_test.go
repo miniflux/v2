@@ -28,7 +28,7 @@ func newOwnerWithPrivateFeed(t *testing.T) (*testUser, int64, miniflux.Entries) 
 	if err != nil {
 		t.Fatal(err)
 	}
-	return owner, feedID, feedEntries(t, owner, feedID)
+	return owner, feedID, servertest.FeedEntries(t, owner.rest, feedID)
 }
 
 func TestUsersCannotReadOtherUsersData(t *testing.T) {
@@ -123,7 +123,7 @@ func TestUsersCannotChangeOtherUsersData(t *testing.T) {
 		t.Errorf(`Expected the feed to be unchanged, got %q in %q`, feed.Title, feed.Category.Title)
 	}
 
-	for _, entry := range feedEntries(t, owner, feedID) {
+	for _, entry := range servertest.FeedEntries(t, owner.rest, feedID) {
 		if entry.Status != miniflux.EntryStatusUnread || entry.Starred {
 			t.Errorf(`Expected entry %d to be unchanged, got %s with starred=%v`, entry.ID, entry.Status, entry.Starred)
 		}

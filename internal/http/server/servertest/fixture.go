@@ -104,6 +104,20 @@ func (f *FeedFixture) Subscribe(t testing.TB, client *miniflux.Client) int64 {
 	return feedID
 }
 
+// FeedEntries returns the entries of a fixture feed oldest first: entry 1 is published on 2025-01-01, entry 3 on 2025-01-03.
+func FeedEntries(t testing.TB, client *miniflux.Client, feedID int64) miniflux.Entries {
+	t.Helper()
+
+	result, err := client.FeedEntries(feedID, &miniflux.Filter{Order: "published_at", Direction: "asc"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Entries) != EntryCount {
+		t.Fatalf(`Expected %d entries, got %d`, EntryCount, len(result.Entries))
+	}
+	return result.Entries
+}
+
 // feedDocument returns an RSS feed with EntryCount entries published a day apart.
 // The second entry mentions SearchTerm and has an audio enclosure.
 func (f *FeedFixture) feedDocument() string {

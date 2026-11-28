@@ -8,14 +8,13 @@ import (
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 func TestAPIKeysEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	regularUserClient, regularTestUser := testConfig.newRegularUser(t)
+	regularUserClient, regularTestUser := newRegularUser(t)
 	apiKeys, err := regularUserClient.APIKeys()
 	if err != nil {
 		t.Fatal(err)
@@ -70,7 +69,7 @@ func TestAPIKeysEndpoint(t *testing.T) {
 	}
 
 	// Create a new client using the API key.
-	apiKeyClient := miniflux.NewClient(testConfig.testBaseURL, apiKey.Token)
+	apiKeyClient := miniflux.NewClient(servertest.Require(t).URL, apiKey.Token)
 
 	// Fetch the user using the API key client.
 	user, err := apiKeyClient.Me()

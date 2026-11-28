@@ -4,14 +4,15 @@
 package fever_test
 
 import (
-	"encoding/json"
-	"io"
+	"maps"
 	"net/http"
 	"net/url"
 	"slices"
 	"strconv"
 	"strings"
 	"testing"
+
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 // feverAPIVersion is the API version that every Fever response reports.
@@ -41,7 +42,7 @@ func (client *feverClient) getRawQuery(t *testing.T, rawQuery string) (int, []by
 	if err != nil {
 		t.Fatal(err)
 	}
-	return send(t, request)
+	return servertest.Send(t, request)
 }
 
 // post sends a form with the API key and the parameters in the request body.
@@ -62,7 +63,7 @@ func (client *feverClient) postWithQuery(t *testing.T, query, form url.Values) (
 		t.Fatal(err)
 	}
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	return send(t, request)
+	return servertest.Send(t, request)
 }
 
 // getJSON sends a GET request and decodes the authenticated response into result.
@@ -91,9 +92,7 @@ func (client *feverClient) endpoint(rawQuery string) string {
 // withAPIKey returns a copy of the parameters with the API key of the client, when it has one.
 func (client *feverClient) withAPIKey(params url.Values) url.Values {
 	values := url.Values{}
-	for key, list := range params {
-		values[key] = list
-	}
+	maps.Copy(values, params)
 	if client.apiKey != "" {
 		values.Set("api_key", client.apiKey)
 	}
@@ -132,44 +131,17 @@ func sortedIDs(ids ...int64) []int64 {
 	return sorted
 }
 
-func send(t *testing.T, request *http.Request) (int, []byte) {
-	t.Helper()
-
-	response, err := http.DefaultClient.Do(request)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer response.Body.Close()
-
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return response.StatusCode, body
-}
-
-func decodeJSON(t *testing.T, status int, body []byte, result any) {
-	t.Helper()
-
-	if status != http.StatusOK {
-		t.Fatalf(`Expected status 200, got %d: %s`, status, body)
-	}
-	if err := json.Unmarshal(body, result); err != nil {
-		t.Fatalf(`Unable to decode %s: %v`, body, err)
-	}
-}
-
 // decodeAuthenticatedJSON decodes a successful response into result, and fails the test
 // unless the response reports the Fever API version and a successful authentication.
 func decodeAuthenticatedJSON(t *testing.T, status int, body []byte, result any) {
 	t.Helper()
 
 	var base baseResult
-	decodeJSON(t, status, body, &base)
+	servertest.DecodeJSON(t, status, body, &base)
 	if base.APIVersion != feverAPIVersion || base.Auth != 1 {
 		t.Fatalf(`Expected an authenticated response for API version %d, got %s`, feverAPIVersion, body)
 	}
-	decodeJSON(t, status, body, result)
+	servertest.DecodeJSON(t, status, body, result)
 }
 
 // requireAuthFailure fails the test unless the response is the Fever authentication failure:
@@ -178,7 +150,7 @@ func requireAuthFailure(t *testing.T, status int, body []byte) {
 	t.Helper()
 
 	var result baseResult
-	decodeJSON(t, status, body, &result)
+	servertest.DecodeJSON(t, status, body, &result)
 	if result.APIVersion != feverAPIVersion || result.Auth != 0 {
 		t.Fatalf(`Expected an authentication failure for API version %d, got %s`, feverAPIVersion, body)
 	}

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	miniflux "miniflux.app/v2/client"
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 // beforeNewestEntry is a before timestamp between the publication of fixture entries 2 and 3.
@@ -90,7 +91,7 @@ func TestMarkGroup(t *testing.T) {
 
 	user := newTestUser(t)
 	group := createCategory(t, user, "Fever Group")
-	groupEntries := feedEntries(t, user, subscribeInCategory(t, user, group.ID))
+	groupEntries := servertest.FeedEntries(t, user.rest, subscribeInCategory(t, user, group.ID))
 	_, otherEntries := subscribeToFixture(t, user)
 	allEntries := append(slices.Clone(groupEntries), otherEntries...)
 
@@ -107,7 +108,7 @@ func TestMarkAllItems(t *testing.T) {
 
 	user := newTestUser(t)
 	group := createCategory(t, user, "Fever Group")
-	groupEntries := feedEntries(t, user, subscribeInCategory(t, user, group.ID))
+	groupEntries := servertest.FeedEntries(t, user.rest, subscribeInCategory(t, user, group.ID))
 	_, otherEntries := subscribeToFixture(t, user)
 
 	// Group 0 is the "Kindling" super group, which contains every feed.

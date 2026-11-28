@@ -162,7 +162,7 @@ func TestStreamItemContentsEndpoint(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	entries := feedEntries(t, user, feedID)
+	entries := servertest.FeedEntries(t, user.rest, feedID)
 
 	if err := user.rest.UpdateEntries([]int64{entries[0].ID}, miniflux.EntryStatusRead); err != nil {
 		t.Fatal(err)

@@ -14,10 +14,9 @@ import (
 func TestUpdateEnclosureEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -55,10 +54,9 @@ func TestUpdateEnclosureEndpoint(t *testing.T) {
 func TestGetEnclosureEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 

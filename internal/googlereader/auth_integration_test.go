@@ -11,13 +11,15 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 func TestClientLogin(t *testing.T) {
 	t.Parallel()
 
 	user := newTestUser(t)
-	anonymous := &googleReaderClient{baseURL: requireTestServer(t).URL}
+	anonymous := &googleReaderClient{baseURL: servertest.Require(t).URL}
 	credentials := url.Values{"Email": {user.username}, "Passwd": {testGoogleReaderPassword}}
 
 	if !strings.HasPrefix(user.reader.token, user.username+"/") {
@@ -52,7 +54,7 @@ func TestClientLoginRejectsInvalidCredentials(t *testing.T) {
 	disabledUser := newTestUser(t)
 	setGoogleReaderIntegration(t, disabledUser.id, false, testGoogleReaderPassword)
 
-	anonymous := &googleReaderClient{baseURL: requireTestServer(t).URL}
+	anonymous := &googleReaderClient{baseURL: servertest.Require(t).URL}
 
 	scenarios := []struct {
 		name     string
@@ -86,7 +88,7 @@ func TestClientLoginTakesAsLongForUnknownUsernames(t *testing.T) {
 	disabledUser := newTestUser(t)
 	setGoogleReaderIntegration(t, disabledUser.id, false, testGoogleReaderPassword)
 
-	anonymous := &googleReaderClient{baseURL: requireTestServer(t).URL}
+	anonymous := &googleReaderClient{baseURL: servertest.Require(t).URL}
 
 	// The first scenario is the baseline: the username exists, so the password is compared with its bcrypt hash.
 	scenarios := []struct {
@@ -131,7 +133,7 @@ func TestAuthenticationRejectsInvalidTokens(t *testing.T) {
 
 	user := newTestUser(t)
 	otherUser := newTestUser(t)
-	baseURL := requireTestServer(t).URL
+	baseURL := servertest.Require(t).URL
 
 	_, hash, _ := strings.Cut(user.reader.token, "/")
 	_, otherHash, _ := strings.Cut(otherUser.reader.token, "/")
@@ -182,7 +184,7 @@ func TestAuthenticationRejectsInvalidTokens(t *testing.T) {
 				request.Header.Set("Authorization", scenario.authorization)
 			}
 
-			status, body := send(t, request)
+			status, body := servertest.Send(t, request)
 			requireStatus(t, status, body, http.StatusUnauthorized)
 		})
 	}
@@ -245,7 +247,7 @@ func TestUnimplementedEndpointsReturnEmptyList(t *testing.T) {
 	t.Parallel()
 
 	user := newTestUser(t)
-	anonymous := &googleReaderClient{baseURL: requireTestServer(t).URL}
+	anonymous := &googleReaderClient{baseURL: servertest.Require(t).URL}
 
 	status, body := user.reader.get(t, "/reader/api/0/unread-count", nil)
 	requireStatus(t, status, body, http.StatusOK)
