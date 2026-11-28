@@ -4,14 +4,15 @@
 package googlereader_test
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
+	"maps"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"testing"
+
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 // The state stream IDs use the "user/-/" form, which clients send for the current user.
@@ -53,7 +54,7 @@ func (client *googleReaderClient) get(t *testing.T, path string, query url.Value
 	if client.token != "" {
 		request.Header.Set("Authorization", "GoogleLogin auth="+client.token)
 	}
-	return send(t, request)
+	return servertest.Send(t, request)
 }
 
 // post sends a form with the token in the T field.
@@ -61,9 +62,7 @@ func (client *googleReaderClient) post(t *testing.T, path string, form url.Value
 	t.Helper()
 
 	values := url.Values{}
-	for key, list := range form {
-		values[key] = list
-	}
+	maps.Copy(values, form)
 	if client.token != "" {
 		values.Set("T", client.token)
 	}
@@ -73,7 +72,7 @@ func (client *googleReaderClient) post(t *testing.T, path string, form url.Value
 		t.Fatal(err)
 	}
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	return send(t, request)
+	return servertest.Send(t, request)
 }
 
 // getJSON sends a GET request with output=json and decodes the successful response into result.
@@ -81,11 +80,9 @@ func (client *googleReaderClient) getJSON(t *testing.T, path string, query url.V
 	t.Helper()
 
 	values := url.Values{"output": {"json"}}
-	for key, list := range query {
-		values[key] = list
-	}
+	maps.Copy(values, query)
 	status, body := client.get(t, path, values)
-	decodeJSON(t, status, body, result)
+	servertest.DecodeJSON(t, status, body, result)
 }
 
 // postJSON sends a form with output=json and decodes the successful response into result.
@@ -93,11 +90,9 @@ func (client *googleReaderClient) postJSON(t *testing.T, path string, form url.V
 	t.Helper()
 
 	values := url.Values{"output": {"json"}}
-	for key, list := range form {
-		values[key] = list
-	}
+	maps.Copy(values, form)
 	status, body := client.post(t, path, values)
-	decodeJSON(t, status, body, result)
+	servertest.DecodeJSON(t, status, body, result)
 }
 
 // postOK sends a form and requires the plain text OK response.
@@ -107,33 +102,6 @@ func (client *googleReaderClient) postOK(t *testing.T, path string, form url.Val
 	status, body := client.post(t, path, form)
 	if status != http.StatusOK || string(body) != "OK" {
 		t.Fatalf(`POST %s %v: expected status 200 with body "OK", got %d: %s`, path, form, status, body)
-	}
-}
-
-func send(t *testing.T, request *http.Request) (int, []byte) {
-	t.Helper()
-
-	response, err := http.DefaultClient.Do(request)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer response.Body.Close()
-
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return response.StatusCode, body
-}
-
-func decodeJSON(t *testing.T, status int, body []byte, result any) {
-	t.Helper()
-
-	if status != http.StatusOK {
-		t.Fatalf(`Expected status 200, got %d: %s`, status, body)
-	}
-	if err := json.Unmarshal(body, result); err != nil {
-		t.Fatalf(`Unable to decode %s: %v`, body, err)
 	}
 }
 

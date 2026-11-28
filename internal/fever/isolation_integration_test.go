@@ -10,6 +10,7 @@ import (
 	"time"
 
 	miniflux "miniflux.app/v2/client"
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 // newOwnerWithPrivateFeed creates a user with a feed in a "Private" category and its second entry starred.
@@ -20,7 +21,7 @@ func newOwnerWithPrivateFeed(t *testing.T) (*testUser, *miniflux.Category, int64
 	owner := newTestUser(t)
 	category := createCategory(t, owner, "Private")
 	feedID := subscribeInCategory(t, owner, category.ID)
-	entries := feedEntries(t, owner, feedID)
+	entries := servertest.FeedEntries(t, owner.rest, feedID)
 	if err := owner.rest.ToggleStarred(entries[1].ID); err != nil {
 		t.Fatal(err)
 	}

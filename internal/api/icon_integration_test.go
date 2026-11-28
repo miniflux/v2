@@ -14,10 +14,9 @@ import (
 func TestGetFeedIcon(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, regularUserClient)
 
@@ -59,9 +58,7 @@ func TestGetFeedIcon(t *testing.T) {
 func TestGetFeedIconWithInexistingFeedID(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	_, err := client.FeedIcon(123456789)
 	if !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Fetching the icon of an inexisting feed should raise an error, got %v`, err)
@@ -71,9 +68,7 @@ func TestGetFeedIconWithInexistingFeedID(t *testing.T) {
 func TestGetIconWithInexistingIconID(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	_, err := client.Icon(123456789)
 	if !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Fetching an inexisting icon should return a "not found" error, got %v`, err)
@@ -83,11 +78,10 @@ func TestGetIconWithInexistingIconID(t *testing.T) {
 func TestGetIconByIconIDFromAnotherUser(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
 	// The owner subscribes to a feed, which fetches and stores its icon.
-	ownerClient, _ := testConfig.newRegularUser(t)
+	ownerClient, _ := newRegularUser(t)
 
 	feedID := fixture.Subscribe(t, ownerClient)
 
@@ -105,7 +99,7 @@ func TestGetIconByIconIDFromAnotherUser(t *testing.T) {
 	}
 
 	// Another user without access to that feed must not be able to fetch the icon.
-	otherClient, _ := testConfig.newRegularUser(t)
+	otherClient, _ := newRegularUser(t)
 
 	if _, err := otherClient.Icon(ownerIcon.ID); !errors.Is(err, miniflux.ErrNotFound) {
 		t.Fatalf(`Fetching an icon owned by another user should return a "not found" error, got %v`, err)

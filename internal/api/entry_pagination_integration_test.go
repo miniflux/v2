@@ -17,8 +17,6 @@ import (
 func TestGetEntriesStablePaginationWithIdenticalPublishedDates(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
 	const (
 		entryCount = 120
 		pageSize   = 25
@@ -36,7 +34,7 @@ func TestGetEntriesStablePaginationWithIdenticalPublishedDates(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client, _ := testConfig.newRegularUser(t)
+	client, _ := newRegularUser(t)
 	if _, err := client.CreateFeed(&miniflux.FeedCreationRequest{FeedURL: server.URL}); err != nil {
 		t.Fatal(err)
 	}

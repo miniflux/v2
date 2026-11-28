@@ -8,14 +8,13 @@ import (
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
+	"miniflux.app/v2/internal/http/server/servertest"
 )
 
 func TestHealthcheckEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := miniflux.NewClient(testConfig.testBaseURL)
+	client := miniflux.NewClient(servertest.Require(t).URL)
 	if err := client.Healthcheck(); err != nil {
 		t.Fatal(err)
 	}
@@ -24,9 +23,7 @@ func TestHealthcheckEndpoint(t *testing.T) {
 func TestVersionEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := testConfig.newAdminClient()
+	client := newAdminClient(t)
 	version, err := client.Version()
 	if err != nil {
 		t.Fatal(err)
@@ -64,9 +61,7 @@ func TestVersionEndpoint(t *testing.T) {
 func TestInvalidCredentials(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
-
-	client := miniflux.NewClient(testConfig.testBaseURL, "invalid", "invalid")
+	client := miniflux.NewClient(servertest.Require(t).URL, "invalid", "invalid")
 	_, err := client.Users()
 	if !errors.Is(err, miniflux.ErrNotAuthorized) {
 		t.Fatalf(`Using bad credentials should raise a "not authorized" error, got %v`, err)

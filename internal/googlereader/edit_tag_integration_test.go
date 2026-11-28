@@ -66,7 +66,7 @@ func TestEditTagEndpoint(t *testing.T) {
 			}
 			user.reader.postOK(t, "/reader/api/0/edit-tag", form)
 
-			entries = feedEntries(t, user, feedID)
+			entries = servertest.FeedEntries(t, user.rest, feedID)
 			for _, entry := range entries[:2] {
 				if entry.Status != scenario.expectedStatus || entry.Starred != scenario.expectedStarred {
 					t.Errorf(`Expected entry %d to be %s with starred=%v, got %s with starred=%v`, entry.ID, scenario.expectedStatus, scenario.expectedStarred, entry.Status, entry.Starred)
@@ -111,7 +111,7 @@ func TestEditTagRejectsInvalidRequests(t *testing.T) {
 		})
 	}
 
-	for _, entry := range feedEntries(t, user, feedID) {
+	for _, entry := range servertest.FeedEntries(t, user.rest, feedID) {
 		if entry.Status != miniflux.EntryStatusUnread || entry.Starred {
 			t.Errorf(`Expected entry %d to be unchanged, got %s with starred=%v`, entry.ID, entry.Status, entry.Starred)
 		}
@@ -235,7 +235,7 @@ func TestMarkAllAsReadRejectsInvalidRequests(t *testing.T) {
 func entryStatuses(t *testing.T, user *testUser, feedID int64) []string {
 	t.Helper()
 
-	entries := feedEntries(t, user, feedID)
+	entries := servertest.FeedEntries(t, user.rest, feedID)
 	statuses := make([]string, 0, len(entries))
 	for _, entry := range entries {
 		statuses = append(statuses, entry.Status)

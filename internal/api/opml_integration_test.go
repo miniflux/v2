@@ -15,10 +15,9 @@ import (
 func TestExportEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	fixture.Subscribe(t, regularUserClient)
 
@@ -39,10 +38,9 @@ func TestExportEndpoint(t *testing.T) {
 func TestImportEndpoint(t *testing.T) {
 	t.Parallel()
 
-	testConfig := requireIntegrationTestConfig(t)
 	fixture := servertest.NewFeedFixture(t)
 
-	regularUserClient, _ := testConfig.newRegularUser(t)
+	regularUserClient, _ := newRegularUser(t)
 
 	data := `<?xml version="1.0" encoding="UTF-8"?>
     <opml version="2.0">

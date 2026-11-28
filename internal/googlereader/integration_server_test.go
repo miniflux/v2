@@ -4,21 +4,15 @@
 package googlereader_test
 
 import (
-	"fmt"
-	"math/rand/v2"
 	"net/url"
-	"os"
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/server/servertest"
-	"miniflux.app/v2/internal/model"
 )
 
 const (
-	skipIntegrationTestsMessage = `Set TEST_DATABASE_URL to a PostgreSQL database to run the Google Reader API integration tests`
-
 	// testUserPassword is the Miniflux password of the test users, used by the REST API.
 	testUserPassword = "miniflux_test_password"
 
@@ -26,38 +20,8 @@ const (
 	testGoogleReaderPassword = "googlereader_test_password"
 )
 
-// testServer is the Miniflux server started by TestMain, or nil when TEST_DATABASE_URL is not set.
-var testServer *servertest.Server
-
 func TestMain(m *testing.M) {
-	os.Exit(runTests(m))
-}
-
-func runTests(m *testing.M) int {
-	databaseURL := os.Getenv("TEST_DATABASE_URL")
-	if databaseURL == "" {
-		return m.Run()
-	}
-
-	server, err := servertest.NewServer(databaseURL)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to start the integration test server: %v\n", err)
-		return 1
-	}
-	defer server.Close()
-
-	testServer = server
-	return m.Run()
-}
-
-// requireTestServer returns the integration test server, or skips the test when TEST_DATABASE_URL is not set.
-func requireTestServer(t *testing.T) *servertest.Server {
-	t.Helper()
-
-	if testServer == nil {
-		t.Skip(skipIntegrationTestsMessage)
-	}
-	return testServer
+	servertest.Main(m, nil)
 }
 
 // testUser is a Miniflux user with the Google Reader API enabled.
@@ -76,20 +40,8 @@ type testUser struct {
 func newTestUser(t *testing.T) *testUser {
 	t.Helper()
 
-	server := requireTestServer(t)
-	user, err := server.Store.CreateUser(&model.UserCreationRequest{
-		Username: fmt.Sprintf("googlereader_test_user_%d", rand.Int()),
-		Password: testUserPassword,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(func() {
-		if err := server.Store.RemoveUser(user.ID); err != nil {
-			t.Errorf(`Unable to remove user %d: %v`, user.ID, err)
-		}
-	})
-
+	server := servertest.Require(t)
+	user := server.NewUser(t, testUserPassword)
 	setGoogleReaderIntegration(t, user.ID, true, testGoogleReaderPassword)
 
 	return &testUser{
@@ -104,7 +56,7 @@ func newTestUser(t *testing.T) *testUser {
 func setGoogleReaderIntegration(t *testing.T, userID int64, enabled bool, password string) {
 	t.Helper()
 
-	server := requireTestServer(t)
+	server := servertest.Require(t)
 	integration, err := server.Store.Integration(userID)
 	if err != nil {
 		t.Fatal(err)
@@ -133,7 +85,7 @@ func clientLogin(t *testing.T, username, password string) string {
 	t.Helper()
 
 	var result loginResult
-	anonymous := &googleReaderClient{baseURL: requireTestServer(t).URL}
+	anonymous := &googleReaderClient{baseURL: servertest.Require(t).URL}
 	anonymous.postJSON(t, "/accounts/ClientLogin", url.Values{
 		"Email":  {username},
 		"Passwd": {password},
@@ -150,19 +102,5 @@ func subscribeToFixture(t *testing.T, user *testUser) (int64, miniflux.Entries) 
 	t.Helper()
 
 	feedID := servertest.NewFeedFixture(t).Subscribe(t, user.rest)
-	return feedID, feedEntries(t, user, feedID)
-}
-
-// feedEntries returns the entries of the feed oldest first: entry 1 is published on 2025-01-01, entry 3 on 2025-01-03.
-func feedEntries(t *testing.T, user *testUser, feedID int64) miniflux.Entries {
-	t.Helper()
-
-	result, err := user.rest.FeedEntries(feedID, &miniflux.Filter{Order: "published_at", Direction: "asc"})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(result.Entries) != servertest.EntryCount {
-		t.Fatalf(`Expected %d entries, got %d`, servertest.EntryCount, len(result.Entries))
-	}
-	return result.Entries
+	return feedID, servertest.FeedEntries(t, user.rest, feedID)
 }
