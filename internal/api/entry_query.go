@@ -40,6 +40,19 @@ type entryFilters struct {
 // parseEntryFilters reads the entry filters shared by the entry endpoints.
 // A non-zero feedID or categoryID comes from the route and takes precedence over the query string.
 func parseEntryFilters(r *http.Request, feedID, categoryID int64) (entryFilters, error) {
+	// Feed and category endpoints reject an invalid value for the scope ID that the route does not set,
+	// since that value narrows the results. The route's own ID always wins, so its query value is not checked.
+	// /v1/entries keeps ignoring invalid values for compatibility with existing clients.
+	if feedID != 0 || categoryID != 0 {
+		name := "feed_id"
+		if feedID != 0 {
+			name = "category_id"
+		}
+		if err := validateEntryScopeQueryID(r, name); err != nil {
+			return entryFilters{}, err
+		}
+	}
+
 	if feedID == 0 {
 		feedID = request.QueryInt64Param(r, "feed_id", 0)
 	}
@@ -100,6 +113,24 @@ func parseEntryFilters(r *http.Request, feedID, categoryID int64) (entryFilters,
 	}
 
 	return filters, nil
+}
+
+// validateEntryScopeQueryID rejects a query string that cannot be parsed,
+// and any value of the parameter that is neither empty nor a non-negative integer.
+func validateEntryScopeQueryID(r *http.Request, name string) error {
+	values, err := url.ParseQuery(r.URL.RawQuery)
+	if err != nil {
+		return fmt.Errorf("invalid query parameters: %w", err)
+	}
+	for _, value := range values[name] {
+		if value == "" {
+			continue
+		}
+		if id, err := strconv.ParseInt(value, 10, 64); err != nil || id < 0 {
+			return fmt.Errorf("invalid %s parameter, must be a non-negative integer", name)
+		}
+	}
+	return nil
 }
 
 // maxEntryFilterTimestamp is the first Unix timestamp past PostgreSQL's finite timestamp range.

@@ -454,6 +454,25 @@ func TestEntryQueryAPIRejectsForeignScopes(t *testing.T) {
 	}
 }
 
+func TestEntryQueryAPIRejectsInvalidRouteScopedQueryIDs(t *testing.T) {
+	api, _ := newEntryQueryAPI(t)
+	for _, path := range []string{
+		"/v1/feeds/11/entries?category_id=-1",
+		"/v1/feeds/11/entries?category_id=invalid",
+		"/v1/feeds/11/entries?category_id=%zz",
+		"/v1/categories/10/entries?feed_id=-1",
+		"/v1/categories/10/entries?feed_id=invalid",
+		"/v1/categories/10/entries?feed_id=&feed_id=-1",
+	} {
+		t.Run(path, func(t *testing.T) {
+			w := entryQueryAPIRequest(api, http.MethodGet, path, "")
+			if w.Code != http.StatusBadRequest {
+				t.Fatalf("Got status %d, want 400: %s", w.Code, w.Body.String())
+			}
+		})
+	}
+}
+
 func TestEntryQueryAPICompatibility(t *testing.T) {
 	api, _ := newEntryQueryAPI(t)
 	for _, test := range []struct {
@@ -492,6 +511,8 @@ func TestEntryQueryAPICompatibility(t *testing.T) {
 		{"/v1/categories/10/entries", []int64{4, 3, 8, 1}},
 		{"/v1/feeds/12/entries?feed_id=11", []int64{2}},
 		{"/v1/feeds/11/entries?feed_id=0", []int64{3, 8, 1}},
+		{"/v1/feeds/11/entries?feed_id=-1", []int64{3, 8, 1}},
+		{"/v1/categories/10/entries?category_id=invalid", []int64{4, 3, 8, 1}},
 		{"/v1/feeds/11/entries?category_id=10", []int64{3, 8, 1}},
 		{"/v1/categories/20/entries?category_id=10", []int64{2}},
 		{"/v1/categories/10/entries?category_id=0", []int64{4, 3, 8, 1}},
