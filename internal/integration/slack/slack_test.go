@@ -4,6 +4,8 @@
 package slack
 
 import (
+	"bytes"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -71,6 +73,37 @@ func TestSendSlackMsgErrorsDoNotContainWebhookURL(t *testing.T) {
 				t.Fatalf("expected the error to contain %q, got %q", tt.wantErrContains, err)
 			}
 		})
+	}
+}
+
+func TestSendSlackMsgDoesNotLogWebhookURL(t *testing.T) {
+	configureIntegrationAllowPrivateNetworksOption(t)
+
+	var logs bytes.Buffer
+	previousLogger := slog.Default()
+	slog.SetDefault(slog.New(slog.NewTextHandler(&logs, &slog.HandlerOptions{Level: slog.LevelDebug})))
+	t.Cleanup(func() { slog.SetDefault(previousLogger) })
+
+	const secret = "api/webhooks/123/0123456789abcdef"
+
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		writer.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	feed := &model.Feed{ID: 1, Title: "Feed", SiteURL: "https://example.org/"}
+	entries := model.Entries{&model.Entry{ID: 1, Title: "Entry", URL: "https://example.org/entry"}}
+
+	if err := NewClient(server.URL+"/"+secret).SendSlackMsg(feed, entries); err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if !strings.Contains(logs.String(), "Sending Slack notification") {
+		t.Fatalf("expected the notification to be logged, got:\n%s", logs.String())
+	}
+
+	if strings.Contains(logs.String(), secret) {
+		t.Errorf("expected the logs to not contain the secret, got:\n%s", logs.String())
 	}
 }
 

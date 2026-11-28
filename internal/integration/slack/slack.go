@@ -28,7 +28,6 @@ func NewClient(webhookURL string) *Client {
 func (c *Client) SendSlackMsg(feed *model.Feed, entries model.Entries) error {
 	for _, entry := range entries {
 		slog.Debug("Sending Slack notification",
-			slog.String("webhookURL", c.webhookURL),
 			slog.String("title", feed.Title),
 			slog.String("entry_url", entry.URL),
 		)
