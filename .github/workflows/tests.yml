@@ -35,9 +35,12 @@ jobs:
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        postgres: [11, 19]
     services:
       postgres:
-        image: postgres:11
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
