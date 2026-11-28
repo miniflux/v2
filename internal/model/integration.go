@@ -18,7 +18,7 @@ type Integration struct {
 	InstapaperPassword               string
 	FeverEnabled                     bool
 	FeverUsername                    string
-	FeverToken                       string
+	FeverTokenHash                   []byte
 	GoogleReaderEnabled              bool
 	GoogleReaderUsername             string
 	GoogleReaderPassword             string

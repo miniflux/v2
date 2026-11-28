@@ -7,8 +7,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 
 	"golang.org/x/crypto/bcrypt"
+	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -28,7 +30,7 @@ func (s *Storage) HasDuplicateGoogleReaderUsername(userID int64, googleReaderUse
 	return result
 }
 
-// UserByFeverToken returns a user by using the Fever API token.
+// UserByFeverToken returns the user whose Fever API token, compared case-insensitively, matches the given one.
 func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	query := `
 		SELECT
@@ -39,11 +41,11 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 			integrations ON integrations.user_id=users.id
 		WHERE
 			integrations.fever_enabled='t' AND
-			sha256(convert_to(lower(integrations.fever_token), 'UTF8')) = sha256(convert_to(lower($1), 'UTF8'))
+			integrations.fever_token_hash=$1
 	`
 
 	var user model.User
-	err := s.db.QueryRow(query, token).Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Timezone)
+	err := s.db.QueryRow(query, crypto.HashToken(strings.ToLower(token))).Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Timezone)
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
 		return nil, nil
@@ -123,7 +125,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			instapaper_password,
 			fever_enabled,
 			fever_username,
-			fever_token,
+			fever_token_hash,
 			googlereader_enabled,
 			googlereader_username,
 			googlereader_password,
@@ -256,7 +258,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.InstapaperPassword,
 		&integration.FeverEnabled,
 		&integration.FeverUsername,
-		&integration.FeverToken,
+		&integration.FeverTokenHash,
 		&integration.GoogleReaderEnabled,
 		&integration.GoogleReaderUsername,
 		&integration.GoogleReaderPassword,
@@ -398,7 +400,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			instapaper_password=$7,
 			fever_enabled=$8,
 			fever_username=$9,
-			fever_token=$10,
+			fever_token_hash=$10,
 			wallabag_enabled=$11,
 			wallabag_only_url=$12,
 			wallabag_url=$13,
@@ -528,7 +530,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.InstapaperPassword,
 		integration.FeverEnabled,
 		integration.FeverUsername,
-		integration.FeverToken,
+		integration.FeverTokenHash,
 		integration.WallabagEnabled,
 		integration.WallabagOnlyURL,
 		integration.WallabagURL,

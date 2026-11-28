@@ -16,7 +16,7 @@ import (
 func TestCreateAPIKeyStoresOnlyTheTokenHash(t *testing.T) {
 	db := openTestDatabase(t)
 	store := NewStorage(db)
-	userID := createAPIKeyTestUser(t, db)
+	userID := createTestUser(t, db)
 
 	apiKey, err := store.CreateAPIKey(userID, "Test")
 	if err != nil {
@@ -63,7 +63,7 @@ func TestCreateAPIKeyStoresOnlyTheTokenHash(t *testing.T) {
 func TestUserByAPIKeyFindsKeysHashedByTheMigration(t *testing.T) {
 	db := openTestDatabase(t)
 	store := NewStorage(db)
-	userID := createAPIKeyTestUser(t, db)
+	userID := createTestUser(t, db)
 
 	// The migration hashes existing tokens in SQL; the digest must match the one computed in Go.
 	legacyToken := crypto.GenerateRandomStringHex(32)
@@ -94,11 +94,11 @@ func TestUserByAPIKeyFindsKeysHashedByTheMigration(t *testing.T) {
 	}
 }
 
-func createAPIKeyTestUser(t *testing.T, db *sql.DB) int64 {
+func createTestUser(t *testing.T, db *sql.DB) int64 {
 	t.Helper()
 
 	var userID int64
-	username := "api_key_test_user_" + crypto.GenerateRandomStringHex(10)
+	username := "storage_test_user_" + crypto.GenerateRandomStringHex(10)
 	if err := db.QueryRow(`INSERT INTO users (username) VALUES ($1) RETURNING id`, username).Scan(&userID); err != nil {
 		t.Fatal(err)
 	}

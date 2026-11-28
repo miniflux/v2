@@ -37,10 +37,12 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 
 	if integration.FeverEnabled {
 		if integrationForm.FeverPassword != "" {
-			integration.FeverToken = fmt.Sprintf("%x", md5.Sum([]byte(integration.FeverUsername+":"+integrationForm.FeverPassword)))
+			// Fever clients send this MD5 value without a username on every request, so a salted, slow hash could not be looked up.
+			feverToken := fmt.Sprintf("%x", md5.Sum([]byte(integration.FeverUsername+":"+integrationForm.FeverPassword)))
+			integration.FeverTokenHash = crypto.HashToken(feverToken)
 		}
 	} else {
-		integration.FeverToken = ""
+		integration.FeverTokenHash = nil
 	}
 
 	if validationErr := integrationForm.ValidateGoogleReader(integration.GoogleReaderPassword); validationErr != nil {
