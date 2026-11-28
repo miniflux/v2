@@ -432,7 +432,6 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 			slog.Int64("user_id", userIntegrations.UserID),
 			slog.Int64("entry_id", entry.ID),
 			slog.String("entry_url", entry.URL),
-			slog.String("webhook_url", webhookURL),
 		)
 
 		webhookClient := webhook.NewClient(webhookURL, userIntegrations.WebhookSecret)
@@ -441,7 +440,6 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 				slog.Int64("user_id", userIntegrations.UserID),
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),
-				slog.String("webhook_url", webhookURL),
 				slog.Any("error", err),
 			)
 		}
@@ -546,7 +544,6 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 			slog.Int64("user_id", userIntegrations.UserID),
 			slog.Int("nb_entries", len(entries)),
 			slog.Int64("feed_id", feed.ID),
-			slog.String("webhook_url", webhookURL),
 		)
 
 		webhookClient := webhook.NewClient(webhookURL, userIntegrations.WebhookSecret)
@@ -555,7 +552,6 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 				slog.Int64("user_id", userIntegrations.UserID),
 				slog.Int("nb_entries", len(entries)),
 				slog.Int64("feed_id", feed.ID),
-				slog.String("webhook_url", webhookURL),
 				slog.Any("error", err),
 			)
 		}
