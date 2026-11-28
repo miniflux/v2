@@ -251,7 +251,7 @@
     "form.integration.gotify_activate": "推送条目到 Gotify",
     "form.integration.gotify_priority": "Gotify 优先级",
     "form.integration.gotify_server_url": "Gotify 服务器 URL",
-    "form.integration.gotify_token": "Gotify token",
+    "form.integration.gotify_token": "Gotify 令牌",
     "form.integration.instapaper_activate": "保存条目到 Instapaper",
     "form.integration.instapaper_password": "Instapaper 密码",
     "form.integration.instapaper_username": "Instapaper 用户名",
