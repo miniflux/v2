@@ -212,13 +212,17 @@ func JoinBaseURLAndPath(baseURL, path string) (string, error) {
 	return finalURL, nil
 }
 
-// RedactedURL returns rawURL with the password of its userinfo replaced
-// by "xxxxx", for logs and errors. It returns "xxxxx" when rawURL cannot
-// be parsed, since the raw string could hold a password.
+// RedactedURL returns rawURL with the userinfo password and the token query
+// parameter replaced by "xxxxx", for logs and errors. It returns "xxxxx" when
+// rawURL cannot be parsed, since the raw string could hold a password.
 func RedactedURL(rawURL string) string {
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
 		return "xxxxx"
+	}
+	if values := parsedURL.Query(); values.Has("token") {
+		values.Set("token", "xxxxx")
+		parsedURL.RawQuery = values.Encode()
 	}
 	return parsedURL.Redacted()
 }

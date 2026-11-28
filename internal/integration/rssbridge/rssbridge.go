@@ -15,6 +15,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -44,7 +45,7 @@ func DetectBridges(rssBridgeURL, rssBridgeToken, websiteURL string) ([]*Bridge, 
 	values.Add("url", websiteURL)
 	endpointURL.RawQuery = values.Encode()
 
-	slog.Debug("Detecting RSS bridges", slog.String("url", redactedURL(endpointURL)))
+	slog.Debug("Detecting RSS bridges", slog.String("url", urllib.RedactedURL(endpointURL.String())))
 
 	request, err := http.NewRequest(http.MethodGet, endpointURL.String(), nil)
 	if err != nil {
@@ -58,7 +59,7 @@ func DetectBridges(rssBridgeURL, rssBridgeToken, websiteURL string) ([]*Bridge, 
 	response, err := httpClient.Do(request)
 	if err != nil {
 		if urlErr, ok := errors.AsType[*url.Error](err); ok {
-			urlErr.URL = redactedURL(endpointURL)
+			urlErr.URL = urllib.RedactedURL(urlErr.URL)
 		}
 		return nil, fmt.Errorf("rssbridge: unable to execute request: %w", err)
 	}
@@ -98,15 +99,4 @@ func DetectBridges(rssBridgeURL, rssBridgeToken, websiteURL string) ([]*Bridge, 
 	}
 
 	return bridgeResponse, nil
-}
-
-// redactedURL returns the URL as a string with the token query parameter
-// and any userinfo password replaced, for logs and errors.
-func redactedURL(u *url.URL) string {
-	redacted := *u
-	if values := redacted.Query(); values.Has("token") {
-		values.Set("token", "xxxxx")
-		redacted.RawQuery = values.Encode()
-	}
-	return redacted.Redacted()
 }

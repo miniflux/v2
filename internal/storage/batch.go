@@ -108,7 +108,7 @@ func (b *batchBuilder) FetchJobs() (model.JobList, error) {
 			feedHostname := urllib.Domain(job.FeedURL)
 			if hosts[feedHostname] >= b.limitPerHost {
 				slog.Debug("Feed host limit reached for this batch",
-					slog.String("feed_url", job.FeedURL),
+					slog.String("feed_url", urllib.RedactedURL(job.FeedURL)),
 					slog.String("feed_hostname", feedHostname),
 					slog.Int("limit_per_host", b.limitPerHost),
 					slog.Int("current", hosts[feedHostname]),

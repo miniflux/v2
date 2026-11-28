@@ -383,7 +383,7 @@ func (h *greaderHandler) quickAddHandler(w http.ResponseWriter, r *http.Request)
 		slog.String("client_ip", clientIP),
 		slog.String("user_agent", r.UserAgent()),
 		slog.Int64("user_id", userID),
-		slog.String("feed_url", newFeed.FeedURL),
+		slog.String("feed_url", urllib.RedactedURL(newFeed.FeedURL)),
 	)
 
 	response.JSON(w, r, quickAddResponse{

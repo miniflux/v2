@@ -327,7 +327,7 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 
 	slog.Debug("Making outgoing request", slog.Group("request",
 		slog.String("method", req.Method),
-		slog.String("url", req.URL.String()),
+		slog.String("url", urllib.RedactedURL(req.URL.String())),
 		slog.Any("headers", redactedHeaders(req.Header)),
 		slog.Bool("without_redirects", r.withoutRedirects),
 		slog.Bool("use_app_client_proxy", r.useClientProxy),
@@ -336,7 +336,11 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		slog.Bool("disable_http2", r.disableHTTP2),
 	))
 
-	return client.Do(req)
+	response, err := client.Do(req)
+	if urlErr, ok := errors.AsType[*url.Error](err); ok {
+		urlErr.URL = urllib.RedactedURL(urlErr.URL)
+	}
+	return response, err
 }
 
 // redactedHeaders returns a copy of headers with the credential values replaced, for logging.

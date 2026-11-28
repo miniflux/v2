@@ -16,6 +16,7 @@ import (
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/readingtime"
 	"miniflux.app/v2/internal/storage"
+	"miniflux.app/v2/internal/urllib"
 )
 
 func fetchWatchTime(websiteURL, query string, isoDate bool) (int, error) {
@@ -87,7 +88,7 @@ func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *mod
 						slog.Int64("entry_id", entry.ID),
 						slog.String("entry_url", entry.URL),
 						slog.Int64("feed_id", feed.ID),
-						slog.String("feed_url", feed.FeedURL),
+						slog.String("feed_url", urllib.RedactedURL(feed.FeedURL)),
 						slog.Any("error", err),
 					)
 				} else {

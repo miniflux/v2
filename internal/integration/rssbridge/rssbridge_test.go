@@ -8,7 +8,6 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"strings"
 	"testing"
 
@@ -88,47 +87,6 @@ func TestDetectBridgesRedactsTokenInRequestError(t *testing.T) {
 
 			if strings.Contains(logs.String(), testToken) {
 				t.Errorf("Expected logs not to contain the token, got:\n%s", logs.String())
-			}
-		})
-	}
-}
-
-func TestRedactedURL(t *testing.T) {
-	tests := []struct {
-		name     string
-		input    string
-		expected string
-	}{
-		{
-			name:     "token",
-			input:    "https://bridge.example.org/?action=findfeed&token=" + testToken,
-			expected: "https://bridge.example.org/?action=findfeed&token=xxxxx",
-		},
-		{
-			name:     "no token",
-			input:    "https://bridge.example.org/?action=findfeed&format=atom",
-			expected: "https://bridge.example.org/?action=findfeed&format=atom",
-		},
-		{
-			name:     "userinfo password",
-			input:    "https://user:password@bridge.example.org/?token=" + testToken,
-			expected: "https://user:xxxxx@bridge.example.org/?token=xxxxx",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			u, err := url.Parse(tt.input)
-			if err != nil {
-				t.Fatalf("Unable to parse URL: %v", err)
-			}
-
-			if got := redactedURL(u); got != tt.expected {
-				t.Errorf("Expected %q, got %q", tt.expected, got)
-			}
-
-			if u.String() != tt.input {
-				t.Errorf("Expected the original URL to be unchanged, got %q", u.String())
 			}
 		})
 	}
